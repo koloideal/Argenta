@@ -1,7 +1,7 @@
 from typing import Callable, Any
-from src.core.router.exceptions import (InvalidCommandInstanceException,
-                                        UnknownCommandHandlerHasAlreadyBeenCreatedException,
-                                        InvalidDescriptionInstanceException)
+from ..router.exceptions import (InvalidCommandInstanceException,
+                                 UnknownCommandHandlerHasAlreadyBeenCreatedException,
+                                 InvalidDescriptionInstanceException)
 
 
 class Router:

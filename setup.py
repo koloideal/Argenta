@@ -5,10 +5,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="argenta",
-    version="0.1.0",
+    version="0.1.1",
     author="kolo",
     author_email="kolo.is.main@gmail.com",
-    description="python library for creating cli apps",
+    description="Python library for creating CLI apps",
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=find_packages(),
