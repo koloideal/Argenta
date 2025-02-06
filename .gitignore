@@ -1,0 +1,5 @@
+.venv
+.idea
+argenta/router/__pycache__/
+argenta/app/__pycache__/
+argenta/__pycache__/
