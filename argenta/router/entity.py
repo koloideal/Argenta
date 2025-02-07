@@ -9,10 +9,10 @@ class Router:
                  name: str,
                  ignore_command_register: bool = False):
 
-        self.ignore_command_register: bool = ignore_command_register
-        self._name = name
+        self.ignore_command_register = ignore_command_register
+        self.name = name
 
-        self.processed_commands: list[dict[str, Callable[[], None] | str]] = []
+        self._processed_commands: list[dict[str, Callable[[], None] | str]] = []
         self.unknown_command_func: Callable[[str], None] | None = None
         self._is_main_router: bool = False
 
@@ -24,7 +24,7 @@ class Router:
             raise InvalidDescriptionInstanceException()
         else:
             def command_decorator(func):
-                self.processed_commands.append({'func': func,
+                self._processed_commands.append({'func': func,
                                                 'command': command,
                                                 'description': description})
                 def wrapper(*args, **kwargs):
@@ -37,7 +37,7 @@ class Router:
         if self.unknown_command_func is not None:
             raise UnknownCommandHandlerHasAlreadyBeenCreatedException()
 
-        self.unknown_command_func = func
+        self.unknown_command_func: Callable = func
 
         def wrapper(*args, **kwargs):
             return func(*args, **kwargs)
@@ -45,13 +45,14 @@ class Router:
 
 
     def input_command_handler(self, input_command):
-        for command_entity in self.processed_commands:
+        for command_entity in self._processed_commands:
             if input_command.lower() == command_entity['command'].lower():
                 if self.ignore_command_register:
                     return command_entity['func']()
                 else:
                     if input_command == command_entity['command']:
                         return command_entity['func']()
+
 
     def unknown_command_handler(self, unknown_command):
         self.unknown_command_func(unknown_command)
@@ -62,9 +63,9 @@ class Router:
 
 
     def get_registered_commands(self) -> list[dict[str, Callable[[], None] | str]]:
-        return self.processed_commands
+        return self._processed_commands
 
 
     def get_name(self) -> str:
-        return self._name
+        return self.name
 
