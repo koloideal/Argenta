@@ -4,3 +4,4 @@ argenta/router/__pycache__/
 argenta/app/__pycache__/
 argenta/__pycache__/
 dist
+tests
