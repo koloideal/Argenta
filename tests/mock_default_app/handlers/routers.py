@@ -2,27 +2,25 @@ from rich.console import Console
 from argenta.router import Router
 
 
-work_router: Router = Router(name='Work points:',
-                             ignore_command_register=False)
-settings_router: Router = Router(name='Settings points:',
-                                 ignore_command_register=True)
+work_router: Router = Router(name='work')
+settings_router: Router = Router(name='settings')
 
 console = Console()
 
 
-@work_router.command(command='0', description='Get Help')
+@work_router.command(command='2')
 def command_help():
-    print('help command')
+    console.print('[bold red]command help [/bold red]')
 
 
-@work_router.command(command='1', description='Start Solving')
+@work_router.command(command='2', description='txiyxykkkkkkkkkkkk')
 def command_start_solving():
-    print('start solving')
+    console.print('[bold red]command start [/bold red]')
 
 
-@settings_router.command(command='U', description='Update WordMath')
-def command_update():
-    print('update wordmath')
+@settings_router.command(command='2')
+def command_settings():
+    console.print('[bold red]command settings [/bold red]')
 
 
 @work_router.unknown_command

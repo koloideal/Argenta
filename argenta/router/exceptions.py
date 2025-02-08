@@ -11,3 +11,8 @@ class InvalidDescriptionInstanceException(Exception):
 class UnknownCommandHandlerHasAlreadyBeenCreatedException(Exception):
     def __str__(self):
         return "Only one unknown command handler can be declared"
+
+
+class RepeatedCommandException(Exception):
+    def __str__(self):
+        return "Commands in handler cannot be repeated"

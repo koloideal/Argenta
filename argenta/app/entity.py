@@ -5,7 +5,10 @@ from .exceptions import (InvalidRouterInstanceException,
                          OnlyOneMainRouterIsAllowedException,
                          MissingMainRouterException,
                          MissingHandlersForUnknownCommandsOnMainRouterException,
-                         HandlerForUnknownCommandsCanOnlyBeDeclaredForMainRouterException)
+                         HandlerForUnknownCommandsCanOnlyBeDeclaredForMainRouterException,
+                         NoRegisteredRoutersException,
+                         NoRegisteredHandlersException,
+                         RepeatedCommandInDifferentRoutersException)
 
 
 class App:
@@ -28,14 +31,18 @@ class App:
         self.command_group_description_separate = command_group_description_separate
 
         self._routers: list[Router] = []
-        self._registered_commands: list[dict[str, str | list[dict[str, Callable[[], None] | str]] | Router]] = []
-        self._main_app_router: Router | None = None
+        self._registered_router_entities: list[dict[str, str | list[dict[str, Callable[[], None] | str]] | Router]] = []
+        self._app_main_router: Router | None = None
         self._description_message_pattern: str = '[{command}] *=*=* {description}'
 
 
     def start_polling(self) -> None:
-        self.print_func(self.initial_greeting)
+        self._validate_number_of_routers()
+        self._validate_included_routers()
         self._validate_main_router()
+        self._validate_all_router_commands()
+
+        self.print_func(self.initial_greeting)
 
         while True:
             self._print_command_group_description()
@@ -74,16 +81,63 @@ class App:
         self._description_message_pattern: str = pattern
 
 
-    def _validate_main_router(self):
-        if not self._main_app_router:
-            raise MissingMainRouterException()
+    def get_main_router(self) -> Router:
+        return self._app_main_router
 
-        if not self._main_app_router.unknown_command_func:
+
+    def get_all_app_commands(self) -> list[str]:
+        all_commands: list[str] = []
+        for router in self._routers:
+            all_commands.extend(router.get_all_commands())
+
+        return all_commands
+
+
+    def _validate_number_of_routers(self) -> None:
+        if not self._routers:
+            raise NoRegisteredRoutersException()
+
+
+    def _validate_included_routers(self) -> None:
+        for router in self._routers:
+            if not router.get_command_entities():
+                raise NoRegisteredHandlersException(router.get_name())
+
+
+    def _validate_main_router(self):
+        if not self._app_main_router:
+            if len(self._routers) > 1:
+                raise MissingMainRouterException()
+            else:
+                router = self._routers[0]
+                router.set_router_as_main()
+                self._app_main_router = router
+
+        if not self._app_main_router.unknown_command_func:
             raise MissingHandlersForUnknownCommandsOnMainRouterException()
 
         for router in self._routers:
-            if router.unknown_command_func and self._main_app_router is not router:
+            if router.unknown_command_func and self._app_main_router is not router:
                 raise HandlerForUnknownCommandsCanOnlyBeDeclaredForMainRouterException()
+
+
+    def _validate_all_router_commands(self) -> None:
+        for idx in range(len(self._registered_router_entities)):
+            current_router: Router = self._registered_router_entities[idx]['router']
+            routers_without_current_router = self._registered_router_entities.copy()
+            routers_without_current_router.pop(idx)
+
+            current_router_ignore_commands_registered: bool = current_router.ignore_command_register
+            current_router_all_commands: list[str] = current_router.get_all_commands()
+
+            for router_entity in routers_without_current_router:
+                if len(set(current_router_all_commands).intersection(set(router_entity['router'].get_all_commands()))) > 0:
+                    raise RepeatedCommandInDifferentRoutersException()
+                if current_router_ignore_commands_registered:
+                    if len(set([x.lower() for x in current_router_all_commands]).intersection(set([x.lower() for x in router_entity['router'].get_all_commands()]))) > 0:
+                        raise RepeatedCommandInDifferentRoutersException()
+
+
 
 
     def _checking_command_for_exit_command(self, command: str):
@@ -98,25 +152,25 @@ class App:
 
 
     def _check_is_command_unknown(self, command: str):
-        registered_commands: list[dict[str, str | list[dict[str, Callable[[], None] | str]] | Router]] = self._registered_commands
-        for router in registered_commands:
-            for command_entity in router['commands']:
+        registered_router_entities: list[dict[str, str | list[dict[str, Callable[[], None] | str]] | Router]] = self._registered_router_entities
+        for router_entity in registered_router_entities:
+            for command_entity in router_entity['commands']:
                 if command_entity['command'].lower() == command.lower():
-                    if router['router'].ignore_command_register:
+                    if router_entity['router'].ignore_command_register:
                         return False
                     else:
                         if command_entity['command'] == command:
                             return False
-        self._main_app_router.unknown_command_handler(command)
+        self._app_main_router.unknown_command_handler(command)
         self.print_func(self.line_separate)
         self.print_func(self.command_group_description_separate)
         return True
 
 
     def _print_command_group_description(self):
-        for router in self._registered_commands:
-            self.print_func(router['name'])
-            for command_entity in router['commands']:
+        for router_entity in self._registered_router_entities:
+            self.print_func(router_entity['title'])
+            for command_entity in router_entity['commands']:
                 self.print_func(self._description_message_pattern.format(
                         command=command_entity['command'],
                         description=command_entity['description']
@@ -125,21 +179,22 @@ class App:
             self.print_func(self.command_group_description_separate)
 
 
-    def include_router(self, router: Router, is_main: bool = False) -> None:
+    def include_router(self, router: Router, is_main: True | False = False) -> None:
         if not isinstance(router, Router):
             raise InvalidRouterInstanceException()
 
         if is_main:
-            if not self._main_app_router:
-                self._main_app_router = router
+            if not self._app_main_router:
+                self._app_main_router = router
                 router.set_router_as_main()
             else:
-                raise OnlyOneMainRouterIsAllowedException(router)
+                raise OnlyOneMainRouterIsAllowedException(self._app_main_router.get_name())
 
         self._routers.append(router)
 
-        registered_commands: list[dict[str, Callable[[], None] | str]] = router.get_registered_commands()
-        self._registered_commands.append({'name': router.get_name(),
-                                         'router': router,
-                                         'commands': registered_commands})
+        command_entities: list[dict[str, Callable[[], None] | str]] = router.get_command_entities()
+        self._registered_router_entities.append({'name': router.get_name(),
+                                                 'title': router.get_title(),
+                                                 'router': router,
+                                                 'commands': command_entities})
 

@@ -37,3 +37,20 @@ class MissingHandlersForUnknownCommandsOnMainRouterException(Exception):
 class HandlerForUnknownCommandsCanOnlyBeDeclaredForMainRouterException(Exception):
     def __str__(self):
         return '\nThe handler for unknown commands can only be declared for the main router'
+
+
+class NoRegisteredRoutersException(Exception):
+    def __str__(self):
+        return "No Registered Router Found"
+
+
+class NoRegisteredHandlersException(Exception):
+    def __init__(self, router_name):
+        self.router_name = router_name
+    def __str__(self):
+        return f"No Registered Handlers Found For '{self.router_name}'"
+
+
+class RepeatedCommandInDifferentRoutersException(Exception):
+    def __str__(self):
+        return "Commands in different handlers cannot be repeated"
