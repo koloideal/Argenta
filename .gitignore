@@ -4,4 +4,11 @@ argenta/router/__pycache__/
 argenta/app/__pycache__/
 argenta/__pycache__/
 dist
-tests
+tests/__pycache__
+tests/mock_default_app/handlers/__pycache__/
+tests/mock_default_app/__pycache__/
+tests/mock_app/local_data_func/__pycache__/
+tests/mock_app/handlers/handlers_implementation/__pycache__/
+tests/mock_app/handlers/__pycache__/
+tests/mock_app/business_logic/__pycache__/
+tests/mock_app/__pycache__/
