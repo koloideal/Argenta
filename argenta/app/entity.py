@@ -14,23 +14,29 @@ from .exceptions import (InvalidRouterInstanceException,
 class App:
     def __init__(self,
                  prompt: str = 'Enter a command',
-                 exit_command: str = 'q',
-                 ignore_exit_command_register: bool = True,
                  initial_greeting: str = '\nHello, I am Argenta\n',
                  farewell_message: str = '\nGoodBye\n',
+                 exit_command: str = 'Q',
+                 exit_command_description: str = 'Exit command',
+                 exit_command_title: str = 'System points:',
+                 ignore_exit_command_register: bool = True,
+                 ignore_command_register: bool = False,
                  line_separate: str = '',
                  command_group_description_separate: str = '',
-                 ignore_command_register: bool = False,
+                 repeat_command_groups: bool = True,
                  print_func: Callable[[str], None] = print) -> None:
         self.prompt = prompt
         self.print_func = print_func
         self.exit_command = exit_command
+        self.exit_command_description = exit_command_description
+        self.exit_command_title = exit_command_title
         self.ignore_exit_command_register = ignore_exit_command_register
         self.farewell_message = farewell_message
         self.initial_greeting = initial_greeting
         self.line_separate = line_separate
         self.command_group_description_separate = command_group_description_separate
         self.ignore_command_register = ignore_command_register
+        self.repeat_command_groups = repeat_command_groups
 
         self._routers: list[Router] = []
         self._registered_router_entities: list[dict[str, str | list[dict[str, Callable[[], None] | str]] | Router]] = []
@@ -46,8 +52,14 @@ class App:
 
         self.print_func(self.initial_greeting)
 
-        while True:
+        if not self.repeat_command_groups:
             self._print_command_group_description()
+        if self.repeat_command_groups:
+            self.print_func(self.prompt)
+
+        while True:
+            if self.repeat_command_groups:
+                self._print_command_group_description()
             self.print_func(self.prompt)
 
             command: str = input()
@@ -176,6 +188,14 @@ class App:
                     )
                 )
             self.print_func(self.command_group_description_separate)
+
+        self.print_func(self.exit_command_title)
+        self.print_func(self._description_message_pattern.format(
+                command=self.exit_command,
+                description=self.exit_command_description
+            )
+        )
+        self.print_func(self.command_group_description_separate)
 
 
     def include_router(self, router: Router, is_main: True | False = False) -> None:

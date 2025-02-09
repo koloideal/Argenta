@@ -6,10 +6,8 @@ from ..handlers.handlers_implementation.solving_command import start_solving_com
 from ..handlers.handlers_implementation.upgrade_command import upgrade_command
 
 
-work_router: Router = Router(name='Work points:',
-                             ignore_command_register=False)
-settings_router: Router = Router(name='Settings points:',
-                                 ignore_command_register=True)
+work_router: Router = Router(title='Work points:')
+settings_router: Router = Router(title='Settings points:')
 
 console = Console()
 
