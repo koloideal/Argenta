@@ -8,16 +8,15 @@ from ..router.exceptions import (InvalidCommandInstanceException,
 class Router:
     def __init__(self,
                  title: str = 'Commands group title:',
-                 name: str = 'subordinate',
-                 ignore_command_register: bool = False):
+                 name: str = 'subordinate'):
 
-        self.ignore_command_register = ignore_command_register
         self.title = title
         self.name = name
 
         self._command_entities: list[dict[str, Callable[[], None] | str]] = []
         self.unknown_command_func: Callable[[str], None] | None = None
         self._is_main_router: bool = False
+        self.ignore_command_register: bool = False
 
 
     def command(self, command: str, description: str = None) -> Callable[[Any],  Any]:
@@ -84,6 +83,10 @@ class Router:
         if self.name == 'subordinate':
             self.name = 'main'
         self._is_main_router = True
+
+
+    def set_ignore_command_register(self, ignore_command_register: bool):
+        self.ignore_command_register = ignore_command_register
 
 
     def get_command_entities(self) -> list[dict[str, Callable[[], None] | str]]:

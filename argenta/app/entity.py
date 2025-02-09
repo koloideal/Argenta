@@ -17,9 +17,10 @@ class App:
                  exit_command: str = 'q',
                  ignore_exit_command_register: bool = True,
                  initial_greeting: str = '\nHello, I am Argenta\n',
-                 farewell_message: str = 'GoodBye',
+                 farewell_message: str = '\nGoodBye\n',
                  line_separate: str = '',
                  command_group_description_separate: str = '',
+                 ignore_command_register: bool = False,
                  print_func: Callable[[str], None] = print) -> None:
         self.prompt = prompt
         self.print_func = print_func
@@ -29,6 +30,7 @@ class App:
         self.initial_greeting = initial_greeting
         self.line_separate = line_separate
         self.command_group_description_separate = command_group_description_separate
+        self.ignore_command_register = ignore_command_register
 
         self._routers: list[Router] = []
         self._registered_router_entities: list[dict[str, str | list[dict[str, Callable[[], None] | str]] | Router]] = []
@@ -54,12 +56,12 @@ class App:
             self.print_func(self.line_separate)
 
             is_unknown_command: bool = self._check_is_command_unknown(command)
-
             if is_unknown_command:
                 continue
 
             for router in self._routers:
                 router.input_command_handler(command)
+
             self.print_func(self.line_separate)
             self.print_func(self.command_group_description_separate)
 
@@ -123,21 +125,18 @@ class App:
 
     def _validate_all_router_commands(self) -> None:
         for idx in range(len(self._registered_router_entities)):
-            current_router: Router = self._registered_router_entities[idx]['router']
+            current_router: Router = self._registered_router_entities[idx]['entity']
             routers_without_current_router = self._registered_router_entities.copy()
             routers_without_current_router.pop(idx)
 
-            current_router_ignore_commands_registered: bool = current_router.ignore_command_register
             current_router_all_commands: list[str] = current_router.get_all_commands()
 
             for router_entity in routers_without_current_router:
-                if len(set(current_router_all_commands).intersection(set(router_entity['router'].get_all_commands()))) > 0:
+                if len(set(current_router_all_commands).intersection(set(router_entity['entity'].get_all_commands()))) > 0:
                     raise RepeatedCommandInDifferentRoutersException()
-                if current_router_ignore_commands_registered:
-                    if len(set([x.lower() for x in current_router_all_commands]).intersection(set([x.lower() for x in router_entity['router'].get_all_commands()]))) > 0:
+                if self.ignore_command_register:
+                    if len(set([x.lower() for x in current_router_all_commands]).intersection(set([x.lower() for x in router_entity['entity'].get_all_commands()]))) > 0:
                         raise RepeatedCommandInDifferentRoutersException()
-
-
 
 
     def _checking_command_for_exit_command(self, command: str):
@@ -156,7 +155,7 @@ class App:
         for router_entity in registered_router_entities:
             for command_entity in router_entity['commands']:
                 if command_entity['command'].lower() == command.lower():
-                    if router_entity['router'].ignore_command_register:
+                    if self.ignore_command_register:
                         return False
                     else:
                         if command_entity['command'] == command:
@@ -190,11 +189,12 @@ class App:
             else:
                 raise OnlyOneMainRouterIsAllowedException(self._app_main_router.get_name())
 
+        router.set_ignore_command_register(self.ignore_command_register)
         self._routers.append(router)
 
         command_entities: list[dict[str, Callable[[], None] | str]] = router.get_command_entities()
         self._registered_router_entities.append({'name': router.get_name(),
                                                  'title': router.get_title(),
-                                                 'router': router,
+                                                 'entity': router,
                                                  'commands': command_entities})
 

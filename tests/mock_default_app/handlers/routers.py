@@ -1,3 +1,4 @@
+from pprint import pprint
 from rich.console import Console
 from argenta.router import Router
 
@@ -8,17 +9,17 @@ settings_router: Router = Router(name='settings')
 console = Console()
 
 
-@work_router.command(command='2')
+@work_router.command(command='a')
 def command_help():
     console.print('[bold red]command help [/bold red]')
 
 
-@work_router.command(command='2', description='txiyxykkkkkkkkkkkk')
+@work_router.command(command='B', description='tester')
 def command_start_solving():
     console.print('[bold red]command start [/bold red]')
 
 
-@settings_router.command(command='2')
+@settings_router.command(command='b')
 def command_settings():
     console.print('[bold red]command settings [/bold red]')
 
