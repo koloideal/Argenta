@@ -156,21 +156,32 @@ App(prompt: str = 'Enter a command',
 `False`, если в приложении зарегистрирован лишь один роутер, то он неявно устанавливается главным, если
 зарегистрировано больше одного роутера, то требуется явное указание главного. При регистрации более одного
 главного роутера вызывается исключение `OnlyOneMainRouterIsAllowedException`. При регистрации более одного
-роутера и отсутствии указания главного вызывается исключение `MissingMainRouterException`
+роутера и отсутствии указания главного вызывается исключение `MissingMainRouterException`  
+
+- В устанавливаемом паттерне сообщения описания команды необходимы быть два ключевых слова: 
+`command` и `description`, каждое из которых должно быть заключено в фигурные скобки, после обработки
+паттерна на места этих ключевых слов будут подставлены соответствующие значения команды, при отсутствии
+этих двух ключевых слов будет вызвано исключение `InvalidDescriptionMessagePatternException`
+
+- Команды приложения не должны повторяться, при значении атрибута `ignore_command_register` равным `True`
+допускается создание обработчиков для разных регистров одинаковых символов в команде, для примера `u` и `U`,
+при значении атрибута `ignore_command_register` равным `False` тот же пример вызывает исключение 
+`RepeatedCommandInDifferentRoutersException`. Исключение вызывается только при наличии пересекающихся команд 
+у __<u>разных</u>__ роутеров
 
 
 
 
 ### Исключения
 
-- `InvalidRouterInstanceException` — Вызывается, если передан неверный объект роутера.
-- `InvalidDescriptionMessagePatternException` — Вызывается при неправильном формате шаблона описания команд.
-- `OnlyOneMainRouterIsAllowedException` — Вызывается при попытке задать более одного основного роутера.
-- `MissingMainRouterException` — Отсутствует основной роутер.
+- `InvalidRouterInstanceException` — Переданный объект в метод `App().include_router()` не является экземпляром класса `Router`.
+- `InvalidDescriptionMessagePatternException` — Неправильный формат паттерна описания команд.
+- `OnlyOneMainRouterIsAllowedException` — Регистрация более одного главного роутера.
+- `MissingMainRouterException` — Отсутствует главный роутер.
 - `MissingHandlersForUnknownCommandsOnMainRouterException` — В основном роутере отсутствует обработчик неизвестных команд.
-- `HandlerForUnknownCommandsCanOnlyBeDeclaredForMainRouterException` — Обработчик неизвестных команд может быть только у основного роутера.
+- `HandlerForUnknownCommandsCanOnlyBeDeclaredForMainRouterException` — Обработчик неизвестных команд определён не у основного роутера.
 - `NoRegisteredRoutersException` — Отсутствуют зарегистрированные роутеры.
-- `NoRegisteredHandlersException` — У роутера отсутствуют обработчики команд.
+- `NoRegisteredHandlersException` — У роутера нет ни одного обработчика команд.
 - `RepeatedCommandInDifferentRoutersException` — Одна и та же команда зарегистрирована в разных роутерах.
 
 
