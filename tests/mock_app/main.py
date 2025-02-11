@@ -21,7 +21,7 @@ def main():
     app.include_router(work_router, is_main=True)
     app.include_router(settings_router)
 
-    app.set_initial_greeting(initial_greeting)
+    app.set_initial_message(initial_greeting)
     app.set_farewell_message(goodbye_message)
 
     app.set_description_message_pattern('[bold red][{command}][/bold red] [blue]*=*=*[/blue] [bold yellow italic]{description}')

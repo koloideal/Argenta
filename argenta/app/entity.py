@@ -14,7 +14,7 @@ from .exceptions import (InvalidRouterInstanceException,
 class App:
     def __init__(self,
                  prompt: str = 'Enter a command',
-                 initial_greeting: str = '\nHello, I am Argenta\n',
+                 initial_message: str = '\nHello, I am Argenta\n',
                  farewell_message: str = '\nGoodBye\n',
                  exit_command: str = 'Q',
                  exit_command_description: str = 'Exit command',
@@ -32,7 +32,7 @@ class App:
         self.exit_command_title = exit_command_title
         self.ignore_exit_command_register = ignore_exit_command_register
         self.farewell_message = farewell_message
-        self.initial_greeting = initial_greeting
+        self.initial_message = initial_message
         self.line_separate = line_separate
         self.command_group_description_separate = command_group_description_separate
         self.ignore_command_register = ignore_command_register
@@ -50,7 +50,7 @@ class App:
         self._validate_main_router()
         self._validate_all_router_commands()
 
-        self.print_func(self.initial_greeting)
+        self.print_func(self.initial_message)
 
         if not self.repeat_command_groups:
             self._print_command_group_description()
@@ -81,8 +81,8 @@ class App:
                 self.print_func(self.prompt)
 
 
-    def set_initial_greeting(self, greeting: str) -> None:
-        self.initial_greeting: str = greeting
+    def set_initial_message(self, message: str) -> None:
+        self.initial_message: str = message
 
 
     def set_farewell_message(self, message: str) -> None:
