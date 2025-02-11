@@ -93,6 +93,8 @@ App(prompt: str = 'Enter a command',
 - `repeat_command_groups` (`bool`): Повторять описание команд перед вводом.
 - `print_func` (`Callable[[str], None]`): Функция вывода текста в терминал (по умолчанию `print`).
 
+---
+
 #### **declared *methods***     
 
 ---
@@ -153,7 +155,7 @@ App(prompt: str = 'Enter a command',
 
 ---
 
-## Примечания  
+#### Примечания  
 
 -  Среди зарегистрированных в приложении роутеров должен быть один главный, является ли роутер главным
 определяется значением аргумента `is_main` равным `True`, в методе `App().include_router()`, который по умолчанию равен
@@ -169,7 +171,7 @@ App(prompt: str = 'Enter a command',
 
 - Команды приложения не должны повторяться, при значении атрибута `ignore_command_register` равным `True`
 допускается создание обработчиков для разных регистров одинаковых символов в команде, для примера `u` и `U`,
-при значении атрибута `ignore_command_register` равным `False` тот же пример вызывает исключение 
+при значении атрибута `ignore_command_register` класса `App` равным `False` тот же пример вызывает исключение 
 `RepeatedCommandInDifferentRoutersException`. Исключение вызывается только при наличии пересекающихся команд 
 у __<u>разных</u>__ роутеров
 
@@ -188,7 +190,7 @@ __<u>не</u>__ главного роутера будет вызвано иск
 
 
 
-### Исключения
+#### Исключения
 
 - `InvalidRouterInstanceException` — Переданный объект в метод `App().include_router()` не является экземпляром класса `Router`.
 - `InvalidDescriptionMessagePatternException` — Неправильный формат паттерна описания команд.
@@ -200,4 +202,84 @@ __<u>не</u>__ главного роутера будет вызвано иск
 - `NoRegisteredHandlersException` — У роутера нет ни одного обработчика команд.
 - `RepeatedCommandInDifferentRoutersException` — Одна и та же команда зарегистрирована в разных роутерах.
 
+---
 
+###  *class* :: `Router` 
+Класс, который определяет и конфигурирует обработчиков команд
+
+#### Конструктор
+```python
+Router(title: str = 'Commands group title:',
+       name: str = 'subordinate')
+```
+
+**Аргументы:**
+- **name : mean**
+- `title` (`str`): Заголовок группы команд.
+- `name` (`str`): Персональное название роутера
+
+
+
+#### **declared *methods***     
+
+---
+
+**`@`Router().**`command(command: str, description: str = None)`  
+
+*param* `command: str` **::** строковый триггер, который будет выполнять указанные действия  
+*example* **::** `U` / `update` / `ExaMPLE` 
+
+*param* `description: str` **::** описание команды, которое будет выведено в консоль 
+*example* **::** `description for update command` или `example description` 
+
+*method mean* **::** декоратор регистрирует функцию как обработчик команды
+
+---
+
+**`@`Router().**`unknown_command`   
+
+*method mean* **::** декоратор регистрирует функцию как обработчик неизвестных команд
+
+---
+
+**`@`Router().**`command(command: str, description: str = None)`  
+
+*param* `command: str` **::** строковый триггер, который будет выполнять указанные действия  
+*example* **::** `U` / `update` / `ExaMPLE` 
+
+*param* `description: str` **::** описание команды, которое будет выведено в консоль 
+*example* **::** `description for update command` или `example description` 
+
+*method mean* **::** декоратор регистрирует функцию как обработчик команды
+
+---
+
+**Router().**`get_name() -> str`  
+
+*method mean* **::** возвращает установленное название роутера
+
+---
+
+**Router().**`get_title() -> str`  
+
+*method mean* **::** возвращает установленный заголовок группы команд данного роутера
+
+---
+
+**Router().**`get_router_info() -> dict`  
+
+*method mean* **::** возвращает информацию о роутере
+
+---
+
+**Router().**`get_all_commands() -> list[str]`  
+
+*method mean* **::** возвращает все зарегистрированные команды для данного роутера
+
+---
+
+#### Исключения 
+- `InvalidCommandInstanceException` - Переданный объект для регистрации команды не является строкой
+- `InvalidDescriptionInstanceException` - Переданный объект для регистрации описания команды не является строкой
+- `UnknownCommandHandlerHasAlreadyBeenCreatedException` - Обработчик неизвестных команд уже создан
+- `RepeatedCommandException` - Одна и та же команда зарегистрирована в одном роутере
