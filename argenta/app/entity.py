@@ -4,8 +4,8 @@ from .exceptions import (InvalidRouterInstanceException,
                          InvalidDescriptionMessagePatternException,
                          OnlyOneMainRouterIsAllowedException,
                          MissingMainRouterException,
-                         MissingHandlersForUnknownCommandsOnMainRouterException,
-                         HandlerForUnknownCommandsCanOnlyBeDeclaredForMainRouterException,
+                         MissingHandlerForUnknownCommandsException,
+                         HandlerForUnknownCommandsOnNonMainRouterException,
                          NoRegisteredRoutersException,
                          NoRegisteredHandlersException,
                          RepeatedCommandInDifferentRoutersException)
@@ -152,11 +152,11 @@ class App:
                 self._app_main_router = router
 
         if not self._app_main_router.unknown_command_func:
-            raise MissingHandlersForUnknownCommandsOnMainRouterException()
+            raise MissingHandlerForUnknownCommandsException()
 
         for router in self._routers:
             if router.unknown_command_func and self._app_main_router is not router:
-                raise HandlerForUnknownCommandsCanOnlyBeDeclaredForMainRouterException()
+                raise HandlerForUnknownCommandsOnNonMainRouterException()
 
 
     def _validate_all_router_commands(self) -> None:

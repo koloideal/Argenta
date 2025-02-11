@@ -29,6 +29,10 @@ router = Router()
 @router.command("hello")
 def hello():
     print("Hello, world!")
+
+@router.unknown_command
+def unlnown_command(command):
+    print(f'Command "{command}" undefined')
 ```
 ```python
 #main.py
@@ -169,6 +173,18 @@ App(prompt: str = 'Enter a command',
 `RepeatedCommandInDifferentRoutersException`. Исключение вызывается только при наличии пересекающихся команд 
 у __<u>разных</u>__ роутеров
 
+- У главного обработчика должен быть зарегистрирован обработчик неизвестных команд:  
+```python
+router = Router()
+
+@router.unknown_command
+def unknown_command(command):
+    print(f'Command "{command}" undefined')
+```
+При отсутствии обработчика неизвестных команд у главного роутера будет вызвано исключение
+`MissingHandlerForUnknownCommandsException`. При регистрации обработчика неизвестных команд у
+__<u>не</u>__ главного роутера будет вызвано исключение `HandlerForUnknownCommandsOnNonMainRouterException`
+
 
 
 
@@ -178,8 +194,8 @@ App(prompt: str = 'Enter a command',
 - `InvalidDescriptionMessagePatternException` — Неправильный формат паттерна описания команд.
 - `OnlyOneMainRouterIsAllowedException` — Регистрация более одного главного роутера.
 - `MissingMainRouterException` — Отсутствует главный роутер.
-- `MissingHandlersForUnknownCommandsOnMainRouterException` — В основном роутере отсутствует обработчик неизвестных команд.
-- `HandlerForUnknownCommandsCanOnlyBeDeclaredForMainRouterException` — Обработчик неизвестных команд определён не у основного роутера.
+- `MissingHandlerForUnknownCommandsException` — В основном роутере отсутствует обработчик неизвестных команд.
+- `HandlerForUnknownCommandsOnNonMainRouterException` — Обработчик неизвестных команд определён не у основного роутера.
 - `NoRegisteredRoutersException` — Отсутствуют зарегистрированные роутеры.
 - `NoRegisteredHandlersException` — У роутера нет ни одного обработчика команд.
 - `RepeatedCommandInDifferentRoutersException` — Одна и та же команда зарегистрирована в разных роутерах.

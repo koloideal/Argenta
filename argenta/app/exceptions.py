@@ -28,13 +28,13 @@ class MissingMainRouterException(Exception):
                 "One of the registered routers must be the main one")
 
 
-class MissingHandlersForUnknownCommandsOnMainRouterException(Exception):
+class MissingHandlerForUnknownCommandsException(Exception):
     def __str__(self):
         return ("Missing Handlers For Unknown Commands On The Main Router\n"
                 "The main router must have a declared handler for unknown commands")
 
 
-class HandlerForUnknownCommandsCanOnlyBeDeclaredForMainRouterException(Exception):
+class HandlerForUnknownCommandsOnNonMainRouterException(Exception):
     def __str__(self):
         return '\nThe handler for unknown commands can only be declared for the main router'
 
