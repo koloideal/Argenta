@@ -229,7 +229,7 @@ Router(title: str = 'Commands group title:',
 *param* `command: str` **::** строковый триггер, который будет выполнять указанные действия  
 *example* **::** `U` / `update` / `ExaMPLE` 
 
-*param* `description: str` **::** описание команды, которое будет выведено в консоль 
+*param* `description: str` **::** описание команды, которое будет выведено в консоль  
 *example* **::** `description for update command` или `example description` 
 
 *method mean* **::** декоратор регистрирует функцию как обработчик команды
@@ -239,18 +239,6 @@ Router(title: str = 'Commands group title:',
 **`@`Router().**`unknown_command`   
 
 *method mean* **::** декоратор регистрирует функцию как обработчик неизвестных команд
-
----
-
-**`@`Router().**`command(command: str, description: str = None)`  
-
-*param* `command: str` **::** строковый триггер, который будет выполнять указанные действия  
-*example* **::** `U` / `update` / `ExaMPLE` 
-
-*param* `description: str` **::** описание команды, которое будет выведено в консоль 
-*example* **::** `description for update command` или `example description` 
-
-*method mean* **::** декоратор регистрирует функцию как обработчик команды
 
 ---
 
