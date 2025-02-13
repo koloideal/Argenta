@@ -1,6 +1,6 @@
 [project]
 name = "argenta"
-version = "0.2.1"
+version = "0.2.2"
 description = "python library for creating cli apps"
 authors = [
     {name = "kolo",email = "kolo.is.main@gmail.com"}

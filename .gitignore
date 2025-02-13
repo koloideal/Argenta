@@ -4,6 +4,7 @@ argenta/router/__pycache__/
 argenta/app/__pycache__/
 argenta/__pycache__/
 dist
+poetry.lock
 tests/__pycache__
 tests/mock_default_app/handlers/__pycache__/
 tests/mock_default_app/__pycache__/
