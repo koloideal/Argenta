@@ -195,7 +195,7 @@ __<u>не</u>__ главного роутера будет вызвано иск
 - `InvalidRouterInstanceException` — Переданный объект в метод `App().include_router()` не является экземпляром класса `Router`.
 - `InvalidDescriptionMessagePatternException` — Неправильный формат паттерна описания команд.
 - `OnlyOneMainRouterIsAllowedException` — Регистрация более одного главного роутера.
-- `MissingMainRouterException` — Отсутствует главный роутер.
+  - `MissingMainRouterException` — Отсутствует главный роутер.    
 - `MissingHandlerForUnknownCommandsException` — В основном роутере отсутствует обработчик неизвестных команд.
 - `HandlerForUnknownCommandsOnNonMainRouterException` — Обработчик неизвестных команд определён не у основного роутера.
 - `NoRegisteredRoutersException` — Отсутствуют зарегистрированные роутеры.
