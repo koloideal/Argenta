@@ -26,7 +26,7 @@ def main():
 
     app.set_description_message_pattern('[bold red][{command}][/bold red] [blue]*=*=*[/blue] [bold yellow italic]{description}')
 
-    app.start_polling()
+    #app.start_polling()
 
 if __name__ == "__main__":
     main()

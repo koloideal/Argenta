@@ -1,7 +1,5 @@
 from typing import Callable, Any
-from ..router.exceptions import (InvalidCommandInstanceException,
-                                 UnknownCommandHandlerHasAlreadyBeenCreatedException,
-                                 InvalidDescriptionInstanceException,
+from ..router.exceptions import (UnknownCommandHandlerHasAlreadyBeenCreatedException,
                                  RepeatedCommandException)
 
 
@@ -20,13 +18,12 @@ class Router:
 
 
     def command(self, command: str, description: str = None) -> Callable[[Any],  Any]:
-        processed_description = Router._validate_description(command, description)
         self._validate_command(command)
 
         def command_decorator(func):
             self._command_entities.append({'handler_func': func,
                                            'command': command,
-                                           'description': processed_description})
+                                           'description': description})
             def wrapper(*args, **kwargs):
                 return func(*args, **kwargs)
             return wrapper
@@ -60,23 +57,11 @@ class Router:
 
 
     def _validate_command(self, command: str):
-        if not isinstance(command, str):
-            raise InvalidCommandInstanceException()
         if command in self.get_all_commands():
             raise RepeatedCommandException()
         if self.ignore_command_register:
             if command.lower() in [x.lower() for x in self.get_all_commands()]:
                 raise RepeatedCommandException()
-
-
-    @staticmethod
-    def _validate_description(command: str, description: str):
-        if not isinstance(description, str):
-            if description is None:
-                description = f'description for "{command}" command'
-            else:
-                raise InvalidDescriptionInstanceException()
-        return description
 
 
     def set_router_as_main(self):

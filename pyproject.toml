@@ -1,15 +1,14 @@
 [project]
 name = "argenta"
 version = "0.2.2"
-description = "python library for creating cli apps"
+description = "python library for creating custom shells"
 authors = [
     {name = "kolo",email = "kolo.is.main@gmail.com"}
 ]
 license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = [
-]
+dependencies = [] # no dependencies
 
 
 [build-system]

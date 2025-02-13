@@ -1,7 +1,6 @@
 from pprint import pprint
 from tests.mock_default_app.handlers.routers import work_router, settings_router
 from argenta.app.entity import App
-from art import text2art
 
 
 app: App = App(ignore_command_register=False,

@@ -1,0 +1,40 @@
+from typing import Literal
+
+
+class Flag:
+    def __init__(self, flag_name: str,
+                 flag_prefix: Literal['-', '--', '---'] = '-',
+                 ignore_flag_value_register: bool = False,
+                 possible_flag_values: list[str] = False):
+        self.flag_name = flag_name
+        self.flag_prefix = flag_prefix
+        self.possible_flag_values = possible_flag_values
+        self.ignore_flag_value_register = ignore_flag_value_register
+
+    def get_string_entity(self):
+        if self.ignore_flag_value_register:
+            string_entity: str = self.flag_prefix + self.flag_name.lower()
+        else:
+            string_entity: str = self.flag_prefix + self.flag_name
+        return string_entity
+
+    def validate_input_flag_value(self, input_flag_value: str):
+        if self.possible_flag_values:
+            if self.ignore_flag_value_register:
+                if input_flag_value.lower() in [x.lower() for x in self.possible_flag_values]:
+                    return True
+                else:
+                    return False
+            else:
+                if input_flag_value in self.possible_flag_values:
+                    return True
+                else:
+                    return False
+        else:
+            return True
+
+
+
+
+c = Flag('s', flag_prefix='---kinn', ignore_flag_value_register=False, possible_flag_values=['abc', 'ASW', 'eBc'])
+print(c.get_string_entity())
