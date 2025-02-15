@@ -1,4 +1,5 @@
 from typing import Callable, Any
+from ..command.entity import Command
 from ..router.exceptions import (UnknownCommandHandlerHasAlreadyBeenCreatedException,
                                  RepeatedCommandException)
 
@@ -11,19 +12,19 @@ class Router:
         self.title = title
         self.name = name
 
-        self._command_entities: list[dict[str, Callable[[], None] | str]] = []
+        self._command_entities: list[dict[str, Callable[[], None] | Command]] = []
         self.unknown_command_func: Callable[[str], None] | None = None
         self._is_main_router: bool = False
         self.ignore_command_register: bool = False
 
 
-    def command(self, command: str, description: str = None) -> Callable[[Any],  Any]:
+    def command(self, command: Command) -> Callable[[Any],  Any]:
+        command.validate_commands_params()
         self._validate_command(command)
 
         def command_decorator(func):
             self._command_entities.append({'handler_func': func,
-                                           'command': command,
-                                           'description': description})
+                                           'command': command})
             def wrapper(*args, **kwargs):
                 return func(*args, **kwargs)
             return wrapper
@@ -42,9 +43,10 @@ class Router:
         return wrapper
 
 
-    def input_command_handler(self, input_command):
+    def input_command_handler(self, input_command: Command):
+        input_command_name: str = input_command.get_string_entity()
         for command_entity in self._command_entities:
-            if input_command.lower() == command_entity['command'].lower():
+            if input_command_name.lower() == command_entity['command'].get_string_entity():
                 if self.ignore_command_register:
                     return command_entity['handler_func']()
                 else:
@@ -56,11 +58,12 @@ class Router:
         self.unknown_command_func(unknown_command)
 
 
-    def _validate_command(self, command: str):
+    def _validate_command(self, command: Command):
+        command_name: str = command.get_string_entity()
         if command in self.get_all_commands():
             raise RepeatedCommandException()
         if self.ignore_command_register:
-            if command.lower() in [x.lower() for x in self.get_all_commands()]:
+            if command_name.lower() in [x.lower() for x in self.get_all_commands()]:
                 raise RepeatedCommandException()
 
 
@@ -74,7 +77,7 @@ class Router:
         self.ignore_command_register = ignore_command_register
 
 
-    def get_command_entities(self) -> list[dict[str, Callable[[], None] | str]]:
+    def get_command_entities(self) -> list[dict[str, Callable[[], None] | Command]]:
         return self._command_entities
 
 
@@ -103,6 +106,6 @@ class Router:
     def get_all_commands(self) -> list[str]:
         all_commands: list[str] = []
         for command_entity in self._command_entities:
-            all_commands.append(command_entity['command'])
+            all_commands.append(command_entity['command'].get_string_entity())
 
         return all_commands

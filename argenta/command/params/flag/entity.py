@@ -11,12 +11,20 @@ class Flag:
         self.possible_flag_values = possible_flag_values
         self.ignore_flag_value_register = ignore_flag_value_register
 
+        self._value = None
+
     def get_string_entity(self):
         if self.ignore_flag_value_register:
             string_entity: str = self.flag_prefix + self.flag_name.lower()
         else:
             string_entity: str = self.flag_prefix + self.flag_name
         return string_entity
+
+    def get_value(self):
+        return self._value
+
+    def set_value(self, value):
+        self._value = value
 
     def validate_input_flag_value(self, input_flag_value: str):
         if self.possible_flag_values:
@@ -32,9 +40,3 @@ class Flag:
                     return False
         else:
             return True
-
-
-
-
-c = Flag('s', flag_prefix='---kinn', ignore_flag_value_register=False, possible_flag_values=['abc', 'ASW', 'eBc'])
-print(c.get_string_entity())

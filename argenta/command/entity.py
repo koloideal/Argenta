@@ -26,11 +26,14 @@ class Command:
     def get_flags(self):
         return self._flags
 
+    def set_command(self, command: str):
+        self._command = command
+
     def validate_commands_params(self):
         if not isinstance(self._command, str):
             raise InvalidCommandInstanceException(self._command)
-        if isinstance(self._description, str):
+        if not isinstance(self._description, str):
             raise InvalidDescriptionInstanceException()
-        if isinstance(self._flags, Flag) or isinstance(self._flags, FlagsGroup):
+        if not (isinstance(self._flags, Flag) or isinstance(self._flags, FlagsGroup)):
             raise InvalidFlagsInstanceException
 

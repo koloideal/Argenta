@@ -1,5 +1,8 @@
 from typing import Callable
+from ..command.entity import Command
+from argenta.command.parse_input_command.entity import ParseInputCommand
 from ..router.entity import Router
+from ..command.parse_input_command.exceptions import InvalidInputFlagsException
 from .exceptions import (InvalidRouterInstanceException,
                          InvalidDescriptionMessagePatternException,
                          OnlyOneMainRouterIsAllowedException,
@@ -16,6 +19,7 @@ class App:
                  prompt: str = 'Enter a command',
                  initial_message: str = '\nHello, I am Argenta\n',
                  farewell_message: str = '\nGoodBye\n',
+                 invalid_input_flags_message: str = 'Invalid input flags',
                  exit_command: str = 'Q',
                  exit_command_description: str = 'Exit command',
                  exit_command_title: str = 'System points:',
@@ -33,13 +37,14 @@ class App:
         self.ignore_exit_command_register = ignore_exit_command_register
         self.farewell_message = farewell_message
         self.initial_message = initial_message
+        self.invalid_input_flags_message = invalid_input_flags_message
         self.line_separate = line_separate
         self.command_group_description_separate = command_group_description_separate
         self.ignore_command_register = ignore_command_register
         self.repeat_command_groups = repeat_command_groups
 
         self._routers: list[Router] = []
-        self._registered_router_entities: list[dict[str, str | list[dict[str, Callable[[], None] | str]] | Router]] = []
+        self._registered_router_entities: list[dict[str, str | list[dict[str, Callable[[], None] | Command]] | Router]] = []
         self._app_main_router: Router | None = None
         self._description_message_pattern: str = '[{command}] *=*=* {description}'
 
@@ -61,12 +66,21 @@ class App:
                 self._print_command_group_description()
                 self.print_func(self.prompt)
 
-            command: str = input()
+            raw_command: str = input()
+            try:
+                command: Command = ParseInputCommand(raw_command=raw_command)
+            except InvalidInputFlagsException:
+                self.print_func(self.line_separate)
+                self.print_func(self.command_group_description_separate)
+                if not self.repeat_command_groups:
+                    self.print_func(self.prompt)
+                continue
 
-            self._checking_command_for_exit_command(command)
+
+            self._checking_command_for_exit_command(command.get_string_entity())
             self.print_func(self.line_separate)
 
-            is_unknown_command: bool = self._check_is_command_unknown(command)
+            is_unknown_command: bool = self._check_is_command_unknown(command.get_string_entity())
             if is_unknown_command:
                 if not self.repeat_command_groups:
                     self.print_func(self.prompt)
@@ -124,7 +138,7 @@ class App:
         router.set_ignore_command_register(self.ignore_command_register)
         self._routers.append(router)
 
-        command_entities: list[dict[str, Callable[[], None] | str]] = router.get_command_entities()
+        command_entities: list[dict[str, Callable[[], None] | Command]] = router.get_command_entities()
         self._registered_router_entities.append({'name': router.get_name(),
                                                  'title': router.get_title(),
                                                  'entity': router,
@@ -187,10 +201,10 @@ class App:
 
 
     def _check_is_command_unknown(self, command: str):
-        registered_router_entities: list[dict[str, str | list[dict[str, Callable[[], None] | str]] | Router]] = self._registered_router_entities
+        registered_router_entities: list[dict[str, str | list[dict[str, Callable[[], None] | Command]] | Router]] = self._registered_router_entities
         for router_entity in registered_router_entities:
             for command_entity in router_entity['commands']:
-                if command_entity['command'].lower() == command.lower():
+                if command_entity['command'].get_string_entity().lower() == command.lower():
                     if self.ignore_command_register:
                         return False
                     else:
@@ -207,8 +221,8 @@ class App:
             self.print_func(router_entity['title'])
             for command_entity in router_entity['commands']:
                 self.print_func(self._description_message_pattern.format(
-                        command=command_entity['command'],
-                        description=command_entity['description']
+                        command=command_entity['command'].get_string_entity(),
+                        description=command_entity['command'].get_description()
                     )
                 )
             self.print_func(self.command_group_description_separate)
