@@ -30,10 +30,11 @@ class Command:
         self._command = command
 
     def validate_commands_params(self):
+        print(self._flags)
         if not isinstance(self._command, str):
             raise InvalidCommandInstanceException(self._command)
         if not isinstance(self._description, str):
             raise InvalidDescriptionInstanceException()
-        if not (isinstance(self._flags, Flag) or isinstance(self._flags, FlagsGroup)):
+        if not (isinstance(self._flags, Flag) or not isinstance(self._flags, FlagsGroup)) or not self._flags is None:
             raise InvalidFlagsInstanceException
 
