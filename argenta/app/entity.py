@@ -1,8 +1,8 @@
 from typing import Callable
 from ..command.entity import Command
-from argenta.command.parse_input_command.entity import ParseInputCommand
+from argenta.command.input_comand.entity import InputCommand
+from argenta.command.input_comand.exceptions import InvalidInputFlagsException
 from ..router.entity import Router
-from ..command.parse_input_command.exceptions import InvalidInputFlagsException
 from .exceptions import (InvalidRouterInstanceException,
                          InvalidDescriptionMessagePatternException,
                          OnlyOneMainRouterIsAllowedException,
@@ -68,7 +68,7 @@ class App:
 
             raw_command: str = input()
             try:
-                command: Command = ParseInputCommand(raw_command=raw_command)
+                command: Command = InputCommand.parse(raw_command=raw_command)
             except InvalidInputFlagsException:
                 self.print_func(self.line_separate)
                 self.print_func(self.command_group_description_separate)

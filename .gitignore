@@ -3,6 +3,11 @@
 argenta/router/__pycache__/
 argenta/app/__pycache__/
 argenta/__pycache__/
+argenta/command/__pycache__
+argenta/command/params/__pycache__
+argenta/command/params/flag/__pycache__
+argenta/command/params/flags_group/__pycache__
+argenta/command/params/input_flag/__pycache__
 dist
 poetry.lock
 tests/__pycache__
@@ -13,3 +18,4 @@ tests/mock_app/handlers/handlers_implementation/__pycache__/
 tests/mock_app/handlers/__pycache__/
 tests/mock_app/business_logic/__pycache__/
 tests/mock_app/__pycache__/
+

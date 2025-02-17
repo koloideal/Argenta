@@ -13,6 +13,8 @@ class Command:
         self._description = description
         self._flags = flags
 
+        self._input_flags = None
+
     def get_string_entity(self):
         return self._command
 
@@ -30,7 +32,6 @@ class Command:
         self._command = command
 
     def validate_commands_params(self):
-        print(self._flags)
         if not isinstance(self._command, str):
             raise InvalidCommandInstanceException(self._command)
         if not isinstance(self._description, str):
