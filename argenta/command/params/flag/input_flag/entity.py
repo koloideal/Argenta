@@ -1,4 +1,4 @@
-from ...params.flag.entity import Flag
+from ...flag.entity import Flag
 
 
 class InputFlag(Flag):

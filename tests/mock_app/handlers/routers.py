@@ -1,12 +1,10 @@
 from rich.console import Console
 
 from argenta.command.entity import Command
+from argenta.command.params.flag.flags_group.entity import FlagsGroup
 from argenta.router import Router
 
 from ..handlers.handlers_implementation.help_command import help_command
-from ..handlers.handlers_implementation.solving_command import start_solving_command
-from ..handlers.handlers_implementation.upgrade_command import upgrade_command
-
 
 work_router: Router = Router(title='Work points:')
 settings_router: Router = Router(title='Settings points:')
@@ -15,7 +13,9 @@ console = Console()
 
 
 @work_router.command(command=Command(command='0', description='Get Help'))
-def command_help():
+def command_help(args: FlagsGroup):
+    print(args.get_flags())
+    print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
     help_command()
 
 

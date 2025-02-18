@@ -1,6 +1,9 @@
-from typing import Literal, LiteralString
+class Entity:
+    pass
 
-x: LiteralString = '---'
-m: LiteralString = input()
-if m == '-':
-    x = m
+class Person(Entity):
+    pass
+
+a: Entity = Entity()
+print(a)
+a = Person()

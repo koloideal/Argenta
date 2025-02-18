@@ -6,8 +6,8 @@ argenta/__pycache__/
 argenta/command/__pycache__
 argenta/command/params/__pycache__
 argenta/command/params/flag/__pycache__
-argenta/command/params/flags_group/__pycache__
-argenta/command/params/input_flag/__pycache__
+argenta/command/params/flag/flags_group/__pycache__
+argenta/command/params/flag/input_flag/__pycache__
 dist
 poetry.lock
 tests/__pycache__

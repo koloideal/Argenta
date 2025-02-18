@@ -1,7 +1,7 @@
 from typing import Callable
 from ..command.entity import Command
 from argenta.command.input_comand.entity import InputCommand
-from argenta.command.input_comand.exceptions import InvalidInputFlagsException
+from argenta.command.input_comand.exceptions import InvalidInputFlagException
 from ..router.entity import Router
 from .exceptions import (InvalidRouterInstanceException,
                          InvalidDescriptionMessagePatternException,
@@ -68,26 +68,25 @@ class App:
 
             raw_command: str = input()
             try:
-                command: Command = InputCommand.parse(raw_command=raw_command)
-            except InvalidInputFlagsException:
+                input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
+            except InvalidInputFlagException:
                 self.print_func(self.line_separate)
                 self.print_func(self.command_group_description_separate)
                 if not self.repeat_command_groups:
                     self.print_func(self.prompt)
                 continue
 
-
-            self._checking_command_for_exit_command(command.get_string_entity())
+            self._checking_command_for_exit_command(input_command.get_string_entity())
             self.print_func(self.line_separate)
 
-            is_unknown_command: bool = self._check_is_command_unknown(command.get_string_entity())
+            is_unknown_command: bool = self._check_is_command_unknown(input_command.get_string_entity())
             if is_unknown_command:
                 if not self.repeat_command_groups:
                     self.print_func(self.prompt)
                 continue
 
             for router in self._routers:
-                router.input_command_handler(command)
+                router.input_command_handler(input_command)
 
             self.print_func(self.line_separate)
             self.print_func(self.command_group_description_separate)
@@ -208,7 +207,7 @@ class App:
                     if self.ignore_command_register:
                         return False
                     else:
-                        if command_entity['command'] == command:
+                        if command_entity['command'].get_string_entity() == command:
                             return False
         self._app_main_router.unknown_command_handler(command)
         self.print_func(self.line_separate)

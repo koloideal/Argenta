@@ -1,8 +1,9 @@
 from .params.flag.entity import Flag
-from .params.flags_group.entity import FlagsGroup
+from .params.flag.flags_group.entity import FlagsGroup
 from .exceptions import (InvalidCommandInstanceException,
                          InvalidDescriptionInstanceException,
                          InvalidFlagsInstanceException)
+from .params.flag.input_flag.entity import InputFlag
 
 
 class Command:
@@ -13,7 +14,7 @@ class Command:
         self._description = description
         self._flags = flags
 
-        self._input_flags = None
+        self._input_flags: FlagsGroup | None = None
 
     def get_string_entity(self):
         return self._command
@@ -38,4 +39,16 @@ class Command:
             raise InvalidDescriptionInstanceException()
         if not (isinstance(self._flags, Flag) or not isinstance(self._flags, FlagsGroup)) or not self._flags is None:
             raise InvalidFlagsInstanceException
+
+    def validate_input_flag(self, flag: InputFlag):
+        registered_flags: FlagsGroup = self._flags
+        if registered_flags:
+            for registered_flag in registered_flags:
+                if registered_flag.get_string_entity() == flag.get_string_entity():
+                    is_valid = registered_flag.validate_input_flag_value(flag)
+                    if is_valid:
+                        return True
+        return False
+
+
 

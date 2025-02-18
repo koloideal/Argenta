@@ -1,5 +1,7 @@
 from typing import Callable, Any
 from ..command.entity import Command
+from ..command.input_comand.entity import InputCommand
+from ..command.input_comand.exceptions import InvalidInputFlagException
 from ..router.exceptions import (UnknownCommandHandlerHasAlreadyBeenCreatedException,
                                  RepeatedCommandException)
 
@@ -43,15 +45,29 @@ class Router:
         return wrapper
 
 
-    def input_command_handler(self, input_command: Command):
+    def input_command_handler(self, input_command: InputCommand):
         input_command_name: str = input_command.get_string_entity()
         for command_entity in self._command_entities:
-            if input_command_name.lower() == command_entity['command'].get_string_entity():
+            if input_command_name.lower() == command_entity['command'].get_string_entity().lower():
                 if self.ignore_command_register:
-                    return command_entity['handler_func']()
-                else:
-                    if input_command == command_entity['command']:
+                    if input_command.get_input_flags():
+                        for flag in input_command.get_input_flags():
+                            is_valid = command_entity['command'].validate_input_flag(flag)
+                            if not is_valid:
+                                raise InvalidInputFlagException(flag)
+                        return command_entity['handler_func'](input_command.get_input_flags())
+                    else:
                         return command_entity['handler_func']()
+                else:
+                    if input_command_name == command_entity['command'].get_string_entity():
+                        if input_command.get_input_flags():
+                            for flag in input_command.get_input_flags():
+                                is_valid = command_entity['command'].validate_input_flag(flag)
+                                if not is_valid:
+                                    raise InvalidInputFlagException(flag)
+                            return command_entity['handler_func'](input_command.get_input_flags())
+                        else:
+                            return command_entity['handler_func']()
 
 
     def unknown_command_handler(self, unknown_command):
