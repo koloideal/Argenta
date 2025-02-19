@@ -26,8 +26,8 @@ class InputCommand(Command, Generic[T]):
         current_flag_name = None
         current_flag_value = None
         for _ in list_of_tokens:
-            flag_prefix_last_symbol_index = _.rfind('-')
             if _.startswith('-'):
+                flag_prefix_last_symbol_index = _.rfind('-')
                 if current_flag_name or len(_) < 2 or len(_[:flag_prefix_last_symbol_index]) > 3:
                     raise IncorrectInputFlagException()
                 else:
@@ -38,8 +38,9 @@ class InputCommand(Command, Generic[T]):
                 else:
                     current_flag_value = _
             if current_flag_name and current_flag_value:
-                flag_prefix = _[:flag_prefix_last_symbol_index]
-                flag_name = _[flag_prefix_last_symbol_index:]
+                flag_prefix_last_symbol_index = current_flag_name.rfind('-')
+                flag_prefix = current_flag_name[:flag_prefix_last_symbol_index]
+                flag_name = current_flag_name[flag_prefix_last_symbol_index:]
 
                 input_flag = InputFlag(flag_name=flag_name,
                                        flag_prefix=flag_prefix)
