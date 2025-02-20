@@ -18,7 +18,6 @@ class Flag:
             string_entity: str = self.flag_prefix + self.flag_name.lower()
         else:
             string_entity: str = self.flag_prefix + self.flag_name
-        print(string_entity)
         return string_entity
 
     def get_value(self):

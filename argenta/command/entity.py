@@ -14,7 +14,7 @@ class Command:
         self._description = description
         self._flags = flags
 
-        self._input_flags: FlagsGroup | None = None
+        self._input_flags: InputFlag | FlagsGroup | None = None
 
     def get_string_entity(self):
         return self._command
@@ -37,17 +37,23 @@ class Command:
             raise InvalidCommandInstanceException(self._command)
         if not isinstance(self._description, str):
             raise InvalidDescriptionInstanceException()
-        if not (isinstance(self._flags, Flag) or not isinstance(self._flags, FlagsGroup)) or not self._flags is None:
+        if not any([(isinstance(self._flags, Flag), isinstance(self._flags, FlagsGroup)), not self._flags]):
             raise InvalidFlagsInstanceException
 
     def validate_input_flag(self, flag: InputFlag):
-        registered_flags: FlagsGroup = self._flags
+        registered_flags: FlagsGroup | Flag | None = self._flags
         if registered_flags:
-            for registered_flag in registered_flags:
-                if registered_flag.get_string_entity() == flag.get_string_entity():
-                    is_valid = registered_flag.validate_input_flag_value(flag)
+            if isinstance(registered_flags, Flag):
+                if registered_flags.get_string_entity() == flag.get_string_entity():
+                    is_valid = registered_flags.validate_input_flag_value(flag.get_value())
                     if is_valid:
                         return True
+            else:
+                for registered_flag in registered_flags:
+                    if registered_flag.get_string_entity() == flag.get_string_entity():
+                        is_valid = registered_flag.validate_input_flag_value(flag.get_value())
+                        if is_valid:
+                            return True
         return False
 
 

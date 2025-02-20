@@ -50,6 +50,8 @@ class InputCommand(Command, Generic[T]):
 
                 current_flag_name = None
                 current_flag_value = None
+        if any([current_flag_name, current_flag_value]):
+            raise IncorrectInputFlagException()
         if len(flags.get_flags()) == 0:
             return InputCommand(command=command)
         else:

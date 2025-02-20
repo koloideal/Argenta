@@ -1,6 +1,7 @@
 from rich.console import Console
 
 from argenta.command.entity import Command
+from argenta.command.params.flag.entity import Flag
 from argenta.command.params.flag.flags_group.entity import FlagsGroup
 from argenta.router import Router
 
@@ -12,11 +13,15 @@ settings_router: Router = Router(title='Settings points:')
 console = Console()
 
 
-@work_router.command(command=Command(command='0', description='Get Help'))
+@work_router.command(command=Command(command='0', description='Get Help', flags=Flag(flag_name='host',
+                                                                                     flag_prefix='--',
+                                                                                     ignore_flag_value_register=True,
+                                                                                     possible_flag_values=['tester', 'ffmpeg'])))
 def command_help(args: FlagsGroup):
-    print(args.get_flags())
-    print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
-    help_command()
+    flags = args.get_flags()
+    for flag in flags:
+        print(f'name: "{flag.get_string_entity()}", value: "{flag.get_value()}"')
+    #help_command()
 
 
 '''@work_router.command(command='1', description='Start Solving')
