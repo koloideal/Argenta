@@ -2,8 +2,9 @@ from typing import Callable, Any
 from ..command.entity import Command
 from ..command.input_comand.entity import InputCommand
 from ..command.input_comand.exceptions import InvalidInputFlagException
+from ..command.params.flag.flags_group.entity import FlagsGroup
 from ..router.exceptions import (UnknownCommandHandlerHasAlreadyBeenCreatedException,
-                                 RepeatedCommandException)
+                                 RepeatedCommandException, RepeatedFlagNameException)
 
 
 class Router:
@@ -82,6 +83,12 @@ class Router:
             if command_name.lower() in [x.lower() for x in self.get_all_commands()]:
                 raise RepeatedCommandException()
 
+        flags: FlagsGroup = command.get_flags()
+        if flags:
+            flags_name: list = [x.get_string_entity().lower() for x in flags]
+            if len(set(flags_name)) < len(flags_name):
+                raise RepeatedFlagNameException()
+
 
     def set_router_as_main(self):
         if self.name == 'subordinate':
@@ -125,3 +132,10 @@ class Router:
             all_commands.append(command_entity['command'].get_string_entity())
 
         return all_commands
+
+    def get_all_flags(self) -> list[FlagsGroup]:
+        all_flags: list[FlagsGroup] = []
+        for command_entity in self._command_entities:
+            all_flags.append(command_entity['command'].get_flags())
+
+        return all_flags

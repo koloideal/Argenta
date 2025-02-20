@@ -11,3 +11,8 @@ class UnknownCommandHandlerHasAlreadyBeenCreatedException(Exception):
 class RepeatedCommandException(Exception):
     def __str__(self):
         return "Commands in handler cannot be repeated"
+
+
+class RepeatedFlagNameException(Exception):
+    def __str__(self):
+        return "Repeated flag name in register command"

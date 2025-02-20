@@ -12,7 +12,7 @@ class Command:
                  flags: Flag | FlagsGroup | None = None):
         self._command = command
         self._description = description
-        self._flags = flags
+        self._flags: FlagsGroup | None = flags if isinstance(flags, FlagsGroup) else FlagsGroup([flags]) if isinstance(flags, Flag) else flags
 
         self._input_flags: InputFlag | FlagsGroup | None = None
 

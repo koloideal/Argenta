@@ -1,4 +1,4 @@
-from ..input_comand.exceptions import IncorrectInputFlagException
+from ..input_comand.exceptions import IncorrectInputFlagException, RepeatedInputFlagsException
 from ..entity import Command
 from ..params.flag.flags_group.entity import FlagsGroup
 from ..params.flag.input_flag.entity import InputFlag
@@ -46,7 +46,11 @@ class InputCommand(Command, Generic[T]):
                                        flag_prefix=flag_prefix)
                 input_flag.set_value(current_flag_value)
 
-                flags.add_flag(input_flag)
+                all_flags = [x.get_string_entity() for x in flags.get_flags()]
+                if input_flag.get_string_entity() not in all_flags:
+                    flags.add_flag(input_flag)
+                else:
+                    raise RepeatedInputFlagsException(input_flag)
 
                 current_flag_name = None
                 current_flag_value = None

@@ -12,11 +12,15 @@ settings_router: Router = Router(title='Settings points:')
 
 console = Console()
 
+flagi =FlagsGroup(flags=[
+    Flag(flag_name='host',
+         flag_prefix='--',),
+    Flag(flag_name='port',
+         flag_prefix='--',)
+])
 
-@work_router.command(command=Command(command='0', description='Get Help', flags=Flag(flag_name='host',
-                                                                                     flag_prefix='--',
-                                                                                     ignore_flag_value_register=True,
-                                                                                     possible_flag_values=['tester', 'ffmpeg'])))
+
+@work_router.command(command=Command(command='0', description='Get Help', flags=flagi))
 def command_help(args: FlagsGroup):
     flags = args.get_flags()
     for flag in flags:
