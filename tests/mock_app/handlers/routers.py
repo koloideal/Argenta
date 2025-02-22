@@ -20,22 +20,28 @@ flagi =FlagsGroup(flags=[
 ])
 
 
-@work_router.command(command=Command(command='0', description='Get Help', flags=flagi))
+@work_router.command(Command(command='0', description='Get Help', flags=flagi))
 def command_help(args: FlagsGroup):
+    print('Help command')
     flags = args.get_flags()
     for flag in flags:
         print(f'name: "{flag.get_string_entity()}", value: "{flag.get_value()}"')
     #help_command()
 
 
-'''@work_router.command(command='1', description='Start Solving')
-def command_start_solving():
-    start_solving_command()
+@work_router.command(Command(command='I', description='Start Solving', flags=flagi))
+def command_start_solving(args: FlagsGroup):
+    print('Solving...')
+    flags = args.get_flags()
+    for flag in flags:
+        print(f'name: "{flag.get_string_entity()}", value: "{flag.get_value()}"')
+    #start_solving_command()
 
 
-@settings_router.command(command='U', description='Update WordMath')
+@settings_router.command(Command(command='i', description='Update WordMath'))
 def command_update():
-    upgrade_command()'''
+    print('uefi')
+    # upgrade_command()
 
 
 @work_router.unknown_command

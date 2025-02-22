@@ -19,7 +19,7 @@ def main():
     goodbye_message: str = f'[bold red]\n{ascii_goodbye_message}{' '*12}made by kolo\n'
 
     app.include_router(work_router, is_main=True)
-    #app.include_router(settings_router)
+    app.include_router(settings_router)
 
     app.set_initial_message(initial_greeting)
     app.set_farewell_message(goodbye_message)

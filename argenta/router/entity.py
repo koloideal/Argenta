@@ -18,7 +18,7 @@ class Router:
         self._command_entities: list[dict[str, Callable[[], None] | Command]] = []
         self.unknown_command_func: Callable[[str], None] | None = None
         self._is_main_router: bool = False
-        self.ignore_command_register: bool = False
+        self._ignore_command_register: bool = False
 
 
     def command(self, command: Command) -> Callable[[Any],  Any]:
@@ -50,7 +50,7 @@ class Router:
         input_command_name: str = input_command.get_string_entity()
         for command_entity in self._command_entities:
             if input_command_name.lower() == command_entity['command'].get_string_entity().lower():
-                if self.ignore_command_register:
+                if self._ignore_command_register:
                     if input_command.get_input_flags():
                         for flag in input_command.get_input_flags():
                             is_valid = command_entity['command'].validate_input_flag(flag)
@@ -77,9 +77,9 @@ class Router:
 
     def _validate_command(self, command: Command):
         command_name: str = command.get_string_entity()
-        if command in self.get_all_commands():
+        if command_name in self.get_all_commands():
             raise RepeatedCommandException()
-        if self.ignore_command_register:
+        if self._ignore_command_register:
             if command_name.lower() in [x.lower() for x in self.get_all_commands()]:
                 raise RepeatedCommandException()
 
@@ -97,7 +97,7 @@ class Router:
 
 
     def set_ignore_command_register(self, ignore_command_register: bool):
-        self.ignore_command_register = ignore_command_register
+        self._ignore_command_register = ignore_command_register
 
 
     def get_command_entities(self) -> list[dict[str, Callable[[], None] | Command]]:
@@ -116,7 +116,7 @@ class Router:
         return {
             'title': self.title,
             'name': self.name,
-            'ignore_command_register': self.ignore_command_register,
+            'ignore_command_register': self._ignore_command_register,
             'attributes': {
                 'command_entities': self._command_entities,
                 'unknown_command_func': self.unknown_command_func,
