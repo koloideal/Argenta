@@ -164,11 +164,11 @@ class App:
                 router.set_router_as_main()
                 self._app_main_router = router
 
-        if not self._app_main_router.unknown_command_func:
+        if not self._app_main_router.get_unknown_command_func():
             raise MissingHandlerForUnknownCommandsException()
 
         for router in self._routers:
-            if router.unknown_command_func and self._app_main_router is not router:
+            if router.get_unknown_command_func() and self._app_main_router is not router:
                 raise HandlerForUnknownCommandsOnNonMainRouterException()
 
 

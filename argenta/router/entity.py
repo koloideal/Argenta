@@ -16,7 +16,7 @@ class Router:
         self.name = name
 
         self._command_entities: list[dict[str, Callable[[], None] | Command]] = []
-        self.unknown_command_func: Callable[[str], None] | None = None
+        self._unknown_command_func: Callable[[str], None] | None = None
         self._is_main_router: bool = False
         self._ignore_command_register: bool = False
 
@@ -36,10 +36,10 @@ class Router:
 
 
     def unknown_command(self, func):
-        if self.unknown_command_func is not None:
+        if self._unknown_command_func is not None:
             raise UnknownCommandHandlerHasAlreadyBeenCreatedException()
 
-        self.unknown_command_func: Callable = func
+        self._unknown_command_func: Callable = func
 
         def wrapper(*args, **kwargs):
             return func(*args, **kwargs)
@@ -71,8 +71,12 @@ class Router:
                             return command_entity['handler_func']()
 
 
+    def get_unknown_command_func(self):
+        return self._unknown_command_func
+
+
     def unknown_command_handler(self, unknown_command):
-        self.unknown_command_func(unknown_command)
+        self._unknown_command_func(unknown_command)
 
 
     def _validate_command(self, command: Command):
@@ -119,7 +123,7 @@ class Router:
             'ignore_command_register': self._ignore_command_register,
             'attributes': {
                 'command_entities': self._command_entities,
-                'unknown_command_func': self.unknown_command_func,
+                'unknown_command_func': self._unknown_command_func,
                 'is_main_router': self._is_main_router
             }
 

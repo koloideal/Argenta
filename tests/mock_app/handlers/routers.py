@@ -12,11 +12,11 @@ settings_router: Router = Router(title='Settings points:')
 
 console = Console()
 
-flagi =FlagsGroup(flags=[
+flagi = FlagsGroup(flags=[
     Flag(flag_name='host',
-         flag_prefix='--',),
+         flag_prefix='--', ),
     Flag(flag_name='port',
-         flag_prefix='--',)
+         flag_prefix='--', )
 ])
 
 
@@ -29,7 +29,7 @@ def command_help(args: FlagsGroup):
     #help_command()
 
 
-@work_router.command(Command(command='I', description='Start Solving', flags=flagi))
+@work_router.command(Command(command='P', description='Start Solving', flags=flagi))
 def command_start_solving(args: FlagsGroup):
     print('Solving...')
     flags = args.get_flags()
@@ -38,7 +38,7 @@ def command_start_solving(args: FlagsGroup):
     #start_solving_command()
 
 
-@settings_router.command(Command(command='i', description='Update WordMath'))
+@settings_router.command(Command(command='G', description='Update WordMath'))
 def command_update():
     print('uefi')
     # upgrade_command()
