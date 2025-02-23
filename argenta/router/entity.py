@@ -1,4 +1,5 @@
 from typing import Callable, Any
+from inspect import getfullargspec
 from ..command.entity import Command
 from ..command.input_comand.entity import InputCommand
 from ..command.input_comand.exceptions import InvalidInputFlagException
@@ -50,7 +51,7 @@ class Router:
         input_command_name: str = input_command.get_string_entity()
         for command_entity in self._command_entities:
             if input_command_name.lower() == command_entity['command'].get_string_entity().lower():
-                if self._ignore_command_register:
+                if input_command_name == command_entity['command'].get_string_entity():
                     if input_command.get_input_flags():
                         for flag in input_command.get_input_flags():
                             is_valid = command_entity['command'].validate_input_flag(flag)
@@ -58,17 +59,8 @@ class Router:
                                 raise InvalidInputFlagException(flag)
                         return command_entity['handler_func'](input_command.get_input_flags())
                     else:
-                        return command_entity['handler_func']()
-                else:
-                    if input_command_name == command_entity['command'].get_string_entity():
-                        if input_command.get_input_flags():
-                            for flag in input_command.get_input_flags():
-                                is_valid = command_entity['command'].validate_input_flag(flag)
-                                if not is_valid:
-                                    raise InvalidInputFlagException(flag)
-                            return command_entity['handler_func'](input_command.get_input_flags())
-                        else:
-                            return command_entity['handler_func']()
+                        print(getfullargspec(command_entity['handler_func']))
+                        return command_entity['handler_func'](None)
 
 
     def get_unknown_command_func(self):

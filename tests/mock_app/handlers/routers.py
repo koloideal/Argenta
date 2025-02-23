@@ -21,7 +21,7 @@ flagi = FlagsGroup(flags=[
 
 
 @work_router.command(Command(command='0', description='Get Help', flags=flagi))
-def command_help(args: FlagsGroup):
+def command_help(args: FlagsGroup | None):
     print('Help command')
     flags = args.get_flags()
     for flag in flags:
@@ -30,7 +30,7 @@ def command_help(args: FlagsGroup):
 
 
 @work_router.command(Command(command='P', description='Start Solving', flags=flagi))
-def command_start_solving(args: FlagsGroup):
+def command_start_solving(args: FlagsGroup | None):
     print('Solving...')
     flags = args.get_flags()
     for flag in flags:
