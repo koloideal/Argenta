@@ -86,6 +86,7 @@ class App:
                 continue
 
             for router in self._routers:
+
                 router.input_command_handler(input_command)
 
             self.print_func(self.line_separate)
