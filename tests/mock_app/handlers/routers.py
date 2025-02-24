@@ -20,12 +20,12 @@ flagi = FlagsGroup(flags=[
 ])
 
 
-@work_router.command(Command(command='0', description='Get Help', flags=flagi))
-def command_help(args: FlagsGroup | None):
+@work_router.command(Command(command='0', description='Get Help'))
+def command_help():
     print('Help command')
-    flags = args.get_flags()
+    '''flags = args.get_flags()
     for flag in flags:
-        print(f'name: "{flag.get_string_entity()}", value: "{flag.get_value()}"')
+        print(f'name: "{flag.get_string_entity()}", value: "{flag.get_value()}"')'''
     #help_command()
 
 

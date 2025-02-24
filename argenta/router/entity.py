@@ -5,7 +5,10 @@ from ..command.input_comand.entity import InputCommand
 from ..command.input_comand.exceptions import InvalidInputFlagException
 from ..command.params.flag.flags_group.entity import FlagsGroup
 from ..router.exceptions import (UnknownCommandHandlerHasAlreadyBeenCreatedException,
-                                 RepeatedCommandException, RepeatedFlagNameException)
+                                 RepeatedCommandException, RepeatedFlagNameException,
+                                 CurrentCommandDoesNotProcessFlagsException,
+                                 TooManyTransferredArgsException,
+                                 RequiredArgumentNotPassedException)
 
 
 class Router:
@@ -27,6 +30,7 @@ class Router:
         self._validate_command(command)
 
         def command_decorator(func):
+            Router._validate_func_args(command, func)
             self._command_entities.append({'handler_func': func,
                                            'command': command})
             def wrapper(*args, **kwargs):
@@ -51,16 +55,20 @@ class Router:
         input_command_name: str = input_command.get_string_entity()
         for command_entity in self._command_entities:
             if input_command_name.lower() == command_entity['command'].get_string_entity().lower():
-                if input_command_name == command_entity['command'].get_string_entity():
+                if command_entity['command'].get_flags():
                     if input_command.get_input_flags():
                         for flag in input_command.get_input_flags():
                             is_valid = command_entity['command'].validate_input_flag(flag)
                             if not is_valid:
                                 raise InvalidInputFlagException(flag)
-                        return command_entity['handler_func'](input_command.get_input_flags())
+                        return command_entity['handler_func'](args=input_command.get_input_flags())
                     else:
-                        print(getfullargspec(command_entity['handler_func']))
-                        return command_entity['handler_func'](None)
+                        return command_entity['handler_func'](args=FlagsGroup(None))
+                else:
+                    if input_command.get_input_flags():
+                        raise CurrentCommandDoesNotProcessFlagsException()
+                    else:
+                        return command_entity['handler_func']()
 
 
     def get_unknown_command_func(self):
@@ -84,6 +92,20 @@ class Router:
             flags_name: list = [x.get_string_entity().lower() for x in flags]
             if len(set(flags_name)) < len(flags_name):
                 raise RepeatedFlagNameException()
+
+
+    @staticmethod
+    def _validate_func_args(command: Command, func: Callable):
+        registered_args = command.get_flags()
+        transferred_args = getfullargspec(func).args
+        if registered_args and transferred_args:
+           if len(transferred_args) != 1:
+                raise TooManyTransferredArgsException()
+        elif registered_args and not transferred_args:
+            raise RequiredArgumentNotPassedException()
+        elif not registered_args and transferred_args:
+            raise TooManyTransferredArgsException()
+
 
 
     def set_router_as_main(self):
