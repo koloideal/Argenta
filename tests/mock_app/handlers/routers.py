@@ -30,9 +30,9 @@ def command_help():
 
 
 @work_router.command(Command(command='P', description='Start Solving', flags=flagi))
-def command_start_solving(args: FlagsGroup | None):
+def command_start_solving(argrrtrts: FlagsGroup | None):
     print('Solving...')
-    flags = args.get_flags()
+    flags = argrrtrts.get_flags()
     for flag in flags:
         print(f'name: "{flag.get_string_entity()}", value: "{flag.get_value()}"')
     #start_solving_command()

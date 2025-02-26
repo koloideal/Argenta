@@ -20,9 +20,11 @@ class Router:
         self.name = name
 
         self._command_entities: list[dict[str, Callable[[], None] | Command]] = []
-        self._unknown_command_func: Callable[[str], None] | None = None
         self._is_main_router: bool = False
         self._ignore_command_register: bool = False
+
+        self._unknown_command_handler: Callable[[str], None] | None = None
+        self._not_valid_flag_handler: Callable[[str], None] | None = None
 
 
     def command(self, command: Command) -> Callable[[Any],  Any]:
@@ -41,10 +43,10 @@ class Router:
 
 
     def unknown_command(self, func):
-        if self._unknown_command_func is not None:
+        if self._unknown_command_handler is not None:
             raise UnknownCommandHandlerHasAlreadyBeenCreatedException()
 
-        self._unknown_command_func: Callable = func
+        self._unknown_command_handler: Callable = func
 
         def wrapper(*args, **kwargs):
             return func(*args, **kwargs)
@@ -61,9 +63,9 @@ class Router:
                             is_valid = command_entity['command'].validate_input_flag(flag)
                             if not is_valid:
                                 raise InvalidInputFlagException(flag)
-                        return command_entity['handler_func'](args=input_command.get_input_flags())
+                        return command_entity['handler_func'](input_command.get_input_flags())
                     else:
-                        return command_entity['handler_func'](args=FlagsGroup(None))
+                        return command_entity['handler_func'](FlagsGroup(None))
                 else:
                     if input_command.get_input_flags():
                         raise CurrentCommandDoesNotProcessFlagsException()
@@ -72,11 +74,11 @@ class Router:
 
 
     def get_unknown_command_func(self):
-        return self._unknown_command_func
+        return self._unknown_command_handler
 
 
     def unknown_command_handler(self, unknown_command):
-        self._unknown_command_func(unknown_command)
+        self._unknown_command_handler(unknown_command)
 
 
     def _validate_command(self, command: Command):
@@ -137,7 +139,7 @@ class Router:
             'ignore_command_register': self._ignore_command_register,
             'attributes': {
                 'command_entities': self._command_entities,
-                'unknown_command_func': self._unknown_command_func,
+                'unknown_command_func': self._unknown_command_handler,
                 'is_main_router': self._is_main_router
             }
 

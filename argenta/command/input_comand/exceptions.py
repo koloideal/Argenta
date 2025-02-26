@@ -21,4 +21,14 @@ class RepeatedInputFlagsException(Exception):
                 f"Duplicate flag was detected in the input: '{self.flag.get_string_entity()}'")
 
 
+class InvalidInputFlagsHandlerHasBeenAlreadyCreatedException(Exception):
+    def __str__(self):
+        return "Invalid Input Flags Handler has already been created"
+
+
+class IncorrectNumberArgsInvalidInputFlagsHandlerException(Exception):
+    def __str__(self):
+        return "Incorrect Input Flags Handler has incorrect number of arguments"
+
+
 

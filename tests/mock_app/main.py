@@ -23,6 +23,7 @@ def main():
 
     app.set_initial_message(initial_greeting)
     app.set_farewell_message(goodbye_message)
+    app.set_invalid_input_flags_handler(lambda raw_command: print("Custom iif handler"))
 
     app.set_description_message_pattern('[bold red][{command}][/bold red] [blue]*=*=*[/blue] [bold yellow italic]{description}')
 
