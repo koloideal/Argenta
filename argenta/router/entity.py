@@ -4,8 +4,7 @@ from ..command.entity import Command
 from ..command.input_comand.entity import InputCommand
 from ..command.input_comand.exceptions import InvalidInputFlagException
 from ..command.params.flag.flags_group.entity import FlagsGroup
-from ..router.exceptions import (UnknownCommandHandlerHasAlreadyBeenCreatedException,
-                                 RepeatedCommandException, RepeatedFlagNameException,
+from ..router.exceptions import (RepeatedCommandException, RepeatedFlagNameException,
                                  CurrentCommandDoesNotProcessFlagsException,
                                  TooManyTransferredArgsException,
                                  RequiredArgumentNotPassedException)
@@ -20,7 +19,6 @@ class Router:
         self.name = name
 
         self._command_entities: list[dict[str, Callable[[], None] | Command]] = []
-        self._is_main_router: bool = False
         self._ignore_command_register: bool = False
 
         self._unknown_command_handler: Callable[[str], None] | None = None
@@ -42,17 +40,6 @@ class Router:
         return command_decorator
 
 
-    def unknown_command(self, func):
-        if self._unknown_command_handler is not None:
-            raise UnknownCommandHandlerHasAlreadyBeenCreatedException()
-
-        self._unknown_command_handler: Callable = func
-
-        def wrapper(*args, **kwargs):
-            return func(*args, **kwargs)
-        return wrapper
-
-
     def input_command_handler(self, input_command: InputCommand):
         input_command_name: str = input_command.get_string_entity()
         for command_entity in self._command_entities:
@@ -71,14 +58,6 @@ class Router:
                         raise CurrentCommandDoesNotProcessFlagsException()
                     else:
                         return command_entity['handler_func']()
-
-
-    def get_unknown_command_func(self):
-        return self._unknown_command_handler
-
-
-    def unknown_command_handler(self, unknown_command):
-        self._unknown_command_handler(unknown_command)
 
 
     def _validate_command(self, command: Command):
@@ -109,13 +88,6 @@ class Router:
             raise TooManyTransferredArgsException()
 
 
-
-    def set_router_as_main(self):
-        if self.name == 'subordinate':
-            self.name = 'main'
-        self._is_main_router = True
-
-
     def set_ignore_command_register(self, ignore_command_register: bool):
         self._ignore_command_register = ignore_command_register
 
@@ -139,8 +111,7 @@ class Router:
             'ignore_command_register': self._ignore_command_register,
             'attributes': {
                 'command_entities': self._command_entities,
-                'unknown_command_func': self._unknown_command_handler,
-                'is_main_router': self._is_main_router
+                'unknown_command_func': self._unknown_command_handler
             }
 
         }

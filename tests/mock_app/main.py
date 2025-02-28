@@ -18,12 +18,13 @@ def main():
     ascii_goodbye_message: str = text2art('GoodBye', font='small')
     goodbye_message: str = f'[bold red]\n{ascii_goodbye_message}{' '*12}made by kolo\n'
 
-    app.include_router(work_router, is_main=True)
+    app.include_router(work_router)
     app.include_router(settings_router)
 
     app.set_initial_message(initial_greeting)
     app.set_farewell_message(goodbye_message)
-    app.set_invalid_input_flags_handler(lambda raw_command: print("Custom iif handler"))
+
+    app.set_invalid_input_flags_handler(lambda raw_command: print(f"Invalid input flags: {raw_command}"))
 
     app.set_description_message_pattern('[bold red][{command}][/bold red] [blue]*=*=*[/blue] [bold yellow italic]{description}')
 

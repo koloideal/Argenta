@@ -1,3 +1,2 @@
 from .entity import Router
-from .exceptions import (UnknownCommandHandlerHasAlreadyBeenCreatedException,
-                         InvalidDescriptionInstanceException)
+from .exceptions import InvalidDescriptionInstanceException

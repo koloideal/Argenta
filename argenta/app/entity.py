@@ -6,13 +6,10 @@ from ..router.entity import Router
 from ..command.input_comand.entity import InputCommand
 from ..command.input_comand.exceptions import (IncorrectInputFlagException,
                                                InvalidInputFlagsHandlerHasBeenAlreadyCreatedException,
-                                               IncorrectNumberArgsInvalidInputFlagsHandlerException)
+                                               IncorrectNumberArgsHandlerException,
+                                               UnknownCommandHandlerHasBeenAlreadyCreatedException)
 from .exceptions import (InvalidRouterInstanceException,
                          InvalidDescriptionMessagePatternException,
-                         OnlyOneMainRouterIsAllowedException,
-                         MissingMainRouterException,
-                         MissingHandlerForUnknownCommandsException,
-                         HandlerForUnknownCommandsOnNonMainRouterException,
                          NoRegisteredRoutersException,
                          NoRegisteredHandlersException,
                          RepeatedCommandInDifferentRoutersException)
@@ -49,6 +46,7 @@ class App:
 
         self._routers: list[Router] = []
         self._invalid_input_flags_handler: Callable[[str], None] | None = None
+        self._unknown_command_handler: Callable[[Command], None] | None = None
         self._registered_router_entities: list[dict[str, str | list[dict[str, Callable[[], None] | Command]] | Router]] = []
         self._app_main_router: Router | None = None
         self._description_message_pattern: str = '[{command}] *=*=* {description}'
@@ -57,7 +55,6 @@ class App:
     def start_polling(self) -> None:
         self._validate_number_of_routers()
         self._validate_included_routers()
-        self._validate_main_router()
         self._validate_all_router_commands()
 
         self.print_func(self.initial_message)
@@ -89,7 +86,8 @@ class App:
             self._checking_command_for_exit_command(input_command.get_string_entity())
             self.print_func(self.line_separate)
 
-            is_unknown_command: bool = self._check_is_command_unknown(input_command.get_string_entity())
+            is_unknown_command: bool = self._check_is_command_unknown(input_command)
+
             if is_unknown_command:
                 if not self.repeat_command_groups:
                     self.print_func(self.prompt)
@@ -127,13 +125,20 @@ class App:
         else:
             args = getfullargspec(handler).args
             if len(args) != 1:
-                raise IncorrectNumberArgsInvalidInputFlagsHandlerException()
+                raise IncorrectNumberArgsHandlerException()
             else:
                 self._invalid_input_flags_handler = handler
 
 
-    def get_main_router(self) -> Router:
-        return self._app_main_router
+    def set_unknown_command_handler(self, handler: Callable[[str], None]) -> None:
+        if self._unknown_command_handler:
+            raise UnknownCommandHandlerHasBeenAlreadyCreatedException()
+        else:
+            args = getfullargspec(handler).args
+            if len(args) != 1:
+                raise IncorrectNumberArgsHandlerException()
+            else:
+                self._unknown_command_handler = handler
 
 
     def get_all_app_commands(self) -> list[str]:
@@ -144,16 +149,9 @@ class App:
         return all_commands
 
 
-    def include_router(self, router: Router, is_main: True | False = False) -> None:
+    def include_router(self, router: Router) -> None:
         if not isinstance(router, Router):
             raise InvalidRouterInstanceException()
-
-        if is_main:
-            if not self._app_main_router:
-                self._app_main_router = router
-                router.set_router_as_main()
-            else:
-                raise OnlyOneMainRouterIsAllowedException(self._app_main_router.get_name())
 
         router.set_ignore_command_register(self.ignore_command_register)
         self._routers.append(router)
@@ -174,23 +172,6 @@ class App:
         for router in self._routers:
             if not router.get_command_entities():
                 raise NoRegisteredHandlersException(router.get_name())
-
-
-    def _validate_main_router(self):
-        if not self._app_main_router:
-            if len(self._routers) > 1:
-                raise MissingMainRouterException()
-            else:
-                router = self._routers[0]
-                router.set_router_as_main()
-                self._app_main_router = router
-
-        if not self._app_main_router.get_unknown_command_func():
-            raise MissingHandlerForUnknownCommandsException()
-
-        for router in self._routers:
-            if router.get_unknown_command_func() and not (self._app_main_router is router):
-                raise HandlerForUnknownCommandsOnNonMainRouterException()
 
 
     def _validate_all_router_commands(self) -> None:
@@ -220,17 +201,22 @@ class App:
                     exit(0)
 
 
-    def _check_is_command_unknown(self, command: str):
+    def _check_is_command_unknown(self, command: Command):
         registered_router_entities: list[dict[str, str | list[dict[str, Callable[[], None] | Command]] | Router]] = self._registered_router_entities
         for router_entity in registered_router_entities:
             for command_entity in router_entity['commands']:
-                if command_entity['command'].get_string_entity().lower() == command.lower():
+                if command_entity['command'].get_string_entity().lower() == command.get_string_entity().lower():
                     if self.ignore_command_register:
                         return False
                     else:
-                        if command_entity['command'].get_string_entity() == command:
+                        if command_entity['command'].get_string_entity() == command.get_string_entity():
                             return False
-        self._app_main_router.unknown_command_handler(command)
+
+        if self._unknown_command_handler:
+            self._unknown_command_handler(command)
+        else:
+            print(f"Unknown command: {command.get_string_entity()}")
+
         self.print_func(self.line_separate)
         self.print_func(self.command_group_description_separate)
         return True

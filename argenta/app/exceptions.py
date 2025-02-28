@@ -13,32 +13,6 @@ class InvalidDescriptionMessagePatternException(Exception):
                 f"Your pattern: {self.pattern}")
 
 
-class OnlyOneMainRouterIsAllowedException(Exception):
-    def __init__(self, existing_main_router):
-        self.existing_main_router = existing_main_router
-
-    def __str__(self):
-        return ("Only One Main Router Allowed\n"
-                f"Existing main router is: {self.existing_main_router}")
-
-
-class MissingMainRouterException(Exception):
-    def __str__(self):
-        return ("Missing Main Router\n"
-                "One of the registered routers must be the main one")
-
-
-class MissingHandlerForUnknownCommandsException(Exception):
-    def __str__(self):
-        return ("Missing Handlers For Unknown Commands On The Main Router\n"
-                "The main router must have a declared handler for unknown commands")
-
-
-class HandlerForUnknownCommandsOnNonMainRouterException(Exception):
-    def __str__(self):
-        return '\nThe handler for unknown commands can only be declared for the main router'
-
-
 class NoRegisteredRoutersException(Exception):
     def __str__(self):
         return "No Registered Router Found"

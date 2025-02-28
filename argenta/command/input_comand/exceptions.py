@@ -26,7 +26,12 @@ class InvalidInputFlagsHandlerHasBeenAlreadyCreatedException(Exception):
         return "Invalid Input Flags Handler has already been created"
 
 
-class IncorrectNumberArgsInvalidInputFlagsHandlerException(Exception):
+class UnknownCommandHandlerHasBeenAlreadyCreatedException(Exception):
+    def __str__(self):
+        return "Unknown Command Handler has already been created"
+
+
+class IncorrectNumberArgsHandlerException(Exception):
     def __str__(self):
         return "Incorrect Input Flags Handler has incorrect number of arguments"
 

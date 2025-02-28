@@ -42,8 +42,3 @@ def command_start_solving(argrrtrts: FlagsGroup | None):
 def command_update():
     print('uefi')
     # upgrade_command()
-
-
-@work_router.unknown_command
-def command_unknown_command(command):
-    console.print(f'[bold red]Unknown command: [/bold red]{command}')
