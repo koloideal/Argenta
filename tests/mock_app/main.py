@@ -5,7 +5,7 @@ from rich.console import Console
 
 
 app: App = App(prompt='[italic white bold]What do you want to do(enter number of action)?',
-               line_separate='[bold green]\n---------------------------------------------\n',
+               line_separate=f'\n{"[bold green]-[/bold green][bold red]-[/bold red]"*25}\n',
                print_func=Console().print,
                command_group_description_separate='',
                repeat_command_groups=False)
@@ -25,6 +25,8 @@ def main():
     app.set_farewell_message(goodbye_message)
 
     app.set_invalid_input_flags_handler(lambda raw_command: print(f"Invalid input flags: {raw_command}"))
+    app.set_unknown_command_handler(lambda command: print(f"Unknown command: {command.get_string_entity()}"))
+    app.set_repeated_input_flags_handler(lambda raw_command: print(f"Repeated input flags: {raw_command}"))
 
     app.set_description_message_pattern('[bold red][{command}][/bold red] [blue]*=*=*[/blue] [bold yellow italic]{description}')
 

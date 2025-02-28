@@ -2,12 +2,12 @@ from typing import Callable, Any
 from inspect import getfullargspec
 from ..command.entity import Command
 from ..command.input_comand.entity import InputCommand
-from ..command.input_comand.exceptions import InvalidInputFlagException
 from ..command.params.flag.flags_group.entity import FlagsGroup
 from ..router.exceptions import (RepeatedCommandException, RepeatedFlagNameException,
-                                 CurrentCommandDoesNotProcessFlagsException,
                                  TooManyTransferredArgsException,
-                                 RequiredArgumentNotPassedException)
+                                 RequiredArgumentNotPassedException,
+                                 NotValidInputFlagHandlerHasBeenAlreadyCreatedException,
+                                 IncorrectNumberOfHandlerArgsException)
 
 
 class Router:
@@ -21,8 +21,7 @@ class Router:
         self._command_entities: list[dict[str, Callable[[], None] | Command]] = []
         self._ignore_command_register: bool = False
 
-        self._unknown_command_handler: Callable[[str], None] | None = None
-        self._not_valid_flag_handler: Callable[[str], None] | None = None
+        self._not_valid_flag_handler: Callable[[Command], None] | None = None
 
 
     def command(self, command: Command) -> Callable[[Any],  Any]:
@@ -39,23 +38,46 @@ class Router:
 
         return command_decorator
 
+    def not_valid_input_flag(self, func):
+        if self._not_valid_flag_handler:
+            raise NotValidInputFlagHandlerHasBeenAlreadyCreatedException()
+        else:
+            processed_args = getfullargspec(func).args
+            if len(processed_args) != 1:
+                raise IncorrectNumberOfHandlerArgsException()
+            else:
+                self._not_valid_flag_handler = func
+                def wrapper(*args, **kwargs):
+                    return func(*args, **kwargs)
+
+                return wrapper
+
 
     def input_command_handler(self, input_command: InputCommand):
         input_command_name: str = input_command.get_string_entity()
+        input_command_flags: FlagsGroup = input_command.get_input_flags()
         for command_entity in self._command_entities:
             if input_command_name.lower() == command_entity['command'].get_string_entity().lower():
                 if command_entity['command'].get_flags():
-                    if input_command.get_input_flags():
-                        for flag in input_command.get_input_flags():
+                    if input_command_flags:
+                        for flag in input_command_flags:
                             is_valid = command_entity['command'].validate_input_flag(flag)
                             if not is_valid:
-                                raise InvalidInputFlagException(flag)
-                        return command_entity['handler_func'](input_command.get_input_flags())
+                                if self._not_valid_flag_handler:
+                                    self._not_valid_flag_handler(input_command)
+                                else:
+                                    print(f"Undefined or incorrect input flag: '{flag.get_string_entity()} {flag.get_value()}'")
+                                return
+                        return command_entity['handler_func'](input_command_flags)
                     else:
                         return command_entity['handler_func'](FlagsGroup(None))
                 else:
-                    if input_command.get_input_flags():
-                        raise CurrentCommandDoesNotProcessFlagsException()
+                    if input_command_flags:
+                        if self._not_valid_flag_handler:
+                            self._not_valid_flag_handler(input_command)
+                        else:
+                            print(f"Undefined or incorrect input flag: '{input_command_flags[0].get_string_entity()} {input_command_flags[0].get_value()}'")
+                        return
                     else:
                         return command_entity['handler_func']()
 
@@ -111,7 +133,6 @@ class Router:
             'ignore_command_register': self._ignore_command_register,
             'attributes': {
                 'command_entities': self._command_entities,
-                'unknown_command_func': self._unknown_command_handler
             }
 
         }

@@ -20,3 +20,6 @@ class FlagsGroup:
 
     def __next__(self):
         return next(iter(self))
+
+    def __getitem__(self, item):
+        return self._flags[item]

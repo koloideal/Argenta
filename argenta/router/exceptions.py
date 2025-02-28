@@ -1,3 +1,6 @@
+from ..command.params.flag.input_flag.entity import InputFlag
+
+
 class InvalidDescriptionInstanceException(Exception):
     def __str__(self):
         return "Invalid Description Instance"
@@ -13,11 +16,6 @@ class RepeatedFlagNameException(Exception):
         return "Repeated flag name in register command"
 
 
-class CurrentCommandDoesNotProcessFlagsException(Exception):
-    def __str__(self):
-        return "Current command does not process flags"
-
-
 class TooManyTransferredArgsException(Exception):
     def __str__(self):
         return "Too many transferred arguments"
@@ -26,3 +24,13 @@ class TooManyTransferredArgsException(Exception):
 class RequiredArgumentNotPassedException(Exception):
     def __str__(self):
         return "Required argument not passed"
+
+
+class NotValidInputFlagHandlerHasBeenAlreadyCreatedException(Exception):
+    def __str__(self):
+        return "Invalid Input Flag Handler has already been created"
+
+
+class IncorrectNumberOfHandlerArgsException(Exception):
+    def __str__(self):
+        return "Incorrect Input Flags Handler has incorrect number of arguments"

@@ -4,10 +4,12 @@ from inspect import getfullargspec
 from ..command.entity import Command
 from ..router.entity import Router
 from ..command.input_comand.entity import InputCommand
-from ..command.input_comand.exceptions import (IncorrectInputFlagException,
+from ..command.input_comand.exceptions import (UnprocessedInputFlagException,
                                                InvalidInputFlagsHandlerHasBeenAlreadyCreatedException,
-                                               IncorrectNumberArgsHandlerException,
-                                               UnknownCommandHandlerHasBeenAlreadyCreatedException)
+                                               IncorrectNumberOfHandlerArgsException,
+                                               UnknownCommandHandlerHasBeenAlreadyCreatedException,
+                                               RepeatedInputFlagsException,
+                                               RepeatedInputFlagsHandlerHasBeenAlreadyCreatedException)
 from .exceptions import (InvalidRouterInstanceException,
                          InvalidDescriptionMessagePatternException,
                          NoRegisteredRoutersException,
@@ -46,6 +48,7 @@ class App:
 
         self._routers: list[Router] = []
         self._invalid_input_flags_handler: Callable[[str], None] | None = None
+        self._repeated_input_flags_handler: Callable[[str], None] | None = None
         self._unknown_command_handler: Callable[[Command], None] | None = None
         self._registered_router_entities: list[dict[str, str | list[dict[str, Callable[[], None] | Command]] | Router]] = []
         self._app_main_router: Router | None = None
@@ -72,12 +75,22 @@ class App:
 
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
-            except IncorrectInputFlagException:
+            except UnprocessedInputFlagException:
                 self.print_func(self.line_separate)
                 if self._invalid_input_flags_handler:
                     self._invalid_input_flags_handler(raw_command)
                 else:
                     self.print_func(f'Incorrect flag syntax: "{raw_command}"')
+                self.print_func(self.line_separate)
+                if not self.repeat_command_groups:
+                    self.print_func(self.prompt)
+                continue
+            except RepeatedInputFlagsException:
+                self.print_func(self.line_separate)
+                if self._repeated_input_flags_handler:
+                    self._repeated_input_flags_handler(raw_command)
+                else:
+                    self.print_func(f'Repeated input flags: "{raw_command}"')
                 self.print_func(self.line_separate)
                 if not self.repeat_command_groups:
                     self.print_func(self.prompt)
@@ -125,9 +138,20 @@ class App:
         else:
             args = getfullargspec(handler).args
             if len(args) != 1:
-                raise IncorrectNumberArgsHandlerException()
+                raise IncorrectNumberOfHandlerArgsException()
             else:
                 self._invalid_input_flags_handler = handler
+
+
+    def set_repeated_input_flags_handler(self, handler: Callable[[str], None]) -> None:
+        if self._repeated_input_flags_handler:
+            raise RepeatedInputFlagsHandlerHasBeenAlreadyCreatedException()
+        else:
+            args = getfullargspec(handler).args
+            if len(args) != 1:
+                raise IncorrectNumberOfHandlerArgsException()
+            else:
+                self._repeated_input_flags_handler = handler
 
 
     def set_unknown_command_handler(self, handler: Callable[[str], None]) -> None:
@@ -136,7 +160,7 @@ class App:
         else:
             args = getfullargspec(handler).args
             if len(args) != 1:
-                raise IncorrectNumberArgsHandlerException()
+                raise IncorrectNumberOfHandlerArgsException()
             else:
                 self._unknown_command_handler = handler
 

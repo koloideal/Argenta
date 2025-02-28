@@ -1,6 +1,6 @@
 [project]
 name = "argenta"
-version = "0.3.1"
+version = "0.3.2"
 description = "python library for creating custom shells"
 authors = [
     {name = "kolo",email = "kolo.is.main@gmail.com"}
@@ -33,6 +33,4 @@ numpy = "^2.2.2"
 word2number = "^1.1"
 numexpr = "^2.10.2"
 requests = "^2.32.3"
-tqdm = "^4.67.1"
-setuptools = "^75.8.0"
 

@@ -42,3 +42,11 @@ def command_start_solving(argrrtrts: FlagsGroup | None):
 def command_update():
     print('uefi')
     # upgrade_command()
+
+
+@work_router.not_valid_input_flag
+def invalid_input_flag(command):
+    print('Invalid inpuuuuuuuuuuuuuuuuuuuuuuuut flag')
+
+
+

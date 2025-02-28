@@ -1,4 +1,4 @@
-from ..input_comand.exceptions import IncorrectInputFlagException, RepeatedInputFlagsException
+from ..input_comand.exceptions import UnprocessedInputFlagException, RepeatedInputFlagsException
 from ..entity import Command
 from ..params.flag.flags_group.entity import FlagsGroup
 from ..params.flag.input_flag.entity import InputFlag
@@ -29,12 +29,12 @@ class InputCommand(Command, Generic[T]):
             if _.startswith('-'):
                 flag_prefix_last_symbol_index = _.rfind('-')
                 if current_flag_name or len(_) < 2 or len(_[:flag_prefix_last_symbol_index]) > 3:
-                    raise IncorrectInputFlagException()
+                    raise UnprocessedInputFlagException()
                 else:
                     current_flag_name = _
             else:
                 if not current_flag_name:
-                    raise IncorrectInputFlagException()
+                    raise UnprocessedInputFlagException()
                 else:
                     current_flag_value = _
             if current_flag_name and current_flag_value:
@@ -55,7 +55,7 @@ class InputCommand(Command, Generic[T]):
                 current_flag_name = None
                 current_flag_value = None
         if any([current_flag_name, current_flag_value]):
-            raise IncorrectInputFlagException()
+            raise UnprocessedInputFlagException()
         if len(flags.get_flags()) == 0:
             return InputCommand(command=command)
         else:
