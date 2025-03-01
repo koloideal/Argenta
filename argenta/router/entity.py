@@ -1,7 +1,6 @@
 from typing import Callable, Any
 from inspect import getfullargspec
 from ..command.entity import Command
-from ..command.input_comand.entity import InputCommand
 from ..command.params.flag.flags_group.entity import FlagsGroup
 from ..router.exceptions import (RepeatedCommandException, RepeatedFlagNameException,
                                  TooManyTransferredArgsException,
@@ -53,12 +52,12 @@ class Router:
                 return wrapper
 
 
-    def input_command_handler(self, input_command: InputCommand):
+    def input_command_handler(self, input_command: Command):
         input_command_name: str = input_command.get_string_entity()
         input_command_flags: FlagsGroup = input_command.get_input_flags()
         for command_entity in self._command_entities:
             if input_command_name.lower() == command_entity['command'].get_string_entity().lower():
-                if command_entity['command'].get_flags():
+                if command_entity['command'].get_registered_flags():
                     if input_command_flags:
                         for flag in input_command_flags:
                             is_valid = command_entity['command'].validate_input_flag(flag)
@@ -90,7 +89,7 @@ class Router:
             if command_name.lower() in [x.lower() for x in self.get_all_commands()]:
                 raise RepeatedCommandException()
 
-        flags: FlagsGroup = command.get_flags()
+        flags: FlagsGroup = command.get_registered_flags()
         if flags:
             flags_name: list = [x.get_string_entity().lower() for x in flags]
             if len(set(flags_name)) < len(flags_name):
@@ -99,7 +98,7 @@ class Router:
 
     @staticmethod
     def _validate_func_args(command: Command, func: Callable):
-        registered_args = command.get_flags()
+        registered_args = command.get_registered_flags()
         transferred_args = getfullargspec(func).args
         if registered_args and transferred_args:
            if len(transferred_args) != 1:
@@ -148,6 +147,6 @@ class Router:
     def get_all_flags(self) -> list[FlagsGroup]:
         all_flags: list[FlagsGroup] = []
         for command_entity in self._command_entities:
-            all_flags.append(command_entity['command'].get_flags())
+            all_flags.append(command_entity['command'].get_registered_flags())
 
         return all_flags

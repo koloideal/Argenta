@@ -1,3 +1,5 @@
+import re
+
 from rich.console import Console
 
 from argenta.command.entity import Command
@@ -5,7 +7,6 @@ from argenta.command.params.flag.entity import Flag
 from argenta.command.params.flag.flags_group.entity import FlagsGroup
 from argenta.router import Router
 
-from ..handlers.handlers_implementation.help_command import help_command
 
 work_router: Router = Router(title='Work points:')
 settings_router: Router = Router(title='Settings points:')
@@ -14,7 +15,8 @@ console = Console()
 
 flagi = FlagsGroup(flags=[
     Flag(flag_name='host',
-         flag_prefix='--', ),
+         flag_prefix='--',
+         possible_flag_values=re.compile(r'^192.168.\d{1,3}.\d{1,3}$')),
     Flag(flag_name='port',
          flag_prefix='--', )
 ])
@@ -45,8 +47,8 @@ def command_update():
 
 
 @work_router.not_valid_input_flag
-def invalid_input_flag(command):
-    print('Invalid inpuuuuuuuuuuuuuuuuuuuuuuuut flag')
+def invalid_input_flag(command: Command):
+    print(f'Invalid inpuuuuuuuuuuuuuuuuuuuuuuuut flag: "{command.get_input_flags()[0].get_value()}"')
 
 
 

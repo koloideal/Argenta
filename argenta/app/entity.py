@@ -3,13 +3,12 @@ from inspect import getfullargspec
 
 from ..command.entity import Command
 from ..router.entity import Router
-from ..command.input_comand.entity import InputCommand
-from ..command.input_comand.exceptions import (UnprocessedInputFlagException,
-                                               InvalidInputFlagsHandlerHasBeenAlreadyCreatedException,
-                                               IncorrectNumberOfHandlerArgsException,
-                                               UnknownCommandHandlerHasBeenAlreadyCreatedException,
-                                               RepeatedInputFlagsException,
-                                               RepeatedInputFlagsHandlerHasBeenAlreadyCreatedException)
+from ..command.exceptions import (UnprocessedInputFlagException,
+                                  InvalidInputFlagsHandlerHasBeenAlreadyCreatedException,
+                                  IncorrectNumberOfHandlerArgsException,
+                                  UnknownCommandHandlerHasBeenAlreadyCreatedException,
+                                  RepeatedInputFlagsException,
+                                  RepeatedInputFlagsHandlerHasBeenAlreadyCreatedException)
 from .exceptions import (InvalidRouterInstanceException,
                          InvalidDescriptionMessagePatternException,
                          NoRegisteredRoutersException,
@@ -74,7 +73,7 @@ class App:
             raw_command: str = input()
 
             try:
-                input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
+                input_command: Command = Command.parse_input_command(raw_command=raw_command)
             except UnprocessedInputFlagException:
                 self.print_func(self.line_separate)
                 if self._invalid_input_flags_handler:

@@ -1,11 +1,11 @@
-from typing import Literal
+from typing import Literal, Pattern
 
 
 class Flag:
     def __init__(self, flag_name: str,
                  flag_prefix: Literal['-', '--', '---'] = '-',
                  ignore_flag_value_register: bool = False,
-                 possible_flag_values: list[str] = False):
+                 possible_flag_values: list[str] | Pattern[str] = False):
         self._flag_name = flag_name
         self._flag_prefix = flag_prefix
         self.possible_flag_values = possible_flag_values
@@ -30,7 +30,13 @@ class Flag:
         self._value = value
 
     def validate_input_flag_value(self, input_flag_value: str):
-        if self.possible_flag_values:
+        if isinstance(self.possible_flag_values, Pattern):
+            is_valid = bool(self.possible_flag_values.match(input_flag_value))
+            if bool(is_valid):
+                return True
+            else:
+                return False
+        if isinstance(self.possible_flag_values, list):
             if self.ignore_flag_value_register:
                 if input_flag_value.lower() in [x.lower() for x in self.possible_flag_values]:
                     return True

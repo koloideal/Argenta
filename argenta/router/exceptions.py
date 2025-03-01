@@ -1,6 +1,3 @@
-from ..command.params.flag.input_flag.entity import InputFlag
-
-
 class InvalidDescriptionInstanceException(Exception):
     def __str__(self):
         return "Invalid Description Instance"
