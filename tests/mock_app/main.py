@@ -8,7 +8,7 @@ app: App = App(prompt='[italic white bold]What do you want to do(enter number of
                line_separate=f'\n{"[bold green]-[/bold green][bold red]-[/bold red]"*25}\n',
                print_func=Console().print,
                command_group_description_separate='',
-               repeat_command_groups=False)
+               repeat_command_groups=True)
 
 
 def main():

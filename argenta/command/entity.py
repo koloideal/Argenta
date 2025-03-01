@@ -2,7 +2,10 @@ from .params.flag.entity import Flag
 from .params.flag.flags_group.entity import FlagsGroup
 from .exceptions import (InvalidCommandInstanceException,
                          InvalidDescriptionInstanceException,
-                         InvalidFlagsInstanceException, UnprocessedInputFlagException, RepeatedInputFlagsException)
+                         InvalidFlagsInstanceException,
+                         UnprocessedInputFlagException,
+                         RepeatedInputFlagsException,
+                         EmptyInputCommandException)
 
 from typing import Generic, TypeVar
 
@@ -71,6 +74,8 @@ class Command(Generic[T]):
 
     @staticmethod
     def parse_input_command(raw_command: str) -> 'Command[T]':
+        if not raw_command:
+            raise EmptyInputCommandException()
         list_of_tokens = raw_command.split()
         command = list_of_tokens[0]
         list_of_tokens.pop(0)

@@ -4,11 +4,9 @@ from inspect import getfullargspec
 from ..command.entity import Command
 from ..router.entity import Router
 from ..command.exceptions import (UnprocessedInputFlagException,
-                                  InvalidInputFlagsHandlerHasBeenAlreadyCreatedException,
                                   IncorrectNumberOfHandlerArgsException,
-                                  UnknownCommandHandlerHasBeenAlreadyCreatedException,
                                   RepeatedInputFlagsException,
-                                  RepeatedInputFlagsHandlerHasBeenAlreadyCreatedException)
+                                  EmptyInputCommandException)
 from .exceptions import (InvalidRouterInstanceException,
                          InvalidDescriptionMessagePatternException,
                          NoRegisteredRoutersException,
@@ -46,12 +44,12 @@ class App:
         self.repeat_command_groups = repeat_command_groups
 
         self._routers: list[Router] = []
-        self._invalid_input_flags_handler: Callable[[str], None] | None = None
-        self._repeated_input_flags_handler: Callable[[str], None] | None = None
-        self._unknown_command_handler: Callable[[Command], None] | None = None
-        self._registered_router_entities: list[dict[str, str | list[dict[str, Callable[[], None] | Command]] | Router]] = []
-        self._app_main_router: Router | None = None
         self._description_message_pattern: str = '[{command}] *=*=* {description}'
+        self._registered_router_entities: list[dict[str, str | list[dict[str, Callable[[], None] | Command]] | Router]] = []
+        self._invalid_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Incorrect flag syntax: "{raw_command}"')
+        self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Repeated input flags: "{raw_command}"')
+        self._empty_input_command_handler: Callable[[], None] = lambda: print_func(f'Empty input command')
+        self._unknown_command_handler: Callable[[Command], None] = lambda command: print_func(f"Unknown command: {command.get_string_entity()}")
 
 
     def start_polling(self) -> None:
@@ -76,31 +74,39 @@ class App:
                 input_command: Command = Command.parse_input_command(raw_command=raw_command)
             except UnprocessedInputFlagException:
                 self.print_func(self.line_separate)
-                if self._invalid_input_flags_handler:
-                    self._invalid_input_flags_handler(raw_command)
-                else:
-                    self.print_func(f'Incorrect flag syntax: "{raw_command}"')
+                self._invalid_input_flags_handler(raw_command)
                 self.print_func(self.line_separate)
+
                 if not self.repeat_command_groups:
                     self.print_func(self.prompt)
                 continue
+
             except RepeatedInputFlagsException:
                 self.print_func(self.line_separate)
-                if self._repeated_input_flags_handler:
-                    self._repeated_input_flags_handler(raw_command)
-                else:
-                    self.print_func(f'Repeated input flags: "{raw_command}"')
+                self._repeated_input_flags_handler(raw_command)
                 self.print_func(self.line_separate)
+
                 if not self.repeat_command_groups:
                     self.print_func(self.prompt)
                 continue
 
-            self._checking_command_for_exit_command(input_command.get_string_entity())
-            self.print_func(self.line_separate)
+            except EmptyInputCommandException:
+                self.print_func(self.line_separate)
+                self._empty_input_command_handler()
+                self.print_func(self.line_separate)
 
+                if not self.repeat_command_groups:
+                    self.print_func(self.prompt)
+                continue
+
+            self._check_command_for_exit_command(input_command.get_string_entity())
+
+            self.print_func(self.line_separate)
             is_unknown_command: bool = self._check_is_command_unknown(input_command)
 
             if is_unknown_command:
+                self.print_func(self.line_separate)
+                self.print_func(self.command_group_description_separate)
                 if not self.repeat_command_groups:
                     self.print_func(self.prompt)
                 continue
@@ -124,52 +130,35 @@ class App:
 
     def set_description_message_pattern(self, pattern: str) -> None:
         try:
-            pattern.format(command='command',
-                           description='description')
+            pattern.format(command='command', description='description')
         except KeyError:
             raise InvalidDescriptionMessagePatternException(pattern)
-        self._description_message_pattern: str = pattern
+        else:
+            self._description_message_pattern: str = pattern
 
 
     def set_invalid_input_flags_handler(self, handler: Callable[[str], None]) -> None:
-        if self._invalid_input_flags_handler:
-            raise InvalidInputFlagsHandlerHasBeenAlreadyCreatedException()
+        args = getfullargspec(handler).args
+        if len(args) != 1:
+            raise IncorrectNumberOfHandlerArgsException()
         else:
-            args = getfullargspec(handler).args
-            if len(args) != 1:
-                raise IncorrectNumberOfHandlerArgsException()
-            else:
-                self._invalid_input_flags_handler = handler
+            self._invalid_input_flags_handler = handler
 
 
     def set_repeated_input_flags_handler(self, handler: Callable[[str], None]) -> None:
-        if self._repeated_input_flags_handler:
-            raise RepeatedInputFlagsHandlerHasBeenAlreadyCreatedException()
+        args = getfullargspec(handler).args
+        if len(args) != 1:
+            raise IncorrectNumberOfHandlerArgsException()
         else:
-            args = getfullargspec(handler).args
-            if len(args) != 1:
-                raise IncorrectNumberOfHandlerArgsException()
-            else:
-                self._repeated_input_flags_handler = handler
+            self._repeated_input_flags_handler = handler
 
 
     def set_unknown_command_handler(self, handler: Callable[[str], None]) -> None:
-        if self._unknown_command_handler:
-            raise UnknownCommandHandlerHasBeenAlreadyCreatedException()
+        args = getfullargspec(handler).args
+        if len(args) != 1:
+            raise IncorrectNumberOfHandlerArgsException()
         else:
-            args = getfullargspec(handler).args
-            if len(args) != 1:
-                raise IncorrectNumberOfHandlerArgsException()
-            else:
-                self._unknown_command_handler = handler
-
-
-    def get_all_app_commands(self) -> list[str]:
-        all_commands: list[str] = []
-        for router in self._routers:
-            all_commands.extend(router.get_all_commands())
-
-        return all_commands
+            self._unknown_command_handler = handler
 
 
     def include_router(self, router: Router) -> None:
@@ -213,7 +202,7 @@ class App:
                         raise RepeatedCommandInDifferentRoutersException()
 
 
-    def _checking_command_for_exit_command(self, command: str):
+    def _check_command_for_exit_command(self, command: str):
         if command.lower() == self.exit_command.lower():
             if self.ignore_exit_command_register:
                 self.print_func(self.farewell_message)
@@ -234,14 +223,7 @@ class App:
                     else:
                         if command_entity['command'].get_string_entity() == command.get_string_entity():
                             return False
-
-        if self._unknown_command_handler:
-            self._unknown_command_handler(command)
-        else:
-            print(f"Unknown command: {command.get_string_entity()}")
-
-        self.print_func(self.line_separate)
-        self.print_func(self.command_group_description_separate)
+        self._unknown_command_handler(command)
         return True
 
 

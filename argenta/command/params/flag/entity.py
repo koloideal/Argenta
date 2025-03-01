@@ -36,6 +36,7 @@ class Flag:
                 return True
             else:
                 return False
+
         if isinstance(self.possible_flag_values, list):
             if self.ignore_flag_value_register:
                 if input_flag_value.lower() in [x.lower() for x in self.possible_flag_values]:
