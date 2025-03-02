@@ -29,11 +29,6 @@ class RepeatedInputFlagsException(Exception):
                 f"Duplicate flag was detected in the input: '{self.flag.get_string_entity()}'")
 
 
-class IncorrectNumberOfHandlerArgsException(Exception):
-    def __str__(self):
-        return "Incorrect Input Flags Handler has incorrect number of arguments"
-
-
 class EmptyInputCommandException(Exception):
     def __str__(self):
         return "Input Command is empty"

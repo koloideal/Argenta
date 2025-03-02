@@ -28,3 +28,8 @@ class NoRegisteredHandlersException(Exception):
 class RepeatedCommandInDifferentRoutersException(Exception):
     def __str__(self):
         return "Commands in different handlers cannot be repeated"
+
+
+class IncorrectNumberOfHandlerArgsException(Exception):
+    def __str__(self):
+        return "Incorrect Input Flags Handler has incorrect number of arguments"

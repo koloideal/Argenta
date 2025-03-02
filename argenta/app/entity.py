@@ -1,17 +1,18 @@
 from typing import Callable
 from inspect import getfullargspec
+import re
 
 from ..command.entity import Command
 from ..router.entity import Router
 from ..command.exceptions import (UnprocessedInputFlagException,
-                                  IncorrectNumberOfHandlerArgsException,
                                   RepeatedInputFlagsException,
                                   EmptyInputCommandException)
 from .exceptions import (InvalidRouterInstanceException,
                          InvalidDescriptionMessagePatternException,
                          NoRegisteredRoutersException,
                          NoRegisteredHandlersException,
-                         RepeatedCommandInDifferentRoutersException)
+                         RepeatedCommandInDifferentRoutersException,
+                         IncorrectNumberOfHandlerArgsException)
 
 
 class App:
@@ -129,9 +130,11 @@ class App:
 
 
     def set_description_message_pattern(self, pattern: str) -> None:
-        try:
-            pattern.format(command='command', description='description')
-        except KeyError:
+        first_check = re.match(r'.*{commmand}.*', pattern)
+        second_check = re.match(r'.*{description}.*', pattern)
+        print(first_check)
+        print(second_check)
+        if bool(first_check) and bool(second_check):
             raise InvalidDescriptionMessagePatternException(pattern)
         else:
             self._description_message_pattern: str = pattern

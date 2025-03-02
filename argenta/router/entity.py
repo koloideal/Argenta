@@ -1,11 +1,12 @@
 from typing import Callable, Any
 from inspect import getfullargspec
+
 from ..command.entity import Command
+from ..command.params.flag.entity import Flag
 from ..command.params.flag.flags_group.entity import FlagsGroup
 from ..router.exceptions import (RepeatedCommandException, RepeatedFlagNameException,
                                  TooManyTransferredArgsException,
                                  RequiredArgumentNotPassedException,
-                                 NotValidInputFlagHandlerHasBeenAlreadyCreatedException,
                                  IncorrectNumberOfHandlerArgsException)
 
 
@@ -20,7 +21,7 @@ class Router:
         self._command_entities: list[dict[str, Callable[[], None] | Command]] = []
         self._ignore_command_register: bool = False
 
-        self._not_valid_flag_handler: Callable[[Command], None] | None = None
+        self._not_valid_flag_handler: Callable[[Flag], None] = lambda flag: print(f"Undefined or incorrect input flag: '{flag.get_string_entity()} {flag.get_value()}'")
 
 
     def command(self, command: Command) -> Callable[[Any],  Any]:
@@ -37,19 +38,12 @@ class Router:
 
         return command_decorator
 
-    def not_valid_input_flag(self, func):
-        if self._not_valid_flag_handler:
-            raise NotValidInputFlagHandlerHasBeenAlreadyCreatedException()
+    def set_invalid_input_flag_handler(self, func):
+        processed_args = getfullargspec(func).args
+        if len(processed_args) != 1:
+            raise IncorrectNumberOfHandlerArgsException()
         else:
-            processed_args = getfullargspec(func).args
-            if len(processed_args) != 1:
-                raise IncorrectNumberOfHandlerArgsException()
-            else:
-                self._not_valid_flag_handler = func
-                def wrapper(*args, **kwargs):
-                    return func(*args, **kwargs)
-
-                return wrapper
+            self._not_valid_flag_handler = func
 
 
     def input_command_handler(self, input_command: Command):
@@ -62,20 +56,14 @@ class Router:
                         for flag in input_command_flags:
                             is_valid = command_entity['command'].validate_input_flag(flag)
                             if not is_valid:
-                                if self._not_valid_flag_handler:
-                                    self._not_valid_flag_handler(input_command)
-                                else:
-                                    print(f"Undefined or incorrect input flag: '{flag.get_string_entity()} {flag.get_value()}'")
+                                self._not_valid_flag_handler(flag)
                                 return
                         return command_entity['handler_func'](input_command_flags)
                     else:
                         return command_entity['handler_func'](FlagsGroup(None))
                 else:
                     if input_command_flags:
-                        if self._not_valid_flag_handler:
-                            self._not_valid_flag_handler(input_command)
-                        else:
-                            print(f"Undefined or incorrect input flag: '{input_command_flags[0].get_string_entity()} {input_command_flags[0].get_value()}'")
+                        self._not_valid_flag_handler(input_command_flags[0])
                         return
                     else:
                         return command_entity['handler_func']()
@@ -125,28 +113,9 @@ class Router:
         return self.title
 
 
-    def get_router_info(self) -> dict:
-        return {
-            'title': self.title,
-            'name': self.name,
-            'ignore_command_register': self._ignore_command_register,
-            'attributes': {
-                'command_entities': self._command_entities,
-            }
-
-        }
-
-
     def get_all_commands(self) -> list[str]:
         all_commands: list[str] = []
         for command_entity in self._command_entities:
             all_commands.append(command_entity['command'].get_string_entity())
 
         return all_commands
-
-    def get_all_flags(self) -> list[FlagsGroup]:
-        all_flags: list[FlagsGroup] = []
-        for command_entity in self._command_entities:
-            all_flags.append(command_entity['command'].get_registered_flags())
-
-        return all_flags

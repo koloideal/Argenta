@@ -8,7 +8,7 @@ from argenta.command.params.flag.flags_group.entity import FlagsGroup
 from argenta.router import Router
 
 
-work_router: Router = Router(title='Work points:')
+work_router: Router = Router(title='Work nts:')
 settings_router: Router = Router(title='Settings points:')
 
 console = Console()
@@ -46,9 +46,11 @@ def command_update():
     # upgrade_command()
 
 
-@work_router.not_valid_input_flag
-def invalid_input_flag(command: Command):
-    print(f'Invalid inpuuuuuuuuuuuuuuuuuuuuuuuut flag: "{command.get_input_flags()[0].get_value()}"')
+def invalid_input_flag(flag: Flag):
+    print(f'Invalid inpuuuuuuuuuuuuuuuuuuuuuuuut flag: "{flag.get_string_entity()} {flag.get_value()}"')
+
+
+work_router.set_invalid_input_flag_handler(invalid_input_flag)
 
 
 

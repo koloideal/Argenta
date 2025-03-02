@@ -3,7 +3,7 @@ name = "argenta"
 version = "0.3.4"
 description = "python library for creating custom shells"
 authors = [
-    {name = "kolo",email = "kolo.is.main@gmail.com"}
+    {name = "kolo", email = "kolo.is.main@gmail.com"}
 ]
 license = {text = "MIT"}
 readme = "README.md"

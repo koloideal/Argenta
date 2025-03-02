@@ -19,7 +19,7 @@ class Command(Generic[T]):
                  flags: Flag | FlagsGroup | None = None):
         self._command = command
         self._description = description
-        self._flags: FlagsGroup | None = flags if isinstance(flags, FlagsGroup) else FlagsGroup([flags]) if isinstance(flags, Flag) else flags
+        self._registered_flags: FlagsGroup | None = flags if isinstance(flags, FlagsGroup) else FlagsGroup([flags]) if isinstance(flags, Flag) else flags
 
         self._input_flags: FlagsGroup | None = None
 
@@ -37,7 +37,7 @@ class Command(Generic[T]):
 
 
     def get_registered_flags(self):
-        return self._flags
+        return self._registered_flags
 
 
     def validate_commands_params(self):
@@ -45,7 +45,7 @@ class Command(Generic[T]):
             raise InvalidCommandInstanceException(self._command)
         if not isinstance(self._description, str):
             raise InvalidDescriptionInstanceException()
-        if not any([(isinstance(self._flags, FlagsGroup)), not self._flags]):
+        if not any([(isinstance(self._registered_flags, FlagsGroup)), not self._registered_flags]):
             raise InvalidFlagsInstanceException
 
 

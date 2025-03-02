@@ -1,7 +1,11 @@
 from tests.mock_app.handlers.routers import work_router, settings_router
-from argenta.app.entity import App
 from art import text2art
 from rich.console import Console
+
+from argenta.app import App
+from argenta.router import Router
+from argenta.command import Command
+from argenta.command.params.flag import Flag, FlagsGroup
 
 
 app: App = App(prompt='[italic white bold]What do you want to do(enter number of action)?',
