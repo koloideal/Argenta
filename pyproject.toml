@@ -1,6 +1,6 @@
 [project]
 name = "argenta"
-version = "0.3.4"
+version = "0.3.5"
 description = "python library for creating custom shells"
 authors = [
     {name = "kolo", email = "kolo.is.main@gmail.com"}
