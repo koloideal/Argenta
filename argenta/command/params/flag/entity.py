@@ -11,7 +11,7 @@ class Flag:
         self.possible_flag_values = possible_flag_values
         self.ignore_flag_value_register = ignore_flag_value_register
 
-        self._value = None
+        self._flag_value = None
 
     def get_string_entity(self):
         string_entity: str = self._flag_prefix + self._flag_name
@@ -24,10 +24,10 @@ class Flag:
         return self._flag_prefix
 
     def get_value(self):
-        return self._value
+        return self._flag_value
 
     def set_value(self, value):
-        self._value = value
+        self._flag_value = value
 
     def validate_input_flag_value(self, input_flag_value: str):
         if isinstance(self.possible_flag_values, Pattern):

@@ -1,4 +1,4 @@
-from tests.mock_app.handlers.routers import work_router, settings_router
+from mock.mock_app.handlers.routers import work_router, settings_router
 from art import text2art
 from rich.console import Console
 

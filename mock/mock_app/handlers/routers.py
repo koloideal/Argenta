@@ -1,4 +1,5 @@
 import re
+from pprint import pprint
 
 from rich.console import Console
 
@@ -32,11 +33,9 @@ def command_help():
 
 
 @work_router.command(Command(command='P', description='Start Solving', flags=flagi))
-def command_start_solving(argrrtrts: FlagsGroup | None):
+def command_start_solving(argrrtrts: dict):
     print('Solving...')
-    flags = argrrtrts.get_flags()
-    for flag in flags:
-        print(f'name: "{flag.get_string_entity()}", value: "{flag.get_value()}"')
+    pprint(argrrtrts)
     #start_solving_command()
 
 

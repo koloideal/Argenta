@@ -3,7 +3,7 @@
 ---
 
 ## Описание
-**Argenta** — это библиотека для создания CLI-приложений на Python. Она предоставляет удобные инструменты для маршрутизации команд и обработки пользовательского ввода.
+**Argenta** — Python library for creating custom shells
 
 ---
 
@@ -19,20 +19,38 @@ poetry add argenta
 ---
 
 # Быстрый старт
-Пример базового CLI-приложения с Argenta:
+
 ```python
-#routers.py
+# routers.py
+import re
 from argenta.router import Router
+from argenta.command import Command
+from argenta.command.params.flag import FlagsGroup, Flag
+
 
 router = Router()
 
-@router.command("hello")
-def hello():
-    print("Hello, world!")
 
-@router.unknown_command
-def unlnown_command(command):
-    print(f'Command "{command}" undefined')
+list_of_flags = [
+  Flag(flag_name='host',
+       flag_prefix='--',
+       possible_flag_values=re.compile(r'^192.168.\d{1,3}.\d{1,3}$')),
+  Flag(flag_name='port',
+       flag_prefix='---',
+       possible_flag_values=re.compile(r'^[0-9]{1,4}$'))
+]
+
+
+@router.command(Command("hello"))
+def handler():
+  print("Hello, world!")
+
+
+@router.command(Command(command="ssh", 
+                        description='connect via ssh', 
+                        flags=FlagsGroup(list_of_flags)))
+def handler_with_flags(args: FlagsGroup):
+  print(f'Command "{command}" undefined')
 ```
 ```python
 #main.py
