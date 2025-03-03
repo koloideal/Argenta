@@ -8,7 +8,11 @@ import unittest
 class TestApp(unittest.TestCase):
     def test_set_invalid_description_message_pattern(self):
         with self.assertRaises(InvalidDescriptionMessagePatternException):
-            App().set_description_message_pattern('Invalid des{}cription pattern')
+            App().set_description_message_pattern('Invalid description pattern')
+
+    def test_set_invalid_description_message_pattern2(self):
+        with self.assertRaises(InvalidDescriptionMessagePatternException):
+            App().set_description_message_pattern('Invalid {desription} description {comand} pattern')
 
     def test_no_registered_router(self):
         with self.assertRaises(NoRegisteredRoutersException):

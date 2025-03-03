@@ -15,10 +15,10 @@ T = TypeVar('T')
 
 class Command(Generic[T]):
     def __init__(self, command: str,
-                 description: str | None = None,
+                 description: str = None,
                  flags: Flag | FlagsGroup | None = None):
         self._command = command
-        self._description = description
+        self._description = f'description for "{self._command}" command' if not description else description
         self._registered_flags: FlagsGroup | None = flags if isinstance(flags, FlagsGroup) else FlagsGroup([flags]) if isinstance(flags, Flag) else flags
 
         self._input_flags: FlagsGroup | None = None
@@ -29,11 +29,7 @@ class Command(Generic[T]):
 
 
     def get_description(self):
-        if not self._description:
-            description = f'description for "{self._command}" command'
-            return description
-        else:
-            return self._description
+        return self._description
 
 
     def get_registered_flags(self):

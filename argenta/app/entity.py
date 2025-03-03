@@ -130,14 +130,13 @@ class App:
 
 
     def set_description_message_pattern(self, pattern: str) -> None:
-        first_check = re.match(r'.*{commmand}.*', pattern)
+        first_check = re.match(r'.*{command}.*', pattern)
         second_check = re.match(r'.*{description}.*', pattern)
-        print(first_check)
-        print(second_check)
+
         if bool(first_check) and bool(second_check):
-            raise InvalidDescriptionMessagePatternException(pattern)
-        else:
             self._description_message_pattern: str = pattern
+        else:
+            raise InvalidDescriptionMessagePatternException(pattern)
 
 
     def set_invalid_input_flags_handler(self, handler: Callable[[str], None]) -> None:
