@@ -49,7 +49,6 @@ class Router:
     def input_command_handler(self, input_command: Command):
         input_command_name: str = input_command.get_string_entity()
         input_command_flags: FlagsGroup = input_command.get_input_flags()
-        input_command_flags_dict: dict = input_command_flags.unparse_to_dict()
         for command_entity in self._command_entities:
             if input_command_name.lower() == command_entity['command'].get_string_entity().lower():
                 if command_entity['command'].get_registered_flags():
@@ -59,7 +58,7 @@ class Router:
                             if not is_valid:
                                 self._not_valid_flag_handler(flag)
                                 return
-                        return command_entity['handler_func'](input_command_flags_dict)
+                        return command_entity['handler_func'](input_command_flags.unparse_to_dict())
                     else:
                         return command_entity['handler_func']({})
                 else:

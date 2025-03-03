@@ -93,9 +93,8 @@ class Command(Generic[T]):
                     current_flag_value = _
             if current_flag_name and current_flag_value:
                 flag_prefix_last_symbol_index = current_flag_name.rfind('-')
-                flag_prefix = current_flag_name[:flag_prefix_last_symbol_index]
-                flag_name = current_flag_name[flag_prefix_last_symbol_index:]
-
+                flag_prefix = current_flag_name[:flag_prefix_last_symbol_index+1]
+                flag_name = current_flag_name[flag_prefix_last_symbol_index+1:]
                 input_flag = Flag(flag_name=flag_name,
                                   flag_prefix=flag_prefix)
                 input_flag.set_value(current_flag_value)

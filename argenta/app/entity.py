@@ -23,7 +23,7 @@ class App:
                  invalid_input_flags_message: str = 'Invalid input flags',
                  exit_command: str = 'Q',
                  exit_command_description: str = 'Exit command',
-                 exit_command_title: str = 'System points:',
+                 system_points_title: str = 'System points:',
                  ignore_exit_command_register: bool = True,
                  ignore_command_register: bool = False,
                  line_separate: str = '',
@@ -34,7 +34,7 @@ class App:
         self.print_func = print_func
         self.exit_command = exit_command
         self.exit_command_description = exit_command_description
-        self.exit_command_title = exit_command_title
+        self.system_points_title = system_points_title
         self.ignore_exit_command_register = ignore_exit_command_register
         self.farewell_message = farewell_message
         self.initial_message = initial_message
@@ -163,6 +163,14 @@ class App:
             self._unknown_command_handler = handler
 
 
+    def set_empty_command_handler(self, handler: Callable[[str], None]) -> None:
+        args = getfullargspec(handler).args
+        if len(args) != 1:
+            raise IncorrectNumberOfHandlerArgsException()
+        else:
+            self._empty_input_command_handler = handler
+
+
     def include_router(self, router: Router) -> None:
         if not isinstance(router, Router):
             raise InvalidRouterInstanceException()
@@ -240,7 +248,7 @@ class App:
                 )
             self.print_func(self.command_group_description_separate)
 
-        self.print_func(self.exit_command_title)
+        self.print_func(self.system_points_title)
         self.print_func(self._description_message_pattern.format(
                 command=self.exit_command,
                 description=self.exit_command_description

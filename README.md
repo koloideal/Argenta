@@ -49,9 +49,12 @@ def handler():
 @router.command(Command(command="ssh", 
                         description='connect via ssh', 
                         flags=FlagsGroup(list_of_flags)))
-def handler_with_flags(args: FlagsGroup):
-  print(f'Command "{command}" undefined')
+def handler_with_flags(flags: dict):
+  for flag in flags:
+    print(f'Flag name: {flag['name']}\n
+          f'Flag value: {flag['value']}')
 ```
+
 ```python
 #main.py
 from argenta.app import App
@@ -88,7 +91,7 @@ App(prompt: str = 'Enter a command',
     farewell_message: str = '\nGoodBye\n',
     exit_command: str = 'Q',
     exit_command_description: str = 'Exit command',
-    exit_command_title: str = 'System points:',
+    system_points_title: str = 'System points:',
     ignore_exit_command_register: bool = True,
     ignore_command_register: bool = False,
     line_separate: str = '',
@@ -103,7 +106,7 @@ App(prompt: str = 'Enter a command',
 - `farewell_message` (`str`): Сообщение при выходе.
 - `exit_command` (`str`): Команда выхода (по умолчанию `'Q'`).
 - `exit_command_description` (`str`): Описание команды выхода.
-- `exit_command_title` (`str`): Заголовок перед списком команд выхода.
+- `system_points_title` (`str`): Заголовок перед списком системных команд.
 - `ignore_exit_command_register` (`bool`): Игнорировать регистр команды выхода.
 - `ignore_command_register` (`bool`): Игнорировать регистр всех команд.
 - `line_separate` (`str`): Разделительная строка между командами.
@@ -123,12 +126,9 @@ App(prompt: str = 'Enter a command',
 
 ---
 
-**App().**`include_router(router: Router, is_main: bool = False) -> None`  
+**App().**`include_router(router: Router) -> None`  
 
-*param* `router: Router` **::** регистрируемый роутер  
-
-*param* `is_main: bool` **::** будет ли являться регистрируемый роутер главным  
-*example* **::** `True` или `False` 
+*param* `router: Router` **::** регистрируемый роутер
 
 *method mean* **::** регистрирует роутер в приложении
 
@@ -137,7 +137,7 @@ App(prompt: str = 'Enter a command',
 **App().**`set_initial_message(message: str) -> None`  
 
 *param* `message: str` **::** устанавливаемое приветственное сообщение  
-*example* **::** `"Hello, I'm a cli example app"`
+*example* **::** `"Hello, I'm a example app"`
 
 *method mean* **::** устанавливает сообщение, которое будет отображено при запуске программы
 
@@ -157,30 +157,56 @@ App(prompt: str = 'Enter a command',
 *param* `pattern: str` **::** паттерн описания команды при её выводе в консоль  
 *example* **::** `"[{command}] *=*=* {description}"`
 
-*method mean* **::** устанавливает приветственное сообщение
+*method mean* **::** устанавливает паттерн описания команд, который будет использован
+при выводе в консоль
 
 ---
 
-**App().**`get_main_router() -> Router`  
+**App().**`set_repeated_input_flags_handler(handler: Callable[[str], None]) -> None`  
 
-*method mean* **::** возвращает `Router()`, который является главным в приложении
+*param* `handler: Callable[[str], None]` **::** функция или лямбда функция, которой будет передано управление при
+вводе юзером повторяющихся флагов
+*example* **::** `lambda raw_command: print_func(f'Repeated input flags: "{raw_command}"')`
+
+*method mean* **::** устанавливает функцию, которой будет передано управление при
+вводе юзером повторяющихся флагов
 
 ---
 
-**App().**`get_all_app_commands() -> list[str]`  
+**App().**`set_invalid_input_flags_handler(self, handler: Callable[[str], None]) -> None`  
 
-*method mean* **::** возвращает список команд всех зарегистрированных роутеров, сохраняя их регистр
+*param* `handler: Callable[[str], None]` **::** функция или лямбда функция, которой будет передано управление при
+вводе юзером команды с некорректным синтаксисом флагов
+*example* **::** `lambda raw_command: print_func(f'Incorrect flag syntax: "{raw_command}"')`
+
+*method mean* **::** устанавливает функцию, которой будет передано управление при
+вводе юзером команды с некорректным синтаксисом флагов
+
+---
+
+**App().**`set_unknown_command_handler(self, handler: Callable[[str], None]) -> None`  
+
+*param* `handler: Callable[[str], None]` **::** функция или лямбда функция, которой будет передано управление при
+вводе юзером неизвестной команды
+*example* **::** `lambda command: print_func(f"Unknown command: {command.get_string_entity()}")`
+
+*method mean* **::** устанавливает функцию, которой будет передано управление при
+вводе юзером неизвестной команды
+
+---
+
+**App().**`set_empty_command_handler(self, handler: Callable[[str], None]) -> None`  
+
+*param* `handler: Callable[[str], None]` **::** функция или лямбда функция, которой будет передано управление при
+вводе юзером пустой команды
+*example* **::** `lambda: print_func(f'Empty input command')`
+
+*method mean* **::** устанавливает функцию, которой будет передано управление при
+вводе юзером пустой команды
 
 ---
 
 #### Примечания  
-
--  Среди зарегистрированных в приложении роутеров должен быть один главный, является ли роутер главным
-определяется значением аргумента `is_main` равным `True`, в методе `App().include_router()`, который по умолчанию равен
-`False`, если в приложении зарегистрирован лишь один роутер, то он неявно устанавливается главным, если
-зарегистрировано больше одного роутера, то требуется явное указание главного. При регистрации более одного
-главного роутера вызывается исключение `OnlyOneMainRouterIsAllowedException`. При регистрации более одного
-роутера и отсутствии указания главного вызывается исключение `MissingMainRouterException`  
 
 - В устанавливаемом паттерне сообщения описания команды необходимы быть два ключевых слова: 
 `command` и `description`, каждое из которых должно быть заключено в фигурные скобки, после обработки
@@ -193,7 +219,6 @@ App(prompt: str = 'Enter a command',
 `RepeatedCommandInDifferentRoutersException`. Исключение вызывается только при наличии пересекающихся команд 
 у __<u>разных</u>__ роутеров
 
-- У главного обработчика должен быть зарегистрирован обработчик неизвестных команд:  
 ```python
 router = Router()
 
@@ -213,7 +238,7 @@ __<u>не</u>__ главного роутера будет вызвано иск
 - `InvalidRouterInstanceException` — Переданный объект в метод `App().include_router()` не является экземпляром класса `Router`.
 - `InvalidDescriptionMessagePatternException` — Неправильный формат паттерна описания команд.
 - `OnlyOneMainRouterIsAllowedException` — Регистрация более одного главного роутера.
-  - `MissingMainRouterException` — Отсутствует главный роутер.    
+- `MissingMainRouterException` — Отсутствует главный роутер.    
 - `MissingHandlerForUnknownCommandsException` — В основном роутере отсутствует обработчик неизвестных команд.
 - `HandlerForUnknownCommandsOnNonMainRouterException` — Обработчик неизвестных команд определён не у основного роутера.
 - `NoRegisteredRoutersException` — Отсутствуют зарегистрированные роутеры.
@@ -242,13 +267,10 @@ Router(title: str = 'Commands group title:',
 
 ---
 
-**`@`Router().**`command(command: str, description: str = None)`  
+**`@`Router().**`command(command: Command)`  
 
-*param* `command: str` **::** строковый триггер, который будет выполнять указанные действия  
-*example* **::** `U` / `update` / `ExaMPLE` 
-
-*param* `description: str` **::** описание команды, которое будет выведено в консоль  
-*example* **::** `description for update command` или `example description` 
+*param* `command: Command` **::** строковый триггер, который будет выполнять указанные действия  
+*example* **::** `U` / `update` / `ExaMPLE`
 
 *method mean* **::** декоратор регистрирует функцию как обработчик команды
 
