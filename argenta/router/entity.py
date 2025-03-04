@@ -4,7 +4,8 @@ from inspect import getfullargspec
 from ..command.entity import Command
 from ..command.params.flag.entity import Flag
 from ..command.params.flag.flags_group.entity import FlagsGroup
-from ..router.exceptions import (RepeatedCommandException, RepeatedFlagNameException,
+from ..router.exceptions import (RepeatedCommandException,
+                                 RepeatedFlagNameException,
                                  TooManyTransferredArgsException,
                                  RequiredArgumentNotPassedException,
                                  IncorrectNumberOfHandlerArgsException)
@@ -25,7 +26,6 @@ class Router:
 
 
     def command(self, command: Command) -> Callable[[Any],  Any]:
-        command.validate_commands_params()
         self._validate_command(command)
 
         def command_decorator(func):
@@ -47,10 +47,10 @@ class Router:
 
 
     def input_command_handler(self, input_command: Command):
-        input_command_name: str = input_command.get_string_entity()
+        input_command_name: str = input_command.get_trigger()
         input_command_flags: FlagsGroup = input_command.get_input_flags()
         for command_entity in self._command_entities:
-            if input_command_name.lower() == command_entity['command'].get_string_entity().lower():
+            if input_command_name.lower() == command_entity['command'].get_trigger().lower():
                 if command_entity['command'].get_registered_flags():
                     if input_command_flags:
                         for flag in input_command_flags:
@@ -70,7 +70,7 @@ class Router:
 
 
     def _validate_command(self, command: Command):
-        command_name: str = command.get_string_entity()
+        command_name: str = command.get_trigger()
         if command_name in self.get_all_commands():
             raise RepeatedCommandException()
         if self._ignore_command_register:
@@ -116,6 +116,6 @@ class Router:
     def get_all_commands(self) -> list[str]:
         all_commands: list[str] = []
         for command_entity in self._command_entities:
-            all_commands.append(command_entity['command'].get_string_entity())
+            all_commands.append(command_entity['command'].get_trigger())
 
         return all_commands

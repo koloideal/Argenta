@@ -7,7 +7,7 @@ import re
 class TestFlag(unittest.TestCase):
     def test_get_string_entity(self):
         self.assertEqual(Flag(flag_name='test').get_string_entity(),
-                         '-test')
+                         '--test')
 
     def test_get_string_entity2(self):
         self.assertEqual(Flag(flag_name='test',
@@ -20,7 +20,7 @@ class TestFlag(unittest.TestCase):
 
     def test_get_flag_prefix(self):
         self.assertEqual(Flag(flag_name='test').get_flag_prefix(),
-                         '-')
+                         '--')
 
     def test_get_flag_prefix2(self):
         self.assertEqual(Flag(flag_name='test',

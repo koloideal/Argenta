@@ -100,7 +100,7 @@ class App:
                     self.print_func(self.prompt)
                 continue
 
-            self._check_command_for_exit_command(input_command.get_string_entity())
+            self._check_command_for_exit_command(input_command.get_trigger())
 
             self.print_func(self.line_separate)
             is_unknown_command: bool = self._check_is_command_unknown(input_command)
@@ -227,11 +227,11 @@ class App:
         registered_router_entities: list[dict[str, str | list[dict[str, Callable[[], None] | Command]] | Router]] = self._registered_router_entities
         for router_entity in registered_router_entities:
             for command_entity in router_entity['commands']:
-                if command_entity['command'].get_string_entity().lower() == command.get_string_entity().lower():
+                if command_entity['command'].get_trigger().lower() == command.get_trigger().lower():
                     if self.ignore_command_register:
                         return False
                     else:
-                        if command_entity['command'].get_string_entity() == command.get_string_entity():
+                        if command_entity['command'].get_trigger() == command.get_trigger():
                             return False
         self._unknown_command_handler(command)
         return True
@@ -242,7 +242,7 @@ class App:
             self.print_func(router_entity['title'])
             for command_entity in router_entity['commands']:
                 self.print_func(self._description_message_pattern.format(
-                        command=command_entity['command'].get_string_entity(),
+                        command=command_entity['command'].get_trigger(),
                         description=command_entity['command'].get_description()
                     )
                 )

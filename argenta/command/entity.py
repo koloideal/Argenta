@@ -1,9 +1,6 @@
 from .params.flag.entity import Flag
 from .params.flag.flags_group.entity import FlagsGroup
-from .exceptions import (InvalidCommandInstanceException,
-                         InvalidDescriptionInstanceException,
-                         InvalidFlagsInstanceException,
-                         UnprocessedInputFlagException,
+from .exceptions import (UnprocessedInputFlagException,
                          RepeatedInputFlagsException,
                          EmptyInputCommandException)
 
@@ -14,35 +11,26 @@ T = TypeVar('T')
 
 
 class Command(Generic[T]):
-    def __init__(self, command: str,
+    def __init__(self, trigger: str,
                  description: str = None,
-                 flags: Flag | FlagsGroup | None = None):
-        self._command = command
-        self._description = f'description for "{self._command}" command' if not description else description
+                 flags: Flag | FlagsGroup = None):
+        self._trigger = trigger
+        self._description = f'description for "{self._trigger}" command' if not description else description
         self._registered_flags: FlagsGroup | None = flags if isinstance(flags, FlagsGroup) else FlagsGroup([flags]) if isinstance(flags, Flag) else flags
 
         self._input_flags: FlagsGroup | None = None
 
 
-    def get_string_entity(self):
-        return self._command
+    def get_trigger(self) -> str:
+        return self._trigger
 
 
-    def get_description(self):
+    def get_description(self) -> str:
         return self._description
 
 
-    def get_registered_flags(self):
+    def get_registered_flags(self) -> FlagsGroup | None:
         return self._registered_flags
-
-
-    def validate_commands_params(self):
-        if not isinstance(self._command, str):
-            raise InvalidCommandInstanceException(self._command)
-        if not isinstance(self._description, str):
-            raise InvalidDescriptionInstanceException()
-        if not any([(isinstance(self._registered_flags, FlagsGroup)), not self._registered_flags]):
-            raise InvalidFlagsInstanceException
 
 
     def validate_input_flag(self, flag: Flag):
@@ -62,7 +50,7 @@ class Command(Generic[T]):
         return False
 
 
-    def set_input_flags(self, input_flags: FlagsGroup):
+    def _set_input_flags(self, input_flags: FlagsGroup):
         self._input_flags = input_flags
 
     def get_input_flags(self) -> FlagsGroup:
@@ -110,10 +98,10 @@ class Command(Generic[T]):
         if any([current_flag_name, current_flag_value]):
             raise UnprocessedInputFlagException()
         if len(flags.get_flags()) == 0:
-            return Command(command=command)
+            return Command(trigger=command)
         else:
-            input_command = Command(command=command)
-            input_command.set_input_flags(flags)
+            input_command = Command(trigger=command)
+            input_command._set_input_flags(flags)
             return input_command
 
 

@@ -1,20 +1,24 @@
 import re
 from pprint import pprint
-
 from rich.console import Console
 
 from argenta.command.entity import Command
 from argenta.command.params.flag.entity import Flag
 from argenta.command.params.flag.flags_group.entity import FlagsGroup
 from argenta.router import Router
+from .handlers_implementation.help_command import help_command
 
 
 work_router: Router = Router(title='Work nts:')
+work_router.set_invalid_input_flag_handler(lambda flag: print(f'Invalid input flag: "{flag.get_string_entity()} {flag.get_value()}"'))
+
 settings_router: Router = Router(title='Settings points:')
+
 
 console = Console()
 
-flagi = FlagsGroup(flags=[
+
+flags = FlagsGroup(flags=[
     Flag(flag_name='host',
          flag_prefix='--',
          possible_flag_values=re.compile(r'^192.168.\d{1,3}.\d{1,3}$')),
@@ -23,33 +27,21 @@ flagi = FlagsGroup(flags=[
 ])
 
 
-@work_router.command(Command(command='0', description='Get Help'))
+@work_router.command(Command(trigger='0', description='Get Help'))
 def command_help():
-    print('Help command')
-    '''flags = args.get_flags()
-    for flag in flags:
-        print(f'name: "{flag.get_string_entity()}", value: "{flag.get_value()}"')'''
-    #help_command()
+    help_command()
 
 
-@work_router.command(Command(command='P', description='Start Solving', flags=flagi))
-def command_start_solving(argrrtrts: dict):
+@work_router.command(Command(trigger='P', description='Start Solving', flags=flags))
+def command_start_solving(args: dict):
     print('Solving...')
-    pprint(argrrtrts)
+    pprint(args)
     #start_solving_command()
 
 
-@settings_router.command(Command(command='G', description='Update WordMath'))
+@settings_router.command(Command(trigger='G', description='Update WordMath'))
 def command_update():
-    print('uefi')
-    # upgrade_command()
-
-
-def invalid_input_flag(flag: Flag):
-    print(f'Invalid inpuuuuuuuuuuuuuuuuuuuuuuuut flag: "{flag.get_string_entity()} {flag.get_value()}"')
-
-
-work_router.set_invalid_input_flag_handler(invalid_input_flag)
+    print('Command update')
 
 
 

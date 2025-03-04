@@ -3,7 +3,7 @@ from typing import Literal, Pattern
 
 class Flag:
     def __init__(self, flag_name: str,
-                 flag_prefix: Literal['-', '--', '---'] = '-',
+                 flag_prefix: Literal['-', '--', '---'] = '--',
                  ignore_flag_value_register: bool = False,
                  possible_flag_values: list[str] | Pattern[str] = False):
         self._flag_name = flag_name

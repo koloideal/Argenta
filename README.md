@@ -20,43 +20,22 @@ poetry add argenta
 
 # Быстрый старт
 
+Пример простейшей оболочки с командой без флагов
 ```python
 # routers.py
-import re
 from argenta.router import Router
 from argenta.command import Command
-from argenta.command.params.flag import FlagsGroup, Flag
 
 
 router = Router()
 
-
-list_of_flags = [
-  Flag(flag_name='host',
-       flag_prefix='--',
-       possible_flag_values=re.compile(r'^192.168.\d{1,3}.\d{1,3}$')),
-  Flag(flag_name='port',
-       flag_prefix='---',
-       possible_flag_values=re.compile(r'^[0-9]{1,4}$'))
-]
-
-
 @router.command(Command("hello"))
 def handler():
   print("Hello, world!")
-
-
-@router.command(Command(command="ssh", 
-                        description='connect via ssh', 
-                        flags=FlagsGroup(list_of_flags)))
-def handler_with_flags(flags: dict):
-  for flag in flags:
-    print(f'Flag name: {flag['name']}\n
-          f'Flag value: {flag['value']}')
 ```
 
 ```python
-#main.py
+# main.py
 from argenta.app import App
 from routers import router
 
@@ -70,21 +49,51 @@ def main() -> None:
 if __name__ == '__main__':
     main()
 ```
+Пример оболочки с командой, у которой зарегистрированы флаги
+
+```python
+# routers.py
+import re
+from argenta.router import Router
+from argenta.command import Command
+from argenta.command.params.flag import FlagsGroup, Flag
+
+router = Router()
+
+list_of_flags = [
+    Flag(flag_name='host',
+         flag_prefix='--',
+         possible_flag_values=re.compile(r'^192.168.\d{1,3}.\d{1,3}$')),
+    Flag(flag_name='port',
+         flag_prefix='---',
+         possible_flag_values=re.compile(r'^[0-9]{1,4}$'))
+]
+
+
+@router.command(Command("hello"))
+def handler():
+    print("Hello, world!")
+
+
+@router.command(Command(trigger="ssh",
+                        description='connect via ssh',
+                        flags=FlagsGroup(list_of_flags)))
+def handler_with_flags(flags: dict):
+    for flag in flags:
+        print(f'Flag name: {flag['name']}\n
+              f'Flag value: {flag['value']}')
+```
 
 ---
 
-# Техническая документация
+# *classes* :
 
 ---
 
-## declared *classes* :
+##  *class* :: `App` 
+Класс, определяющий поведение и состояние оболочки
 
----
-
-###  *class* :: `App` 
-Класс, определяющий поведение и состояние приложения
-
-#### Конструктор
+### Конструктор
 ```python
 App(prompt: str = 'Enter a command',
     initial_greeting: str = '\nHello, I am Argenta\n',
@@ -116,7 +125,7 @@ App(prompt: str = 'Enter a command',
 
 ---
 
-#### **declared *methods***     
+### ***methods***     
 
 ---
 
@@ -206,7 +215,7 @@ App(prompt: str = 'Enter a command',
 
 ---
 
-#### Примечания  
+### Примечания  
 
 - В устанавливаемом паттерне сообщения описания команды необходимы быть два ключевых слова: 
 `command` и `description`, каждое из которых должно быть заключено в фигурные скобки, после обработки
@@ -222,7 +231,7 @@ App(prompt: str = 'Enter a command',
 
 
 
-#### Исключения
+### Исключения
 
 - `InvalidRouterInstanceException` — Переданный объект в метод `App().include_router()` не является экземпляром класса `Router`.
 - `InvalidDescriptionMessagePatternException` — Неправильный формат паттерна описания команд.
@@ -233,23 +242,25 @@ App(prompt: str = 'Enter a command',
 
 ---
 
-###  *class* :: `Router` 
+##  *class* :: `Router` 
 Класс, который определяет и конфигурирует обработчики команд
 
-#### Конструктор
+### Конструктор
 ```python
 Router(title: str = 'Commands group title:',
        name: str = 'subordinate')
 ```
+
+
 
 **Аргументы:**
 - **name : mean**
 - `title` (`str`): Заголовок группы команд.
 - `name` (`str`): Персональное название роутера
 
+---
 
-
-#### **declared *methods***     
+### ***methods***     
 
 ---
 
@@ -281,10 +292,133 @@ Router(title: str = 'Commands group title:',
 
 ---
 
-#### Исключения 
-- `InvalidDescriptionInstanceException` - Переданный объект для регистрации описания команды не является строкой
+### Исключения
 - `RepeatedCommandException` - Одна и та же команда зарегистрирована в одном роутере
 - `RepeatedFlagNameException` - Повторяющиеся зарегистрированные флаги в команде
 - `TooManyTransferredArgsException` - Слишком много зарегистрированных аргументов у обработчика команды
 - `RequiredArgumentNotPassedException` - Не зарегистрирован обязательный аргумент у обработчика команды(аргумент, через который будут переданы флаги введённой команды)
 - `IncorrectNumberOfHandlerArgsException` - У обработчика нестандартного поведения зарегистрировано неверное количество аргументов(в большинстве случаев у него должен быть один аргумент)
+
+---
+
+##  *class* :: `Command` 
+Класс, экземпляр которого определяет строковый триггер хэндлера и конфигурирует его атрибуты
+
+### Конструктор
+```python
+Command(trigger: str,
+        description: str = None,
+        flags: Flag | FlagsGroup = None)
+```
+
+**Аргументы:**
+- **name : mean**
+- `trigger` (`str`): Строковый триггер
+- `description` (`str`): Описание команды, которое будет выведено в консоль при запуске оболочки
+- `flags` (`Flag | FlagsGroup`): Флаги, которые будут обработаны при их наличии во вводе юзера
+
+---
+
+**Command().**`get_trigger() -> str`  
+
+*method mean* **::** возвращает строковый триггер экземпляра
+
+---
+
+**Command().**`get_description() -> str`  
+
+*method mean* **::** возвращает описание команды
+
+---
+
+**Command().**`get_registered_flags() -> FlagsGroup | None`  
+
+*method mean* **::** возвращает зарегистрированные флаги экземпляра
+
+---
+
+### Исключения 
+- `UnprocessedInputFlagException` - Некорректный синтаксис ввода команды
+- `RepeatedInputFlagsException` - Повторяющиеся флаги во введённой команде
+- `EmptyInputCommandException` - Введённая команда является пустой(не содержит символов)  
+
+**Примечание**
+Все вышеуказанные исключения класса `Command` вызываются в рантайме запущенным экземпляром класса
+`App`, а также по дефолту обрабатываются, при желании можно задать пользовательские
+обработчики для этих исключений ([подробнее см.](#methods-))
+
+---
+
+##  *class* :: `Flag` 
+Класс, экземпляры которого в большинстве случаев должны передаваться при создании
+экземпляра класса `Command` для регистрации допустимого флага при вводе юзером команды
+
+### Конструктор
+```python
+Flag(flag_name: str,
+     flag_prefix: Literal['-', '--', '---'] = '-',
+     ignore_flag_value_register: bool = False,
+     possible_flag_values: list[str] | Pattern[str] = False)
+```
+
+---
+
+**Аргументы:**
+- **name : mean**
+- `flag_name` (`str`): Имя флага
+- `flag_prefix` (`Literal['-', '--', '---']`): Префикс команды, допустимым значением является от одного до трёх минусов
+- `ignore_flag_value_register` (`bool`): Будет ли игнорироваться регистр значения введённого флага 
+- `possible_flag_values` (`list[str] | Pattern[str]`): Множество допустимых значений флага, может быть задано 
+списком с допустимыми значениями или регулярным выражением (рекомендуется `re.compile(r'example exspression')`)
+
+---
+
+### ***methods***     
+
+---
+
+**Flag().**`get_sring_entity() -> str`  
+
+*method mean* **::** возвращает строковое представление флага(префикс + имя)
+
+---
+
+**Flag().**`get_flag_name() -> str`  
+
+*method mean* **::** возвращает имя флага
+
+---
+
+**Flag().**`get_flag_prefix() -> str`  
+
+*method mean* **::** возвращает префикс флага
+
+---
+
+##  *class* :: `FlagsGroup` 
+Класс, объединяющий список флагов в один объект, используется в качестве 
+передаваемого аргумента `flags` экземпляру класса `Command`, при регистрации
+хэндлера
+
+### Конструктор
+```python
+FlagsGroup(flags: list[Flag] = None)
+```
+
+---
+
+**Аргументы:**
+- **name : mean**
+- `flags` (`list[Flag]`): Список флагов, которые будут объединены в одну группу
+
+---
+
+### ***methods***     
+
+---
+
+**FlagsGroup().**`get_flags() -> list[Flag]`  
+
+*method mean* **::** возвращает зарегистрированные флаги
+
+---

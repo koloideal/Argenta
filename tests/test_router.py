@@ -15,71 +15,71 @@ class TestRouter(unittest.TestCase):
 
     def test_input_correct_command(self):
         router = Router()
-        @router.command(Command(command='test'))
+        @router.command(Command(trigger='test'))
         def test():
             return 'correct result'
 
-        self.assertEqual(router.input_command_handler(Command(command='test')), 'correct result')
+        self.assertEqual(router.input_command_handler(Command(trigger='test')), 'correct result')
 
     def test_input_command_with_invalid_flag(self):
         router = Router()
         router.set_invalid_input_flag_handler(lambda x: x)
 
-        @router.command(Command(command='test'))
+        @router.command(Command(trigger='test'))
         def test():
             return 'correct result'
 
-        input_command = Command(command='test')
-        input_command.set_input_flags(FlagsGroup([Flag('host')]))
+        input_command = Command(trigger='test')
+        input_command._set_input_flags(FlagsGroup([Flag('host')]))
 
         self.assertEqual(router.input_command_handler(input_command), None)
 
     def test_input_correct_command_with_one_register_and_ignore_command_register(self):
         router = Router()
         router.set_ignore_command_register(True)
-        @router.command(Command(command='test'))
+        @router.command(Command(trigger='test'))
         def test():
             return 'correct result'
 
-        self.assertEqual(router.input_command_handler(Command(command='test')), 'correct result')
+        self.assertEqual(router.input_command_handler(Command(trigger='test')), 'correct result')
 
     def test_input_correct_command_with_different_register_and_ignore_command_register(self):
         router = Router()
         router.set_ignore_command_register(True)
-        @router.command(Command(command='test'))
+        @router.command(Command(trigger='test'))
         def test():
             return 'correct result'
 
-        self.assertEqual(router.input_command_handler(Command(command='TeSt')), 'correct result')
+        self.assertEqual(router.input_command_handler(Command(trigger='TeSt')), 'correct result')
 
     def test_input_incorrect_command_with_ignore_command_register(self):
         router = Router()
         router.set_ignore_command_register(True)
-        @router.command(Command(command='test'))
+        @router.command(Command(trigger='test'))
         def test():
             return 'correct result'
 
-        self.assertEqual(router.input_command_handler(Command(command='Test2')), None)
+        self.assertEqual(router.input_command_handler(Command(trigger='Test2')), None)
 
     def test_register_repeated_commands_with_one_register(self):
         router = Router()
-        @router.command(Command(command='test'))
+        @router.command(Command(trigger='test'))
         def test():
             return 'correct result'
 
         with self.assertRaises(RepeatedCommandException):
-            @router.command(Command(command='test'))
+            @router.command(Command(trigger='test'))
             def test():
                 return 'correct result'
 
     def test_register_commands_with_different_register(self):
         router = Router()
-        @router.command(Command(command='test'))
+        @router.command(Command(trigger='test'))
         def test():
             return 'correct result'
 
         try:
-            @router.command(Command(command='Test'))
+            @router.command(Command(trigger='Test'))
             def test():
                 return 'correct result'
         except RepeatedCommandException:
@@ -88,24 +88,24 @@ class TestRouter(unittest.TestCase):
     def test_register_repeated_commands_with_one_register_and_set_ignore_command_register(self):
         router = Router()
         router.set_ignore_command_register(True)
-        @router.command(Command(command='test'))
+        @router.command(Command(trigger='test'))
         def test():
             return 'correct result'
 
         with self.assertRaises(RepeatedCommandException):
-            @router.command(Command(command='test'))
+            @router.command(Command(trigger='test'))
             def test():
                 return 'correct result'
 
     def test_register_repeated_commands_with_different_register_and_set_ignore_command_register(self):
         router = Router()
         router.set_ignore_command_register(True)
-        @router.command(Command(command='test'))
+        @router.command(Command(trigger='test'))
         def test():
             return 'correct result'
 
         with self.assertRaises(RepeatedCommandException):
-            @router.command(Command(command='Test'))
+            @router.command(Command(trigger='Test'))
             def test():
                 return 'correct result'
 

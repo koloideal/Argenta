@@ -5,7 +5,7 @@ class FlagsGroup:
     def __init__(self, flags: list[Flag] = None):
         self._flags: list[Flag] = [] if not flags else flags
 
-    def get_flags(self):
+    def get_flags(self) -> list[Flag]:
         return self._flags
 
     def add_flag(self, flag: Flag):
