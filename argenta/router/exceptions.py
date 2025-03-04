@@ -23,11 +23,6 @@ class RequiredArgumentNotPassedException(Exception):
         return "Required argument not passed"
 
 
-class NotValidInputFlagHandlerHasBeenAlreadyCreatedException(Exception):
-    def __str__(self):
-        return "Invalid Input Flag Handler has already been created"
-
-
 class IncorrectNumberOfHandlerArgsException(Exception):
     def __str__(self):
-        return "Incorrect Input Flags Handler has incorrect number of arguments"
+        return "Handler has incorrect number of arguments"

@@ -219,17 +219,6 @@ App(prompt: str = 'Enter a command',
 `RepeatedCommandInDifferentRoutersException`. Исключение вызывается только при наличии пересекающихся команд 
 у __<u>разных</u>__ роутеров
 
-```python
-router = Router()
-
-@router.unknown_command
-def unknown_command(command):
-    print(f'Command "{command}" undefined')
-```
-При отсутствии обработчика неизвестных команд у главного роутера будет вызвано исключение
-`MissingHandlerForUnknownCommandsException`. При регистрации обработчика неизвестных команд у
-__<u>не</u>__ главного роутера будет вызвано исключение `HandlerForUnknownCommandsOnNonMainRouterException`
-
 
 
 
@@ -237,10 +226,7 @@ __<u>не</u>__ главного роутера будет вызвано иск
 
 - `InvalidRouterInstanceException` — Переданный объект в метод `App().include_router()` не является экземпляром класса `Router`.
 - `InvalidDescriptionMessagePatternException` — Неправильный формат паттерна описания команд.
-- `OnlyOneMainRouterIsAllowedException` — Регистрация более одного главного роутера.
-- `MissingMainRouterException` — Отсутствует главный роутер.    
-- `MissingHandlerForUnknownCommandsException` — В основном роутере отсутствует обработчик неизвестных команд.
-- `HandlerForUnknownCommandsOnNonMainRouterException` — Обработчик неизвестных команд определён не у основного роутера.
+- `IncorrectNumberOfHandlerArgsException` — У обработчика нестандартного поведения зарегистрировано неверное количество аргументов(в большинстве случаев у него должен быть один аргумент).
 - `NoRegisteredRoutersException` — Отсутствуют зарегистрированные роутеры.
 - `NoRegisteredHandlersException` — У роутера нет ни одного обработчика команд.
 - `RepeatedCommandInDifferentRoutersException` — Одна и та же команда зарегистрирована в разных роутерах.
@@ -269,16 +255,11 @@ Router(title: str = 'Commands group title:',
 
 **`@`Router().**`command(command: Command)`  
 
-*param* `command: Command` **::** строковый триггер, который будет выполнять указанные действия  
-*example* **::** `U` / `update` / `ExaMPLE`
+*param* `command: Command` **::** экземпляр класса `Command`, который определяет строковый триггер команды,
+допустимые флаги команды и другое
+*example* **::** `Command(command='ssh', description='connect via ssh')`
 
-*method mean* **::** декоратор регистрирует функцию как обработчик команды
-
----
-
-**`@`Router().**`unknown_command`   
-
-*method mean* **::** декоратор регистрирует функцию как обработчик неизвестных команд
+*method mean* **::** декоратор, который регистрирует функцию как обработчик команды
 
 ---
 
@@ -294,12 +275,6 @@ Router(title: str = 'Commands group title:',
 
 ---
 
-**Router().**`get_router_info() -> dict`  
-
-*method mean* **::** возвращает информацию о роутере
-
----
-
 **Router().**`get_all_commands() -> list[str]`  
 
 *method mean* **::** возвращает все зарегистрированные команды для данного роутера
@@ -307,7 +282,9 @@ Router(title: str = 'Commands group title:',
 ---
 
 #### Исключения 
-- `InvalidCommandInstanceException` - Переданный объект для регистрации команды не является строкой
 - `InvalidDescriptionInstanceException` - Переданный объект для регистрации описания команды не является строкой
-- `UnknownCommandHandlerHasAlreadyBeenCreatedException` - Обработчик неизвестных команд уже создан
 - `RepeatedCommandException` - Одна и та же команда зарегистрирована в одном роутере
+- `RepeatedFlagNameException` - Повторяющиеся зарегистрированные флаги в команде
+- `TooManyTransferredArgsException` - Слишком много зарегистрированных аргументов у обработчика команды
+- `RequiredArgumentNotPassedException` - Не зарегистрирован обязательный аргумент у обработчика команды(аргумент, через который будут переданы флаги введённой команды)
+- `IncorrectNumberOfHandlerArgsException` - У обработчика нестандартного поведения зарегистрировано неверное количество аргументов(в большинстве случаев у него должен быть один аргумент)

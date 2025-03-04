@@ -15,8 +15,8 @@ class Router:
                  title: str = 'Commands group title:',
                  name: str = 'subordinate'):
 
-        self.title = title
-        self.name = name
+        self._title = title
+        self._name = name
 
         self._command_entities: list[dict[str, Callable[[], None] | Command]] = []
         self._ignore_command_register: bool = False
@@ -106,11 +106,11 @@ class Router:
 
 
     def get_name(self) -> str:
-        return self.name
+        return self._name
 
 
     def get_title(self) -> str:
-        return self.title
+        return self._title
 
 
     def get_all_commands(self) -> list[str]:
