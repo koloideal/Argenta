@@ -422,3 +422,15 @@ FlagsGroup(flags: list[Flag] = None)
 *method mean* **::** возвращает зарегистрированные флаги
 
 ---
+
+# Тесты
+
+Запуск тестов:
+
+```bash
+python -m unittest discover
+```
+or
+```bash
+python -m unittest discover -v
+```
