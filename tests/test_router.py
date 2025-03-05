@@ -1,7 +1,7 @@
 from argenta.command.params.flag import FlagsGroup, Flag
 from argenta.router import Router
 from argenta.command import Command
-from argenta.router.exceptions import RepeatedCommandException
+from argenta.router.exceptions import RepeatedCommandException, TriggerCannotContainSpacesException
 
 import unittest
 
@@ -106,6 +106,13 @@ class TestRouter(unittest.TestCase):
 
         with self.assertRaises(RepeatedCommandException):
             @router.command(Command(trigger='Test'))
+            def test():
+                return 'correct result'
+
+    def test_register_command_with_spaces_in_trigger(self):
+        router = Router()
+        with self.assertRaises(TriggerCannotContainSpacesException):
+            @router.command(Command(trigger='command with spaces'))
             def test():
                 return 'correct result'
 

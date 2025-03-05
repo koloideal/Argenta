@@ -8,7 +8,8 @@ from ..router.exceptions import (RepeatedCommandException,
                                  RepeatedFlagNameException,
                                  TooManyTransferredArgsException,
                                  RequiredArgumentNotPassedException,
-                                 IncorrectNumberOfHandlerArgsException)
+                                 IncorrectNumberOfHandlerArgsException,
+                                 TriggerCannotContainSpacesException)
 
 
 class Router:
@@ -71,6 +72,8 @@ class Router:
 
     def _validate_command(self, command: Command):
         command_name: str = command.get_trigger()
+        if command_name.find(' ') != -1:
+            raise TriggerCannotContainSpacesException()
         if command_name in self.get_all_commands():
             raise RepeatedCommandException()
         if self._ignore_command_register:

@@ -21,3 +21,8 @@ class RequiredArgumentNotPassedException(Exception):
 class IncorrectNumberOfHandlerArgsException(Exception):
     def __str__(self):
         return "Handler has incorrect number of arguments"
+
+
+class TriggerCannotContainSpacesException(Exception):
+    def __str__(self):
+        return "Command trigger cannot contain spaces"

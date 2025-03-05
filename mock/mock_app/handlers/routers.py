@@ -32,7 +32,7 @@ def command_help():
     help_command()
 
 
-@work_router.command(Command(trigger='P', description='Start Solving', flags=flags))
+@work_router.command(Command(trigger='--gbP', description='Start Solving', flags=flags))
 def command_start_solving(args: dict):
     print('Solving...')
     pprint(args)

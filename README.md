@@ -305,6 +305,7 @@ Router(title: str = 'Commands group title:',
 - `TooManyTransferredArgsException` - Слишком много зарегистрированных аргументов у обработчика команды
 - `RequiredArgumentNotPassedException` - Не зарегистрирован обязательный аргумент у обработчика команды(аргумент, через который будут переданы флаги введённой команды)
 - `IncorrectNumberOfHandlerArgsException` - У обработчика нестандартного поведения зарегистрировано неверное количество аргументов(в большинстве случаев у него должен быть один аргумент)
+- `TriggerCannotContainSpacesException` - У регистрируемой команды в триггере содержатся пробелы
 
 ---
 
@@ -363,9 +364,9 @@ Command(trigger: str,
 ### Конструктор
 ```python
 Flag(flag_name: str,
-     flag_prefix: Literal['-', '--', '---'] = '-',
+     flag_prefix: typing.Literal['-', '--', '---'] = '-',
      ignore_flag_value_register: bool = False,
-     possible_flag_values: list[str] | Pattern[str] = False)
+     possible_flag_values: list[str] | typing.Pattern[str] = False)
 ```
 
 ---
