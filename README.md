@@ -20,7 +20,7 @@ poetry add argenta
 
 # Быстрый старт
 
-Пример простейшей оболочки с командой без флагов
+Пример простейшей оболочки с командой без зарегистрированных флагов
 ```python
 # routers.py
 from argenta.router import Router
@@ -60,14 +60,12 @@ from argenta.command.params.flag import FlagsGroup, Flag
 
 router = Router()
 
-list_of_flags = [
+registered_flags = FlagsGroup([
     Flag(flag_name='host',
          flag_prefix='--',
          possible_flag_values=re.compile(r'^192.168.\d{1,3}.\d{1,3}$')),
-    Flag(flag_name='port',
-         flag_prefix='---',
-         possible_flag_values=re.compile(r'^[0-9]{1,4}$'))
-]
+    Flag('port', '---', re.compile(r'^[0-9]{1,4}$'))
+])
 
 
 @router.command(Command("hello"))
@@ -77,10 +75,10 @@ def handler():
 
 @router.command(Command(trigger="ssh",
                         description='connect via ssh',
-                        flags=FlagsGroup(list_of_flags)))
+                        flags=registered_flags))
 def handler_with_flags(flags: dict):
     for flag in flags:
-        print(f'Flag name: {flag['name']}\n
+        print(f'Flag name: {flag['name']}\n'
               f'Flag value: {flag['value']}')
 ```
 
@@ -90,7 +88,7 @@ def handler_with_flags(flags: dict):
 
 ---
 
-##  *class* :: `App` 
+##  *class* : : `App` 
 Класс, определяющий поведение и состояние оболочки
 
 ### Конструктор
@@ -129,41 +127,45 @@ App(prompt: str = 'Enter a command',
 
 ---
 
-**App().**`start_polling() -> None`  
+#### **.start_polling() -> `None`**  
 
-*method mean* **::** запускает жизненный цикл приложения
-
----
-
-**App().**`include_router(router: Router) -> None`  
-
-*param* `router: Router` **::** регистрируемый роутер
-
-*method mean* **::** регистрирует роутер в приложении
+*method mean* **::** запускает цикл обработки ввода
 
 ---
 
-**App().**`set_initial_message(message: str) -> None`  
+#### **.include_router(router: Router) -> `None`**  
+
+*param* `router: Router` **::** регистрируемый роутер  
+*required* **::** True
+
+*method mean* **::** регистрирует роутер в оболочке
+
+---
+
+#### **.set_initial_message(message: str) -> `None`**  
 
 *param* `message: str` **::** устанавливаемое приветственное сообщение  
+*required* **::** True  
 *example* **::** `"Hello, I'm a example app"`
 
 *method mean* **::** устанавливает сообщение, которое будет отображено при запуске программы
 
 ---
 
-**App().**`set_farewell_message(message: str) -> None`  
+#### **.set_farewell_message(message: str) -> `None`**  
 
 *param* `message: str` **::** устанавливаемое сообщение при выходе  
+*required* **::** True  
 *example* **::** `"GoodBye !"`
 
 *method mean* **::** устанавливает сообщение, которое будет отображено при выходе
 
 ---
 
-**App().**`set_description_message_pattern(pattern: str) -> None`  
+#### **.set_description_message_pattern(pattern: str) -> `None`**  
 
 *param* `pattern: str` **::** паттерн описания команды при её выводе в консоль  
+*required* **::** True  
 *example* **::** `"[{command}] *=*=* {description}"`
 
 *method mean* **::** устанавливает паттерн описания команд, который будет использован
@@ -171,10 +173,11 @@ App(prompt: str = 'Enter a command',
 
 ---
 <a name="custom_handler"></a>
-**App().**`set_repeated_input_flags_handler(handler: Callable[[str], None]) -> None`  
+#### **.set_repeated_input_flags_handler(handler: Callable[[str], None]) -> `None`**  
 
 *param* `handler: Callable[[str], None]` **::** функция или лямбда функция, которой будет передано управление при
-вводе юзером повторяющихся флагов
+вводе юзером повторяющихся флагов  
+*required* **::** True  
 *example* **::** `lambda raw_command: print_func(f'Repeated input flags: "{raw_command}"')`
 
 *method mean* **::** устанавливает функцию, которой будет передано управление при
@@ -182,10 +185,11 @@ App(prompt: str = 'Enter a command',
 
 ---
 
-**App().**`set_invalid_input_flags_handler(self, handler: Callable[[str], None]) -> None`  
+#### **.set_invalid_input_flags_handler(self, handler: Callable[[str], None]) -> `None`**  
 
 *param* `handler: Callable[[str], None]` **::** функция или лямбда функция, которой будет передано управление при
 вводе юзером команды с некорректным синтаксисом флагов
+*required* **::** True  
 *example* **::** `lambda raw_command: print_func(f'Incorrect flag syntax: "{raw_command}"')`
 
 *method mean* **::** устанавливает функцию, которой будет передано управление при
@@ -193,10 +197,11 @@ App(prompt: str = 'Enter a command',
 
 ---
 
-**App().**`set_unknown_command_handler(self, handler: Callable[[str], None]) -> None`  
+#### **.set_unknown_command_handler(self, handler: Callable[[str], None]) -> `None`**  
 
 *param* `handler: Callable[[str], None]` **::** функция или лямбда функция, которой будет передано управление при
 вводе юзером неизвестной команды
+*required* **::** True  
 *example* **::** `lambda command: print_func(f"Unknown command: {command.get_string_entity()}")`
 
 *method mean* **::** устанавливает функцию, которой будет передано управление при
@@ -204,10 +209,11 @@ App(prompt: str = 'Enter a command',
 
 ---
 
-**App().**`set_empty_command_handler(self, handler: Callable[[str], None]) -> None`  
+#### **.set_empty_command_handler(self, handler: Callable[[str], None]) -> `None`**  
 
 *param* `handler: Callable[[str], None]` **::** функция или лямбда функция, которой будет передано управление при
-вводе юзером пустой команды
+вводе юзером пустой команды  
+*required* **::** True  
 *example* **::** `lambda: print_func(f'Empty input command')`
 
 *method mean* **::** устанавливает функцию, которой будет передано управление при
@@ -219,10 +225,10 @@ App(prompt: str = 'Enter a command',
 
 - В устанавливаемом паттерне сообщения описания команды необходимы быть два ключевых слова: 
 `command` и `description`, каждое из которых должно быть заключено в фигурные скобки, после обработки
-паттерна на места этих ключевых слов будут подставлены соответствующие значения команды, при отсутствии
+паттерна на места этих ключевых слов будут подставлены соответствующие атрибуты команды, при отсутствии
 этих двух ключевых слов будет вызвано исключение `InvalidDescriptionMessagePatternException`
 
-- Команды приложения не должны повторяться, при значении атрибута `ignore_command_register` равным `True`
+- Команды оболочки не должны повторяться, при значении атрибута `ignore_command_register` равным `True`
 допускается создание обработчиков для разных регистров одинаковых символов в команде, для примера `u` и `U`,
 при значении атрибута `ignore_command_register` класса `App` равным `False` тот же пример вызывает исключение 
 `RepeatedCommandInDifferentRoutersException`. Исключение вызывается только при наличии пересекающихся команд 
@@ -248,7 +254,7 @@ App(prompt: str = 'Enter a command',
 ### Конструктор
 ```python
 Router(title: str = 'Commands group title:',
-       name: str = 'subordinate')
+       name: str = 'Default')
 ```
 
 
@@ -264,29 +270,30 @@ Router(title: str = 'Commands group title:',
 
 ---
 
-**`@`Router().**`command(command: Command)`  
+#### **command(command: Command)**  
 
 *param* `command: Command` **::** экземпляр класса `Command`, который определяет строковый триггер команды,
-допустимые флаги команды и другое
+допустимые флаги команды и другое  
+*required* **::** True  
 *example* **::** `Command(command='ssh', description='connect via ssh')`
 
 *method mean* **::** декоратор, который регистрирует функцию как обработчик команды
 
 ---
 
-**Router().**`get_name() -> str`  
+#### **.get_name() -> `str`**  
 
 *method mean* **::** возвращает установленное название роутера
 
 ---
 
-**Router().**`get_title() -> str`  
+#### **.get_title() -> `str`**  
 
 *method mean* **::** возвращает установленный заголовок группы команд данного роутера
 
 ---
 
-**Router().**`get_all_commands() -> list[str]`  
+#### **.get_all_commands() -> `list[str]`**  
 
 *method mean* **::** возвращает все зарегистрированные команды для данного роутера
 
@@ -319,19 +326,19 @@ Command(trigger: str,
 
 ---
 
-**Command().**`get_trigger() -> str`  
+#### **.get_trigger() -> `str`**  
 
 *method mean* **::** возвращает строковый триггер экземпляра
 
 ---
 
-**Command().**`get_description() -> str`  
+#### **.get_description() -> `str`**  
 
 *method mean* **::** возвращает описание команды
 
 ---
 
-**Command().**`get_registered_flags() -> FlagsGroup | None`  
+#### **.get_registered_flags() -> `FlagsGroup | None`**  
 
 *method mean* **::** возвращает зарегистрированные флаги экземпляра
 
@@ -350,7 +357,7 @@ Command(trigger: str,
 ---
 
 ##  *class* :: `Flag` 
-Класс, экземпляры которого в большинстве случаев должны передаваться при создании
+Класс, экземпляры которого в большинстве случаев передаются при создании
 экземпляра класса `Command` для регистрации допустимого флага при вводе юзером команды
 
 ### Конструктор
@@ -377,19 +384,19 @@ Flag(flag_name: str,
 
 ---
 
-**Flag().**`get_sring_entity() -> str`  
+#### **.get_string_entity() -> `str`**  
 
 *method mean* **::** возвращает строковое представление флага(префикс + имя)
 
 ---
 
-**Flag().**`get_flag_name() -> str`  
+#### **.get_flag_name() -> `str`**  
 
 *method mean* **::** возвращает имя флага
 
 ---
 
-**Flag().**`get_flag_prefix() -> str`  
+#### **.get_flag_prefix() -> `str`**  
 
 *method mean* **::** возвращает префикс флага
 
@@ -417,7 +424,7 @@ FlagsGroup(flags: list[Flag] = None)
 
 ---
 
-**FlagsGroup().**`get_flags() -> list[Flag]`  
+#### **.get_flags() -> `list[Flag]`**  
 
 *method mean* **::** возвращает зарегистрированные флаги
 

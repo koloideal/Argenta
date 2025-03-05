@@ -14,7 +14,7 @@ from ..router.exceptions import (RepeatedCommandException,
 class Router:
     def __init__(self,
                  title: str = 'Commands group title:',
-                 name: str = 'subordinate'):
+                 name: str = 'Default'):
 
         self._title = title
         self._name = name
