@@ -1,4 +1,4 @@
-from .params.flag.entity import Flag
+from argenta.command.flag.entity import Flag
 
 
 class UnprocessedInputFlagException(Exception):

@@ -10,10 +10,6 @@ class TestCommand(unittest.TestCase):
     def test_parse_correct_raw_command(self):
         self.assertEqual(Command.parse_input_command('ssh --host 192.168.0.3').get_trigger(), 'ssh')
 
-    def test_parse_raw_command_with_flag_name_without_value(self):
-        with self.assertRaises(UnprocessedInputFlagException):
-            Command.parse_input_command('ssh --host')
-
     def test_parse_raw_command_without_flag_name_with_value(self):
         with self.assertRaises(UnprocessedInputFlagException):
             Command.parse_input_command('ssh 192.168.0.3')

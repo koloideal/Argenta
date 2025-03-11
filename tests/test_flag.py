@@ -1,4 +1,4 @@
-from argenta.command.params.flag import Flag
+from argenta.command.flag import Flag
 
 import unittest
 import re
@@ -51,6 +51,22 @@ class TestFlag(unittest.TestCase):
     def test_validate_correct_flag_value_with_pattern_of_possible_flag_values(self):
         flag = Flag(flag_name='test', possible_flag_values=re.compile(r'192.168.\d+.\d+'))
         self.assertEqual(flag.validate_input_flag_value('192.168.9.8'), True)
+
+    def test_validate_correct_empty_flag_value_without_possible_flag_values(self):
+        flag = Flag(flag_name='test', possible_flag_values=False)
+        self.assertEqual(flag.validate_input_flag_value(None), True)
+
+    def test_validate_correct_empty_flag_value_with_possible_flag_values(self):
+        flag = Flag(flag_name='test', possible_flag_values=True)
+        self.assertEqual(flag.validate_input_flag_value(None), True)
+
+    def test_validate_incorrect_random_flag_value_without_possible_flag_values(self):
+        flag = Flag(flag_name='test', possible_flag_values=False)
+        self.assertEqual(flag.validate_input_flag_value('random value'), False)
+
+    def test_validate_correct_random_flag_value_with_possible_flag_values(self):
+        flag = Flag(flag_name='test', possible_flag_values=True)
+        self.assertEqual(flag.validate_input_flag_value('random value'), True)
 
 
 

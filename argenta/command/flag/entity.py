@@ -4,12 +4,10 @@ from typing import Literal, Pattern
 class Flag:
     def __init__(self, flag_name: str,
                  flag_prefix: Literal['-', '--', '---'] = '--',
-                 ignore_flag_value_register: bool = False,
-                 possible_flag_values: list[str] | Pattern[str] = False):
+                 possible_flag_values: list[str] | Pattern[str] | False = True):
         self._flag_name = flag_name
         self._flag_prefix = flag_prefix
         self.possible_flag_values = possible_flag_values
-        self.ignore_flag_value_register = ignore_flag_value_register
 
         self._flag_value = None
 
@@ -29,23 +27,23 @@ class Flag:
     def set_value(self, value):
         self._flag_value = value
 
-    def validate_input_flag_value(self, input_flag_value: str):
-        if isinstance(self.possible_flag_values, Pattern):
+    def validate_input_flag_value(self, input_flag_value: str | None):
+        if self.possible_flag_values is False:
+            if input_flag_value is None:
+                return True
+            else:
+                return False
+        elif isinstance(self.possible_flag_values, Pattern):
             is_valid = bool(self.possible_flag_values.match(input_flag_value))
             if bool(is_valid):
                 return True
             else:
                 return False
 
-        if isinstance(self.possible_flag_values, list):
-            if self.ignore_flag_value_register:
-                if input_flag_value.lower() in [x.lower() for x in self.possible_flag_values]:
-                    return True
-                else:
-                    return False
+        elif isinstance(self.possible_flag_values, list):
+            if input_flag_value in self.possible_flag_values:
+                return True
             else:
-                if input_flag_value in self.possible_flag_values:
-                    return True
-                else:
-                    return False
-        return True
+                return False
+        else:
+            return True

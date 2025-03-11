@@ -1,4 +1,4 @@
-from argenta.command.params.flag import Flag, FlagsGroup
+from argenta.command.flag import Flag, FlagsGroup
 
 import unittest
 
@@ -31,7 +31,7 @@ class TestFlagsGroup(unittest.TestCase):
             Flag('test2'),
             Flag('test3'),
         ]
-        flags = FlagsGroup(list_of_flags)
+        flags = FlagsGroup(*list_of_flags)
         serialized_flags = flags.unparse_to_dict()
         needed_result = {'test1': {'name': 'test1',
                                    'prefix': '--',

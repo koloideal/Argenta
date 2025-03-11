@@ -3,16 +3,13 @@ from art import text2art
 from rich.console import Console
 
 from argenta.app import App
-from argenta.router import Router
-from argenta.command import Command
-from argenta.command.params.flag import Flag, FlagsGroup
-
 
 app: App = App(prompt='[italic white bold]What do you want to do(enter number of action)?',
                line_separate=f'\n{"[bold green]-[/bold green][bold red]-[/bold red]"*25}\n',
                print_func=Console().print,
                command_group_description_separate='',
-               repeat_command_groups=True)
+               repeat_command_groups=True,
+               ignore_exit_command_register=False)
 
 
 def main():
@@ -29,7 +26,7 @@ def main():
     app.set_farewell_message(goodbye_message)
 
     app.set_invalid_input_flags_handler(lambda raw_command: print(f"Invalid input flags: {raw_command}"))
-    app.set_unknown_command_handler(lambda command: print(f"Unknown command: {command.get_string_entity()}"))
+    app.set_unknown_command_handler(lambda command: print(f"Unknown command: {command.get_trigger()}"))
     app.set_repeated_input_flags_handler(lambda raw_command: print(f"Repeated input flags: {raw_command}"))
 
     app.set_description_message_pattern('[bold red][{command}][/bold red] [blue]*=*=*[/blue] [bold yellow italic]{description}')

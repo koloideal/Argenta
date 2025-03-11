@@ -1,8 +1,8 @@
-from argenta.command.params.flag.entity import Flag
+from argenta.command.flag.entity import Flag
 
 
 class FlagsGroup:
-    def __init__(self, flags: list[Flag] = None):
+    def __init__(self, *flags: Flag):
         self._flags: list[Flag] = [] if not flags else flags
 
     def get_flags(self) -> list[Flag]:

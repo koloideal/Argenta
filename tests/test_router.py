@@ -1,4 +1,4 @@
-from argenta.command.params.flag import FlagsGroup, Flag
+from argenta.command.flag import FlagsGroup, Flag
 from argenta.router import Router
 from argenta.command import Command
 from argenta.router.exceptions import RepeatedCommandException, TriggerCannotContainSpacesException

@@ -2,8 +2,8 @@ from typing import Callable, Any
 from inspect import getfullargspec
 
 from ..command.entity import Command
-from ..command.params.flag.entity import Flag
-from ..command.params.flag.flags_group.entity import FlagsGroup
+from argenta.command.flag.entity import Flag
+from argenta.command.flag.flags_group import FlagsGroup
 from ..router.exceptions import (RepeatedCommandException,
                                  RepeatedFlagNameException,
                                  TooManyTransferredArgsException,

@@ -2,9 +2,9 @@ import re
 from pprint import pprint
 from rich.console import Console
 
-from argenta.command.entity import Command
-from argenta.command.params.flag.entity import Flag
-from argenta.command.params.flag.flags_group.entity import FlagsGroup
+from argenta.command import Command
+from argenta.command.flag import Flag, FlagsGroup
+from argenta.command.flag.defaults import host_flag, port_flag
 from argenta.router import Router
 from .handlers_implementation.help_command import help_command
 
@@ -18,21 +18,12 @@ settings_router: Router = Router(title='Settings points:')
 console = Console()
 
 
-flags = FlagsGroup(flags=[
-    Flag(flag_name='host',
-         flag_prefix='--',
-         possible_flag_values=re.compile(r'^192.168.\d{1,3}.\d{1,3}$')),
-    Flag(flag_name='port',
-         flag_prefix='--', )
-])
-
-
 @work_router.command(Command(trigger='0', description='Get Help'))
 def command_help():
     help_command()
 
 
-@work_router.command(Command(trigger='--gbP', description='Start Solving', flags=flags))
+@work_router.command(Command(trigger='j', description='Start Solving', flags=FlagsGroup(host_flag, port_flag)))
 def command_start_solving(args: dict):
     print('Solving...')
     pprint(args)
