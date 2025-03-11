@@ -6,6 +6,7 @@ from .exceptions import (UnprocessedInputFlagException,
 
 from typing import Generic, TypeVar, cast, Literal
 
+
 CommandType = TypeVar('CommandType')
 
 
@@ -15,8 +16,7 @@ class Command(Generic[CommandType]):
                  flags: Flag | FlagsGroup = None):
         self._trigger = trigger
         self._description = f'description for "{self._trigger}" command' if not description else description
-        self._registered_flags: FlagsGroup | None = flags if isinstance(flags, FlagsGroup) else FlagsGroup([flags]) if isinstance(flags, Flag) else flags
-
+        self._registered_flags: FlagsGroup | None = flags if isinstance(flags, FlagsGroup) else FlagsGroup(flags) if isinstance(flags, Flag) else flags
         self._input_flags: FlagsGroup | None = None
 
 
@@ -56,7 +56,7 @@ class Command(Generic[CommandType]):
         return self._input_flags
 
     @staticmethod
-    def parse_input_command(raw_command: str) -> 'Command[CommandType]':
+    def parse_input_command(raw_command: str) -> CommandType:
         if not raw_command:
             raise EmptyInputCommandException()
         list_of_tokens = raw_command.split()

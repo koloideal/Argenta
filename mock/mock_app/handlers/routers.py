@@ -10,7 +10,7 @@ from .handlers_implementation.help_command import help_command
 
 
 work_router: Router = Router(title='Work nts:')
-work_router.set_invalid_input_flag_handler(lambda flag: print(f'Invalid input flag: "{flag.get_string_entity()} {flag.get_value()}"'))
+work_router.set_invalid_input_flag_handler(lambda flag: print(f'Invalid input flag: "{flag.get_string_entity()} {flag.get_value() if flag.get_value() else ''}"'))
 
 settings_router: Router = Router(title='Settings points:')
 
@@ -23,7 +23,7 @@ def command_help():
     help_command()
 
 
-@work_router.command(Command(trigger='j', description='Start Solving', flags=FlagsGroup(host_flag, port_flag)))
+@work_router.command(Command(trigger='P', description='Start Solving', flags=FlagsGroup(host_flag, port_flag)))
 def command_start_solving(args: dict):
     print('Solving...')
     pprint(args)
