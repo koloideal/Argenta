@@ -1,4 +1,4 @@
-from argenta.command.flag.entity import Flag
+from argenta.command.flag import Flag
 
 
 class FlagsGroup:

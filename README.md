@@ -60,12 +60,11 @@ from argenta.command.flag import FlagsGroup, Flag
 
 router = Router()
 
-registered_flags = FlagsGroup([
+registered_flags = FlagsGroup(
     Flag(flag_name='host',
          flag_prefix='--',
          possible_flag_values=re.compile(r'^192.168.\d{1,3}.\d{1,3}$')),
-    Flag('port', '---', re.compile(r'^[0-9]{1,4}$'))
-])
+    Flag('port', '--', re.compile(r'^[0-9]{1,4}$')))
 
 
 @router.command(Command("hello"))
@@ -365,8 +364,7 @@ Command(trigger: str,
 ```python
 Flag(flag_name: str,
      flag_prefix: typing.Literal['-', '--', '---'] = '-',
-     ignore_flag_value_register: bool = False,
-     possible_flag_values: list[str] | typing.Pattern[str] = False)
+     possible_flag_values: list[str] | typing.Pattern[str] | False = True)
 ```
 
 ---
@@ -375,9 +373,10 @@ Flag(flag_name: str,
 - **name : mean**
 - `flag_name` (`str`): Имя флага
 - `flag_prefix` (`Literal['-', '--', '---']`): Префикс команды, допустимым значением является от одного до трёх минусов
-- `ignore_flag_value_register` (`bool`): Будет ли игнорироваться регистр значения введённого флага 
-- `possible_flag_values` (`list[str] | Pattern[str]`): Множество допустимых значений флага, может быть задано 
-списком с допустимыми значениями или регулярным выражением (рекомендуется `re.compile(r'example exspression')`)
+- `possible_flag_values` (`list[str] | Pattern[str] | bool`): Множество допустимых значений флага, может быть задано
+списком с допустимыми значениями или регулярным выражением (рекомендуется `re.compile(r'example exspression')`), при значении
+аргумента `False` у введённого флага не может быть значения, иначе будет вызвано исключение и обработано соответствующим 
+еррор-хэндлером
 
 ---
 
@@ -410,14 +409,14 @@ Flag(flag_name: str,
 
 ### Конструктор
 ```python
-FlagsGroup(flags: list[Flag] = None)
+FlagsGroup(*flagы: Flag)
 ```
 
 ---
 
 **Аргументы:**
 - **name : mean**
-- `flags` (`list[Flag]`): Список флагов, которые будут объединены в одну группу
+- `*flags` (`Flag`): Неограниченное количество передаваемых флагов
 
 ---
 
