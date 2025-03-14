@@ -50,7 +50,7 @@ class App:
         self._invalid_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Incorrect flag syntax: "{raw_command}"')
         self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Repeated input flags: "{raw_command}"')
         self._empty_input_command_handler: Callable[[], None] = lambda: print_func(f'Empty input command')
-        self._unknown_command_handler: Callable[[Command], None] = lambda command: print_func(f"Unknown command: {command.get_string_entity()}")
+        self._unknown_command_handler: Callable[[Command], None] = lambda command: print_func(f"Unknown command: {command.get_trigger()}")
 
 
     def start_polling(self) -> None:
@@ -100,7 +100,9 @@ class App:
                     self.print_func(self.prompt)
                 continue
 
-            self._check_command_for_exit_command(input_command.get_trigger())
+            is_exit = self._is_exit_command(input_command.get_trigger())
+            if is_exit:
+                return
 
             self.print_func(self.line_separate)
             is_unknown_command: bool = self._check_is_command_unknown(input_command)
@@ -212,15 +214,16 @@ class App:
                         raise RepeatedCommandInDifferentRoutersException()
 
 
-    def _check_command_for_exit_command(self, command: str):
+    def _is_exit_command(self, command: str):
         if command.lower() == self.exit_command.lower():
             if self.ignore_exit_command_register:
                 self.print_func(self.farewell_message)
-                exit(0)
+                return True
             else:
                 if command == self.exit_command:
                     self.print_func(self.farewell_message)
-                    exit(0)
+                    return True
+        return False
 
 
     def _check_is_command_unknown(self, command: Command):

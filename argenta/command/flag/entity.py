@@ -28,8 +28,8 @@ class Flag:
         self._flag_value = value
 
     def validate_input_flag_value(self, input_flag_value: str | None):
-        if input_flag_value is None:
-            if self.possible_flag_values is False:
+        if self.possible_flag_values is False:
+            if input_flag_value is None:
                 return True
             else:
                 return False
