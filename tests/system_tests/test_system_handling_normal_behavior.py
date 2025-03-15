@@ -28,7 +28,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn('test command', output)
+        self.assertIn('\ntest command\n', output)
 
 
     @patch("builtins.input", side_effect=["TeSt", "q"])

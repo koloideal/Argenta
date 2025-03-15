@@ -23,7 +23,7 @@ class Router:
         self._command_entities: list[dict[str, Callable[[], None] | Command]] = []
         self._ignore_command_register: bool = False
 
-        self._not_valid_flag_handler: Callable[[Flag], None] = lambda flag: print(f"Undefined or incorrect input flag: {flag.get_string_entity()} {flag.get_value() if flag.get_value() else ''}")
+        self._not_valid_flag_handler: Callable[[Flag], None] = lambda flag: print(f"Undefined or incorrect input flag: {flag.get_string_entity()}{(' '+flag.get_value()) if flag.get_value() else ''}")
 
 
     def command(self, command: Command) -> Callable[[Any],  Any]:
