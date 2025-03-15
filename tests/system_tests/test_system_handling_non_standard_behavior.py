@@ -159,4 +159,40 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn("Incorrect flag syntax: \"test 535 --port\"", output)
+        self.assertIn("\nIncorrect flag syntax: \"test 535 --port\"\n", output)
+
+
+    @patch("builtins.input", side_effect=["", "q"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_input_empty_command(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
+        router = Router()
+
+        @router.command(Command('test'))
+        def test():
+            print(f'test command')
+
+        app = App()
+        app.include_router(router)
+        app.start_polling()
+
+        output = mock_stdout.getvalue()
+
+        self.assertIn("\nEmpty input command\n", output)
+
+
+    @patch("builtins.input", side_effect=["test --port 22 --port 33", "q"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_input_correct_command_with_repeated_flags(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
+        router = Router()
+
+        @router.command(Command('test', flags=DefaultFlags.port_flag))
+        def test(args):
+            print('test command')
+
+        app = App()
+        app.include_router(router)
+        app.start_polling()
+
+        output = mock_stdout.getvalue()
+
+        self.assertIn("\nRepeated input flags: \"test --port 22 --port 33\"", output)
