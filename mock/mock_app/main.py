@@ -25,6 +25,8 @@ def main():
     app.set_initial_message(initial_greeting)
     app.set_farewell_message(goodbye_message)
 
+    app.add_message_on_startup('--help for get helping\n\n')
+
     app.set_invalid_input_flags_handler(lambda raw_command: print(f"Invalid input flags: {raw_command}"))
     app.set_unknown_command_handler(lambda command: print(f"Unknown command: {command.get_trigger()}"))
     app.set_repeated_input_flags_handler(lambda raw_command: print(f"Repeated input flags: {raw_command}"))

@@ -29,6 +29,7 @@ class App:
                  line_separate: str = '',
                  command_group_description_separate: str = '',
                  repeat_command_groups: bool = True,
+                 messages_on_startup: list[str] = None,
                  print_func: Callable[[str], None] = print) -> None:
         self.prompt = prompt
         self.print_func = print_func
@@ -43,6 +44,7 @@ class App:
         self.command_group_description_separate = command_group_description_separate
         self.ignore_command_register = ignore_command_register
         self.repeat_command_groups = repeat_command_groups
+        self.messages_on_startup = messages_on_startup if messages_on_startup else []
 
         self._routers: list[Router] = []
         self._description_message_pattern: str = '[{command}] *=*=* {description}'
@@ -59,6 +61,9 @@ class App:
         self._validate_all_router_commands()
 
         self.print_func(self.initial_message)
+
+        for message in self.messages_on_startup:
+            self.print_func(message)
 
         if not self.repeat_command_groups:
             self._print_command_group_description()
@@ -171,6 +176,10 @@ class App:
             raise IncorrectNumberOfHandlerArgsException()
         else:
             self._empty_input_command_handler = handler
+
+
+    def add_message_on_startup(self, message: str) -> None:
+        self.messages_on_startup.append(message)
 
 
     def include_router(self, router: Router) -> None:

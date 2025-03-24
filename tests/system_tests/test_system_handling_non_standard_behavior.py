@@ -7,7 +7,7 @@ import re
 from argenta.app import App
 from argenta.command import Command
 from argenta.router import Router
-from argenta.command.flag import Flag, FlagsGroup
+from argenta.command.flag import FlagsGroup
 from argenta.command.flag.defaults import DefaultFlags
 
 
