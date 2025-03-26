@@ -2,9 +2,10 @@ from typing import Callable
 from inspect import getfullargspec
 import re
 
-from ..command.entity import Command
-from ..router.entity import Router
-from ..command.exceptions import (UnprocessedInputFlagException,
+from argenta.command import Command
+from argenta.router import Router
+from argenta.router.defaults import system_router
+from argenta.command.exceptions import (UnprocessedInputFlagException,
                                   RepeatedInputFlagsException,
                                   EmptyInputCommandException)
 from .exceptions import (InvalidRouterInstanceException,
@@ -53,9 +54,11 @@ class App:
         self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Repeated input flags: "{raw_command}"')
         self._empty_input_command_handler: Callable[[], None] = lambda: print_func(f'Empty input command')
         self._unknown_command_handler: Callable[[Command], None] = lambda command: print_func(f"Unknown command: {command.get_trigger()}")
+        self._exit_command_handler: Callable[[], None] = lambda: print_func(self.farewell_message)
 
 
     def start_polling(self) -> None:
+        self._setup_system_router()
         self._validate_number_of_routers()
         self._validate_included_routers()
         self._validate_all_router_commands()
@@ -105,7 +108,7 @@ class App:
                     self.print_func(self.prompt)
                 continue
 
-            is_exit = self._is_exit_command(input_command.get_trigger())
+            is_exit = self._is_exit_command(input_command)
             if is_exit:
                 return
 
@@ -178,6 +181,14 @@ class App:
             self._empty_input_command_handler = handler
 
 
+    def set_exit_command_handler(self, handler: Callable[[], None]) -> None:
+        args = getfullargspec(handler).args
+        if len(args) != 0:
+            raise IncorrectNumberOfHandlerArgsException()
+        else:
+            self._exit_command_handler = handler
+
+
     def add_message_on_startup(self, message: str) -> None:
         self.messages_on_startup.append(message)
 
@@ -223,14 +234,24 @@ class App:
                         raise RepeatedCommandInDifferentRoutersException()
 
 
-    def _is_exit_command(self, command: str):
-        if command.lower() == self.exit_command.lower():
+    def _setup_system_router(self):
+        system_router.set_title(self.system_points_title)
+        @system_router.command(Command(self.exit_command, self.exit_command_description))
+        def exit_command():
+            self._exit_command_handler()
+
+        if system_router not in [router['entity'] for router in self._registered_router_entities]:
+            self.include_router(system_router)
+
+
+    def _is_exit_command(self, command: Command):
+        if command.get_trigger().lower() == self.exit_command.lower():
             if self.ignore_exit_command_register:
-                self.print_func(self.farewell_message)
+                system_router.input_command_handler(command)
                 return True
             else:
-                if command == self.exit_command:
-                    self.print_func(self.farewell_message)
+                if command.get_trigger() == self.exit_command:
+                    system_router.input_command_handler(command)
                     return True
         return False
 
@@ -259,12 +280,3 @@ class App:
                     )
                 )
             self.print_func(self.command_group_description_separate)
-
-        self.print_func(self.system_points_title)
-        self.print_func(self._description_message_pattern.format(
-                command=self.exit_command,
-                description=self.exit_command_description
-            )
-        )
-        self.print_func(self.command_group_description_separate)
-

@@ -1,11 +1,11 @@
-import re
 from pprint import pprint
 from rich.console import Console
 
 from argenta.command import Command
-from argenta.command.flag import Flag, FlagsGroup
+from argenta.command.flag import FlagsGroup
 from argenta.command.flag.defaults import DefaultFlags
 from argenta.router import Router
+from argenta.router.defaults import system_router
 from .handlers_implementation.help_command import help_command
 
 
@@ -33,6 +33,7 @@ def command_start_solving(args: dict):
 @settings_router.command(Command(trigger='G', description='Update WordMath'))
 def command_update():
     print('Command update')
+
 
 
 

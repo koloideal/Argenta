@@ -116,6 +116,10 @@ class Router:
         return self._title
 
 
+    def set_title(self, title: str):
+        self._title = title
+
+
     def get_all_commands(self) -> list[str]:
         all_commands: list[str] = []
         for command_entity in self._command_entities:
