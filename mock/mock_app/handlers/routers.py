@@ -23,7 +23,7 @@ def command_help():
     help_command()
 
 
-@work_router.command(Command(trigger='P', description='Start Solving', flags=FlagsGroup(DefaultFlags.host_flag, DefaultFlags.port_flag)))
+@work_router.command(Command(trigger='P', description='Start Solving', flags=FlagsGroup(DefaultFlags.HOST, DefaultFlags.PORT)))
 def command_start_solving(args: dict):
     print('Solving...')
     pprint(args)

@@ -1,10 +1,10 @@
 from typing import Callable, Any
 from inspect import getfullargspec
 
-from ..command.entity import Command
-from argenta.command.flag.entity import Flag
-from argenta.command.flag.flags_group import FlagsGroup
-from ..router.exceptions import (RepeatedCommandException,
+from argenta.command import Command
+from argenta.router.models import CommandHandler, CommandHandlers
+from argenta.command.flag import Flag, FlagsGroup
+from argenta.router.exceptions import (RepeatedCommandException,
                                  RepeatedFlagNameException,
                                  TooManyTransferredArgsException,
                                  RequiredArgumentNotPassedException,
@@ -20,7 +20,7 @@ class Router:
         self._title = title
         self._name = name
 
-        self._command_entities: list[dict[str, Callable[[], None] | Command]] = []
+        self._command_handlers: CommandHandlers = CommandHandlers()
         self._ignore_command_register: bool = False
 
         self._not_valid_flag_handler: Callable[[Flag], None] = lambda flag: print(f"Undefined or incorrect input flag: {flag.get_string_entity()}{(' '+flag.get_value()) if flag.get_value() else ''}")
@@ -31,13 +31,14 @@ class Router:
 
         def command_decorator(func):
             Router._validate_func_args(command, func)
-            self._command_entities.append({'handler_func': func,
-                                           'command': command})
+            self._command_handlers.add_command_handler(CommandHandler(func, command))
+
             def wrapper(*args, **kwargs):
                 return func(*args, **kwargs)
             return wrapper
 
         return command_decorator
+
 
     def set_invalid_input_flag_handler(self, func):
         processed_args = getfullargspec(func).args
@@ -50,24 +51,25 @@ class Router:
     def input_command_handler(self, input_command: Command):
         input_command_name: str = input_command.get_trigger()
         input_command_flags: FlagsGroup = input_command.get_input_flags()
-        for command_entity in self._command_entities:
-            if input_command_name.lower() == command_entity['command'].get_trigger().lower():
-                if command_entity['command'].get_registered_flags():
+        for command_handler in self._command_handlers:
+            handle_command = command_handler.get_handled_command()
+            if input_command_name.lower() == handle_command.get_trigger().lower():
+                if handle_command.get_registered_flags():
                     if input_command_flags:
                         for flag in input_command_flags:
-                            is_valid = command_entity['command'].validate_input_flag(flag)
+                            is_valid = handle_command.validate_input_flag(flag)
                             if not is_valid:
                                 self._not_valid_flag_handler(flag)
                                 return
-                        return command_entity['handler_func'](input_command_flags.unparse_to_dict())
+                        return command_handler.handling(input_command_flags.unparse_to_dict())
                     else:
-                        return command_entity['handler_func']({})
+                        return command_handler.handling({})
                 else:
                     if input_command_flags:
                         self._not_valid_flag_handler(input_command_flags[0])
                         return
                     else:
-                        return command_entity['handler_func']()
+                        return command_handler.handling()
 
 
     def _validate_command(self, command: Command):
@@ -104,8 +106,8 @@ class Router:
         self._ignore_command_register = ignore_command_register
 
 
-    def get_command_entities(self) -> list[dict[str, Callable[[], None] | Command]]:
-        return self._command_entities
+    def get_command_handlers(self) -> CommandHandlers:
+        return self._command_handlers
 
 
     def get_name(self) -> str:
@@ -122,7 +124,7 @@ class Router:
 
     def get_all_commands(self) -> list[str]:
         all_commands: list[str] = []
-        for command_entity in self._command_entities:
-            all_commands.append(command_entity['command'].get_trigger())
+        for command_handler in self._command_handlers:
+            all_commands.append(command_handler.get_handled_command().get_trigger())
 
         return all_commands
