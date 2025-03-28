@@ -51,7 +51,7 @@ class App:
         self._registered_routers: RegisteredRouters = RegisteredRouters()
         self._invalid_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Incorrect flag syntax: "{raw_command}"')
         self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Repeated input flags: "{raw_command}"')
-        self._empty_input_command_handler: Callable[[], None] = lambda: print_func(f'Empty input command')
+        self._empty_input_command_handler: Callable[[], None] = lambda: print_func('Empty input command')
         self._unknown_command_handler: Callable[[Command], None] = lambda command: print_func(f"Unknown command: {command.get_trigger()}")
         self._exit_command_handler: Callable[[], None] = lambda: print_func(self.farewell_message)
 
