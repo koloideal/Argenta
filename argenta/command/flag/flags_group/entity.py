@@ -1,22 +1,23 @@
-from argenta.command.flag import Flag
+from argenta.command.flag.input_flag.entity import InputFlag
+from argenta.command.flag.registered_flag import Flag
 
 
 class FlagsGroup:
-    def __init__(self, *flags: Flag):
-        self._flags: list[Flag] = [] if not flags else flags
+    def __init__(self, *flags: Flag | InputFlag):
+        self._flags: list[Flag | InputFlag] = [] if not flags else flags
 
-    def get_flags(self) -> list[Flag]:
+    def get_flags(self) -> list[Flag | InputFlag]:
         return self._flags
 
-    def add_flag(self, flag: Flag):
+    def add_flag(self, flag: Flag | InputFlag):
         self._flags.append(flag)
 
-    def add_flags(self, flags: list[Flag]):
+    def add_flags(self, flags: list[Flag | InputFlag]):
         self._flags.extend(flags)
 
     def unparse_to_dict(self):
         result_dict: dict[str, dict] = {}
-        for flag in self._flags:
+        for flag in self.get_flags():
             result_dict[flag.get_flag_name()] = {
                 'name': flag.get_flag_name(),
                 'string_entity': flag.get_string_entity(),

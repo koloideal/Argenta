@@ -7,8 +7,8 @@ import re
 from argenta.app import App
 from argenta.command import Command
 from argenta.router import Router
-from argenta.command.flag import Flag, FlagsGroup
-from argenta.command.flag.defaults import DefaultFlags
+from argenta.command.flag.registered_flag import Flag, FlagsGroup
+from argenta.command.flag.registered_flag.defaults import DefaultFlags
 
 
 
@@ -57,7 +57,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         @router.command(Command('test', flags=flag))
         def test(args: dict):
-            print(f'\nhelp for {args['help']['name']} flag\n')
+            print(f'\nhelp for {args['help']['name']} registered_flag\n')
 
         app = App()
         app.include_router(router)
@@ -65,7 +65,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn('\nhelp for help flag\n', output)
+        self.assertIn('\nhelp for help registered_flag\n', output)
 
     @patch("builtins.input", side_effect=["test --port 22", "q"])
     @patch("sys.stdout", new_callable=io.StringIO)
@@ -75,7 +75,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         @router.command(Command('test', flags=flag))
         def test(args: dict):
-            print(f'flag value for {args['port']['name']} flag : {args["port"]["value"]}')
+            print(f'registered_flag value for {args['port']['name']} registered_flag : {args["port"]["value"]}')
 
         app = App()
         app.include_router(router)
@@ -83,18 +83,18 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn('\nflag value for port flag : 22\n', output)
+        self.assertIn('\nregistered_flag value for port registered_flag : 22\n', output)
 
 
     @patch("builtins.input", side_effect=["test -h", "q"])
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_default_flag(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flag = DefaultFlags.short_help_flag
+        flag = DefaultFlags.SHORT_HELP
 
         @router.command(Command('test', flags=flag))
         def test(args: dict):
-            print(f'help for {args['h']['name']} flag')
+            print(f'help for {args['h']['name']} registered_flag')
 
         app = App()
         app.include_router(router)
@@ -102,14 +102,14 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn('\nhelp for h flag\n', output)
+        self.assertIn('\nhelp for h registered_flag\n', output)
 
 
     @patch("builtins.input", side_effect=["test --info", "q"])
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_default_flag2(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flag = DefaultFlags.info_flag
+        flag = DefaultFlags.INFO
 
         @router.command(Command('test', flags=flag))
         def test(args: dict):
@@ -129,7 +129,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_default_flag3(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flag = DefaultFlags.host_flag
+        flag = DefaultFlags.HOST
 
         @router.command(Command('test', flags=flag))
         def test(args: dict):
@@ -148,7 +148,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_two_flags(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flags = FlagsGroup(DefaultFlags.host_flag, DefaultFlags.port_flag)
+        flags = FlagsGroup(DefaultFlags.HOST, DefaultFlags.PORT)
 
         @router.command(Command('test', flags=flags))
         def test(args: dict):
@@ -173,7 +173,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
             print(f'test command')
 
         @router.command(Command('some'))
-        def test():
+        def test2():
             print(f'some command')
 
         app = App()

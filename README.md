@@ -56,7 +56,7 @@ if __name__ == '__main__':
 import re
 from argenta.router import Router
 from argenta.command import Command
-from argenta.command.flag import FlagsGroup, Flag
+from argenta.command.flag.registered_flag import FlagsGroup, Flag
 
 router = Router()
 

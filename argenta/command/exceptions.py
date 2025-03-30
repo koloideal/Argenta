@@ -1,4 +1,5 @@
-from argenta.command.flag.entity import Flag
+from argenta.command.flag.input_flag.entity import InputFlag
+from argenta.command.flag.registered_flag.entity import Flag
 
 
 class UnprocessedInputFlagException(Exception):
@@ -7,7 +8,7 @@ class UnprocessedInputFlagException(Exception):
 
 
 class RepeatedInputFlagsException(Exception):
-    def __init__(self, flag: Flag):
+    def __init__(self, flag: Flag | InputFlag):
         self.flag = flag
     def __str__(self):
         return ("Repeated Input Flags\n"

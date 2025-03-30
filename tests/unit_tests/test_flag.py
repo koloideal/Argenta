@@ -1,4 +1,4 @@
-from argenta.command.flag import Flag
+from argenta.command.flag.registered_flag import Flag
 
 import unittest
 import re

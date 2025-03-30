@@ -1,11 +1,6 @@
-class RepeatedCommandException(Exception):
-    def __str__(self):
-        return "Commands in handler cannot be repeated"
-
-
 class RepeatedFlagNameException(Exception):
     def __str__(self):
-        return "Repeated flag name in register command"
+        return "Repeated registered_flag name in register command"
 
 
 class TooManyTransferredArgsException(Exception):

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from argenta.command.flag import Flag
+from argenta.command.flag.registered_flag import Flag
 import re
 
 

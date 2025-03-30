@@ -1,4 +1,5 @@
-from argenta.command.flag.entity import Flag
+from argenta.command.flag.registered_flag.entity import Flag
+from argenta.command.flag.input_flag.entity import InputFlag
 from argenta.command.flag.flags_group import FlagsGroup
 from .exceptions import (UnprocessedInputFlagException,
                          RepeatedInputFlagsException,
@@ -32,7 +33,7 @@ class Command(Generic[CommandType]):
         return self._registered_flags
 
 
-    def validate_input_flag(self, flag: Flag):
+    def validate_input_flag(self, flag: InputFlag):
         registered_flags: FlagsGroup | None = self.get_registered_flags()
         if registered_flags:
             if isinstance(registered_flags, Flag):
@@ -85,8 +86,8 @@ class Command(Generic[CommandType]):
                 flag_prefix_last_symbol_index = current_flag_name.rfind('-')
                 flag_prefix = current_flag_name[:flag_prefix_last_symbol_index+1]
                 flag_name = current_flag_name[flag_prefix_last_symbol_index+1:]
-                input_flag = Flag(flag_name=flag_name,
-                                  flag_prefix=cast(Literal['-', '--', '---'], flag_prefix))
+                input_flag = InputFlag(flag_name=flag_name,
+                                       flag_prefix=cast(Literal['-', '--', '---'], flag_prefix))
                 input_flag.set_value(current_flag_value)
 
                 all_flags = [x.get_string_entity() for x in flags.get_flags()]

@@ -2,10 +2,10 @@ from typing import Callable, Any
 from inspect import getfullargspec
 
 from argenta.command import Command
-from argenta.router.models import CommandHandler, CommandHandlers
-from argenta.command.flag import Flag, FlagsGroup
-from argenta.router.exceptions import (RepeatedCommandException,
-                                 RepeatedFlagNameException,
+from argenta.router.command_handlers.entity import CommandHandlers
+from argenta.router.command_handler.entity import CommandHandler
+from argenta.command.flag.registered_flag import Flag, FlagsGroup
+from argenta.router.exceptions import (RepeatedFlagNameException,
                                  TooManyTransferredArgsException,
                                  RequiredArgumentNotPassedException,
                                  IncorrectNumberOfHandlerArgsException,
@@ -61,26 +61,25 @@ class Router:
                             if not is_valid:
                                 self._not_valid_flag_handler(flag)
                                 return
-                        return command_handler.handling(input_command_flags.unparse_to_dict())
+                        command_handler.handling(input_command_flags.unparse_to_dict())
+                        return
                     else:
-                        return command_handler.handling({})
+                        command_handler.handling({})
+                        return
                 else:
                     if input_command_flags:
                         self._not_valid_flag_handler(input_command_flags[0])
                         return
                     else:
-                        return command_handler.handling()
+                        command_handler.handling()
+                        return
 
 
-    def _validate_command(self, command: Command):
+    @staticmethod
+    def _validate_command(command: Command):
         command_name: str = command.get_trigger()
         if command_name.find(' ') != -1:
             raise TriggerCannotContainSpacesException()
-        if command_name in self.get_all_commands():
-            raise RepeatedCommandException()
-        if self._ignore_command_register:
-            if command_name.lower() in [x.lower() for x in self.get_all_commands()]:
-                raise RepeatedCommandException()
 
         flags: FlagsGroup = command.get_registered_flags()
         if flags:

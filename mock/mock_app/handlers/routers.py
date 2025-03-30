@@ -2,10 +2,9 @@ from pprint import pprint
 from rich.console import Console
 
 from argenta.command import Command
-from argenta.command.flag import FlagsGroup
-from argenta.command.flag.defaults import DefaultFlags
+from argenta.command.flag.registered_flag import FlagsGroup
+from argenta.command.flag.registered_flag.defaults import DefaultFlags
 from argenta.router import Router
-from argenta.router.defaults import system_router
 from .handlers_implementation.help_command import help_command
 
 

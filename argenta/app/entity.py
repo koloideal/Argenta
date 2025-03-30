@@ -13,7 +13,7 @@ from argenta.app.exceptions import (InvalidRouterInstanceException,
                          NoRegisteredRoutersException,
                          NoRegisteredHandlersException,
                          IncorrectNumberOfHandlerArgsException)
-from argenta.app.models import RegisteredRouters
+from argenta.app.registered_routers.entity import RegisteredRouters
 
 
 class App:
@@ -219,7 +219,6 @@ class App:
         @system_router.command(Command(self.exit_command, self.exit_command_description))
         def exit_command():
             self._exit_command_handler()
-
         if system_router not in self._registered_routers.get_registered_routers():
             self.include_router(system_router)
 
