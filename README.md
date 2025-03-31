@@ -56,11 +56,11 @@ if __name__ == '__main__':
 import re
 from argenta.router import Router
 from argenta.command import Command
-from argenta.command.flag.registered_flag import FlagsGroup, Flag
+from argenta.command.flag.registered_flag import Flags, Flag
 
 router = Router()
 
-registered_flags = FlagsGroup(
+registered_flags = Flags(
     Flag(flag_name='host',
          flag_prefix='--',
          possible_flag_values=re.compile(r'^192.168.\d{1,3}.\d{1,3}$')),
@@ -315,14 +315,14 @@ Router(title: str = 'Commands group title:',
 ```python
 Command(trigger: str,
         description: str = None,
-        flags: Flag | FlagsGroup = None)
+        flags: Flag | Flags = None)
 ```
 
 **Аргументы:**
 - **name : mean**
 - `trigger` (`str`): Строковый триггер
 - `description` (`str`): Описание команды, которое будет выведено в консоль при запуске оболочки
-- `flags` (`Flag | FlagsGroup`): Флаги, которые будут обработаны при их наличии во вводе юзера
+- `flags` (`Flag | Flags`): Флаги, которые будут обработаны при их наличии во вводе юзера
 
 ---
 
@@ -338,7 +338,7 @@ Command(trigger: str,
 
 ---
 
-#### **.get_registered_flags() -> `FlagsGroup | None`**  
+#### **.get_registered_flags() -> `Flags | None`**  
 
 *method mean* **::** возвращает зарегистрированные флаги экземпляра
 
@@ -402,14 +402,14 @@ Flag(flag_name: str,
 
 ---
 
-##  *class* :: `FlagsGroup` 
+##  *class* :: `Flags` 
 Класс, объединяющий список флагов в один объект, используется в качестве 
 передаваемого аргумента `flags` экземпляру класса `Command`, при регистрации
 хэндлера
 
 ### Конструктор
 ```python
-FlagsGroup(*flagы: Flag)
+Flags(*flagы: Flag)
 ```
 
 ---

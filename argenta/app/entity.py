@@ -2,7 +2,7 @@ from typing import Callable
 from inspect import getfullargspec
 import re
 
-from argenta.command import Command
+from argenta.command.models import Command, InputCommand
 from argenta.router import Router
 from argenta.router.defaults import system_router
 from argenta.command.exceptions import (UnprocessedInputFlagException,
@@ -78,7 +78,7 @@ class App:
             raw_command: str = input()
 
             try:
-                input_command: Command = Command.parse_input_command(raw_command=raw_command)
+                input_command: InputCommand = InputCommand.parse_input_command(raw_command=raw_command)
             except UnprocessedInputFlagException:
                 self.print_func(self.line_separate)
                 self._invalid_input_flags_handler(raw_command)
@@ -223,7 +223,7 @@ class App:
             self.include_router(system_router)
 
 
-    def _is_exit_command(self, command: Command):
+    def _is_exit_command(self, command: InputCommand):
         if command.get_trigger().lower() == self.exit_command.lower():
             if self.ignore_exit_command_register:
                 system_router.input_command_handler(command)
@@ -235,7 +235,7 @@ class App:
         return False
 
 
-    def _check_is_command_unknown(self, command: Command):
+    def _check_is_command_unknown(self, command: InputCommand):
         for router_entity in self._registered_routers:
             for command_handler in router_entity.get_command_handlers():
                 handled_command_trigger = command_handler.get_handled_command().get_trigger()

@@ -2,21 +2,21 @@ from typing import Callable, Any
 from inspect import getfullargspec
 
 from argenta.command import Command
+from argenta.command.models import InputCommand
 from argenta.router.command_handlers.entity import CommandHandlers
 from argenta.router.command_handler.entity import CommandHandler
-from argenta.command.flag.registered_flag import Flag, FlagsGroup
+from argenta.command.flag.models import Flag, Flags, InputFlags
 from argenta.router.exceptions import (RepeatedFlagNameException,
-                                 TooManyTransferredArgsException,
-                                 RequiredArgumentNotPassedException,
-                                 IncorrectNumberOfHandlerArgsException,
-                                 TriggerCannotContainSpacesException)
+                                     TooManyTransferredArgsException,
+                                     RequiredArgumentNotPassedException,
+                                     IncorrectNumberOfHandlerArgsException,
+                                     TriggerCannotContainSpacesException)
 
 
 class Router:
     def __init__(self,
                  title: str = 'Commands group title:',
                  name: str = 'Default'):
-
         self._title = title
         self._name = name
 
@@ -48,9 +48,9 @@ class Router:
             self._not_valid_flag_handler = func
 
 
-    def input_command_handler(self, input_command: Command):
+    def input_command_handler(self, input_command: InputCommand):
         input_command_name: str = input_command.get_trigger()
-        input_command_flags: FlagsGroup = input_command.get_input_flags()
+        input_command_flags: InputFlags = input_command.get_input_flags()
         for command_handler in self._command_handlers:
             handle_command = command_handler.get_handled_command()
             if input_command_name.lower() == handle_command.get_trigger().lower():
@@ -61,7 +61,7 @@ class Router:
                             if not is_valid:
                                 self._not_valid_flag_handler(flag)
                                 return
-                        command_handler.handling(input_command_flags.unparse_to_dict())
+                        command_handler.handling(input_command_flags)
                         return
                     else:
                         command_handler.handling({})
@@ -81,7 +81,7 @@ class Router:
         if command_name.find(' ') != -1:
             raise TriggerCannotContainSpacesException()
 
-        flags: FlagsGroup = command.get_registered_flags()
+        flags: Flags = command.get_registered_flags()
         if flags:
             flags_name: list = [x.get_string_entity().lower() for x in flags]
             if len(set(flags_name)) < len(flags_name):
@@ -92,12 +92,12 @@ class Router:
     def _validate_func_args(command: Command, func: Callable):
         registered_args = command.get_registered_flags()
         transferred_args = getfullargspec(func).args
-        if registered_args and transferred_args:
+        if registered_args.get_flags() and transferred_args:
            if len(transferred_args) != 1:
                 raise TooManyTransferredArgsException()
-        elif registered_args and not transferred_args:
+        elif registered_args.get_flags() and not transferred_args:
             raise RequiredArgumentNotPassedException()
-        elif not registered_args and transferred_args:
+        elif not registered_args.get_flags() and transferred_args:
             raise TooManyTransferredArgsException()
 
 

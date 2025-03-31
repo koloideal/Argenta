@@ -1,5 +1,4 @@
-from argenta.command.flag.input_flag.entity import InputFlag
-from argenta.command.flag.registered_flag.entity import Flag
+from argenta.command.flag.models import InputFlag, Flag
 
 
 class UnprocessedInputFlagException(Exception):

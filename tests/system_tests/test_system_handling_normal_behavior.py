@@ -5,10 +5,10 @@ import io
 import re
 
 from argenta.app import App
-from argenta.command import Command
+from argenta.command.models import Command
 from argenta.router import Router
-from argenta.command.flag.registered_flag import Flag, FlagsGroup
-from argenta.command.flag.registered_flag.defaults import DefaultFlags
+from argenta.command.flag.models import Flag, Flags, InputFlags
+from argenta.command.flag.defaults import DefaultFlags
 
 
 
@@ -56,8 +56,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         flag = Flag('help', '--', False)
 
         @router.command(Command('test', flags=flag))
-        def test(args: dict):
-            print(f'\nhelp for {args['help']['name']} registered_flag\n')
+        def test(args: InputFlags):
+            print(f'\nhelp for {args.get_flag('help').get_name()} flag\n')
 
         app = App()
         app.include_router(router)
@@ -65,7 +65,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn('\nhelp for help registered_flag\n', output)
+        self.assertIn('\nhelp for help flag\n', output)
 
     @patch("builtins.input", side_effect=["test --port 22", "q"])
     @patch("sys.stdout", new_callable=io.StringIO)
@@ -74,8 +74,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         flag = Flag('port', '--', re.compile(r'^\d{1,5}$'))
 
         @router.command(Command('test', flags=flag))
-        def test(args: dict):
-            print(f'registered_flag value for {args['port']['name']} registered_flag : {args["port"]["value"]}')
+        def test(args: InputFlags):
+            print(f'flag value for {args.get_flag('port').get_name()} flag : {args.get_flag('port').get_value()}')
 
         app = App()
         app.include_router(router)
@@ -83,7 +83,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn('\nregistered_flag value for port registered_flag : 22\n', output)
+        self.assertIn('\nflag value for port flag : 22\n', output)
 
 
     @patch("builtins.input", side_effect=["test -h", "q"])
@@ -94,7 +94,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         @router.command(Command('test', flags=flag))
         def test(args: dict):
-            print(f'help for {args['h']['name']} registered_flag')
+            print(f'help for {args[0].get_name()} flag')
 
         app = App()
         app.include_router(router)
@@ -102,7 +102,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn('\nhelp for h registered_flag\n', output)
+        self.assertIn('\nhelp for h flag\n', output)
 
 
     @patch("builtins.input", side_effect=["test --info", "q"])
@@ -112,8 +112,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         flag = DefaultFlags.INFO
 
         @router.command(Command('test', flags=flag))
-        def test(args: dict):
-            if args.get('info'):
+        def test(args: InputFlags):
+            if args.get_flag('info'):
                 print('info about test command')
 
         app = App()
@@ -132,8 +132,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         flag = DefaultFlags.HOST
 
         @router.command(Command('test', flags=flag))
-        def test(args: dict):
-            print(f'connecting to host {args["host"]["value"]}')
+        def test(args: InputFlags):
+            print(f'connecting to host {args[0].get_value()}')
 
         app = App()
         app.include_router(router)
@@ -148,11 +148,11 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_two_flags(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flags = FlagsGroup(DefaultFlags.HOST, DefaultFlags.PORT)
+        flags = Flags(DefaultFlags.HOST, DefaultFlags.PORT)
 
         @router.command(Command('test', flags=flags))
-        def test(args: dict):
-            print(f'connecting to host {args["host"]["value"]} and port {args["port"]["value"]}')
+        def test(args: InputFlags):
+            print(f'connecting to host {args[0].get_value()} and port {args[1].get_value()}')
 
         app = App()
         app.include_router(router)

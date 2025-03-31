@@ -1,14 +1,15 @@
 from typing import Callable
 from argenta.command import Command
+from argenta.command.flag.models import InputFlags
 
 
 class CommandHandler:
-    def __init__(self, handler: Callable[[], None] | Callable[[dict], None], handled_command: Command):
+    def __init__(self, handler: Callable[[], None] | Callable[[InputFlags], None], handled_command: Command):
         self.handler = handler
         self.handled_command = handled_command
 
-    def handling(self, input_flags: dict = None):
-        if input_flags is not None:
+    def handling(self, input_flags: InputFlags):
+        if input_flags.get_flags():
             self.handler(input_flags)
         else:
             self.handler()

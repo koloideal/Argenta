@@ -1,3 +1,3 @@
 __all__ = ["Command"]
 
-from .entity import Command
+from .models import Command

@@ -7,8 +7,8 @@ import re
 from argenta.app import App
 from argenta.command import Command
 from argenta.router import Router
-from argenta.command.flag.registered_flag import FlagsGroup
-from argenta.command.flag.registered_flag.defaults import DefaultFlags
+from argenta.command.flag.models import Flags
+from argenta.command.flag.defaults import DefaultFlags
 
 
 
@@ -64,7 +64,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn('\nUndefined or incorrect input registered_flag: --help\n', output)
+        self.assertIn('\nUndefined or incorrect input flag: --help\n', output)
 
 
     @patch("builtins.input", side_effect=["test --port 22", "q"])
@@ -82,14 +82,14 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn('\nUndefined or incorrect input registered_flag: --port 22\n', output)
+        self.assertIn('\nUndefined or incorrect input flag: --port 22\n', output)
 
 
     @patch("builtins.input", side_effect=["test --host 192.168.32.1 --port 132", "q"])
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_one_correct_flag_an_one_incorrect_flag(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flags = FlagsGroup(DefaultFlags.HOST)
+        flags = Flags(DefaultFlags.HOST)
 
         @router.command(Command('test', flags=flags))
         def test(args: dict):
@@ -101,7 +101,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn('\nUndefined or incorrect input registered_flag: --port 132\n', output)
+        self.assertIn('\nUndefined or incorrect input flag: --port 132\n', output)
 
 
     @patch("builtins.input", side_effect=["test", "some", "q"])
@@ -159,7 +159,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn("\nIncorrect registered_flag syntax: \"test 535 --port\"\n", output)
+        self.assertIn("\nIncorrect flag syntax: \"test 535 --port\"\n", output)
 
 
     @patch("builtins.input", side_effect=["", "q"])
