@@ -8,7 +8,7 @@ from argenta.app import App
 from argenta.command.models import Command
 from argenta.router import Router
 from argenta.command.flag.models import Flag, Flags, InputFlags
-from argenta.command.flag.defaults import DefaultFlags
+from argenta.command.flag.defaults import PredeterminedFlags
 
 
 
@@ -90,7 +90,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_default_flag(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flag = DefaultFlags.SHORT_HELP
+        flag = PredeterminedFlags.SHORT_HELP
 
         @router.command(Command('test', flags=flag))
         def test(args: dict):
@@ -109,7 +109,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_default_flag2(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flag = DefaultFlags.INFO
+        flag = PredeterminedFlags.INFO
 
         @router.command(Command('test', flags=flag))
         def test(args: InputFlags):
@@ -129,7 +129,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_default_flag3(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flag = DefaultFlags.HOST
+        flag = PredeterminedFlags.HOST
 
         @router.command(Command('test', flags=flag))
         def test(args: InputFlags):
@@ -148,7 +148,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_two_flags(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flags = Flags(DefaultFlags.HOST, DefaultFlags.PORT)
+        flags = Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT)
 
         @router.command(Command('test', flags=flags))
         def test(args: InputFlags):

@@ -5,30 +5,24 @@ from argenta.command.exceptions import (UnprocessedInputFlagException,
 from typing import Generic, TypeVar, cast, Literal
 
 
-BaseCommandType = TypeVar('BaseCommandType')
+InputCommandType = TypeVar('InputCommandType')
 
 
-class BaseCommand(Generic[BaseCommandType]):
-    def __init__(self, trigger: str,
-                 description: str = None,
-                 flags: Flag | Flags = None):
+class BaseCommand:
+    def __init__(self, trigger: str):
         self._trigger = trigger
-        self._description = f'description for "{self._trigger}" command' if not description else description
 
     def get_trigger(self) -> str:
         return self._trigger
-
-    def get_description(self) -> str:
-        return self._description
-
 
 
 class Command(BaseCommand):
     def __init__(self, trigger: str,
                  description: str = None,
                  flags: Flag | Flags = None):
-        super().__init__(trigger, description)
+        super().__init__(trigger)
         self._registered_flags: Flags = flags if isinstance(flags, Flags) else Flags(flags) if isinstance(flags, Flag) else Flags()
+        self._description = f'description for "{self._trigger}" command' if not description else description
 
     def get_registered_flags(self) -> Flags:
         return self._registered_flags
@@ -49,13 +43,15 @@ class Command(BaseCommand):
                             return True
         return False
 
+    def get_description(self) -> str:
+        return self._description
 
 
-class InputCommand(BaseCommand):
+
+class InputCommand(BaseCommand, Generic[InputCommandType]):
     def __init__(self, trigger: str,
-                 description: str = None,
                  input_flags: InputFlag | InputFlags = None):
-        super().__init__(trigger, description)
+        super().__init__(trigger)
         self._input_flags: InputFlags = input_flags if isinstance(input_flags, InputFlags) else InputFlags(input_flags) if isinstance(input_flags, InputFlag) else InputFlags()
 
     def _set_input_flags(self, input_flags: InputFlags):
@@ -65,53 +61,45 @@ class InputCommand(BaseCommand):
         return self._input_flags
 
     @staticmethod
-    def parse_input_command(raw_command: str) -> BaseCommandType:
+    def parse(raw_command: str) -> InputCommandType:
         if not raw_command:
             raise EmptyInputCommandException()
+
         list_of_tokens = raw_command.split()
-        command = list_of_tokens[0]
-        list_of_tokens.pop(0)
+        command = list_of_tokens.pop(0)
 
         input_flags: InputFlags = InputFlags()
-        current_flag_name = None
-        current_flag_value = None
+        current_flag_name, current_flag_value = None, None
+
         for k, _ in enumerate(list_of_tokens):
             if _.startswith('-'):
-                flag_prefix_last_symbol_index = _.rfind('-')
-                if current_flag_name or len(_) < 2 or len(_[:flag_prefix_last_symbol_index]) > 3:
+                if current_flag_name or len(_) < 2 or len(_[:_.rfind('-')]) > 3:
                     raise UnprocessedInputFlagException()
-                else:
-                    current_flag_name = _
+                current_flag_name = _
             else:
                 if not current_flag_name:
                     raise UnprocessedInputFlagException()
-                else:
-                    current_flag_value = _
-            if current_flag_name:
-                if not len(list_of_tokens) == k + 1:
-                    if not list_of_tokens[k + 1].startswith('-'):
-                        continue
-                flag_prefix_last_symbol_index = current_flag_name.rfind('-')
-                flag_prefix = current_flag_name[:flag_prefix_last_symbol_index + 1]
-                flag_name = current_flag_name[flag_prefix_last_symbol_index + 1:]
-                input_flag = InputFlag(name=flag_name,
-                                       prefix=cast(Literal['-', '--', '---'], flag_prefix))
-                input_flag.set_value(current_flag_value)
+                current_flag_value = _
 
-                all_flags = [x.get_string_entity() for x in input_flags.get_flags()]
+            if current_flag_name:
+                if not len(list_of_tokens) == k+1:
+                    if not list_of_tokens[k+1].startswith('-'): continue
+
+                input_flag = InputFlag(name=current_flag_name[current_flag_name.rfind('-')+1:],
+                                       prefix=cast(Literal['-', '--', '---'],
+                                                   current_flag_name[:current_flag_name.rfind('-')+1]),
+                                       value=current_flag_value)
+
+                all_flags = [flag.get_string_entity() for flag in input_flags.get_flags()]
                 if input_flag.get_string_entity() not in all_flags:
                     input_flags.add_flag(input_flag)
                 else:
                     raise RepeatedInputFlagsException(input_flag)
 
-                current_flag_name = None
-                current_flag_value = None
+                current_flag_name, current_flag_value = None, None
+
         if any([current_flag_name, current_flag_value]):
             raise UnprocessedInputFlagException()
-        if len(input_flags.get_flags()) == 0:
-            return InputCommand(trigger=command)
         else:
-            input_command = InputCommand(trigger=command)
-            input_command._set_input_flags(input_flags)
-            return input_command
+            return InputCommand(trigger=command, input_flags=input_flags)
 

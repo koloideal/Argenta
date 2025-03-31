@@ -56,14 +56,14 @@ if __name__ == '__main__':
 import re
 from argenta.router import Router
 from argenta.command import Command
-from argenta.command.flag.registered_flag import Flags, Flag
+from argenta.command.flag import Flags, Flag, InputFlags
 
 router = Router()
 
 registered_flags = Flags(
-    Flag(flag_name='host',
-         flag_prefix='--',
-         possible_flag_values=re.compile(r'^192.168.\d{1,3}.\d{1,3}$')),
+    Flag(name='host',
+         prefix='--',
+         possible_values=re.compile(r'^192.168.\d{1,3}.\d{1,3}$')),
     Flag('port', '--', re.compile(r'^[0-9]{1,4}$')))
 
 
@@ -75,10 +75,10 @@ def handler():
 @router.command(Command(trigger="ssh",
                         description='connect via ssh',
                         flags=registered_flags))
-def handler_with_flags(flags: dict):
+def handler_with_flags(flags: InputFlags):
     for flag in flags:
-        print(f'Flag name: {flag['name']}\n'
-              f'Flag value: {flag['value']}')
+        print(f'Flag name: {flag.get_name()}\n'
+              f'Flag value: {flag.get_value()}')
 ```
 
 ---
@@ -299,7 +299,6 @@ Router(title: str = 'Commands group title:',
 ---
 
 ### Исключения
-- `RepeatedCommandException` - Одна и та же команда зарегистрирована в одном роутере
 - `RepeatedFlagNameException` - Повторяющиеся зарегистрированные флаги в команде
 - `TooManyTransferredArgsException` - Слишком много зарегистрированных аргументов у обработчика команды
 - `RequiredArgumentNotPassedException` - Не зарегистрирован обязательный аргумент у обработчика команды(аргумент, через который будут переданы флаги введённой команды)

@@ -4,7 +4,7 @@ import re
 
 
 @dataclass
-class DefaultFlags:
+class PredeterminedFlags:
     HELP = Flag(name='help', possible_values=False)
     SHORT_HELP = Flag(name='h', prefix='-', possible_values=False)
 

@@ -52,7 +52,7 @@ class App:
         self._invalid_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Incorrect flag syntax: "{raw_command}"')
         self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Repeated input flags: "{raw_command}"')
         self._empty_input_command_handler: Callable[[], None] = lambda: print_func('Empty input command')
-        self._unknown_command_handler: Callable[[Command], None] = lambda command: print_func(f"Unknown command: {command.get_trigger()}")
+        self._unknown_command_handler: Callable[[InputCommand], None] = lambda command: print_func(f"Unknown command: {command.get_trigger()}")
         self._exit_command_handler: Callable[[], None] = lambda: print_func(self.farewell_message)
 
 
@@ -78,28 +78,12 @@ class App:
             raw_command: str = input()
 
             try:
-                input_command: InputCommand = InputCommand.parse_input_command(raw_command=raw_command)
-            except UnprocessedInputFlagException:
+                input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
+            except (UnprocessedInputFlagException,
+                    RepeatedInputFlagsException,
+                    EmptyInputCommandException) as error:
                 self.print_func(self.line_separate)
-                self._invalid_input_flags_handler(raw_command)
-                self.print_func(self.line_separate)
-
-                if not self.repeat_command_groups:
-                    self.print_func(self.prompt)
-                continue
-
-            except RepeatedInputFlagsException:
-                self.print_func(self.line_separate)
-                self._repeated_input_flags_handler(raw_command)
-                self.print_func(self.line_separate)
-
-                if not self.repeat_command_groups:
-                    self.print_func(self.prompt)
-                continue
-
-            except EmptyInputCommandException:
-                self.print_func(self.line_separate)
-                self._empty_input_command_handler()
+                self._error_handler(error, raw_command)
                 self.print_func(self.line_separate)
 
                 if not self.repeat_command_groups:
@@ -203,6 +187,7 @@ class App:
         for router in routers:
             self.include_router(router)
 
+
     def _validate_number_of_routers(self) -> None:
         if not self._registered_routers:
             raise NoRegisteredRoutersException()
@@ -259,3 +244,19 @@ class App:
                     )
                 )
             self.print_func(self.command_group_description_separate)
+
+
+    def _error_handler(self,
+                       error: UnprocessedInputFlagException |
+                              RepeatedInputFlagsException |
+                              EmptyInputCommandException,
+                       raw_command: str) -> None:
+        match error:
+            case UnprocessedInputFlagException():
+                self._invalid_input_flags_handler(raw_command)
+            case RepeatedInputFlagsException():
+                self._repeated_input_flags_handler(raw_command)
+            case EmptyInputCommandException():
+                self._empty_input_command_handler()
+
+
