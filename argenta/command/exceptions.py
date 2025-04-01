@@ -1,12 +1,16 @@
 from argenta.command.flag.models import InputFlag, Flag
 
 
-class UnprocessedInputFlagException(Exception):
+class BaseInputCommandException(Exception):
+    pass
+
+
+class UnprocessedInputFlagException(BaseInputCommandException):
     def __str__(self):
         return "Unprocessed Input Flags"
 
 
-class RepeatedInputFlagsException(Exception):
+class RepeatedInputFlagsException(BaseInputCommandException):
     def __init__(self, flag: Flag | InputFlag):
         self.flag = flag
     def __str__(self):
@@ -14,6 +18,6 @@ class RepeatedInputFlagsException(Exception):
                 f"Duplicate flag was detected in the input: '{self.flag.get_string_entity()}'")
 
 
-class EmptyInputCommandException(Exception):
+class EmptyInputCommandException(BaseInputCommandException):
     def __str__(self):
         return "Input Command is empty"

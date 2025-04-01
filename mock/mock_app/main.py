@@ -9,7 +9,7 @@ app: App = App(prompt='[italic white bold]What do you want to do(enter number of
                line_separate=f'\n{"[bold green]-[/bold green][bold red]-[/bold red]"*25}\n',
                print_func=Console().print,
                command_group_description_separate='',
-               repeat_command_groups=True)
+               repeat_command_groups=False)
 
 
 def main():
@@ -24,13 +24,14 @@ def main():
     app.set_initial_message(initial_greeting)
     app.set_farewell_message(goodbye_message)
 
-    app.add_message_on_startup('--help for get helping\n\n')
+    app.add_message_on_startup('[b dim]Usage[/b dim]: [i]<command> <[green]flags[/green]>[/i]\n')
+    app.add_message_on_startup('[b dim]Help[/b dim]: [i]<command>[/i] [b red]--help[/b red]\n\n')
 
     app.set_invalid_input_flags_handler(lambda raw_command: print(f"Invalid input flags: {raw_command}"))
     app.set_unknown_command_handler(lambda command: print(f"Unknown command: {command.get_trigger()}"))
     app.set_repeated_input_flags_handler(lambda raw_command: print(f"Repeated input flags: {raw_command}"))
 
-    app.set_description_message_pattern('[bold red][{command}][/bold red] [blue]*=*=*[/blue] [bold yellow italic]{description}')
+    app.set_description_message_pattern('[bold red][{command}][/bold red] [blue dim]*=*=*[/blue dim] [bold yellow italic]{description}')
 
     app.start_polling()
 

@@ -5,6 +5,19 @@
 ## Описание
 **Argenta** — Python library for creating custom shells
 
+![prewiev](imgs/mock_app_preview.png)
+Пример внешнего вида TUI, написанного с помощью Argenta  
+Рекомендуемая библиотека для форматирования текста - [rich](https://github.com/Textualize/rich)  
+```python
+from argenta.app import App
+from rich.console import Console
+
+app = App(print_func=Console().print) # default: builtins.print
+
+# code...
+```
+
+
 ---
 
 # Установка

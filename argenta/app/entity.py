@@ -6,8 +6,9 @@ from argenta.command.models import Command, InputCommand
 from argenta.router import Router
 from argenta.router.defaults import system_router
 from argenta.command.exceptions import (UnprocessedInputFlagException,
-                                  RepeatedInputFlagsException,
-                                  EmptyInputCommandException)
+                                        RepeatedInputFlagsException,
+                                        EmptyInputCommandException,
+                                        BaseInputCommandException)
 from argenta.app.exceptions import (InvalidRouterInstanceException,
                          InvalidDescriptionMessagePatternException,
                          NoRegisteredRoutersException,
@@ -79,9 +80,7 @@ class App:
 
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
-            except (UnprocessedInputFlagException,
-                    RepeatedInputFlagsException,
-                    EmptyInputCommandException) as error:
+            except BaseInputCommandException as error:
                 self.print_func(self.line_separate)
                 self._error_handler(error, raw_command)
                 self.print_func(self.line_separate)
@@ -240,17 +239,11 @@ class App:
             for command_handler in registered_router.get_command_handlers():
                 self.print_func(self._description_message_pattern.format(
                         command=command_handler.get_handled_command().get_trigger(),
-                        description=command_handler.get_handled_command().get_description()
-                    )
-                )
+                        description=command_handler.get_handled_command().get_description()))
             self.print_func(self.command_group_description_separate)
 
 
-    def _error_handler(self,
-                       error: UnprocessedInputFlagException |
-                              RepeatedInputFlagsException |
-                              EmptyInputCommandException,
-                       raw_command: str) -> None:
+    def _error_handler(self, error: BaseInputCommandException, raw_command: str) -> None:
         match error:
             case UnprocessedInputFlagException():
                 self._invalid_input_flags_handler(raw_command)
