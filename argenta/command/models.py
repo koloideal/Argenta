@@ -83,7 +83,8 @@ class InputCommand(BaseCommand, Generic[InputCommandType]):
 
             if current_flag_name:
                 if not len(list_of_tokens) == k+1:
-                    if not list_of_tokens[k+1].startswith('-'): continue
+                    if not list_of_tokens[k+1].startswith('-'):
+                        continue
 
                 input_flag = InputFlag(name=current_flag_name[current_flag_name.rfind('-')+1:],
                                        prefix=cast(Literal['-', '--', '---'],
