@@ -1,4 +1,3 @@
-from pprint import pprint
 from rich.console import Console
 
 from argenta.command import Command
@@ -24,14 +23,12 @@ def command_help():
 
 @work_router.command(Command(trigger='S', description='Start Solving', flags=Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT)))
 def command_start_solving(args: InputFlags):
-    print('Solving...')
-    pprint(args.get_flag('host'))
-    #start_solving_command()
+    pass
 
 
 @settings_router.command(Command(trigger='U', description='Update WordMath'))
 def command_update():
-    print('Command update')
+    pass
 
 
 
