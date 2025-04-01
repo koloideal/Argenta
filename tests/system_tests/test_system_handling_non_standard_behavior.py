@@ -101,7 +101,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn('\nUndefined or incoct input flag: --port 132\n', output)
+        self.assertIn('\nUndefined or incorrect input flag: --port 132\n', output)
 
 
     @patch("builtins.input", side_effect=["test", "some", "q"])
