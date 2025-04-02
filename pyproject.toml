@@ -1,6 +1,6 @@
 [project]
 name = "argenta"
-version = "0.4.5"
+version = "0.4.6"
 description = "python library for creating custom shells"
 authors = [
     {name = "kolo", email = "kolo.is.main@gmail.com"}
@@ -8,7 +8,7 @@ authors = [
 license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = [] # no dependencies
+dependencies = ["rich (>=14.0.0,<15.0.0)", "art (>=6.4,<7.0)"]
 
 
 [tool.ruff]
@@ -27,11 +27,5 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.dev.dependencies]
-art = "^6.4"
-rich = "^13.9.4"
-numpy = "^2.2.2"
-word2number = "^1.1"
-numexpr = "^2.10.2"
-requests = "^2.32.3"
 pyreadline3 = "^3.5.4"
 

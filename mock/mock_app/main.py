@@ -1,37 +1,18 @@
 from mock.mock_app.handlers.routers import work_router, settings_router
 from art import text2art
-from rich.console import Console
 
 from argenta.app import App
+from argenta.app.defaults import PredeterminedMessages
 
 
-app: App = App(prompt='[italic white bold]What do you want to do(enter number of action)?',
-               line_separate=f'\n{"[bold green]-[/bold green][bold red]-[/bold red]"*25}\n',
-               print_func=Console().print,
-               command_group_description_separate='ISIISISISIISISISISISISISISIISISI',
-               repeat_command_groups=True)
+app: App = App()
 
 
 def main():
-    ascii_name: str = text2art('WordMath', font='nancyj')
-    initial_greeting: str = f'[bold red]\n\n{ascii_name}'
-
-    ascii_goodbye_message: str = text2art('GoodBye', font='small')
-    goodbye_message: str = f'[bold red]\n{ascii_goodbye_message}{' '*12}made by kolo\n'
-
     app.include_routers(work_router, settings_router)
 
-    app.set_initial_message(initial_greeting)
-    app.set_farewell_message(goodbye_message)
-
-    app.add_message_on_startup('[b dim]Usage[/b dim]: [i]<command> <[green]flags[/green]>[/i]\n')
-    app.add_message_on_startup('[b dim]Help[/b dim]: [i]<command>[/i] [b red]--help[/b red]\n\n')
-
-    app.set_invalid_input_flags_handler(lambda raw_command: print(f"Invalid input flags: {raw_command}"))
-    app.set_unknown_command_handler(lambda command: print(f"Unknown command: {command.get_trigger()}"))
-    app.set_repeated_input_flags_handler(lambda raw_command: print(f"Repeated input flags: {raw_command}"))
-
-    app.set_description_message_pattern('[bold red][{command}][/bold red] [blue dim]*=*=*[/blue dim] [bold yellow italic]{description}')
+    app.add_message_on_startup(PredeterminedMessages.USAGE)
+    app.add_message_on_startup(PredeterminedMessages.HELP + '\n\n')
 
     app.start_polling()
 

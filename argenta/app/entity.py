@@ -1,6 +1,7 @@
 from typing import Callable
 from inspect import getfullargspec
 from rich.console import Console
+from art import text2art
 import re
 
 from argenta.command.models import Command, InputCommand
@@ -20,15 +21,17 @@ from argenta.app.registered_routers.entity import RegisteredRouters
 
 class App:
     def __init__(self,
-                 prompt: str = 'Enter a command\n',
-                 initial_message: str = '\nHello, I am Argenta\n',
-                 farewell_message: str = '\nGoodBye\n',
+                 prompt: str = '[italic dim bold]What do you want to do?\n',
+                 initial_message: str = f'\n[bold red]{text2art('Argenta', font='tarty1')}\n\n',
+                 farewell_message: str = f'[bold red]\n{text2art('\nSee   you\n', font='chanky')}[/bold red]\n'
+                                         f'[red i]github.com/koloideal/Argenta[/red i] | '
+                                         f'[red bold i]made by kolo[/red bold i]\n',
                  exit_command: str = 'Q',
                  exit_command_description: str = 'Exit command',
                  system_points_title: str = 'System points:',
                  ignore_exit_command_register: bool = True,
-                 ignore_command_register: bool = False,
-                 line_separate: str = '',
+                 ignore_command_register: bool = True,
+                 line_separate: str = f'\n[dim]{"--"*25}\n',
                  command_group_description_separate: str = '',
                  repeat_command_groups: bool = True,
                  print_func: Callable[[str], None] = Console().print) -> None:
@@ -45,12 +48,12 @@ class App:
         self._ignore_command_register = ignore_command_register
         self._repeat_command_groups_description = repeat_command_groups
 
-        self._description_message_pattern: str = '[{command}] *=*=* {description}'
+        self._description_message_pattern: str = '[bold red][{command}][/bold red] [blue dim]*=*=*[/blue dim] [bold yellow italic]{description}'
         self._registered_routers: RegisteredRouters = RegisteredRouters()
-        self._invalid_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Incorrect flag syntax: "{raw_command}"')
-        self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Repeated input flags: "{raw_command}"')
-        self._empty_input_command_handler: Callable[[], None] = lambda: print_func('Empty input command')
-        self._unknown_command_handler: Callable[[InputCommand], None] = lambda command: print_func(f"Unknown command: {command.get_trigger()}")
+        self._invalid_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'[red bold]Incorrect flag syntax: {raw_command}')
+        self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'[red bold]Repeated input flags: {raw_command}')
+        self._empty_input_command_handler: Callable[[], None] = lambda: print_func('[red bold]Empty input command')
+        self._unknown_command_handler: Callable[[InputCommand], None] = lambda command: print_func(f"[red bold]Unknown command: {command.get_trigger()}")
         self._exit_command_handler: Callable[[], None] = lambda: print_func(self._farewell_message)
         self._messages_on_startup = []
 
