@@ -1,5 +1,6 @@
 from typing import Callable
 from inspect import getfullargspec
+from rich.console import Console
 import re
 
 from argenta.command.models import Command, InputCommand
@@ -19,7 +20,7 @@ from argenta.app.registered_routers.entity import RegisteredRouters
 
 class App:
     def __init__(self,
-                 prompt: str = 'Enter a command',
+                 prompt: str = 'Enter a command\n',
                  initial_message: str = '\nHello, I am Argenta\n',
                  farewell_message: str = '\nGoodBye\n',
                  exit_command: str = 'Q',
@@ -30,7 +31,7 @@ class App:
                  line_separate: str = '',
                  command_group_description_separate: str = '',
                  repeat_command_groups: bool = True,
-                 print_func: Callable[[str], None] = print) -> None:
+                 print_func: Callable[[str], None] = Console().print) -> None:
         self._prompt = prompt
         self._print_func = print_func
         self._exit_command = exit_command
@@ -66,14 +67,12 @@ class App:
 
         if not self._repeat_command_groups_description:
             self._print_command_group_description()
-            self._print_func(self._prompt)
 
         while True:
             if self._repeat_command_groups_description:
                 self._print_command_group_description()
-                self._print_func(self._prompt)
 
-            raw_command: str = input()
+            raw_command: str = Console().input(self._prompt)
 
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
@@ -86,14 +85,12 @@ class App:
                     self._print_func(self._prompt)
                 continue
 
-            is_exit = self._is_exit_command(input_command)
-            if is_exit:
+            if self._is_exit_command(input_command):
                 return
 
             self._print_func(self._line_separate)
-            is_unknown_command: bool = self._check_is_command_unknown(input_command)
 
-            if is_unknown_command:
+            if self._is_unknown_command(input_command):
                 self._print_func(self._line_separate)
                 if not self._repeat_command_groups_description:
                     self._print_func(self._prompt)
@@ -209,23 +206,21 @@ class App:
             if self._ignore_exit_command_register:
                 system_router.input_command_handler(command)
                 return True
-            else:
-                if command.get_trigger() == self._exit_command:
-                    system_router.input_command_handler(command)
-                    return True
+            elif command.get_trigger() == self._exit_command:
+                system_router.input_command_handler(command)
+                return True
         return False
 
 
-    def _check_is_command_unknown(self, command: InputCommand):
+    def _is_unknown_command(self, command: InputCommand):
         for router_entity in self._registered_routers:
             for command_handler in router_entity.get_command_handlers():
                 handled_command_trigger = command_handler.get_handled_command().get_trigger()
                 if handled_command_trigger.lower() == command.get_trigger().lower():
                     if self._ignore_command_register:
                         return False
-                    else:
-                        if handled_command_trigger == command.get_trigger():
-                            return False
+                    elif handled_command_trigger == command.get_trigger():
+                        return False
         self._unknown_command_handler(command)
         return True
 
