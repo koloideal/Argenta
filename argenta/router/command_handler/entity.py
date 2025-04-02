@@ -8,8 +8,8 @@ class CommandHandler:
         self.handler = handler
         self.handled_command = handled_command
 
-    def handling(self, input_flags: InputFlags):
-        if input_flags.get_flags():
+    def handling(self, input_flags: InputFlags = None):
+        if input_flags is not None:
             self.handler(input_flags)
         else:
             self.handler()

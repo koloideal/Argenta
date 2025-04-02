@@ -23,7 +23,7 @@ def command_help():
 
 @work_router.command(Command(trigger='S', description='Start Solving', flags=Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT)))
 def command_start_solving(args: InputFlags):
-    pass
+    print(args.get_flags())
 
 
 @settings_router.command(Command(trigger='U', description='Update WordMath'))

@@ -22,7 +22,6 @@ class App:
                  prompt: str = 'Enter a command',
                  initial_message: str = '\nHello, I am Argenta\n',
                  farewell_message: str = '\nGoodBye\n',
-                 invalid_input_flags_message: str = 'Invalid input flags',
                  exit_command: str = 'Q',
                  exit_command_description: str = 'Exit command',
                  system_points_title: str = 'System points:',
@@ -31,22 +30,19 @@ class App:
                  line_separate: str = '',
                  command_group_description_separate: str = '',
                  repeat_command_groups: bool = True,
-                 messages_on_startup: list[str] = None,
                  print_func: Callable[[str], None] = print) -> None:
-        self.prompt = prompt
-        self.print_func = print_func
-        self.exit_command = exit_command
-        self.exit_command_description = exit_command_description
-        self.system_points_title = system_points_title
-        self.ignore_exit_command_register = ignore_exit_command_register
-        self.farewell_message = farewell_message
-        self.initial_message = initial_message
-        self.invalid_input_flags_message = invalid_input_flags_message
-        self.line_separate = line_separate
-        self.command_group_description_separate = command_group_description_separate
-        self.ignore_command_register = ignore_command_register
-        self.repeat_command_groups = repeat_command_groups
-        self.messages_on_startup = messages_on_startup if messages_on_startup else []
+        self._prompt = prompt
+        self._print_func = print_func
+        self._exit_command = exit_command
+        self._exit_command_description = exit_command_description
+        self._system_points_title = system_points_title
+        self._ignore_exit_command_register = ignore_exit_command_register
+        self._farewell_message = farewell_message
+        self._initial_message = initial_message
+        self._line_separate = line_separate
+        self._command_group_description_separate = command_group_description_separate
+        self._ignore_command_register = ignore_command_register
+        self._repeat_command_groups_description = repeat_command_groups
 
         self._description_message_pattern: str = '[{command}] *=*=* {description}'
         self._registered_routers: RegisteredRouters = RegisteredRouters()
@@ -54,7 +50,8 @@ class App:
         self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Repeated input flags: "{raw_command}"')
         self._empty_input_command_handler: Callable[[], None] = lambda: print_func('Empty input command')
         self._unknown_command_handler: Callable[[InputCommand], None] = lambda command: print_func(f"Unknown command: {command.get_trigger()}")
-        self._exit_command_handler: Callable[[], None] = lambda: print_func(self.farewell_message)
+        self._exit_command_handler: Callable[[], None] = lambda: print_func(self._farewell_message)
+        self._messages_on_startup = []
 
 
     def start_polling(self) -> None:
@@ -62,62 +59,60 @@ class App:
         self._validate_number_of_routers()
         self._validate_included_routers()
 
-        self.print_func(self.initial_message)
+        self._print_func(self._initial_message)
 
-        for message in self.messages_on_startup:
-            self.print_func(message)
+        for message in self._messages_on_startup:
+            self._print_func(message)
 
-        if not self.repeat_command_groups:
+        if not self._repeat_command_groups_description:
             self._print_command_group_description()
-            self.print_func(self.prompt)
+            self._print_func(self._prompt)
 
         while True:
-            if self.repeat_command_groups:
+            if self._repeat_command_groups_description:
                 self._print_command_group_description()
-                self.print_func(self.prompt)
+                self._print_func(self._prompt)
 
             raw_command: str = input()
 
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
             except BaseInputCommandException as error:
-                self.print_func(self.line_separate)
+                self._print_func(self._line_separate)
                 self._error_handler(error, raw_command)
-                self.print_func(self.line_separate)
+                self._print_func(self._line_separate)
 
-                if not self.repeat_command_groups:
-                    self.print_func(self.prompt)
+                if not self._repeat_command_groups_description:
+                    self._print_func(self._prompt)
                 continue
 
             is_exit = self._is_exit_command(input_command)
             if is_exit:
                 return
 
-            self.print_func(self.line_separate)
+            self._print_func(self._line_separate)
             is_unknown_command: bool = self._check_is_command_unknown(input_command)
 
             if is_unknown_command:
-                self.print_func(self.line_separate)
-                self.print_func(self.command_group_description_separate)
-                if not self.repeat_command_groups:
-                    self.print_func(self.prompt)
+                self._print_func(self._line_separate)
+                if not self._repeat_command_groups_description:
+                    self._print_func(self._prompt)
                 continue
 
             for registered_router in self._registered_routers:
                 registered_router.input_command_handler(input_command)
 
-            self.print_func(self.line_separate)
-            self.print_func(self.command_group_description_separate)
-            if not self.repeat_command_groups:
-                self.print_func(self.prompt)
+            self._print_func(self._line_separate)
+            if not self._repeat_command_groups_description:
+                self._print_func(self._prompt)
 
 
     def set_initial_message(self, message: str) -> None:
-        self.initial_message: str = message
+        self._initial_message: str = message
 
 
     def set_farewell_message(self, message: str) -> None:
-        self.farewell_message: str = message
+        self._farewell_message: str = message
 
 
     def set_description_message_pattern(self, pattern: str) -> None:
@@ -171,14 +166,14 @@ class App:
 
 
     def add_message_on_startup(self, message: str) -> None:
-        self.messages_on_startup.append(message)
+        self._messages_on_startup.append(message)
 
 
     def include_router(self, router: Router) -> None:
         if not isinstance(router, Router):
             raise InvalidRouterInstanceException()
 
-        router.set_ignore_command_register(self.ignore_command_register)
+        router.set_ignore_command_register(self._ignore_command_register)
         self._registered_routers.add_registered_router(router)
 
 
@@ -199,21 +194,23 @@ class App:
 
 
     def _setup_system_router(self):
-        system_router.set_title(self.system_points_title)
-        @system_router.command(Command(self.exit_command, self.exit_command_description))
+        system_router.set_title(self._system_points_title)
+        @system_router.command(Command(trigger=self._exit_command,
+                                       description=self._exit_command_description))
         def exit_command():
             self._exit_command_handler()
+
         if system_router not in self._registered_routers.get_registered_routers():
             self.include_router(system_router)
 
 
     def _is_exit_command(self, command: InputCommand):
-        if command.get_trigger().lower() == self.exit_command.lower():
-            if self.ignore_exit_command_register:
+        if command.get_trigger().lower() == self._exit_command.lower():
+            if self._ignore_exit_command_register:
                 system_router.input_command_handler(command)
                 return True
             else:
-                if command.get_trigger() == self.exit_command:
+                if command.get_trigger() == self._exit_command:
                     system_router.input_command_handler(command)
                     return True
         return False
@@ -224,7 +221,7 @@ class App:
             for command_handler in router_entity.get_command_handlers():
                 handled_command_trigger = command_handler.get_handled_command().get_trigger()
                 if handled_command_trigger.lower() == command.get_trigger().lower():
-                    if self.ignore_command_register:
+                    if self._ignore_command_register:
                         return False
                     else:
                         if handled_command_trigger == command.get_trigger():
@@ -235,12 +232,12 @@ class App:
 
     def _print_command_group_description(self):
         for registered_router in self._registered_routers:
-            self.print_func(registered_router.get_title())
+            self._print_func(registered_router.get_title())
             for command_handler in registered_router.get_command_handlers():
-                self.print_func(self._description_message_pattern.format(
+                self._print_func(self._description_message_pattern.format(
                         command=command_handler.get_handled_command().get_trigger(),
                         description=command_handler.get_handled_command().get_description()))
-            self.print_func(self.command_group_description_separate)
+            self._print_func(self._command_group_description_separate)
 
 
     def _error_handler(self, error: BaseInputCommandException, raw_command: str) -> None:
