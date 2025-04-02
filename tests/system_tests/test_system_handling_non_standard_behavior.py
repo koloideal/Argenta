@@ -24,6 +24,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         app = App()
         app.include_router(router)
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
         app.start_polling()
 
         output = mock_stdout.getvalue()
@@ -42,6 +43,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         app = App(ignore_command_register=False)
         app.include_router(router)
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
         app.start_polling()
 
         output = mock_stdout.getvalue()
@@ -115,6 +117,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         app = App()
         app.include_router(router)
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
         app.start_polling()
 
         output = mock_stdout.getvalue()
@@ -137,6 +140,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         app = App()
         app.include_router(router)
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
         app.start_polling()
 
         output = mock_stdout.getvalue()
@@ -155,6 +159,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         app = App()
         app.include_router(router)
+        app.set_invalid_input_flags_handler(lambda command: print(f'Incorrect flag syntax: "{command}"'))
         app.start_polling()
 
         output = mock_stdout.getvalue()
@@ -173,6 +178,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         app = App()
         app.include_router(router)
+        app.set_empty_command_handler(lambda: print('Empty input command'))
         app.start_polling()
 
         output = mock_stdout.getvalue()
@@ -191,6 +197,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         app = App()
         app.include_router(router)
+        app.set_repeated_input_flags_handler(lambda command: print(f'Repeated input flags: "{command}"'))
         app.start_polling()
 
         output = mock_stdout.getvalue()

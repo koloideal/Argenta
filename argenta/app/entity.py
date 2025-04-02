@@ -149,9 +149,9 @@ class App:
             self._unknown_command_handler = handler
 
 
-    def set_empty_command_handler(self, handler: Callable[[str], None]) -> None:
+    def set_empty_command_handler(self, handler: Callable[[], None]) -> None:
         args = getfullargspec(handler).args
-        if len(args) != 1:
+        if len(args) != 0:
             raise IncorrectNumberOfHandlerArgsException()
         else:
             self._empty_input_command_handler = handler
