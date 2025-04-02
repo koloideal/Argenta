@@ -1,3 +1,3 @@
 __all__ = ["App"]
 
-from .entity import App
+from .models import App

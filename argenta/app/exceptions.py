@@ -23,8 +23,3 @@ class NoRegisteredHandlersException(Exception):
         self.router_name = router_name
     def __str__(self):
         return f"No Registered Handlers Found For '{self.router_name}'"
-
-
-class IncorrectNumberOfHandlerArgsException(Exception):
-    def __str__(self):
-        return "Incorrect Input Flags Handler has incorrect number of arguments"
