@@ -27,7 +27,7 @@ class InputFlag(BaseFlag):
         super().__init__(name, prefix)
         self._flag_value = value
 
-    def get_value(self):
+    def get_value(self) -> str | None:
         return self._flag_value
 
     def set_value(self, value):

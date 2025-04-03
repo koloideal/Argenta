@@ -151,9 +151,6 @@ class App(BaseApp):
                 self._print_func(self._line_separate)
                 self._error_handler(error, raw_command)
                 self._print_func(self._line_separate)
-
-                if not self._repeat_command_groups_description:
-                    self._print_func(self._prompt)
                 continue
 
             if self._is_exit_command(input_command):
@@ -163,8 +160,6 @@ class App(BaseApp):
 
             if self._is_unknown_command(input_command):
                 self._print_func(self._line_separate)
-                if not self._repeat_command_groups_description:
-                    self._print_func(self._prompt)
                 continue
 
             for registered_router in self._registered_routers:

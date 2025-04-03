@@ -5,7 +5,7 @@
 ## Описание
 **Argenta** — Python library for creating custom shells
 
-![prewiev](imgs/mock_app_preview_last.png)  
+![prewiev](https://github.com/koloideal/Argenta/blob/kolo/imgs/mock_app_preview_last.png?raw=True)  
 Пример внешнего вида TUI, написанного с помощью Argenta  
 
 ---
@@ -95,33 +95,29 @@ def handler_with_flags(flags: InputFlags):
 
 ### Конструктор
 ```python
-App(prompt: str = 'Enter a command',
-    initial_greeting: str = '\nHello, I am Argenta\n',
-    farewell_message: str = '\nGoodBye\n',
+App(prompt: str = 'What do you want to do?\n',
+    initial_message: str = 'Argenta',
+    farewell_message: str = 'See you',
     exit_command: str = 'Q',
     exit_command_description: str = 'Exit command',
     system_points_title: str = 'System points:',
-    ignore_exit_command_register: bool = True,
-    ignore_command_register: bool = False,
-    line_separate: str = '',
-    command_group_description_separate: str = '',
+    ignore_command_register: bool = True,
+    line_separate: str = '-----',
     repeat_command_groups: bool = True,
-    print_func: Callable[[str], None] = print)
+    print_func: Callable[[str], None] = Console().print)
 ```
 **Аргументы:**
 - **name : mean**
 - `prompt` (`str`): Сообщение перед вводом команды.
-- `initial_greeting` (`str`): Приветственное сообщение при запуске.
+- `initial_message` (`str`): Приветственное сообщение при запуске.
 - `farewell_message` (`str`): Сообщение при выходе.
 - `exit_command` (`str`): Команда выхода (по умолчанию `'Q'`).
 - `exit_command_description` (`str`): Описание команды выхода.
 - `system_points_title` (`str`): Заголовок перед списком системных команд.
-- `ignore_exit_command_register` (`bool`): Игнорировать регистр команды выхода.
 - `ignore_command_register` (`bool`): Игнорировать регистр всех команд.
 - `line_separate` (`str`): Разделительная строка между командами.
-- `command_group_description_separate` (`str`): Разделитель между группами команд.
 - `repeat_command_groups` (`bool`): Повторять описание команд перед вводом.
-- `print_func` (`Callable[[str], None]`): Функция вывода текста в терминал (по умолчанию `print`).
+- `print_func` (`Callable[[str], None]`): Функция вывода текста в терминал.
 
 ---
 
@@ -131,94 +127,83 @@ App(prompt: str = 'Enter a command',
 
 #### **.start_polling() -> `None`**  
 
-*method mean* **::** запускает цикл обработки ввода
+*method mean* **::** Запускает цикл обработки ввода
 
 ---
 
 #### **.include_router(router: Router) -> `None`**  
 
-*param* `router: Router` **::** регистрируемый роутер  
+*param* `router: Router` **::** Регистрируемый роутер  
 *required* **::** True
 
-*method mean* **::** регистрирует роутер в оболочке
+*method mean* **::** Регистрирует роутер в оболочке
 
 ---
 
-#### **.set_initial_message(message: str) -> `None`**  
+#### **.include_routers(\*routers: Router) -> `None`**  
 
-*param* `message: str` **::** устанавливаемое приветственное сообщение  
-*required* **::** True  
-*example* **::** `"Hello, I'm a example app"`
+*param* `routers: Router` **::** Неограниченное количество регистрируемых роутеров    
+*required* **::** True
 
-*method mean* **::** устанавливает сообщение, которое будет отображено при запуске программы
-
----
-
-#### **.set_farewell_message(message: str) -> `None`**  
-
-*param* `message: str` **::** устанавливаемое сообщение при выходе  
-*required* **::** True  
-*example* **::** `"GoodBye !"`
-
-*method mean* **::** устанавливает сообщение, которое будет отображено при выходе
+*method mean* **::** Регистрирует роутер в оболочке
 
 ---
 
 #### **.set_description_message_pattern(pattern: str) -> `None`**  
 
-*param* `pattern: str` **::** паттерн описания команды при её выводе в консоль  
+*param* `pattern: str` **::** Паттерн описания команды при её выводе в консоль  
 *required* **::** True  
 *example* **::** `"[{command}] *=*=* {description}"`
 
-*method mean* **::** устанавливает паттерн описания команд, который будет использован
+*method mean* **::** Устанавливает паттерн описания команд, который будет использован
 при выводе в консоль
 
 ---
-<a name="custom_handler"></a>
-#### **.set_repeated_input_flags_handler(handler: Callable[[str], None]) -> `None`**  
 
-*param* `handler: Callable[[str], None]` **::** функция или лямбда функция, которой будет передано управление при
-вводе юзером повторяющихся флагов  
+#### **.add_message_on_startup(message: str) -> `None`**  
+
+*param* `message: str` **::** Сообщение, которое будет выведено при запуске приложения 
 *required* **::** True  
+*example* **::** `Message on startup`
+
+*method mean* **::** Устанавливает паттерн описания команд, который будет использован
+при выводе в консоль
+
+---
+
+<a name="custom_handler"></a>
+#### **.repeated_input_flags_handler: `Callable[[str], None])`**
+
 *example* **::** `lambda raw_command: print_func(f'Repeated input flags: "{raw_command}"')`
 
-*method mean* **::** устанавливает функцию, которой будет передано управление при
+*attr mean* **::** Устанавливает функцию, которой будет передано управление при
 вводе юзером повторяющихся флагов
 
 ---
 
-#### **.set_invalid_input_flags_handler(self, handler: Callable[[str], None]) -> `None`**  
+#### **.invalid_input_flags_handler: `Callable[[str], None])`**  
 
-*param* `handler: Callable[[str], None]` **::** функция или лямбда функция, которой будет передано управление при
-вводе юзером команды с некорректным синтаксисом флагов
-*required* **::** True  
 *example* **::** `lambda raw_command: print_func(f'Incorrect flag syntax: "{raw_command}"')`
 
-*method mean* **::** устанавливает функцию, которой будет передано управление при
+*attr mean* **::** Устанавливает функцию, которой будет передано управление при
 вводе юзером команды с некорректным синтаксисом флагов
 
 ---
 
-#### **.set_unknown_command_handler(self, handler: Callable[[str], None]) -> `None`**  
+#### **.unknown_command_handler: `Callable[[str], None]`**  
 
-*param* `handler: Callable[[str], None]` **::** функция или лямбда функция, которой будет передано управление при
-вводе юзером неизвестной команды
-*required* **::** True  
 *example* **::** `lambda command: print_func(f"Unknown command: {command.get_string_entity()}")`
 
-*method mean* **::** устанавливает функцию, которой будет передано управление при
+*attr mean* **::** Устанавливает функцию, которой будет передано управление при
 вводе юзером неизвестной команды
 
 ---
 
-#### **.set_empty_command_handler(self, handler: Callable[[str], None]) -> `None`**  
+#### **.empty_command_handler: `Callable[[str], None])`**  
 
-*param* `handler: Callable[[str], None]` **::** функция или лямбда функция, которой будет передано управление при
-вводе юзером пустой команды  
-*required* **::** True  
 *example* **::** `lambda: print_func(f'Empty input command')`
 
-*method mean* **::** устанавливает функцию, которой будет передано управление при
+*attr mean* **::** Устанавливает функцию, которой будет передано управление при
 вводе юзером пустой команды
 
 ---
@@ -236,6 +221,9 @@ App(prompt: str = 'Enter a command',
 `RepeatedCommandInDifferentRoutersException`. Исключение вызывается только при наличии пересекающихся команд 
 у __<u>разных</u>__ роутеров
 
+- Наиболее частые сообщение при запуске предопределены и доступны для быстрого
+использования: `argenta.app.defaults.PredeterminedMessages`
+
 
 
 
@@ -244,9 +232,7 @@ App(prompt: str = 'Enter a command',
 - `InvalidRouterInstanceException` — Переданный объект в метод `App().include_router()` не является экземпляром класса `Router`.
 - `InvalidDescriptionMessagePatternException` — Неправильный формат паттерна описания команд.
 - `IncorrectNumberOfHandlerArgsException` — У обработчика нестандартного поведения зарегистрировано неверное количество аргументов(в большинстве случаев у него должен быть один аргумент).
-- `NoRegisteredRoutersException` — Отсутствуют зарегистрированные роутеры.
 - `NoRegisteredHandlersException` — У роутера нет ни одного обработчика команд.
-- `RepeatedCommandInDifferentRoutersException` — Одна и та же команда зарегистрирована в разных роутерах.
 
 ---
 
@@ -274,32 +260,27 @@ Router(title: str = 'Commands group title:',
 
 #### **command(command: Command)**  
 
-*param* `command: Command` **::** экземпляр класса `Command`, который определяет строковый триггер команды,
+*param* `command: Command` **::** Экземпляр класса `Command`, который определяет строковый триггер команды,
 допустимые флаги команды и другое  
 *required* **::** True  
 *example* **::** `Command(command='ssh', description='connect via ssh')`
 
-*method mean* **::** декоратор, который регистрирует функцию как обработчик команды
+*method mean* **::** Декоратор, который регистрирует функцию как обработчик команды
 
 ---
 
 #### **.get_name() -> `str`**  
 
-*method mean* **::** возвращает установленное название роутера
+*method mean* **::** Возвращает установленное название роутера
 
 ---
 
 #### **.get_title() -> `str`**  
 
-*method mean* **::** возвращает установленный заголовок группы команд данного роутера
+*method mean* **::** Возвращает установленный заголовок группы команд данного роутера
 
 ---
 
-#### **.get_all_commands() -> `list[str]`**  
-
-*method mean* **::** возвращает все зарегистрированные команды для данного роутера
-
----
 
 ### Исключения
 - `RepeatedFlagNameException` - Повторяющиеся зарегистрированные флаги в команде
@@ -330,19 +311,19 @@ Command(trigger: str,
 
 #### **.get_trigger() -> `str`**  
 
-*method mean* **::** возвращает строковый триггер экземпляра
+*method mean* **::** Возвращает строковый триггер экземпляра
 
 ---
 
 #### **.get_description() -> `str`**  
 
-*method mean* **::** возвращает описание команды
+*method mean* **::** Возвращает описание команды
 
 ---
 
 #### **.get_registered_flags() -> `Flags | None`**  
 
-*method mean* **::** возвращает зарегистрированные флаги экземпляра
+*method mean* **::** Возвращает зарегистрированные флаги экземпляра
 
 ---
 
@@ -364,18 +345,18 @@ Command(trigger: str,
 
 ### Конструктор
 ```python
-Flag(flag_name: str,
-     flag_prefix: typing.Literal['-', '--', '---'] = '-',
-     possible_flag_values: list[str] | typing.Pattern[str] | False = True)
+Flag(name: str,
+     prefix: typing.Literal['-', '--', '---'] = '-',
+     possible_values: list[str] | typing.Pattern[str] | False = True)
 ```
 
 ---
 
 **Аргументы:**
 - **name : mean**
-- `flag_name` (`str`): Имя флага
-- `flag_prefix` (`Literal['-', '--', '---']`): Префикс команды, допустимым значением является от одного до трёх минусов
-- `possible_flag_values` (`list[str] | Pattern[str] | bool`): Множество допустимых значений флага, может быть задано
+- `name` (`str`): Имя флага
+- `prefix` (`Literal['-', '--', '---']`): Префикс команды, допустимым значением является от одного до трёх минусов
+- `possible_values` (`list[str] | Pattern[str] | bool`): Множество допустимых значений флага, может быть задано
 списком с допустимыми значениями или регулярным выражением (рекомендуется `re.compile(r'example exspression')`), при значении
 аргумента `False` у введённого флага не может быть значения, иначе будет вызвано исключение и обработано соответствующим 
 еррор-хэндлером
@@ -388,19 +369,60 @@ Flag(flag_name: str,
 
 #### **.get_string_entity() -> `str`**  
 
-*method mean* **::** возвращает строковое представление флага(префикс + имя)
+*method mean* **::** Возвращает строковое представление флага(префикс + имя)
 
 ---
 
-#### **.get_flag_name() -> `str`**  
+#### **.get_name() -> `str`**  
 
-*method mean* **::** возвращает имя флага
+*method mean* **::** Возвращает имя флага
 
 ---
 
-#### **.get_flag_prefix() -> `str`**  
+#### **.get_prefix() -> `str`**  
 
-*method mean* **::** возвращает префикс флага
+*method mean* **::** Возвращает префикс флага
+
+---
+
+##  *class* :: `InputFlag` 
+Класс, экземпляры которого являются введёнными флагами команды, передаётся в хэндлер команды
+через `InputFlags`
+
+---
+
+### Примечания  
+
+- Наиболее часто используемые флаги предопределены и доступны для быстрого использования:
+`argenta.command.flag.defaults.PredeterminedFlags` 
+
+---
+
+
+### Конструктор
+```python
+InputFlag(name: str,
+         prefix: typing.Literal['-', '--', '---'] = '-',
+         value: str = None)
+```
+
+---
+
+**Аргументы:**
+- **name : mean**
+- `name` (`str`): Имя флага
+- `prefix` (`Literal['-', '--', '---']`): Префикс команды, допустимым значением является от одного до трёх минусов
+- `value` (`str`): Значение введённого флага, если оно есть
+
+---
+
+### ***methods***     
+
+---
+
+#### **.get_value() -> `str | None`**  
+
+*method mean* **::** Возвращает значение введённого флага
 
 ---
 
@@ -411,7 +433,7 @@ Flag(flag_name: str,
 
 ### Конструктор
 ```python
-Flags(*flagы: Flag)
+Flags(*flags: Flag)
 ```
 
 ---
@@ -428,7 +450,66 @@ Flags(*flagы: Flag)
 
 #### **.get_flags() -> `list[Flag]`**  
 
-*method mean* **::** возвращает зарегистрированные флаги
+*method mean* **::** Возвращает зарегистрированные флаги
+
+---
+
+#### **.add_flag(flag: Flag) -> `None`**  
+
+*method mean* **::** Добавляет флаг в группу
+
+---
+
+#### **.add_flags(flags: list[Flag]) -> `None`**  
+
+*method mean* **::** Добавляет флаги в группу
+
+---
+
+#### **.get_flag(name: str) -> `Flag | None`**  
+
+*param* `name: str` **::** Строковый триггер флага без префикса
+*required* **::** True  
+*example* **::** `'host'`
+
+*method mean* **::** Возвращает флаг по его триггеру или `None`, если флаг не найден
+
+---
+
+##  *class* :: `InputFlags` 
+Класс, объединяющий список введённых флагов в один объект, передаётся соответствующему хэндлеру
+в качестве аргумента
+
+### Конструктор
+```python
+InputFlags(*flags: Flag)
+```
+
+---
+
+**Аргументы:**
+- **name : mean**
+- `*flags` (`InputFlag`): Неограниченное количество передаваемых флагов
+
+---
+
+### ***methods***     
+
+---
+
+#### **.get_flags() -> `list[Flag]`**  
+
+*method mean* **::** Возвращает введённые флаги
+
+---
+
+#### **.get_flag(name: str) -> `InputFlag | None`**  
+
+*param* `name: str` **::** Строковый триггер флага без префикса
+*required* **::** True  
+*example* **::** `'host'`
+
+*method mean* **::** Возвращает введённый флаг по его триггеру или `None`, если флаг не найден
 
 ---
 
