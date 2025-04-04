@@ -60,6 +60,7 @@ class InputCommand(BaseCommand, Generic[InputCommandType]):
     def get_input_flags(self) -> InputFlags:
         return self._input_flags
 
+
     @staticmethod
     def parse(raw_command: str) -> InputCommandType:
         if not raw_command:

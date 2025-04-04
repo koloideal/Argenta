@@ -1,18 +1,12 @@
-from argenta.app import App
-from argenta.command import Command
-from argenta.router import Router
+from contextlib import redirect_stdout
+import io
 
 
-router = Router()
-
-@router.command(Command('test'))
-def test():
-    print(f'test command')
-
-@router.command(Command('some'))
-def test2():
-    print(f'some command')
-
-app = App()
-app.include_router(router)
-app.start_polling()
+while True:
+    with redirect_stdout(io.StringIO()) as f:
+        a = input('rgsert')
+        print(a)
+        res = f.getvalue()
+    print('-'*len(res))
+    print(res.replace('\n', ''))
+    print('-'*len(res))

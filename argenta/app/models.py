@@ -1,6 +1,8 @@
 from typing import Callable
 from rich.console import Console
 from art import text2art
+from contextlib import redirect_stdout
+import io
 import re
 
 from argenta.command.models import Command, InputCommand
@@ -27,7 +29,7 @@ class BaseApp:
                  exit_command_description: str = 'Exit command',
                  system_points_title: str = 'System points:',
                  ignore_command_register: bool = True,
-                 line_separate: str = '-----',
+                 line_separate: str = '-',
                  repeat_command_groups: bool = True,
                  print_func: Callable[[str], None] = Console().print) -> None:
         self._prompt = prompt
@@ -53,21 +55,17 @@ class BaseApp:
         self.exit_command_handler: Callable[[], None] = lambda: print_func(self.farewell_message)
 
         self._setup_default_view(is_initial_message_default=initial_message == 'Argenta',
-                                 is_farewell_message_default=farewell_message == 'See you',
-                                 is_line_separate_default=line_separate == '-----')
+                                 is_farewell_message_default=farewell_message == 'See you')
 
 
     def _setup_default_view(self, is_initial_message_default: bool,
-                            is_farewell_message_default: bool,
-                            is_line_separate_default: bool):
+                            is_farewell_message_default: bool):
         if is_initial_message_default:
             self.initial_message = f'\n[bold red]{text2art('Argenta', font='tarty1')}\n\n'
         if is_farewell_message_default:
             self.farewell_message = (f'[bold red]\n{text2art('\nSee   you\n', font='chanky')}[/bold red]\n'
                                      f'[red i]github.com/koloideal/Argenta[/red i] | '
                                      f'[red bold i]made by kolo[/red bold i]\n')
-        if is_line_separate_default:
-            self._line_separate = f'\n[dim]{"-" * 50}\n'
 
 
     def _validate_number_of_routers(self) -> None:
@@ -123,6 +121,10 @@ class BaseApp:
             case EmptyInputCommandException():
                 self.empty_input_command_handler()
 
+    @staticmethod
+    def _make_line_separator(size: int, one_part_of_sep: str):
+        return f'\n[dim]{one_part_of_sep * size}[/dim]\n'
+
 
 
 class App(BaseApp):
@@ -148,9 +150,12 @@ class App(BaseApp):
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
             except BaseInputCommandException as error:
-                self._print_func(self._line_separate)
-                self._error_handler(error, raw_command)
-                self._print_func(self._line_separate)
+                with redirect_stdout(io.StringIO()) as f:
+                    self._error_handler(error, raw_command)
+                    res = f.getvalue()
+                self._print_func(self._make_line_separator(len(res), self._line_separate))
+                self._print_func(res.replace('\n', ''))
+                self._print_func(self._make_line_separator(len(res), self._line_separate))
                 continue
 
             if self._is_exit_command(input_command):
@@ -162,8 +167,17 @@ class App(BaseApp):
                 self._print_func(self._line_separate)
                 continue
 
-            for registered_router in self._registered_routers:
-                registered_router.input_command_handler(input_command)
+            with redirect_stdout(io.StringIO()) as f:
+                for registered_router in self._registered_routers:
+                    registered_router.input_command_handler(input_command)
+                res = f.getvalue()
+
+            max_length_line = max([len(line) for line in res.split('\n')])
+            max_length_line = max_length_line if max_length_line <= 80 else 80
+
+            self._print_func(self._make_line_separator(max_length_line, self._line_separate))
+            print(res.replace('\n', ''))
+            self._print_func(self._make_line_separator(max_length_line, self._line_separate))
 
             self._print_func(self._line_separate)
             if not self._repeat_command_groups_description:
