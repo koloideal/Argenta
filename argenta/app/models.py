@@ -98,7 +98,11 @@ class BaseApp:
                     return False
                 elif handled_command_trigger == command.get_trigger():
                     return False
-        self.unknown_command_handler(command)
+        with redirect_stdout(io.StringIO()) as f:
+            self.unknown_command_handler(command)
+            res: str = f.getvalue()
+        self._print_framed_text(res)
+
         return True
 
 
@@ -121,9 +125,21 @@ class BaseApp:
             case EmptyInputCommandException():
                 self.empty_input_command_handler()
 
+
     @staticmethod
     def _make_line_separator(size: int, one_part_of_sep: str):
         return f'\n[dim]{one_part_of_sep * size}[/dim]\n'
+
+
+    def _print_framed_text(self, text: str):
+        max_length_line = max([len([char for char in line if char.isalnum()]) for line in text.split('\n')])
+        with open('test.txt', 'w') as file:
+            file.write(text)
+        max_length_line = max_length_line if 10 <= max_length_line <= 80 else 80 if max_length_line > 80 else 10
+
+        self._print_func(self._make_line_separator(max_length_line, self._line_separate))
+        print(text.strip('\n'))
+        self._print_func(self._make_line_separator(max_length_line, self._line_separate))
 
 
 
@@ -152,34 +168,22 @@ class App(BaseApp):
             except BaseInputCommandException as error:
                 with redirect_stdout(io.StringIO()) as f:
                     self._error_handler(error, raw_command)
-                    res = f.getvalue()
-                self._print_func(self._make_line_separator(len(res), self._line_separate))
-                self._print_func(res.replace('\n', ''))
-                self._print_func(self._make_line_separator(len(res), self._line_separate))
+                    res: str = f.getvalue()
+                self._print_framed_text(res)
                 continue
 
             if self._is_exit_command(input_command):
                 return
 
-            self._print_func(self._line_separate)
-
             if self._is_unknown_command(input_command):
-                self._print_func(self._line_separate)
                 continue
 
             with redirect_stdout(io.StringIO()) as f:
                 for registered_router in self._registered_routers:
                     registered_router.input_command_handler(input_command)
-                res = f.getvalue()
+                res: str = f.getvalue()
+            self._print_framed_text(res)
 
-            max_length_line = max([len(line) for line in res.split('\n')])
-            max_length_line = max_length_line if max_length_line <= 80 else 80
-
-            self._print_func(self._make_line_separator(max_length_line, self._line_separate))
-            print(res.replace('\n', ''))
-            self._print_func(self._make_line_separator(max_length_line, self._line_separate))
-
-            self._print_func(self._line_separate)
             if not self._repeat_command_groups_description:
                 self._print_func(self._prompt)
 
