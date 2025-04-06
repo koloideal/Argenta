@@ -29,7 +29,7 @@ class BaseApp:
                  exit_command_description: str = 'Exit command',
                  system_points_title: str = 'System points:',
                  ignore_command_register: bool = True,
-                 line_separate: str = '-',
+                 dividing_line: str = '-',
                  repeat_command_groups: bool = True,
                  print_func: Callable[[str], None] = Console().print) -> None:
         self._prompt = prompt
@@ -37,7 +37,7 @@ class BaseApp:
         self._exit_command = exit_command
         self._exit_command_description = exit_command_description
         self._system_points_title = system_points_title
-        self._line_separate = line_separate
+        self._dividing_line = dividing_line
         self._ignore_command_register = ignore_command_register
         self._repeat_command_groups_description = repeat_command_groups
 
@@ -132,14 +132,13 @@ class BaseApp:
 
 
     def _print_framed_text(self, text: str):
-        max_length_line = max([len([char for char in line if char.isalnum()]) for line in text.split('\n')])
-        with open('test.txt', 'w') as file:
-            file.write(text)
+        clear_text = re.sub(r'\u001b\[[0-9;]*m', '', text)
+        max_length_line = max([len(line) for line in clear_text.split('\n')])
         max_length_line = max_length_line if 10 <= max_length_line <= 80 else 80 if max_length_line > 80 else 10
 
-        self._print_func(self._make_line_separator(max_length_line, self._line_separate))
+        self._print_func(self._make_line_separator(max_length_line, self._dividing_line))
         print(text.strip('\n'))
-        self._print_func(self._make_line_separator(max_length_line, self._line_separate))
+        self._print_func(self._make_line_separator(max_length_line, self._dividing_line))
 
 
 

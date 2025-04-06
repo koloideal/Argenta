@@ -1,7 +1,7 @@
 from rich.console import Console
 
 from argenta.command import Command
-from argenta.command.flag import Flags, InputFlags
+from argenta.command.flag import Flags, InputFlags, Flag
 from argenta.command.flag.defaults import PredeterminedFlags
 from argenta.router import Router
 from .handlers_implementation.help_command import help_command
@@ -15,15 +15,18 @@ settings_router: Router = Router(title='Settings points:')
 
 console = Console()
 
+flag = Flag('test')
 
-@work_router.command(Command(trigger='0', description='Get Help'))
+
+@work_router.command(Command(trigger='0',
+                             description='Get Help'))
 def command_help():
     help_command()
 
 
-@work_router.command(Command(trigger='S', description='Start Solving', flags=Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT)))
+@work_router.command(Command(trigger='S', description='Start Solving', flags=Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT, flag)))
 def command_start_solving(args: InputFlags):
-    print(args.get_flags())
+    print(args.get_flag('test'))
 
 
 @settings_router.command(Command(trigger='U', description='Update WordMath'))

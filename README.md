@@ -102,7 +102,7 @@ App(prompt: str = 'What do you want to do?\n',
     exit_command_description: str = 'Exit command',
     system_points_title: str = 'System points:',
     ignore_command_register: bool = True,
-    line_separate: str = '-----',
+    dividing_line: str = '-----',
     repeat_command_groups: bool = True,
     print_func: Callable[[str], None] = Console().print)
 ```
@@ -115,7 +115,7 @@ App(prompt: str = 'What do you want to do?\n',
 - `exit_command_description` (`str`): Описание команды выхода.
 - `system_points_title` (`str`): Заголовок перед списком системных команд.
 - `ignore_command_register` (`bool`): Игнорировать регистр всех команд.
-- `line_separate` (`str`): Разделительная строка между командами.
+- `dividing_line` (`str`): Разделительная строка между командами.
 - `repeat_command_groups` (`bool`): Повторять описание команд перед вводом.
 - `print_func` (`Callable[[str], None]`): Функция вывода текста в терминал.
 
