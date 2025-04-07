@@ -102,7 +102,7 @@ App(prompt: str = 'What do you want to do?\n',
     exit_command_description: str = 'Exit command',
     system_points_title: str = 'System points:',
     ignore_command_register: bool = True,
-    dividing_line: str = '-----',
+    dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
     repeat_command_groups: bool = True,
     print_func: Callable[[str], None] = Console().print)
 ```
@@ -115,7 +115,7 @@ App(prompt: str = 'What do you want to do?\n',
 - `exit_command_description` (`str`): Описание команды выхода.
 - `system_points_title` (`str`): Заголовок перед списком системных команд.
 - `ignore_command_register` (`bool`): Игнорировать регистр всех команд.
-- `dividing_line` (`str`): Разделительная строка между командами.
+- `dividing_line` (`StaticDividingLine | DynamicDividingLine`): Разделительная строка.
 - `repeat_command_groups` (`bool`): Повторять описание команд перед вводом.
 - `print_func` (`Callable[[str], None]`): Функция вывода текста в терминал.
 
@@ -233,6 +233,36 @@ App(prompt: str = 'What do you want to do?\n',
 - `InvalidDescriptionMessagePatternException` — Неправильный формат паттерна описания команд.
 - `IncorrectNumberOfHandlerArgsException` — У обработчика нестандартного поведения зарегистрировано неверное количество аргументов(в большинстве случаев у него должен быть один аргумент).
 - `NoRegisteredHandlersException` — У роутера нет ни одного обработчика команд.
+
+---
+
+##  *class* :: `StaticDivideLine` 
+Класс, экземпляр которого представляет собой строковый разделитель фиксированной длины
+
+### Конструктор
+```python
+StaticDivideLine(unit_part: str = '-', 
+                 length: int = 25)
+```
+
+**Аргументы:**
+- **name : mean**
+- `unit_part` (`str`): Единичная часть строкового разделителя
+- `length` (`int`): Длина строкового разделителя
+
+---
+
+##  *class* :: `DinamicDivideLine` 
+Строковый разделитель динамической длины, которая определяется длиной обрамляемого вывода команды
+
+### Конструктор
+```python
+DinamicDivideLine(unit_part: str = '-')
+```
+
+**Аргументы:**
+- **name : mean**
+- `unit_part` (`str`): Единичная часть строкового разделителя
 
 ---
 
