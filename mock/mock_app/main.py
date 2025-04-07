@@ -2,9 +2,10 @@ from mock.mock_app.handlers.routers import work_router, settings_router
 
 from argenta.app import App
 from argenta.app.defaults import PredeterminedMessages
+from argenta.app.dividing_line.models import StaticDividingLine, DynamicDividingLine
 
 
-app: App = App()
+app: App = App(dividing_line=DynamicDividingLine())
 
 
 def main():

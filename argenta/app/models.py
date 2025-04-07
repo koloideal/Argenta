@@ -8,6 +8,7 @@ import re
 from argenta.command.models import Command, InputCommand
 from argenta.router import Router
 from argenta.router.defaults import system_router
+from argenta.app.dividing_line.models import StaticDividingLine, DynamicDividingLine
 from argenta.command.exceptions import (UnprocessedInputFlagException,
                                         RepeatedInputFlagsException,
                                         EmptyInputCommandException,
@@ -29,7 +30,7 @@ class BaseApp:
                  exit_command_description: str = 'Exit command',
                  system_points_title: str = 'System points:',
                  ignore_command_register: bool = True,
-                 dividing_line: str = '-',
+                 dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
                  repeat_command_groups: bool = True,
                  print_func: Callable[[str], None] = Console().print) -> None:
         self._prompt = prompt
@@ -98,11 +99,15 @@ class BaseApp:
                     return False
                 elif handled_command_trigger == command.get_trigger():
                     return False
-        with redirect_stdout(io.StringIO()) as f:
+        if isinstance(self._dividing_line, StaticDividingLine):
+            self._print_func(self._dividing_line.get_full_line())
             self.unknown_command_handler(command)
-            res: str = f.getvalue()
-        self._print_framed_text(res)
-
+            self._print_func(self._dividing_line.get_full_line())
+        elif isinstance(self._dividing_line, DynamicDividingLine):
+            with redirect_stdout(io.StringIO()) as f:
+                self.unknown_command_handler(command)
+                res: str = f.getvalue()
+            self._print_framed_text_with_dynamic_line(res)
         return True
 
 
@@ -126,19 +131,13 @@ class BaseApp:
                 self.empty_input_command_handler()
 
 
-    @staticmethod
-    def _make_line_separator(size: int, one_part_of_sep: str):
-        return f'\n[dim]{one_part_of_sep * size}[/dim]\n'
-
-
-    def _print_framed_text(self, text: str):
+    def _print_framed_text_with_dynamic_line(self, text: str):
         clear_text = re.sub(r'\u001b\[[0-9;]*m', '', text)
         max_length_line = max([len(line) for line in clear_text.split('\n')])
         max_length_line = max_length_line if 10 <= max_length_line <= 80 else 80 if max_length_line > 80 else 10
-
-        self._print_func(self._make_line_separator(max_length_line, self._dividing_line))
+        self._print_func(self._dividing_line.get_full_line(max_length_line))
         print(text.strip('\n'))
-        self._print_func(self._make_line_separator(max_length_line, self._dividing_line))
+        self._print_func(self._dividing_line.get_full_line(max_length_line))
 
 
 
@@ -165,10 +164,15 @@ class App(BaseApp):
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
             except BaseInputCommandException as error:
-                with redirect_stdout(io.StringIO()) as f:
+                if isinstance(self._dividing_line, StaticDividingLine):
+                    self._print_func(self._dividing_line.get_full_line())
                     self._error_handler(error, raw_command)
-                    res: str = f.getvalue()
-                self._print_framed_text(res)
+                    self._print_func(self._dividing_line.get_full_line())
+                elif isinstance(self._dividing_line, DynamicDividingLine):
+                    with redirect_stdout(io.StringIO()) as f:
+                        self._error_handler(error, raw_command)
+                        res: str = f.getvalue()
+                    self._print_framed_text_with_dynamic_line(res)
                 continue
 
             if self._is_exit_command(input_command):
@@ -177,11 +181,17 @@ class App(BaseApp):
             if self._is_unknown_command(input_command):
                 continue
 
-            with redirect_stdout(io.StringIO()) as f:
+            if isinstance(self._dividing_line, StaticDividingLine):
+                self._print_func(self._dividing_line.get_full_line())
                 for registered_router in self._registered_routers:
                     registered_router.input_command_handler(input_command)
-                res: str = f.getvalue()
-            self._print_framed_text(res)
+                self._print_func(self._dividing_line.get_full_line())
+            elif isinstance(self._dividing_line, DynamicDividingLine):
+                with redirect_stdout(io.StringIO()) as f:
+                    for registered_router in self._registered_routers:
+                        registered_router.input_command_handler(input_command)
+                    res: str = f.getvalue()
+                self._print_framed_text_with_dynamic_line(res)
 
             if not self._repeat_command_groups_description:
                 self._print_func(self._prompt)
