@@ -1,6 +1,6 @@
 [project]
 name = "argenta"
-version = "0.4.8"
+version = "0.4.9"
 description = "Python library for creating TUI"
 authors = [
     {name = "kolo", email = "kolo.is.main@gmail.com"}

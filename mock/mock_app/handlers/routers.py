@@ -18,18 +18,17 @@ console = Console()
 flag = Flag('test')
 
 
-@work_router.command(Command(trigger='0',
-                             description='Get Help'))
+@work_router.command(Command('0', 'Get Help'))
 def command_help():
     help_command()
 
 
-@work_router.command(Command(trigger='S', description='Start Solving', flags=Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT, flag)))
+@work_router.command(Command('S', 'Start Solving', Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT, flag)))
 def command_start_solving(args: InputFlags):
     print(args.get_flag('test'))
 
 
-@settings_router.command(Command(trigger='U', description='Update WordMath'))
+@settings_router.command(Command('U', 'Update WordMath'))
 def command_update():
     pass
 

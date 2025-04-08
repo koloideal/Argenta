@@ -3,7 +3,7 @@
 ---
 
 ## Описание
-**Argenta** — Python library for creating custom shells
+**Argenta** — Python library for creating TUI
 
 ![prewiev](https://github.com/koloideal/Argenta/blob/kolo/imgs/mock_app_preview_last.png?raw=True)  
 Пример внешнего вида TUI, написанного с помощью Argenta  
@@ -104,6 +104,7 @@ App(prompt: str = 'What do you want to do?\n',
     ignore_command_register: bool = True,
     dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
     repeat_command_groups: bool = True,
+    full_override_system_messages: bool = False
     print_func: Callable[[str], None] = Console().print)
 ```
 **Аргументы:**
@@ -117,6 +118,7 @@ App(prompt: str = 'What do you want to do?\n',
 - `ignore_command_register` (`bool`): Игнорировать регистр всех команд.
 - `dividing_line` (`StaticDividingLine | DynamicDividingLine`): Разделительная строка.
 - `repeat_command_groups` (`bool`): Повторять описание команд перед вводом.
+- `full_override_system_messages` (`bool`): Переопределить ли дефолтное оформление сообщений ([подробнее см.](#override_defaults))
 - `print_func` (`Callable[[str], None]`): Функция вывода текста в терминал.
 
 ---
@@ -223,6 +225,11 @@ App(prompt: str = 'What do you want to do?\n',
 
 - Наиболее частые сообщение при запуске предопределены и доступны для быстрого
 использования: `argenta.app.defaults.PredeterminedMessages`
+
+<a name="override_defaults"></a>
+- Если `override_system_messages`=`False`, то при переопределении таких атрибутов как `initial_message` и
+`farawell_message` будет использовано дефолтное оформление текста, в виде красного ascii арта, при значении
+`override_system_messages`=`True` системные сообщения будут отображены в точности какими были переданы
 
 
 

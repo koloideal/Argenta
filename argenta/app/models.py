@@ -24,14 +24,15 @@ from argenta.app.registered_routers.entity import RegisteredRouters
 class BaseApp:
     def __init__(self,
                  prompt: str = '[italic dim bold]What do you want to do?\n',
-                 initial_message: str = 'Argenta',
-                 farewell_message: str = 'See you',
+                 initial_message: str = '\nArgenta\n',
+                 farewell_message: str = '\nSee you\n',
                  exit_command: str = 'Q',
                  exit_command_description: str = 'Exit command',
                  system_points_title: str = 'System points:',
                  ignore_command_register: bool = True,
                  dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
                  repeat_command_groups: bool = True,
+                 full_override_system_messages: bool = False,
                  print_func: Callable[[str], None] = Console().print) -> None:
         self._prompt = prompt
         self._print_func = print_func
@@ -41,6 +42,7 @@ class BaseApp:
         self._dividing_line = dividing_line
         self._ignore_command_register = ignore_command_register
         self._repeat_command_groups_description = repeat_command_groups
+        self._full_override_system_messages = full_override_system_messages
 
         self.farewell_message = farewell_message
         self.initial_message = initial_message
@@ -55,18 +57,14 @@ class BaseApp:
         self.unknown_command_handler: Callable[[InputCommand], None] = lambda command: print_func(f"[red bold]Unknown command: {command.get_trigger()}")
         self.exit_command_handler: Callable[[], None] = lambda: print_func(self.farewell_message)
 
-        self._setup_default_view(is_initial_message_default=initial_message == 'Argenta',
-                                 is_farewell_message_default=farewell_message == 'See you')
+        self._setup_default_view()
 
 
-    def _setup_default_view(self, is_initial_message_default: bool,
-                            is_farewell_message_default: bool):
-        if is_initial_message_default:
-            self.initial_message = f'\n[bold red]{text2art('Argenta', font='tarty1')}\n\n'
-        if is_farewell_message_default:
-            self.farewell_message = (f'[bold red]\n{text2art('\nSee   you\n', font='chanky')}[/bold red]\n'
-                                     f'[red i]github.com/koloideal/Argenta[/red i] | '
-                                     f'[red bold i]made by kolo[/red bold i]\n')
+    def _setup_default_view(self):
+        if not self._full_override_system_messages:
+            self.initial_message = f'\n[bold red]{text2art(self.initial_message, font='tarty1')}\n\n'
+            self.farewell_message = (f'[bold red]\n{text2art(f'\n{self.farewell_message}\n', font='chanky')}[/bold red]\n'
+                                     f'[red i]github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]\n')
 
 
     def _validate_number_of_routers(self) -> None:
