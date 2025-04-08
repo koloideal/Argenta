@@ -109,7 +109,7 @@ class AppPrinters(AppInit):
         self._print_func(self._dividing_line.get_full_line(max_length_line))
 
 
-class AppNonStandardHandlers(AppInit, AppPrinters):
+class AppNonStandardHandlers(AppPrinters):
     def _is_exit_command(self, command: InputCommand):
         if command.get_trigger().lower() == self._exit_command.lower():
             if self._ignore_command_register:
@@ -163,7 +163,7 @@ class AppValidators(AppInit):
                 raise NoRegisteredHandlersException(router.get_name())
 
 
-class AppSetups(AppInit):
+class AppSetups(AppValidators, AppPrinters):
     def _setup_system_router(self):
         system_router.set_title(self._system_points_title)
 
@@ -182,12 +182,7 @@ class AppSetups(AppInit):
                 f'[bold red]\n{text2art(f'\n{self._farewell_message}\n', font='chanky')}[/bold red]\n'
                 f'[red i]github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]\n')
 
-
-
-class App(AppInit, AppSetters,
-          AppNonStandardHandlers,
-          AppValidators, AppSetups):
-    def start_polling(self) -> None:
+    def _pre_cycle_setup(self):
         self._setup_default_view()
         self._setup_system_router()
         self._validate_number_of_routers()
@@ -201,6 +196,10 @@ class App(AppInit, AppSetters,
         if not self._repeat_command_groups_description:
             self._print_command_group_description()
 
+
+class App(AppSetters, AppNonStandardHandlers, AppSetups):
+    def start_polling(self) -> None:
+        self._pre_cycle_setup()
         while True:
             if self._repeat_command_groups_description:
                 self._print_command_group_description()

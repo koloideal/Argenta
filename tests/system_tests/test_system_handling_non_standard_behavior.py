@@ -24,7 +24,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         app = App()
         app.include_router(router)
-        app.unknown_command_handler = lambda command: print(f'Unknown command: {command.get_trigger()}')
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
         app.start_polling()
 
         output = mock_stdout.getvalue()
@@ -43,7 +43,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         app = App(ignore_command_register=False)
         app.include_router(router)
-        app.unknown_command_handler = lambda command: print(f'Unknown command: {command.get_trigger()}')
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
         app.start_polling()
 
         output = mock_stdout.getvalue()
@@ -117,12 +117,12 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         app = App()
         app.include_router(router)
-        app.unknown_command_handler = lambda command: print(f'Unknown command: {command.get_trigger()}')
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
         app.start_polling()
 
         output = mock_stdout.getvalue()
 
-        self.assertRegex(output, re.compile(r'\ntest command\n(.|\n)*\nUnknown command: some\n'))
+        self.assertRegex(output, re.compile(r'\ntest command\n(.|\n)*\nUnknown command: some'))
 
 
     @patch("builtins.input", side_effect=["test", "some", "more", "q"])
@@ -140,7 +140,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         app = App()
         app.include_router(router)
-        app.unknown_command_handler = lambda command: print(f'Unknown command: {command.get_trigger()}')
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
         app.start_polling()
 
         output = mock_stdout.getvalue()
@@ -159,7 +159,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         app = App()
         app.include_router(router)
-        app.invalid_input_flags_handler = lambda command: print(f'Incorrect flag syntax: "{command}"')
+        app.set_invalid_input_flags_handler(lambda command: print(f'Incorrect flag syntax: "{command}"'))
         app.start_polling()
 
         output = mock_stdout.getvalue()
@@ -178,7 +178,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         app = App()
         app.include_router(router)
-        app.empty_input_command_handler = lambda: print('Empty input command')
+        app.set_empty_command_handler(lambda: print('Empty input command'))
         app.start_polling()
 
         output = mock_stdout.getvalue()
@@ -197,9 +197,9 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         app = App()
         app.include_router(router)
-        app.repeated_input_flags_handler = lambda command: print(f'Repeated input flags: "{command}"')
+        app.set_repeated_input_flags_handler(lambda command: print(f'Repeated input flags: "{command}"'))
         app.start_polling()
 
         output = mock_stdout.getvalue()
 
-        self.assertIn("\nRepeated input flags: \"test --port 22 --port 33\"", output)
+        self.assertIn("\nRepeated input flags: \"test --port 22 --port 33\"\n", output)

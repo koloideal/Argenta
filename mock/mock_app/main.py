@@ -5,9 +5,7 @@ from argenta.app.defaults import PredeterminedMessages
 from argenta.app.dividing_line import DynamicDividingLine
 
 
-app: App = App(dividing_line=DynamicDividingLine(),
-               initial_message='WordMath',
-               farewell_message='shiiiit')
+app: App = App(dividing_line=DynamicDividingLine())
 
 
 def main():

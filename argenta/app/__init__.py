@@ -1,3 +1,3 @@
 __all__ = ["App"]
 
-from .models import App
+from argenta.app.models import App
