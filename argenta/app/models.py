@@ -8,7 +8,7 @@ import re
 from argenta.command.models import Command, InputCommand
 from argenta.router import Router
 from argenta.router.defaults import system_router
-from argenta.app.autocompleter import Autocompleter
+from argenta.app.autocompleter import AutoCompleter
 from argenta.app.dividing_line.models import StaticDividingLine, DynamicDividingLine
 from argenta.command.exceptions import (UnprocessedInputFlagException,
                                         RepeatedInputFlagsException,
@@ -34,7 +34,7 @@ class AppInit:
                  dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
                  repeat_command_groups: bool = True,
                  full_override_system_messages: bool = False,
-                 autocompleter: Autocompleter = Autocompleter(),
+                 autocompleter: AutoCompleter = AutoCompleter(),
                  print_func: Callable[[str], None] = Console().print) -> None:
         self._prompt = prompt
         self._print_func = print_func
@@ -45,6 +45,7 @@ class AppInit:
         self._ignore_command_register = ignore_command_register
         self._repeat_command_groups_description = repeat_command_groups
         self._full_override_system_messages = full_override_system_messages
+        self._autocompleter = autocompleter
 
         self._farewell_message = farewell_message
         self._initial_message = initial_message
@@ -189,6 +190,7 @@ class AppSetups(AppValidators, AppPrinters):
         self._setup_system_router()
         self._validate_number_of_routers()
         self._validate_included_routers()
+        self._autocompleter.initial_setup()
 
         self._print_func(self._initial_message)
 
@@ -223,6 +225,7 @@ class App(AppSetters, AppNonStandardHandlers, AppSetups):
                 continue
 
             if self._is_exit_command(input_command):
+                self._autocompleter.exit_setup()
                 return
 
             if self._is_unknown_command(input_command):

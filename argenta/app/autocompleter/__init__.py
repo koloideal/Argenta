@@ -1,4 +1,4 @@
-__all__ = ["Autocompleter"]
+__all__ = ["AutoCompleter"]
 
 
-from argenta.app.autocompleter.models import Autocompleter
+from argenta.app.autocompleter.entity import AutoCompleter

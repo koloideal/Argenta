@@ -1,0 +1,11 @@
+test
+q
+P
+q
+S
+S --host 125
+q
+S --host 125.0123
+0
+U
+q

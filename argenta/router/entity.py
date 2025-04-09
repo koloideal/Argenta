@@ -7,10 +7,10 @@ from argenta.router.command_handlers.entity import CommandHandlers
 from argenta.router.command_handler.entity import CommandHandler
 from argenta.command.flag.models import Flag, Flags, InputFlags
 from argenta.router.exceptions import (RepeatedFlagNameException,
-                                     TooManyTransferredArgsException,
-                                     RequiredArgumentNotPassedException,
-                                     IncorrectNumberOfHandlerArgsException,
-                                     TriggerCannotContainSpacesException)
+                                       TooManyTransferredArgsException,
+                                       RequiredArgumentNotPassedException,
+                                       IncorrectNumberOfHandlerArgsException,
+                                       TriggerCannotContainSpacesException)
 
 
 class Router:
