@@ -8,6 +8,7 @@ import re
 from argenta.command.models import Command, InputCommand
 from argenta.router import Router
 from argenta.router.defaults import system_router
+from argenta.app.autocompleter import Autocompleter
 from argenta.app.dividing_line.models import StaticDividingLine, DynamicDividingLine
 from argenta.command.exceptions import (UnprocessedInputFlagException,
                                         RepeatedInputFlagsException,
@@ -33,6 +34,7 @@ class AppInit:
                  dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
                  repeat_command_groups: bool = True,
                  full_override_system_messages: bool = False,
+                 autocompleter: Autocompleter = Autocompleter(),
                  print_func: Callable[[str], None] = Console().print) -> None:
         self._prompt = prompt
         self._print_func = print_func
