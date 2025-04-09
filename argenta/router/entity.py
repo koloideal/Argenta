@@ -110,6 +110,13 @@ class Router:
         self._ignore_command_register = ignore_command_register
 
 
+    def get_triggers(self):
+        all_triggers: list[str] = []
+        for command_handler in self._command_handlers:
+            all_triggers.append(command_handler.get_handled_command().get_trigger())
+        return all_triggers
+
+
     def get_command_handlers(self) -> CommandHandlers:
         return self._command_handlers
 

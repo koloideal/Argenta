@@ -1,6 +1,6 @@
-import readline
 import os
 
+import readline
 
 
 class AutoCompleter:
@@ -27,10 +27,14 @@ class AutoCompleter:
         else:
             return None
 
-    def initial_setup(self):
+    def initial_setup(self, all_commands: list[str]):
         if self.history_filename:
             if os.path.exists(self.history_filename):
                 readline.read_history_file(self.history_filename)
+            else:
+                for line in all_commands:
+                    readline.add_history(line)
+
         readline.set_completer(self.complete)
         readline.set_completer_delims(readline.get_completer_delims().replace(' ', ''))
         readline.parse_and_bind(f'{self.autocomplete_button}: complete')
@@ -42,4 +46,3 @@ class AutoCompleter:
     @staticmethod
     def get_history_items():
         return [readline.get_history_item(i) for i in range(1, readline.get_current_history_length() + 1)]
-

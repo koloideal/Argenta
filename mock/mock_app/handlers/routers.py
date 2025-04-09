@@ -14,17 +14,17 @@ settings_router: Router = Router(title='Settings points:')
 console = Console()
 
 
-@work_router.command(Command('0', 'Get Help'))
+@work_router.command(Command('get', 'Get Help'))
 def command_help():
     help_command()
 
 
-@work_router.command(Command('S', 'Start Solving', Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT)))
+@work_router.command(Command('start', 'Start Solving', Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT)))
 def command_start_solving(args: InputFlags):
     print(args.get_flag('test'))
 
 
-@settings_router.command(Command('U', 'Update WordMath'))
+@settings_router.command(Command('update', 'Update WordMath'))
 def command_update():
     print('eeeeeee')
 

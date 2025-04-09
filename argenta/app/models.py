@@ -1,5 +1,6 @@
 from typing import Callable
 from rich.console import Console
+from rich.markup import escape
 from art import text2art
 from contextlib import redirect_stdout
 import io
@@ -15,7 +16,6 @@ from argenta.command.exceptions import (UnprocessedInputFlagException,
                                         EmptyInputCommandException,
                                         BaseInputCommandException)
 from argenta.app.exceptions import (InvalidRouterInstanceException,
-                                    InvalidDescriptionMessagePatternException,
                                     NoRegisteredRoutersException,
                                     NoRegisteredHandlersException)
 from argenta.app.registered_routers.entity import RegisteredRouters
@@ -50,7 +50,8 @@ class AppInit:
         self._farewell_message = farewell_message
         self._initial_message = initial_message
 
-        self._description_message_pattern: str = '[bold red][{command}][/bold red] [blue dim]*=*=*[/blue dim] [bold yellow italic]{description}'
+
+        self._description_message_gen: Callable[[str, str], str] = lambda command, description: f'[bold red]{escape('['+command+']')}[/bold red] [blue dim]*=*=*[/blue dim] [bold yellow italic]{escape(description)}'
         self._registered_routers: RegisteredRouters = RegisteredRouters()
         self._messages_on_startup = []
 
@@ -62,14 +63,8 @@ class AppInit:
 
 
 class AppSetters(AppInit):
-    def set_description_message_pattern(self, pattern: str) -> None:
-        first_check = re.match(r'.*{command}.*', pattern)
-        second_check = re.match(r'.*{description}.*', pattern)
-
-        if bool(first_check) and bool(second_check):
-            self._description_message_pattern: str = pattern
-        else:
-            raise InvalidDescriptionMessagePatternException(pattern)
+    def set_description_message_pattern(self, pattern: Callable[[str, str], str]) -> None:
+        self._description_message_gen: Callable[[str, str], str] = pattern
 
 
     def set_invalid_input_flags_handler(self, handler: Callable[[str], None]) -> None:
@@ -97,9 +92,9 @@ class AppPrinters(AppInit):
         for registered_router in self._registered_routers:
             self._print_func(registered_router.get_title())
             for command_handler in registered_router.get_command_handlers():
-                self._print_func(self._description_message_pattern.format(
-                        command=command_handler.get_handled_command().get_trigger(),
-                        description=command_handler.get_handled_command().get_description()))
+                self._print_func(self._description_message_gen(
+                        command_handler.get_handled_command().get_trigger(),
+                        command_handler.get_handled_command().get_description()))
             self._print_func('')
 
 
@@ -190,7 +185,11 @@ class AppSetups(AppValidators, AppPrinters):
         self._setup_system_router()
         self._validate_number_of_routers()
         self._validate_included_routers()
-        self._autocompleter.initial_setup()
+
+        all_triggers: list[str] = []
+        for router_entity in self._registered_routers:
+            all_triggers.extend(router_entity.get_triggers())
+        self._autocompleter.initial_setup(all_triggers)
 
         self._print_func(self._initial_message)
 
