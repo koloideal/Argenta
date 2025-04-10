@@ -14,14 +14,14 @@ settings_router: Router = Router()
 console = Console()
 
 
-@work_router.command(Command('get', 'Get Help'))
+@work_router.command(Command('get', 'Get Help', aliases=['help', 'get_help']))
 def command_help():
     help_command()
 
 
-@work_router.command(Command('start', 'Start Solving', Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT)))
+@work_router.command(Command('start', 'Start Solving', Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT), aliases=['starting']))
 def command_start_solving(args: InputFlags):
-    print(args.get_flag('test'))
+    print(args.get_flag('host'))
 
 
 @settings_router.command(Command('update', 'Update WordMath'))

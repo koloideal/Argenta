@@ -54,21 +54,29 @@ class Router:
         for command_handler in self._command_handlers:
             handle_command = command_handler.get_handled_command()
             if input_command_name.lower() == handle_command.get_trigger().lower():
-                if handle_command.get_registered_flags().get_flags():
-                    if input_command_flags.get_flags():
-                        if self._validate_input_flags(handle_command, input_command_flags):
-                            command_handler.handling(input_command_flags)
-                            return
-                    else:
-                        command_handler.handling(input_command_flags)
-                        return
-                else:
-                    if input_command_flags.get_flags():
-                        self._not_valid_flag_handler(input_command_flags[0])
-                        return
-                    else:
-                        command_handler.handling()
-                        return
+                self._validate_input_command(input_command_flags, command_handler)
+            elif handle_command.get_aliases():
+                if input_command_name.lower() in handle_command.get_aliases():
+                    self._validate_input_command(input_command_flags, command_handler)
+
+
+    def _validate_input_command(self, input_command_flags: InputFlags, command_handler: CommandHandler):
+        handle_command = command_handler.get_handled_command()
+        if handle_command.get_registered_flags().get_flags():
+            if input_command_flags.get_flags():
+                if self._validate_input_flags(handle_command, input_command_flags):
+                    command_handler.handling(input_command_flags)
+                    return
+            else:
+                command_handler.handling(input_command_flags)
+                return
+        else:
+            if input_command_flags.get_flags():
+                self._not_valid_flag_handler(input_command_flags[0])
+                return
+            else:
+                command_handler.handling()
+                return
 
 
     def _validate_input_flags(self, handle_command: Command, input_flags: InputFlags):
@@ -115,6 +123,14 @@ class Router:
         for command_handler in self._command_handlers:
             all_triggers.append(command_handler.get_handled_command().get_trigger())
         return all_triggers
+
+
+    def get_aliases(self):
+        all_aliases: list[str] = []
+        for command_handler in self._command_handlers:
+            if command_handler.get_handled_command().get_aliases():
+                all_aliases.extend(command_handler.get_handled_command().get_aliases())
+        return all_aliases
 
 
     def get_command_handlers(self) -> CommandHandlers:

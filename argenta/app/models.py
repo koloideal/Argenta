@@ -122,10 +122,16 @@ class AppNonStandardHandlers(AppPrinters):
         for router_entity in self._registered_routers:
             for command_handler in router_entity.get_command_handlers():
                 handled_command_trigger = command_handler.get_handled_command().get_trigger()
+                handled_command_aliases = command_handler.get_handled_command().get_aliases()
                 if handled_command_trigger.lower() == command.get_trigger().lower() and self._ignore_command_register:
                     return False
                 elif handled_command_trigger == command.get_trigger():
                     return False
+                elif handled_command_aliases:
+                    if command.get_trigger().lower() in [x.lower() for x in handled_command_aliases] and self._ignore_command_register:
+                        return False
+                    elif command.get_trigger() in handled_command_trigger:
+                        return False
         if isinstance(self._dividing_line, StaticDividingLine):
             self._print_func(self._dividing_line.get_full_line())
             self._unknown_command_handler(command)
@@ -188,6 +194,7 @@ class AppSetups(AppValidators, AppPrinters):
         all_triggers: list[str] = []
         for router_entity in self._registered_routers:
             all_triggers.extend(router_entity.get_triggers())
+            all_triggers.extend(router_entity.get_aliases())
         self._autocompleter.initial_setup(all_triggers)
 
         self._print_func(self._initial_message)
