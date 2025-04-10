@@ -9,7 +9,7 @@ from .handlers_implementation.help_command import help_command
 
 work_router: Router = Router(title='Work points:')
 
-settings_router: Router = Router(title='Settings points:')
+settings_router: Router = Router()
 
 console = Console()
 

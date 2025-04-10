@@ -15,7 +15,7 @@ from argenta.router.exceptions import (RepeatedFlagNameException,
 
 class Router:
     def __init__(self,
-                 title: str = 'Commands group title:',
+                 title: str = None,
                  name: str = 'Default'):
         self._title = title
         self._name = name
@@ -125,7 +125,7 @@ class Router:
         return self._name
 
 
-    def get_title(self) -> str:
+    def get_title(self) -> str | None:
         return self._title
 
 

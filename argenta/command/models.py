@@ -19,13 +19,18 @@ class BaseCommand:
 class Command(BaseCommand):
     def __init__(self, trigger: str,
                  description: str = None,
-                 flags: Flag | Flags = None):
+                 flags: Flag | Flags = None,
+                 aliases: list[str] = None):
         super().__init__(trigger)
         self._registered_flags: Flags = flags if isinstance(flags, Flags) else Flags(flags) if isinstance(flags, Flag) else Flags()
-        self._description = f'description for "{self._trigger}" command' if not description else description
+        self._description = f'Description for "{self._trigger}" command' if not description else description
+        self._aliases = aliases
 
     def get_registered_flags(self) -> Flags:
         return self._registered_flags
+
+    def get_aliases(self) -> list[str] | None:
+        return self._aliases
 
     def validate_input_flag(self, flag: InputFlag):
         registered_flags: Flags | None = self.get_registered_flags()

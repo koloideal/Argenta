@@ -6,9 +6,10 @@ from argenta.app.dividing_line import DynamicDividingLine
 from argenta.app.autocompleter import AutoCompleter
 
 
-autocompleter = AutoCompleter()
+autocompleter = AutoCompleter('./mock/.hist')
 app: App = App(dividing_line=DynamicDividingLine(),
-               autocompleter=autocompleter)
+               autocompleter=autocompleter,
+               system_points_title=None)
 
 
 def main():

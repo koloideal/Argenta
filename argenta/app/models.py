@@ -27,9 +27,8 @@ class AppInit:
                  prompt: str = '[italic dim bold]What do you want to do?\n',
                  initial_message: str = '\nArgenta\n',
                  farewell_message: str = '\nSee you\n',
-                 exit_command: str = 'Q',
-                 exit_command_description: str = 'Exit command',
-                 system_points_title: str = 'System points:',
+                 exit_command: Command = Command('Q', 'Exit command'),
+                 system_points_title: str | None = 'System points:',
                  ignore_command_register: bool = True,
                  dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
                  repeat_command_groups: bool = True,
@@ -39,7 +38,6 @@ class AppInit:
         self._prompt = prompt
         self._print_func = print_func
         self._exit_command = exit_command
-        self._exit_command_description = exit_command_description
         self._system_points_title = system_points_title
         self._dividing_line = dividing_line
         self._ignore_command_register = ignore_command_register
@@ -90,7 +88,8 @@ class AppSetters(AppInit):
 class AppPrinters(AppInit):
     def _print_command_group_description(self):
         for registered_router in self._registered_routers:
-            self._print_func(registered_router.get_title())
+            if registered_router.get_title():
+                self._print_func(registered_router.get_title())
             for command_handler in registered_router.get_command_handlers():
                 self._print_func(self._description_message_gen(
                         command_handler.get_handled_command().get_trigger(),
@@ -109,7 +108,7 @@ class AppPrinters(AppInit):
 
 class AppNonStandardHandlers(AppPrinters):
     def _is_exit_command(self, command: InputCommand):
-        if command.get_trigger().lower() == self._exit_command.lower():
+        if command.get_trigger().lower() == self._exit_command.get_trigger().lower():
             if self._ignore_command_register:
                 system_router.input_command_handler(command)
                 return True
@@ -165,7 +164,7 @@ class AppSetups(AppValidators, AppPrinters):
     def _setup_system_router(self):
         system_router.set_title(self._system_points_title)
 
-        @system_router.command(Command(self._exit_command, self._exit_command_description))
+        @system_router.command(self._exit_command)
         def exit_command():
             self._exit_command_handler()
 
