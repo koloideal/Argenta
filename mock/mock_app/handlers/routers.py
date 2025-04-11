@@ -14,7 +14,7 @@ settings_router: Router = Router()
 console = Console()
 
 
-@work_router.command(Command('get', 'Get Help', aliases=['help', 'get_help']))
+@work_router.command(Command('get', 'Get Help', aliases=['help', 'Get_help']))
 def command_help():
     help_command()
 

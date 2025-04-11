@@ -32,7 +32,7 @@ class AppInit:
                  ignore_command_register: bool = True,
                  dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
                  repeat_command_groups: bool = True,
-                 full_override_system_messages: bool = False,
+                 override_system_messages: bool = False,
                  autocompleter: AutoCompleter = AutoCompleter(),
                  print_func: Callable[[str], None] = Console().print) -> None:
         self._prompt = prompt
@@ -42,7 +42,7 @@ class AppInit:
         self._dividing_line = dividing_line
         self._ignore_command_register = ignore_command_register
         self._repeat_command_groups_description = repeat_command_groups
-        self._full_override_system_messages = full_override_system_messages
+        self._override_system_messages = override_system_messages
         self._autocompleter = autocompleter
 
         self._farewell_message = farewell_message
@@ -53,10 +53,10 @@ class AppInit:
         self._registered_routers: RegisteredRouters = RegisteredRouters()
         self._messages_on_startup = []
 
-        self._invalid_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'[red bold]Incorrect flag syntax: {raw_command}')
-        self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'[red bold]Repeated input flags: {raw_command}')
+        self._invalid_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'[red bold]Incorrect flag syntax: {escape(raw_command)}')
+        self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'[red bold]Repeated input flags: {escape(raw_command)}')
         self._empty_input_command_handler: Callable[[], None] = lambda: print_func('[red bold]Empty input command')
-        self._unknown_command_handler: Callable[[InputCommand], None] = lambda command: print_func(f"[red bold]Unknown command: {command.get_trigger()}")
+        self._unknown_command_handler: Callable[[InputCommand], None] = lambda command: print_func(f"[red bold]Unknown command: {escape(command.get_trigger())}")
         self._exit_command_handler: Callable[[], None] = lambda: print_func(self._farewell_message)
 
 
@@ -112,7 +112,7 @@ class AppNonStandardHandlers(AppPrinters):
             if self._ignore_command_register:
                 system_router.input_command_handler(command)
                 return True
-            elif command.get_trigger() == self._exit_command:
+            elif command.get_trigger() == self._exit_command.get_trigger():
                 system_router.input_command_handler(command)
                 return True
         return False
@@ -128,7 +128,7 @@ class AppNonStandardHandlers(AppPrinters):
                 elif handled_command_trigger == command.get_trigger():
                     return False
                 elif handled_command_aliases:
-                    if command.get_trigger().lower() in [x.lower() for x in handled_command_aliases] and self._ignore_command_register:
+                    if (command.get_trigger().lower() in [x.lower() for x in handled_command_aliases]) and self._ignore_command_register:
                         return False
                     elif command.get_trigger() in handled_command_trigger:
                         return False
@@ -179,7 +179,7 @@ class AppSetups(AppValidators, AppPrinters):
             self._registered_routers.add_registered_router(system_router)
 
     def _setup_default_view(self):
-        if not self._full_override_system_messages:
+        if not self._override_system_messages:
             self._initial_message = f'\n[bold red]{text2art(self._initial_message, font='tarty1')}\n\n'
             self._farewell_message = (
                 f'[bold red]\n{text2art(f'\n{self._farewell_message}\n', font='chanky')}[/bold red]\n'

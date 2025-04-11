@@ -8,8 +8,7 @@ from argenta.app.autocompleter import AutoCompleter
 
 autocompleter = AutoCompleter('./mock/.hist')
 app: App = App(dividing_line=DynamicDividingLine(),
-               autocompleter=autocompleter,
-               system_points_title=None)
+               autocompleter=autocompleter)
 
 
 def main():

@@ -1,3 +1,5 @@
+from argenta.app.autocompleter import AutoCompleter
+
 # Argenta
 
 ---
@@ -5,7 +7,7 @@
 ## Описание
 **Argenta** — Python library for creating TUI
 
-![prewiev](https://github.com/koloideal/Argenta/blob/kolo/imgs/mock_app_preview_last.png?raw=True)  
+![preview](https://github.com/koloideal/Argenta/blob/kolo/imgs/mock_app_preview_last.png?raw=True)  
 Пример внешнего вида TUI, написанного с помощью Argenta  
 
 ---
@@ -95,16 +97,16 @@ def handler_with_flags(flags: InputFlags):
 
 ### Конструктор
 ```python
-App(prompt: str = 'What do you want to do?\n',
-    initial_message: str = 'Argenta',
-    farewell_message: str = 'See you',
-    exit_command: str = 'Q',
-    exit_command_description: str = 'Exit command',
-    system_points_title: str = 'System points:',
+App(prompt: str = '[italic dim bold]What do you want to do?\n',
+    initial_message: str = '\nArgenta\n',
+    farewell_message: str = '\nSee you\n',
+    exit_command: Command = Command('Q', 'Exit command'),
+    system_points_title: str | None = 'System points:',
     ignore_command_register: bool = True,
     dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
     repeat_command_groups: bool = True,
-    full_override_system_messages: bool = False
+    override_system_messages: bool = False,
+    autocompleter: AutoCompleter = AutoCompleter(),
     print_func: Callable[[str], None] = Console().print)
 ```
 **Аргументы:**
@@ -112,13 +114,13 @@ App(prompt: str = 'What do you want to do?\n',
 - `prompt` (`str`): Сообщение перед вводом команды.
 - `initial_message` (`str`): Приветственное сообщение при запуске.
 - `farewell_message` (`str`): Сообщение при выходе.
-- `exit_command` (`str`): Команда выхода (по умолчанию `'Q'`).
-- `exit_command_description` (`str`): Описание команды выхода.
+- `exit_command` (`Command`): Сущность команды, которая будет отвечать за завершение работы.
 - `system_points_title` (`str`): Заголовок перед списком системных команд.
 - `ignore_command_register` (`bool`): Игнорировать регистр всех команд.
 - `dividing_line` (`StaticDividingLine | DynamicDividingLine`): Разделительная строка.
 - `repeat_command_groups` (`bool`): Повторять описание команд перед вводом.
-- `full_override_system_messages` (`bool`): Переопределить ли дефолтное оформление сообщений ([подробнее см.](#override_defaults))
+- `override_system_messages` (`bool`): Переопределить ли дефолтное оформление сообщений ([подробнее см.](#override_defaults))
+- `autocompleter` (`AutoCompleter`): Сущность автодополнителя ввода.
 - `print_func` (`Callable[[str], None]`): Функция вывода текста в терминал.
 
 ---
@@ -243,6 +245,26 @@ App(prompt: str = 'What do you want to do?\n',
 
 ---
 
+##  *class* :: `AutoCompleter` 
+Класс, экземпляр которого представляет собой автодополнитель ввода
+
+### Конструктор
+```python
+AutoCompleter(history_filename: str = False, 
+              autocomplete_button: str = 'tab')
+```
+
+**Аргументы:**
+- **name : mean**
+- `history_filename` (`str` | `False`): Путь к файлу, который будет являться или является 
+историй пользовательского ввода, в последующем эти команды будут автодополняться, файл
+может не существовать при инициализации, тогда он будет создан, при значении аргумента `False`
+история пользовательского ввода будет существовать только в пределах сессии и не сохраняться в файл
+- `autocomplete_button` (`str`): Строковое обозначение кнопки на клавиатуре, которая будет
+использоваться для автодополнения при вводе, по умолчанию `tab`
+
+---
+
 ##  *class* :: `StaticDivideLine` 
 Класс, экземпляр которого представляет собой строковый разделитель фиксированной длины
 
@@ -278,7 +300,7 @@ DinamicDivideLine(unit_part: str = '-')
 
 ### Конструктор
 ```python
-Router(title: str = 'Commands group title:',
+Router(title: str | None = None,
        name: str = 'Default')
 ```
 

@@ -22,7 +22,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test():
             print('test command')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
         app.start_polling()
@@ -41,7 +42,9 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test():
             print('test command')
 
-        app = App(ignore_command_register=False)
+        app = App(ignore_command_register=False,
+                  override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
         app.start_polling()
@@ -60,7 +63,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test():
             print(f'test command')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.start_polling()
 
@@ -78,7 +82,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test():
             print('test command')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.start_polling()
 
@@ -97,7 +102,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test(args: InputFlags):
             print(f'connecting to host {args.get_flag('host').get_value()}')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.start_polling()
 
@@ -115,7 +121,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test():
             print(f'test command')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
         app.start_polling()
@@ -138,7 +145,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test():
             print(f'more command')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
         app.start_polling()
@@ -157,7 +165,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test():
             print(f'test command')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.set_invalid_input_flags_handler(lambda command: print(f'Incorrect flag syntax: "{command}"'))
         app.start_polling()
@@ -176,7 +185,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test():
             print(f'test command')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.set_empty_command_handler(lambda: print('Empty input command'))
         app.start_polling()
@@ -195,7 +205,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test(args: InputFlags):
             print('test command')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.set_repeated_input_flags_handler(lambda command: print(f'Repeated input flags: "{command}"'))
         app.start_polling()

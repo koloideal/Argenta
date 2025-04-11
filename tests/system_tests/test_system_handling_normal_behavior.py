@@ -22,7 +22,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test():
             print('test command')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.start_polling()
 
@@ -40,7 +41,9 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test():
             print('test command')
 
-        app = App(ignore_command_register=True)
+        app = App(ignore_command_register=True,
+                  override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.start_polling()
 
@@ -59,7 +62,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test(args: InputFlags):
             print(f'\nhelp for {args.get_flag('help').get_name()} flag\n')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.start_polling()
 
@@ -77,7 +81,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test(args: InputFlags):
             print(f'flag value for {args.get_flag('port').get_name()} flag : {args.get_flag('port').get_value()}')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.start_polling()
 
@@ -93,10 +98,11 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         flag = PredeterminedFlags.SHORT_HELP
 
         @router.command(Command('test', flags=flag))
-        def test(args: dict):
-            print(f'help for {args[0].get_name()} flag')
+        def test(args: InputFlags):
+            print(f'help for {args.get_flag('h').get_name()} flag')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.start_polling()
 
@@ -116,7 +122,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
             if args.get_flag('info'):
                 print('info about test command')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.start_polling()
 
@@ -135,7 +142,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test(args: InputFlags):
             print(f'connecting to host {args[0].get_value()}')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.start_polling()
 
@@ -154,7 +162,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test(args: InputFlags):
             print(f'connecting to host {args[0].get_value()} and port {args[1].get_value()}')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.start_polling()
 
@@ -176,7 +185,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test2():
             print(f'some command')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.start_polling()
 
@@ -202,7 +212,8 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         def test():
             print(f'more command')
 
-        app = App()
+        app = App(override_system_messages=True,
+                  print_func=print)
         app.include_router(router)
         app.start_polling()
 
