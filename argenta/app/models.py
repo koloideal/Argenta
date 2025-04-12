@@ -15,8 +15,7 @@ from argenta.command.exceptions import (UnprocessedInputFlagException,
                                         RepeatedInputFlagsException,
                                         EmptyInputCommandException,
                                         BaseInputCommandException)
-from argenta.app.exceptions import (InvalidRouterInstanceException,
-                                    NoRegisteredRoutersException,
+from argenta.app.exceptions import (NoRegisteredRoutersException,
                                     NoRegisteredHandlersException)
 from argenta.app.registered_routers.entity import RegisteredRouters
 
@@ -201,6 +200,7 @@ class AppSetups(AppValidators, AppPrinters):
 
         for message in self._messages_on_startup:
             self._print_func(message)
+        print('\n\n')
 
         if not self._repeat_command_groups_description:
             self._print_command_group_description()
@@ -253,9 +253,6 @@ class App(AppSetters, AppNonStandardHandlers, AppSetups):
 
 
     def include_router(self, router: Router) -> None:
-        if not isinstance(router, Router):
-            raise InvalidRouterInstanceException()
-
         router.set_ignore_command_register(self._ignore_command_register)
         self._registered_routers.add_registered_router(router)
 

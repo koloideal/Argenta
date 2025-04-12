@@ -1,5 +1,3 @@
-from argenta.app.autocompleter import AutoCompleter
-
 # Argenta
 
 ---

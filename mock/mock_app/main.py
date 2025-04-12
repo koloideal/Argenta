@@ -16,7 +16,7 @@ def main():
 
     app.add_message_on_startup(PredeterminedMessages.USAGE)
     app.add_message_on_startup(PredeterminedMessages.AUTOCOMPLETE)
-    app.add_message_on_startup(PredeterminedMessages.HELP + '\n\n')
+    app.add_message_on_startup(PredeterminedMessages.HELP)
 
     app.start_polling()
 
