@@ -4,11 +4,15 @@ from argenta.app import App
 from argenta.app.defaults import PredeterminedMessages
 from argenta.app.dividing_line import DynamicDividingLine
 from argenta.app.autocompleter import AutoCompleter
+from argenta.orchestrator import Orchestrator
+from argenta.orchestrator.argparse.arguments import (PositionalArgument,
+                                                     OptionalArgument,
+                                                     BooleanArgument)
 
 
-autocompleter = AutoCompleter('./mock/.hist')
 app: App = App(dividing_line=DynamicDividingLine(),
-               autocompleter=autocompleter)
+               autocompleter=AutoCompleter('./mock/.hist'))
+orchestrator: Orchestrator = Orchestrator(PositionalArgument('name'))
 
 
 def main():
@@ -18,7 +22,8 @@ def main():
     app.add_message_on_startup(PredeterminedMessages.AUTOCOMPLETE)
     app.add_message_on_startup(PredeterminedMessages.HELP)
 
-    app.start_polling()
+    print(orchestrator.get_args())
+    #orchestrator.start_polling(app)
 
 if __name__ == "__main__":
     main()

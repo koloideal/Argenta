@@ -25,7 +25,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.start_polling()
+        app.run_polling()
 
         output = mock_stdout.getvalue()
 
@@ -45,7 +45,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
                   override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.start_polling()
+        app.run_polling()
 
         output = mock_stdout.getvalue()
 
@@ -65,7 +65,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.start_polling()
+        app.run_polling()
 
         output = mock_stdout.getvalue()
 
@@ -84,7 +84,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.start_polling()
+        app.run_polling()
 
         output = mock_stdout.getvalue()
 
@@ -104,7 +104,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.start_polling()
+        app.run_polling()
 
         output = mock_stdout.getvalue()
 
@@ -125,7 +125,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.start_polling()
+        app.run_polling()
 
         output = mock_stdout.getvalue()
 
@@ -145,7 +145,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.start_polling()
+        app.run_polling()
 
         output = mock_stdout.getvalue()
 
@@ -165,7 +165,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.start_polling()
+        app.run_polling()
 
         output = mock_stdout.getvalue()
 
@@ -188,7 +188,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.start_polling()
+        app.run_polling()
 
         output = mock_stdout.getvalue()
 
@@ -215,7 +215,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.start_polling()
+        app.run_polling()
 
         output = mock_stdout.getvalue()
 

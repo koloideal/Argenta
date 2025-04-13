@@ -216,7 +216,7 @@ class AppSetups(AppValidators, AppPrinters):
 
 
 class App(AppSetters, AppNonStandardHandlers, AppSetups):
-    def start_polling(self) -> None:
+    def run_polling(self) -> None:
         self._pre_cycle_setup()
         while True:
             if self._repeat_command_groups_description:

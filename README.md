@@ -44,11 +44,12 @@ from routers import router
 
 app: App = App()
 
+
 def main() -> None:
     app.include_router(router)
-    app.start_polling()
+    app.run_polling()
 
-    
+
 if __name__ == '__main__':
     main()
 ```

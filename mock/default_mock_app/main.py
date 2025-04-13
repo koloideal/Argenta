@@ -6,4 +6,4 @@ app = App(repeat_command_groups=True)
 
 app.add_message_on_startup(PredeterminedMessages.USAGE + '\n\n')
 
-app.start_polling()
+app.run_polling()
