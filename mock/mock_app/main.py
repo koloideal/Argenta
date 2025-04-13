@@ -5,14 +5,16 @@ from argenta.app.defaults import PredeterminedMessages
 from argenta.app.dividing_line import DynamicDividingLine
 from argenta.app.autocompleter import AutoCompleter
 from argenta.orchestrator import Orchestrator
+from argenta.orchestrator.argparse import ArgParse
 from argenta.orchestrator.argparse.arguments import (PositionalArgument,
                                                      OptionalArgument,
                                                      BooleanArgument)
 
 
+arg_parser = ArgParse(args=[PositionalArgument('test'), OptionalArgument('some'), BooleanArgument('verbose')])
 app: App = App(dividing_line=DynamicDividingLine(),
                autocompleter=AutoCompleter('./mock/.hist'))
-orchestrator: Orchestrator = Orchestrator(PositionalArgument('name'))
+orchestrator: Orchestrator = Orchestrator(arg_parser)
 
 
 def main():

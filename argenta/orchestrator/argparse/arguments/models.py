@@ -25,7 +25,7 @@ class PositionalArgument(BaseArgument):
 
 
 class OptionalArgument(BaseArgument):
-    def __init__(self, name: str, prefix: Literal['-', '--', '---']):
+    def __init__(self, name: str, prefix: Literal['-', '--', '---'] = '--'):
         """
         Optional argument, must have the value
         :param name: name of the argument
@@ -39,12 +39,14 @@ class OptionalArgument(BaseArgument):
 
 
 class BooleanArgument(BaseArgument):
-    def __init__(self, name: str):
+    def __init__(self, name: str, prefix: Literal['-', '--', '---'] = '--'):
         """
         Boolean argument, does not require a value
         :param name: name of the argument
+        :param prefix: prefix of the argument
         """
         self.name = name
+        self.prefix = prefix
 
     def get_string_entity(self):
-        return self.name
+        return self.prefix + self.name

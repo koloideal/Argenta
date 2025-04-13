@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser(prog='ProgramName',
 
 parser.add_argument('filename')           # positional argument
 parser.add_argument('-c', '--count')      # option that takes a value
-parser.add_argument('-v', '--verbose',
+parser.add_argument('-v',
                     action='store_const')
 
 args = parser.parse_args()
