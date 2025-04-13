@@ -19,7 +19,9 @@ def command_help():
     help_command()
 
 
-@work_router.command(Command('start', 'Start Solving', Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT), aliases=['starting']))
+@work_router.command(Command('start', 'Start Solving',
+                             flags=Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT),
+                             aliases=['starting']))
 def command_start_solving(args: InputFlags):
     print(args.get_flag('host'))
 
