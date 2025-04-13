@@ -1,14 +1,15 @@
-from argenta.app import App
-from argenta.command import Command
-from argenta.router import Router
+import argparse
 
-router = Router()
 
-@router.command(Command('test'))
-def test():
-    print('test command')
+parser = argparse.ArgumentParser(prog='ProgramName',
+                                 description='What the program does',
+                                 epilog='Text at the bottom of help')
 
-app = App(ignore_command_register=False)
-app.include_router(router)
-app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
-app.start_polling()
+parser.add_argument('filename')           # positional argument
+parser.add_argument('-c', '--count')      # option that takes a value
+parser.add_argument('-v', '--verbose',
+                    action='store_const')
+
+args = parser.parse_args()
+print(args)
+print(args.filename, args.count, args.verbose)
