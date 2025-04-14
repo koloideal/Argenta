@@ -15,8 +15,7 @@ from argenta.command.exceptions import (UnprocessedInputFlagException,
                                         RepeatedInputFlagsException,
                                         EmptyInputCommandException,
                                         BaseInputCommandException)
-from argenta.app.exceptions import (NoRegisteredRoutersException,
-                                    NoRegisteredHandlersException)
+from argenta.app.exceptions import NoRegisteredHandlersException
 from argenta.app.registered_routers.entity import RegisteredRouters
 
 
@@ -48,15 +47,16 @@ class AppInit:
         self._initial_message = initial_message
 
 
-        self._description_message_gen: Callable[[str, str], str] = lambda command, description: f'[bold red]{escape('['+command+']')}[/bold red] [blue dim]*=*=*[/blue dim] [bold yellow italic]{escape(description)}'
+        self._description_message_gen: Callable[[str, str], str] = lambda command, description: f'[{command}] *=*=* {description}'
         self._registered_routers: RegisteredRouters = RegisteredRouters()
         self._messages_on_startup = []
 
-        self._invalid_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'[red bold]Incorrect flag syntax: {escape(raw_command)}')
-        self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'[red bold]Repeated input flags: {escape(raw_command)}')
-        self._empty_input_command_handler: Callable[[], None] = lambda: print_func('[red bold]Empty input command')
-        self._unknown_command_handler: Callable[[InputCommand], None] = lambda command: print_func(f"[red bold]Unknown command: {escape(command.get_trigger())}")
+        self._invalid_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Incorrect flag syntax: {raw_command}')
+        self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Repeated input flags: {raw_command}')
+        self._empty_input_command_handler: Callable[[], None] = lambda: print_func('Empty input command')
+        self._unknown_command_handler: Callable[[InputCommand], None] = lambda command: print_func(f"Unknown command: {command.get_trigger()}")
         self._exit_command_handler: Callable[[], None] = lambda: print_func(self._farewell_message)
+
 
 
 class AppSetters(AppInit):
@@ -84,6 +84,7 @@ class AppSetters(AppInit):
         self._exit_command_handler = handler
 
 
+
 class AppPrinters(AppInit):
     def _print_command_group_description(self):
         for registered_router in self._registered_routers:
@@ -96,22 +97,21 @@ class AppPrinters(AppInit):
             self._print_func('')
 
 
-    def _print_framed_text_with_dynamic_line(self, text: str):
-        clear_text = re.sub(r'\u001b\[[0-9;]*m', '', text)
-        max_length_line = max([len(line) for line in clear_text.split('\n')])
-        max_length_line = max_length_line if 10 <= max_length_line <= 80 else 80 if max_length_line > 80 else 10
-        self._print_func(self._dividing_line.get_full_line(max_length_line))
-        print(text.strip('\n'))
-        self._print_func(self._dividing_line.get_full_line(max_length_line))
-
-
     def _print_framed_text(self, text: str):
         if isinstance(self._dividing_line, StaticDividingLine):
-            self._print_func(self._dividing_line.get_full_line())
+            self._print_func(self._dividing_line.get_full_static_line(self._override_system_messages))
             self._print_func(text)
-            self._print_func(self._dividing_line.get_full_line())
+            self._print_func(self._dividing_line.get_full_static_line(self._override_system_messages))
+
         elif isinstance(self._dividing_line, DynamicDividingLine):
-            self._print_framed_text_with_dynamic_line(text)
+            clear_text = re.sub(r'\u001b\[[0-9;]*m', '', text)
+            max_length_line = max([len(line) for line in clear_text.split('\n')])
+            max_length_line = max_length_line if 10 <= max_length_line <= 80 else 80 if max_length_line > 80 else 10
+
+            self._print_func(self._dividing_line.get_full_dynamic_line(max_length_line, self._override_system_messages))
+            print(text.strip('\n'))
+            self._print_func(self._dividing_line.get_full_dynamic_line(max_length_line, self._override_system_messages))
+
 
 
 class AppNonStandardHandlers(AppPrinters):
@@ -140,15 +140,10 @@ class AppNonStandardHandlers(AppPrinters):
                         return False
                     elif command.get_trigger() in handled_command_trigger:
                         return False
-        if isinstance(self._dividing_line, StaticDividingLine):
-            self._print_func(self._dividing_line.get_full_line())
+        with redirect_stdout(io.StringIO()) as f:
             self._unknown_command_handler(command)
-            self._print_func(self._dividing_line.get_full_line())
-        elif isinstance(self._dividing_line, DynamicDividingLine):
-            with redirect_stdout(io.StringIO()) as f:
-                self._unknown_command_handler(command)
-                res: str = f.getvalue()
-            self._print_framed_text_with_dynamic_line(res)
+            res: str = f.getvalue()
+        self._print_framed_text(res)
         return True
 
 
@@ -162,16 +157,13 @@ class AppNonStandardHandlers(AppPrinters):
                 self._empty_input_command_handler()
 
 
+
 class AppValidators(AppInit):
-    def _validate_number_of_routers(self) -> None:
-        if not self._registered_routers:
-            raise NoRegisteredRoutersException()
-
-
     def _validate_included_routers(self) -> None:
         for router in self._registered_routers:
             if not router.get_command_handlers():
                 raise NoRegisteredHandlersException(router.get_name())
+
 
 
 class AppSetups(AppValidators, AppPrinters):
@@ -189,14 +181,19 @@ class AppSetups(AppValidators, AppPrinters):
     def _setup_default_view(self):
         if not self._override_system_messages:
             self._initial_message = f'\n[bold red]{text2art(self._initial_message, font='tarty1')}\n\n'
-            self._farewell_message = (
-                f'[bold red]\n{text2art(f'\n{self._farewell_message}\n', font='chanky')}[/bold red]\n'
-                f'[red i]github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]\n')
+            self._farewell_message = (f'[bold red]\n{text2art(f'\n{self._farewell_message}\n', font='chanky')}[/bold red]\n'
+                                      f'[red i]github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]\n')
+            self._description_message_gen = lambda command, description: (f'[bold red]{escape('[' + command + ']')}[/bold red] '
+                                                                          f'[blue dim]*=*=*[/blue dim] '
+                                                                          f'[bold yellow italic]{escape(description)}')
+            self._invalid_input_flags_handler = lambda raw_command: self._print_func(f'[red bold]Incorrect flag syntax: {escape(raw_command)}')
+            self._repeated_input_flags_handler = lambda raw_command: self._print_func(f'[red bold]Repeated input flags: {escape(raw_command)}')
+            self._empty_input_command_handler = lambda: self._print_func('[red bold]Empty input command')
+            self._unknown_command_handler = lambda command: self._print_func(f"[red bold]Unknown command: {escape(command.get_trigger())}")
 
     def _pre_cycle_setup(self):
         self._setup_default_view()
         self._setup_system_router()
-        self._validate_number_of_routers()
         self._validate_included_routers()
 
         all_triggers: list[str] = []
@@ -209,10 +206,12 @@ class AppSetups(AppValidators, AppPrinters):
 
         for message in self._messages_on_startup:
             self._print_func(message)
-        print('\n\n')
+        if self._messages_on_startup:
+            print('\n\n')
 
         if not self._repeat_command_groups_description:
             self._print_command_group_description()
+
 
 
 class App(AppSetters, AppNonStandardHandlers, AppSetups):

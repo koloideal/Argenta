@@ -1,9 +1,8 @@
 from argenta.app import App
-from argenta.app.defaults import PredeterminedMessages
-
+from argenta.app.defaults import PredefinedMessages
+from argenta.orchestrator import Orchestrator
 
 app = App(repeat_command_groups=True)
 
-app.add_message_on_startup(PredeterminedMessages.USAGE + '\n\n')
-
-app.run_polling()
+orchestrator = Orchestrator()
+orchestrator.start_polling(app)

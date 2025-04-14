@@ -6,23 +6,24 @@ from argenta.orchestrator.argparse.arguments.models import (BooleanArgument,
 
 
 class ArgParse:
-    def __init__(self, name: str = 'Argenta',
+    def __init__(self,
+                 processed_args: list[PositionalArgument | OptionalArgument | BooleanArgument],
+                 name: str = 'Argenta',
                  description: str = 'Argenta available arguments',
-                 epilog: str = 'github.com/koloideal/Argenta | made by kolo',
-                 args: list[PositionalArgument | OptionalArgument | BooleanArgument] = None) -> None:
+                 epilog: str = 'github.com/koloideal/Argenta | made by kolo') -> None:
         """
         Cmd argument parser and configurator at startup
         :param name: the name of the ArgParse instance
         :param description: the description of the ArgParse instance
         :param epilog: the epilog of the ArgParse instance
-        :param args: registered and processed arguments
+        :param processed_args: registered and processed arguments
         """
         self.name = name
         self.description = description
         self.epilog = epilog
 
-        self.entity = ArgumentParser(prog=name, description=description, epilog=epilog)
-        self.args: list[PositionalArgument | OptionalArgument | BooleanArgument] | None = args
+        self.entity: ArgumentParser = ArgumentParser(prog=name, description=description, epilog=epilog)
+        self.args: list[PositionalArgument | OptionalArgument | BooleanArgument] | None = processed_args
 
     def set_args(self, *args: PositionalArgument | OptionalArgument | BooleanArgument):
         """
@@ -37,6 +38,8 @@ class ArgParse:
         Registers initialized command line arguments
         :return:
         """
+        if not self.args:
+            return
         for arg in self.args:
             if type(arg) is PositionalArgument:
                 self.entity.add_argument(arg.get_string_entity())
