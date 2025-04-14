@@ -8,7 +8,7 @@ from argenta.app import App
 from argenta.command import Command
 from argenta.router import Router
 from argenta.command.flag.models import Flags, InputFlags
-from argenta.command.flag.defaults import PredeterminedFlags
+from argenta.command.flag.defaults import PredefinedFlags
 
 
 
@@ -96,7 +96,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_one_correct_flag_an_one_incorrect_flag(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flags = Flags(PredeterminedFlags.HOST)
+        flags = Flags(PredefinedFlags.HOST)
 
         @router.command(Command('test', flags=flags))
         def test(args: InputFlags):
@@ -201,7 +201,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
     def test_input_correct_command_with_repeated_flags(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
 
-        @router.command(Command('test', flags=PredeterminedFlags.PORT))
+        @router.command(Command('test', flags=PredefinedFlags.PORT))
         def test(args: InputFlags):
             print('test command')
 

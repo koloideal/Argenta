@@ -2,13 +2,23 @@ from typing import Literal, Pattern
 from abc import ABC, abstractmethod
 
 
-class BaseFlag:
+class BaseFlag(ABC):
     def __init__(self, name: str,
                  prefix: Literal['-', '--', '---'] = '--'):
+        """
+        Private. Base class for flags
+        :param name: the name of the flag
+        :param prefix: the prefix of the flag
+        :return: None
+        """
         self._name = name
         self._prefix = prefix
 
     def get_string_entity(self):
+        """
+        Private. Returns a string representation of the flag
+        :return: None
+        """
         string_entity: str = self._prefix + self._name
         return string_entity
 

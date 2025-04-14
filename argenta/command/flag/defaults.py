@@ -4,7 +4,10 @@ import re
 
 
 @dataclass
-class PredeterminedFlags:
+class PredefinedFlags:
+    """
+    Public. A dataclass with predefined flags and most frequently used flags for quick use
+    """
     HELP = Flag(name='help', possible_values=False)
     SHORT_HELP = Flag(name='h', prefix='-', possible_values=False)
 

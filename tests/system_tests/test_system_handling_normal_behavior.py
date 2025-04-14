@@ -8,7 +8,7 @@ from argenta.app import App
 from argenta.command.models import Command
 from argenta.router import Router
 from argenta.command.flag.models import Flag, Flags, InputFlags
-from argenta.command.flag.defaults import PredeterminedFlags
+from argenta.command.flag.defaults import PredefinedFlags
 
 
 
@@ -95,7 +95,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_default_flag(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flag = PredeterminedFlags.SHORT_HELP
+        flag = PredefinedFlags.SHORT_HELP
 
         @router.command(Command('test', flags=flag))
         def test(args: InputFlags):
@@ -115,7 +115,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_default_flag2(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flag = PredeterminedFlags.INFO
+        flag = PredefinedFlags.INFO
 
         @router.command(Command('test', flags=flag))
         def test(args: InputFlags):
@@ -136,7 +136,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_default_flag3(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flag = PredeterminedFlags.HOST
+        flag = PredefinedFlags.HOST
 
         @router.command(Command('test', flags=flag))
         def test(args: InputFlags):
@@ -156,7 +156,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_two_flags(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
-        flags = Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT)
+        flags = Flags(PredefinedFlags.HOST, PredefinedFlags.PORT)
 
         @router.command(Command('test', flags=flags))
         def test(args: InputFlags):

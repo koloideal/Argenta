@@ -63,30 +63,64 @@ class BaseApp:
 
 
     def set_description_message_pattern(self, pattern: Callable[[str, str], str]) -> None:
+        """
+        Public. Sets the output pattern of the available commands
+        :param pattern: output pattern of the available commands
+        :return: None
+        """
         self._description_message_gen: Callable[[str, str], str] = pattern
 
 
     def set_invalid_input_flags_handler(self, handler: Callable[[str], None]) -> None:
+        """
+        Public. Sets the handler for incorrect flags when entering a command
+        :param handler: handler for incorrect flags when entering a command
+        :return: None
+        """
         self._invalid_input_flags_handler = handler
 
 
     def set_repeated_input_flags_handler(self, handler: Callable[[str], None]) -> None:
+        """
+        Public. Sets the handler for repeated flags when entering a command
+        :param handler: handler for repeated flags when entering a command
+        :return: None
+        """
         self._repeated_input_flags_handler = handler
 
 
     def set_unknown_command_handler(self, handler: Callable[[str], None]) -> None:
+        """
+        Public. Sets the handler for unknown commands when entering a command
+        :param handler: handler for unknown commands when entering a command
+        :return: None
+        """
         self._unknown_command_handler = handler
 
 
     def set_empty_command_handler(self, handler: Callable[[], None]) -> None:
+        """
+        Public. Sets the handler for empty commands when entering a command
+        :param handler: handler for empty commands when entering a command
+        :return: None
+        """
         self._empty_input_command_handler = handler
 
 
     def set_exit_command_handler(self, handler: Callable[[], None]) -> None:
+        """
+        Public. Sets the handler for exit command when entering a command
+        :param handler: handler for exit command when entering a command
+        :return: None
+        """
         self._exit_command_handler = handler
 
 
-    def _print_command_group_description(self):
+    def _print_command_group_description(self) -> None:
+        """
+        Private. Prints the description of the available commands
+        :return: None
+        """
         for registered_router in self._registered_routers:
             if registered_router.get_title():
                 self._print_func(registered_router.get_title())
@@ -97,7 +131,12 @@ class BaseApp:
             self._print_func('')
 
 
-    def _print_framed_text(self, text: str):
+    def _print_framed_text(self, text: str) -> None:
+        """
+        Private. Outputs text by framing it in a static or dynamic split strip
+        :param text: framed text
+        :return: None
+        """
         if isinstance(self._dividing_line, StaticDividingLine):
             self._print_func(self._dividing_line.get_full_static_line(self._override_system_messages))
             self._print_func(text)
@@ -113,7 +152,12 @@ class BaseApp:
             self._print_func(self._dividing_line.get_full_dynamic_line(max_length_line, self._override_system_messages))
 
 
-    def _is_exit_command(self, command: InputCommand):
+    def _is_exit_command(self, command: InputCommand) -> bool:
+        """
+        Private. Checks if the given command is an exit command
+        :param command: command to check
+        :return: is it an exit command or not as bool
+        """
         if self._ignore_command_register:
             if command.get_trigger().lower() == self._exit_command.get_trigger().lower():
                 return True
@@ -127,7 +171,12 @@ class BaseApp:
         return False
 
 
-    def _is_unknown_command(self, command: InputCommand):
+    def _is_unknown_command(self, command: InputCommand) -> bool:
+        """
+        Private. Checks if the given command is an unknown command
+        :param command: command to check
+        :return: is it an unknown command or not as bool
+        """
         input_command_trigger = command.get_trigger()
         if self._ignore_command_register:
             if input_command_trigger.lower() in self._all_registered_triggers_in_lower:
@@ -144,6 +193,12 @@ class BaseApp:
 
 
     def _error_handler(self, error: BaseInputCommandException, raw_command: str) -> None:
+        """
+        Private. Handles parsing errors of the entered command
+        :param error: error being handled
+        :param raw_command: the raw input command
+        :return: None
+        """
         match error:
             case UnprocessedInputFlagException():
                 self._invalid_input_flags_handler(raw_command)
@@ -154,12 +209,20 @@ class BaseApp:
 
 
     def _validate_included_routers(self) -> None:
+        """
+        Private. Validates included routers
+        :return: None
+        """
         for router in self._registered_routers:
             if not router.get_command_handlers():
                 raise NoRegisteredHandlersException(router.get_name())
 
 
-    def _setup_system_router(self):
+    def _setup_system_router(self) -> None:
+        """
+        Private. Sets up system router
+        :return: None
+        """
         system_router.set_title(self._system_router_title)
 
         @system_router.command(self._exit_command)
@@ -171,7 +234,11 @@ class BaseApp:
             self._registered_routers.add_registered_router(system_router)
 
 
-    def _setup_default_view(self):
+    def _setup_default_view(self) -> None:
+        """
+        Private. Sets up default app view
+        :return: None
+        """
         if not self._override_system_messages:
             self._initial_message = f'\n[bold red]{text2art(self._initial_message, font='tarty1')}\n\n'
             self._farewell_message = (f'[bold red]\n{text2art(f'\n{self._farewell_message}\n', font='chanky')}[/bold red]\n'
@@ -185,7 +252,11 @@ class BaseApp:
             self._unknown_command_handler = lambda command: self._print_func(f"[red bold]Unknown command: {escape(command.get_trigger())}")
 
 
-    def _pre_cycle_setup(self):
+    def _pre_cycle_setup(self) -> None:
+        """
+        Private. Configures various aspects of the application before the start of the cycle
+        :return: None
+        """
         self._setup_default_view()
         self._setup_system_router()
         self._validate_included_routers()
@@ -254,6 +325,10 @@ class App(BaseApp):
 
 
     def run_polling(self) -> None:
+        """
+        Private. Starts the user input processing cycle
+        :return: None
+        """
         self._pre_cycle_setup()
         while True:
             if self._repeat_command_groups_description:
@@ -289,15 +364,30 @@ class App(BaseApp):
 
 
     def include_router(self, router: Router) -> None:
+        """
+        Public. Registers the router in the application
+        :param router: registered router
+        :return: None
+        """
         router.set_ignore_command_register(self._ignore_command_register)
         self._registered_routers.add_registered_router(router)
 
 
     def include_routers(self, *routers: Router) -> None:
+        """
+        Public. Registers the routers in the application
+        :param routers: registered routers
+        :return: None
+        """
         for router in routers:
             self.include_router(router)
 
 
     def add_message_on_startup(self, message: str) -> None:
+        """
+        Public. Adds a message that will be displayed when the application is launched
+        :param message: the message being added
+        :return: None
+        """
         self._messages_on_startup.append(message)
 

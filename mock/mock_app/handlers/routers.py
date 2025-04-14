@@ -2,7 +2,7 @@ from rich.console import Console
 
 from argenta.command import Command
 from argenta.command.flag import Flags, InputFlags
-from argenta.command.flag.defaults import PredeterminedFlags
+from argenta.command.flag.defaults import PredefinedFlags
 from argenta.router import Router
 from .handlers_implementation.help_command import help_command
 
@@ -20,7 +20,7 @@ def command_help():
 
 
 @work_router.command(Command('start', 'Start Solving',
-                             flags=Flags(PredeterminedFlags.HOST, PredeterminedFlags.PORT),
+                             flags=Flags(PredefinedFlags.HOST, PredefinedFlags.PORT),
                              aliases=['starting']))
 def command_start_solving(args: InputFlags):
     print(args.get_flag('host'))
