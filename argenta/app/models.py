@@ -20,23 +20,24 @@ from argenta.app.registered_routers.entity import RegisteredRouters
 
 
 
-class AppInit:
+class BaseApp:
     def __init__(self,
-                 prompt: str = '[italic dim bold]What do you want to do?\n',
-                 initial_message: str = '\nArgenta\n',
-                 farewell_message: str = '\nSee you\n',
-                 exit_command: Command = Command('Q', 'Exit command'),
-                 system_points_title: str | None = 'System points:',
-                 ignore_command_register: bool = True,
-                 dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
-                 repeat_command_groups: bool = True,
-                 override_system_messages: bool = False,
-                 autocompleter: AutoCompleter = AutoCompleter(),
-                 print_func: Callable[[str], None] = Console().print) -> None:
+                 prompt: str,
+                 initial_message: str,
+                 farewell_message: str,
+                 exit_command: Command,
+                 system_router_title: str | None,
+                 ignore_command_register: bool,
+                 dividing_line: StaticDividingLine | DynamicDividingLine,
+                 repeat_command_groups: bool,
+                 override_system_messages: bool,
+                 autocompleter: AutoCompleter,
+                 print_func: Callable[[str], None]) -> None:
+
         self._prompt = prompt
         self._print_func = print_func
         self._exit_command = exit_command
-        self._system_points_title = system_points_title
+        self._system_router_title = system_router_title
         self._dividing_line = dividing_line
         self._ignore_command_register = ignore_command_register
         self._repeat_command_groups_description = repeat_command_groups
@@ -49,7 +50,10 @@ class AppInit:
 
         self._description_message_gen: Callable[[str, str], str] = lambda command, description: f'[{command}] *=*=* {description}'
         self._registered_routers: RegisteredRouters = RegisteredRouters()
-        self._messages_on_startup = []
+        self._messages_on_startup: list[str] = []
+
+        self._all_registered_triggers_in_lower: list[str] = []
+        self._all_registered_triggers_in_default_case: list[str] = []
 
         self._invalid_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Incorrect flag syntax: {raw_command}')
         self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Repeated input flags: {raw_command}')
@@ -58,8 +62,6 @@ class AppInit:
         self._exit_command_handler: Callable[[], None] = lambda: print_func(self._farewell_message)
 
 
-
-class AppSetters(AppInit):
     def set_description_message_pattern(self, pattern: Callable[[str, str], str]) -> None:
         self._description_message_gen: Callable[[str, str], str] = pattern
 
@@ -84,8 +86,6 @@ class AppSetters(AppInit):
         self._exit_command_handler = handler
 
 
-
-class AppPrinters(AppInit):
     def _print_command_group_description(self):
         for registered_router in self._registered_routers:
             if registered_router.get_title():
@@ -113,33 +113,29 @@ class AppPrinters(AppInit):
             self._print_func(self._dividing_line.get_full_dynamic_line(max_length_line, self._override_system_messages))
 
 
-
-class AppNonStandardHandlers(AppPrinters):
     def _is_exit_command(self, command: InputCommand):
-        if command.get_trigger().lower() == self._exit_command.get_trigger().lower():
-            if self._ignore_command_register:
-                system_router.input_command_handler(command)
+        if self._ignore_command_register:
+            if command.get_trigger().lower() == self._exit_command.get_trigger().lower():
                 return True
-            elif command.get_trigger() == self._exit_command.get_trigger():
-                system_router.input_command_handler(command)
+            elif command.get_trigger().lower() in [x.lower() for x in self._exit_command.get_aliases()]:
+                return True
+        else:
+            if command.get_trigger() == self._exit_command.get_trigger():
+                return True
+            elif command.get_trigger() in self._exit_command.get_aliases():
                 return True
         return False
 
 
     def _is_unknown_command(self, command: InputCommand):
-        for router_entity in self._registered_routers:
-            for command_handler in router_entity.get_command_handlers():
-                handled_command_trigger = command_handler.get_handled_command().get_trigger()
-                handled_command_aliases = command_handler.get_handled_command().get_aliases()
-                if handled_command_trigger.lower() == command.get_trigger().lower() and self._ignore_command_register:
-                    return False
-                elif handled_command_trigger == command.get_trigger():
-                    return False
-                elif handled_command_aliases:
-                    if (command.get_trigger().lower() in [x.lower() for x in handled_command_aliases]) and self._ignore_command_register:
-                        return False
-                    elif command.get_trigger() in handled_command_trigger:
-                        return False
+        input_command_trigger = command.get_trigger()
+        if self._ignore_command_register:
+            if input_command_trigger.lower() in self._all_registered_triggers_in_lower:
+                return False
+        else:
+            if input_command_trigger in self._all_registered_triggers_in_default_case:
+                return False
+
         with redirect_stdout(io.StringIO()) as f:
             self._unknown_command_handler(command)
             res: str = f.getvalue()
@@ -157,18 +153,14 @@ class AppNonStandardHandlers(AppPrinters):
                 self._empty_input_command_handler()
 
 
-
-class AppValidators(AppInit):
     def _validate_included_routers(self) -> None:
         for router in self._registered_routers:
             if not router.get_command_handlers():
                 raise NoRegisteredHandlersException(router.get_name())
 
 
-
-class AppSetups(AppValidators, AppPrinters):
     def _setup_system_router(self):
-        system_router.set_title(self._system_points_title)
+        system_router.set_title(self._system_router_title)
 
         @system_router.command(self._exit_command)
         def exit_command():
@@ -177,6 +169,7 @@ class AppSetups(AppValidators, AppPrinters):
         if system_router not in self._registered_routers.get_registered_routers():
             system_router.set_ignore_command_register(self._ignore_command_register)
             self._registered_routers.add_registered_router(system_router)
+
 
     def _setup_default_view(self):
         if not self._override_system_messages:
@@ -191,16 +184,20 @@ class AppSetups(AppValidators, AppPrinters):
             self._empty_input_command_handler = lambda: self._print_func('[red bold]Empty input command')
             self._unknown_command_handler = lambda command: self._print_func(f"[red bold]Unknown command: {escape(command.get_trigger())}")
 
+
     def _pre_cycle_setup(self):
         self._setup_default_view()
         self._setup_system_router()
         self._validate_included_routers()
 
-        all_triggers: list[str] = []
         for router_entity in self._registered_routers:
-            all_triggers.extend(router_entity.get_triggers())
-            all_triggers.extend(router_entity.get_aliases())
-        self._autocompleter.initial_setup(all_triggers)
+            self._all_registered_triggers_in_default_case.extend(router_entity.get_triggers())
+            self._all_registered_triggers_in_default_case.extend(router_entity.get_aliases())
+
+            self._all_registered_triggers_in_lower.extend([x.lower() for x in router_entity.get_triggers()])
+            self._all_registered_triggers_in_lower.extend([x.lower() for x in router_entity.get_aliases()])
+
+        self._autocompleter.initial_setup(self._all_registered_triggers_in_lower)
 
         self._print_func(self._initial_message)
 
@@ -214,7 +211,48 @@ class AppSetups(AppValidators, AppPrinters):
 
 
 
-class App(AppSetters, AppNonStandardHandlers, AppSetups):
+class App(BaseApp):
+    def __init__(self,
+                 prompt: str = '[italic dim bold]What do you want to do?\n',
+                 initial_message: str = '\nArgenta\n',
+                 farewell_message: str = '\nSee you\n',
+                 exit_command: Command = Command('Q', 'Exit command'),
+                 system_router_title: str | None = 'System points:',
+                 ignore_command_register: bool = True,
+                 dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
+                 repeat_command_groups: bool = True,
+                 override_system_messages: bool = False,
+                 autocompleter: AutoCompleter = AutoCompleter(),
+                 print_func: Callable[[str], None] = Console().print) -> None:
+        """
+        Public. The essence of the application itself.
+        Configures and manages all aspects of the behavior and presentation of the user interacting with the user
+        :param prompt: displayed before entering the command
+        :param initial_message: displayed at the start of the app
+        :param farewell_message: displayed at the end of the app
+        :param exit_command: the entity of the command that will be terminated when entered
+        :param system_router_title: system router title
+        :param ignore_command_register: whether to ignore the case of the entered commands
+        :param dividing_line: the entity of the dividing line
+        :param repeat_command_groups: whether to repeat the available commands and their description
+        :param override_system_messages: whether to redefine the default formatting of system messages
+        :param autocompleter: the entity of the autocompleter
+        :param print_func: system messages text output function
+        :return: None
+        """
+        super().__init__(prompt=prompt,
+                         initial_message=initial_message,
+                         farewell_message=farewell_message,
+                         exit_command=exit_command,
+                         system_router_title=system_router_title,
+                         ignore_command_register=ignore_command_register,
+                         dividing_line=dividing_line,
+                         repeat_command_groups=repeat_command_groups,
+                         override_system_messages=override_system_messages,
+                         autocompleter=autocompleter,
+                         print_func=print_func)
+
+
     def run_polling(self) -> None:
         self._pre_cycle_setup()
         while True:
@@ -233,6 +271,7 @@ class App(AppSetters, AppNonStandardHandlers, AppSetups):
                 continue
 
             if self._is_exit_command(input_command):
+                system_router.input_command_handler(input_command)
                 self._autocompleter.exit_setup()
                 return
 

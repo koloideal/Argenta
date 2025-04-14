@@ -1,3 +1,4 @@
+from argenta.command import Command
 from mock.mock_app.handlers.routers import work_router, settings_router
 
 from argenta.app import App
@@ -6,14 +7,13 @@ from argenta.app.dividing_line import DynamicDividingLine
 from argenta.app.autocompleter import AutoCompleter
 from argenta.orchestrator import Orchestrator
 from argenta.orchestrator.argparse import ArgParse
-from argenta.orchestrator.argparse.arguments import (PositionalArgument,
-                                                     OptionalArgument,
-                                                     BooleanArgument)
+from argenta.orchestrator.argparse.arguments import BooleanArgument
 
 
 arg_parser = ArgParse(processed_args=[BooleanArgument('repeat')])
 app: App = App(dividing_line=DynamicDividingLine(),
-               autocompleter=AutoCompleter('./mock/.hist'))
+               autocompleter=AutoCompleter('./mock/.hist'),
+               exit_command=Command('w', aliases=['test']))
 orchestrator: Orchestrator = Orchestrator(arg_parser)
 
 
