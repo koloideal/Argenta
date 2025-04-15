@@ -1,7 +1,7 @@
 from argenta.command.flag.models import Flag, InputFlag, Flags, InputFlags
 from argenta.command.exceptions import (UnprocessedInputFlagException,
-                                         RepeatedInputFlagsException,
-                                         EmptyInputCommandException)
+                                        RepeatedInputFlagsException,
+                                        EmptyInputCommandException)
 from typing import Generic, TypeVar, cast, Literal
 
 
@@ -9,10 +9,18 @@ InputCommandType = TypeVar('InputCommandType')
 
 
 class BaseCommand:
-    def __init__(self, trigger: str):
+    def __init__(self, trigger: str) -> None:
+        """
+        Private. Base class for all commands
+        :param trigger: A string trigger, which, when entered by the user, indicates that the input corresponds to the command
+        """
         self._trigger = trigger
 
     def get_trigger(self) -> str:
+        """
+        Returns the trigger of the command
+        :return: the trigger of the command as str
+        """
         return self._trigger
 
 
@@ -21,6 +29,13 @@ class Command(BaseCommand):
                  description: str = None,
                  flags: Flag | Flags = None,
                  aliases: list[str] = None):
+        """
+        Public. The command that can and should be registered in the Router
+        :param trigger: A string trigger, which, when entered by the user, indicates that the input corresponds to the command
+        :param description: the description of the command
+        :param flags: processed commands
+        :param aliases: string synonyms for the main trigger
+        """
         super().__init__(trigger)
         self._registered_flags: Flags = flags if isinstance(flags, Flags) else Flags(flags) if isinstance(flags, Flag) else Flags()
         self._description = f'Description for "{self._trigger}" command' if not description else description

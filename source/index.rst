@@ -16,5 +16,3 @@ documentation for details.
    :caption: Contents:
 
 .. automodule:: argenta
-   :members:
-

@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 class BaseFlag(ABC):
     def __init__(self, name: str,
-                 prefix: Literal['-', '--', '---'] = '--'):
+                 prefix: Literal['-', '--', '---'] = '--') -> None:
         """
         Private. Base class for flags
         :param name: the name of the flag
@@ -14,18 +14,26 @@ class BaseFlag(ABC):
         self._name = name
         self._prefix = prefix
 
-    def get_string_entity(self):
+    def get_string_entity(self) -> str:
         """
-        Private. Returns a string representation of the flag
-        :return: None
+        Public. Returns a string representation of the flag
+        :return: string representation of the flag as str
         """
         string_entity: str = self._prefix + self._name
         return string_entity
 
-    def get_name(self):
+    def get_name(self) -> str:
+        """
+        Public. Returns the name of the flag
+        :return: the name of the flag as str
+        """
         return self._name
 
-    def get_prefix(self):
+    def get_prefix(self) -> str:
+        """
+        Public. Returns the prefix of the flag
+        :return: the prefix of the flag as str
+        """
         return self._prefix
 
 
@@ -34,13 +42,29 @@ class InputFlag(BaseFlag):
     def __init__(self, name: str,
                  prefix: Literal['-', '--', '---'] = '--',
                  value: str = None):
+        """
+        Public. The entity of the flag of the entered command
+        :param name: the name of the input flag
+        :param prefix: the prefix of the input flag
+        :param value: the value of the input flag
+        :return: None
+        """
         super().__init__(name, prefix)
         self._flag_value = value
 
     def get_value(self) -> str | None:
+        """
+        Public. Returns the value of the flag
+        :return: the value of the flag as str
+        """
         return self._flag_value
 
     def set_value(self, value):
+        """
+        Private. Sets the value of the flag
+        :param value: the fag value to set
+        :return: None
+        """
         self._flag_value = value
 
 
@@ -48,11 +72,23 @@ class InputFlag(BaseFlag):
 class Flag(BaseFlag):
     def __init__(self, name: str,
                  prefix: Literal['-', '--', '---'] = '--',
-                 possible_values: list[str] | Pattern[str] | False = True):
+                 possible_values: list[str] | Pattern[str] | False = True) -> None:
+        """
+        Public. The entity of the flag being registered for subsequent processing
+        :param name: The name of the flag
+        :param prefix: The prefix of the flag
+        :param possible_values: The possible values of the flag, if False then the flag cannot have a value
+        :return: None
+        """
         super().__init__(name, prefix)
         self.possible_values = possible_values
 
     def validate_input_flag_value(self, input_flag_value: str | None):
+        """
+        Private. Validates the input flag value
+        :param input_flag_value: The input flag value to validate
+        :return: whether the entered flag is valid as bool
+        """
         if self.possible_values is False:
             if input_flag_value is None:
                 return True
@@ -79,22 +115,44 @@ class Flag(BaseFlag):
 
 
 class BaseFlags(ABC):
+    """
+    Private. Base class for groups of flags
+    """
     __slots__ = ('_flags',)
 
     @abstractmethod
     def get_flags(self):
+        """
+        Public. Returns a list of flags
+        :return: list of flags
+        """
         pass
 
     @abstractmethod
     def add_flag(self, flag: Flag | InputFlag):
+        """
+        Public. Adds a flag to the list of flags
+        :param flag: flag to add
+        :return: None
+        """
         pass
 
     @abstractmethod
     def add_flags(self, flags: list[Flag] | list[InputFlag]):
+        """
+        Public. Adds a list of flags to the list of flags
+        :param flags: list of flags to add
+        :return: None
+        """
         pass
 
     @abstractmethod
     def get_flag(self, name: str):
+        """
+        Public. Returns the flag entity by its name or None if not found
+        :param name: the name of the flag to get
+        :return: entity of the flag or None
+        """
         pass
 
     def __iter__(self):
