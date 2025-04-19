@@ -52,7 +52,7 @@ def main() -> None:
 if __name__ == '__main__':
     main()
 ```
-Пример оболочки с командой, у которой зарегистрированы флаги
+Example TUI with a command that has processed flags
 
 ```python
 # routers.py
@@ -96,7 +96,7 @@ def handler_with_flags(flags: InputFlags):
 ```python
 class AutoCompleter()
 ```
----
+
 <a id="argenta.app.autocompleter.entity.AutoCompleter.__init__"></a>
 
 #### \_\_init\_\_
@@ -117,75 +117,11 @@ Public. Configures and implements auto-completion of input command
 
 None
 
-<a id="argenta.app.autocompleter.entity.AutoCompleter.complete"></a>
-
-#### complete
-
-```python
-def complete(text, state) -> str | None
-```
-
-Private. Auto-completion function
-
-**Arguments**:
-
-- `text`: part of the command being entered
-- `state`: the current cursor position is relative to the beginning of the line
-
-**Returns**:
-
-the desired candidate as str or None
-
-<a id="argenta.app.autocompleter.entity.AutoCompleter.initial_setup"></a>
-
-#### initial\_setup
-
-```python
-def initial_setup(all_commands: list[str]) -> None
-```
-
-Public. Initial setup function
-
-**Arguments**:
-
-- `all_commands`: Registered commands for adding them to the autocomplete history
-
-**Returns**:
-
-None
-
-<a id="argenta.app.autocompleter.entity.AutoCompleter.exit_setup"></a>
-
-#### exit\_setup
-
-```python
-def exit_setup() -> None
-```
-
-Public. Exit setup function
-
-**Returns**:
-
-None
-
-<a id="argenta.app.autocompleter.entity.AutoCompleter.get_history_items"></a>
-
-#### get\_history\_items
-
-```python
-@staticmethod
-def get_history_items() -> list[str] | list
-```
-
-Private. Returns a list of all commands entered by the user
-
-**Returns**:
-
-all commands entered by the user as list[str]
+---
 
 <a id="argenta.app.defaults"></a>
 
-# argenta.app.defaults
+# `argenta.app.defaults`
 
 <a id="argenta.app.defaults.PredefinedMessages"></a>
 
@@ -198,49 +134,11 @@ class PredefinedMessages()
 
 Public. A dataclass with predetermined messages for quick use
 
+---
+
 <a id="argenta.app.dividing_line.models"></a>
 
-# argenta.app.dividing\_line.models
-
-<a id="argenta.app.dividing_line.models.BaseDividingLine"></a>
-
-## BaseDividingLine Objects
-
-```python
-class BaseDividingLine(ABC)
-```
-
-<a id="argenta.app.dividing_line.models.BaseDividingLine.__init__"></a>
-
-#### \_\_init\_\_
-
-```python
-def __init__(unit_part: str = '-') -> None
-```
-
-Private. The basic dividing line
-
-**Arguments**:
-
-- `unit_part`: the single part of the dividing line
-
-**Returns**:
-
-None
-
-<a id="argenta.app.dividing_line.models.BaseDividingLine.get_unit_part"></a>
-
-#### get\_unit\_part
-
-```python
-def get_unit_part() -> str
-```
-
-Private. Returns the unit part of the dividing line
-
-**Returns**:
-
-unit_part of dividing line as str
+# `argenta.app.dividing_line`
 
 <a id="argenta.app.dividing_line.models.StaticDividingLine"></a>
 
@@ -269,23 +167,7 @@ Public. The static dividing line
 
 None
 
-<a id="argenta.app.dividing_line.models.StaticDividingLine.get_full_static_line"></a>
-
-#### get\_full\_static\_line
-
-```python
-def get_full_static_line(is_override: bool) -> str
-```
-
-Private. Returns the full line of the dividing line
-
-**Arguments**:
-
-- `is_override`: has the default text layout been redefined
-
-**Returns**:
-
-full line of dividing line as str
+---
 
 <a id="argenta.app.dividing_line.models.DynamicDividingLine"></a>
 
