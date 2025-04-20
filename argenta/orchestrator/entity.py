@@ -9,6 +9,7 @@ class Orchestrator:
         """
         An orchestrator and configurator that defines the behavior of an integrated system, one level higher than the App
         :param arg_parser: Cmd argument parser and configurator at startup
+        :return: None
         """
         self.arg_parser: ArgParse | False = arg_parser
         if arg_parser:
@@ -19,14 +20,14 @@ class Orchestrator:
         """
         Starting the user input processing cycle
         :param app: a running application
-        :return:
+        :return: None
         """
         app.run_polling()
 
     def get_input_args(self) -> Namespace | None:
         """
         Returns the arguments parsed
-        :return:
+        :return: None
         """
         if self.arg_parser:
             return self.arg_parser.entity.parse_args()

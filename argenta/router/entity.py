@@ -1,4 +1,4 @@
-from typing import Callable, Any
+from typing import Callable
 from inspect import getfullargspec
 
 from argenta.command import Command
@@ -16,6 +16,12 @@ class Router:
     def __init__(self,
                  title: str = None,
                  name: str = 'Default'):
+        """
+        Public. Directly configures and manages handlers
+        :param title: the title of the router
+        :param name: the name of the router
+        :return: None
+        """
         self._title = title
         self._name = name
 
@@ -24,7 +30,12 @@ class Router:
         self._not_valid_flag_handler: Callable[[Flag], None] = lambda flag: print(f"Undefined or incorrect input flag: {flag.get_string_entity()}{(' '+flag.get_value()) if flag.get_value() else ''}")
 
 
-    def command(self, command: Command) -> Callable[[Any],  Any]:
+    def command(self, command: Command) -> Callable:
+        """
+        Public. Registers handler
+        :param command: Registered command
+        :return: decorated handler as Callable[[Any], Any]
+        """
         self._validate_command(command)
 
         def command_decorator(func):
@@ -38,7 +49,12 @@ class Router:
         return command_decorator
 
 
-    def set_invalid_input_flag_handler(self, func):
+    def set_invalid_input_flag_handler(self, func) -> None:
+        """
+        Public. Registers handler for invalid input flag
+        :param func: registered handler
+        :return: None
+        """
         processed_args = getfullargspec(func).args
         if len(processed_args) != 1:
             raise IncorrectNumberOfHandlerArgsException()
@@ -46,7 +62,12 @@ class Router:
             self._not_valid_flag_handler = func
 
 
-    def input_command_handler(self, input_command: InputCommand):
+    def input_command_handler(self, input_command: InputCommand) -> None:
+        """
+        Private. One handler for all input commands
+        :param input_command: input command as InputCommand
+        :return: None
+        """
         input_command_name: str = input_command.get_trigger()
         input_command_flags: InputFlags = input_command.get_input_flags()
 
@@ -59,7 +80,13 @@ class Router:
                     self._validate_input_command(input_command_flags, command_handler)
 
 
-    def _validate_input_command(self, input_command_flags: InputFlags, command_handler: CommandHandler):
+    def _validate_input_command(self, input_command_flags: InputFlags, command_handler: CommandHandler) -> None:
+        """
+        Private. Validates flags of input command
+        :param input_command_flags: input command flags as InputFlags
+        :param command_handler: command handler for input command as CommandHandler
+        :return: None
+        """
         handle_command = command_handler.get_handled_command()
         if handle_command.get_registered_flags().get_flags():
             if input_command_flags.get_flags():
