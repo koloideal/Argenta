@@ -1,16 +1,96 @@
 # Argenta
 
+### Python library for creating TUI
+
 ---
 
-## Описание
-**Argenta** — Python library for creating TUI
+## Contents
+
+- [**Installing**](#installing) 
+- [**Quick Start**](#quick-start) 
+- [**Documentation**](#documentation)
+   - [**App** Objects](#app-objects)  
+      - [\_\_init\_\_](#__init__)   
+      - [set\_description\_message\_pattern](#set\_description\_message\_pattern)  
+      - [set\_invalid\_input\_flags\_handler](#set\_invalid\_input\_flags\_handler)    
+      - [set\_repeated\_input\_flags\_handler](#set\_repeated\_input\_flags\_handler)   
+      - [set\_unknown\_command\_handler](#set\_unknown\_command\_handler)  
+      - [set\_empty\_command\_handler](#set\_empty\_command\_handler)  
+      - [set\_exit\_command\_handler](#set\_exit\_command\_handler)  
+      - [run\_polling](#run\_polling)  
+      - [include\_router](#include\_router)  
+      - [include\_routers](#include\_routers)  
+      - [add\_message\_on\_startup](#add\_message\_on\_startup)  
+  - [**AutoCompleter** Objects](#autocompleter-objects)  
+      - [\_\_init\_\_](#\_\_init\_\_) 
+  - [**PredefinedMessages** Objects](#predefinedmessages-objects) 
+  - [**StaticDividingLine** Objects](#staticdividingline-objects) 
+      - [\_\_init\_\_](#\_\_init\_\_)  
+      - [get\_full\_static\_line](#get\_full\_static\_line)  
+  - [**DynamicDividingLine** Objects](#dynamicdividingline-objects)  
+      - [\_\_init\_\_](#\_\_init\_\_)  
+      - [get\_full\_dynamic\_line](#get\_full\_dynamic\_line)  
+  - [**NoRegisteredHandlersException** Objects](#noregisteredhandlersexception-objects)  
+  - [**UnprocessedInputFlagException** Objects](#unprocessedinputflagexception-objects)  
+  - [**RepeatedInputFlagsException** Objects](#repeatedinputflagsexception-objects)  
+  - [**EmptyInputCommandException** Objects](#emptyinputcommandexception-objects)  
+  - [**PredefinedFlags** Objects](#predefinedflags-objects)  
+  - [**InputFlag** Objects](#inputflag-objects)  
+      - [\_\_init\_\_](#\_\_init\_\_)  
+      - [get\_value](#get\_value)  
+  - [**Flag** Objects](#flag-objects)  
+      - [\_\_init\_\_](#\_\_init\_\_)  
+  - [**Flags** Objects](#flags-objects)  
+      - [\_\_init\_\_](#\_\_init\_\_)  
+      - [get\_flags](#get\_flags)  
+      - [add\_flag](#add\_flag)  
+      - [add\_flags](#add\_flags)  
+      - [get\_flag](#get\_flag)  
+  - [**InputFlags** Objects](#inputflags-objects)  
+      - [\_\_init\_\_](#\_\_init\_\_)  
+      - [get\_flags](#get\_flags)  
+      - [add\_flag](#add\_flag)  
+      - [add\_flags](#add\_flags)  
+      - [get\_flag](#get\_flag)  
+  - [**Command** Objects](#command-objects)   
+      - [\_\_init\_\_](#\_\_init\_\_)  
+  - [**PositionalArgument** Objects](#positionalargument-objects)   
+      - [\_\_init\_\_](#\_\_init\_\_)  
+  - [**OptionalArgument** Objects](#optionalargument-objects)  
+      - [\_\_init\_\_](#\_\_init\_\_)  
+  - [**BooleanArgument** Objects](#booleanargument-objects)  
+      - [\_\_init\_\_](#\_\_init\_\_)  
+  - [**ArgParse** Objects](#argparse-objects)  
+      - [\_\_init\_\_](#\_\_init\_\_)  
+      - [set\_args](#set\_args)  
+  - [**Orchestrator** Objects](#orchestrator-objects)  
+      - [\_\_init\_\_](#\_\_init\_\_)  
+      - [start\_polling](#start\_polling)  
+      - [get\_input\_args](#get\_input\_args)  
+  - [**Router** Objects](#router-objects)  
+      - [\_\_init\_\_](#\_\_init\_\_)  
+      - [@command](#@command)  
+      - [set\_invalid\_input\_flag\_handler](#set\_invalid\_input\_flag\_handler)  
+      - [input\_command\_handler](#input\_command\_handler)  
+      - [set\_command\_register\_ignore](#set\_command\_register\_ignore)  
+      - [get\_triggers](#get\_triggers)  
+      - [get\_aliases](#get\_aliases)  
+      - [get\_title](#get\_title)  
+      - [set\_title](#set\_title)  
+  - [**RepeatedFlagNameException** Objects](#repeatedflagnameexception-objects) 
+  - [**TooManyTransferredArgsException** Objects](#toomanytransferredargsexception-objects) 
+  - [**RequiredArgumentNotPassedException** Objects](#requiredargumentnotpassedexception-objects) 
+  - [**IncorrectNumberOfHandlerArgsException** Objects](#incorrectnumberofhandlerargsexception-objects) 
+  - [**TriggerContainSpacesException** Objects](#triggercontainspacesexception-objects)
+
+---
 
 ![preview](https://github.com/koloideal/Argenta/blob/kolo/imgs/mock_app_preview3.png?raw=True)  
-Пример внешнего вида TUI, написанного с помощью Argenta  
+An example of the TUI appearance
 
 ---
 
-# Установка
+# Installing
 ```bash
 pip install argenta
 ```
@@ -21,9 +101,9 @@ poetry add argenta
 
 ---
 
-# Быстрый старт
+# Quick start
 
-Пример простейшей оболочки с командой без зарегистрированных флагов
+Example of the simplest TUI with a single command 
 ```python
 # routers.py
 from argenta.router import Router
@@ -40,35 +120,36 @@ def handler():
 ```python
 # main.py
 from argenta.app import App
+from argenta.orchestrator import Orchestrator
 from routers import router
 
 app: App = App()
+orchestrator: Orchestrator = Orchestrator()
 
 
 def main() -> None:
     app.include_router(router)
-    app.run_polling()
+    orchestrator.start_polling(app)
 
 
 if __name__ == '__main__':
     main()
 ```
-Пример оболочки с командой, у которой зарегистрированы флаги
+Example TUI with a command that has processed flags
 
 ```python
 # routers.py
 import re
 from argenta.router import Router
 from argenta.command import Command
+from argenta.orchestrator import Orchestrator
+from argenta.command.flag.defaults import PredefinedFlags
 from argenta.command.flag import Flags, Flag, InputFlags
 
 router = Router()
 
-registered_flags = Flags(
-    Flag(name='host',
-         prefix='--',
-         possible_values=re.compile(r'^192.168.\d{1,3}.\d{1,3}$')),
-    Flag('port', '--', re.compile(r'^[0-9]{1,4}$')))
+registered_flags = Flags(PredefinedFlags.HOST,
+                         Flag('port', '--', re.compile(r'^[0-9]{1,4}$')))
 
 
 @router.command(Command("hello"))
@@ -87,493 +168,1259 @@ def handler_with_flags(flags: InputFlags):
 
 ---
 
-# *classes* :
+# Documentation
 
----
+<a id="argenta.app.models"></a>
 
-##  *class* : : `App` 
-Класс, определяющий поведение и состояние оболочки
+# `.app`
 
-### Конструктор
+<a id="argenta.app.models.App"></a>
+
+## App Objects
+
 ```python
-App(prompt: str = '[italic dim bold]What do you want to do?\n',
-    initial_message: str = '\nArgenta\n',
-    farewell_message: str = '\nSee you\n',
-    exit_command: Command = Command('Q', 'Exit command'),
-    system_points_title: str | None = 'System points:',
-    ignore_command_register: bool = True,
-    dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
-    repeat_command_groups: bool = True,
-    override_system_messages: bool = False,
-    autocompleter: AutoCompleter = AutoCompleter(),
-    print_func: Callable[[str], None] = Console().print)
-```
-**Аргументы:**
-- **name : mean**
-- `prompt` (`str`): Сообщение перед вводом команды.
-- `initial_message` (`str`): Приветственное сообщение при запуске.
-- `farewell_message` (`str`): Сообщение при выходе.
-- `exit_command` (`Command`): Сущность команды, которая будет отвечать за завершение работы.
-- `system_points_title` (`str`): Заголовок перед списком системных команд.
-- `ignore_command_register` (`bool`): Игнорировать регистр всех команд.
-- `dividing_line` (`StaticDividingLine | DynamicDividingLine`): Разделительная строка.
-- `repeat_command_groups` (`bool`): Повторять описание команд перед вводом.
-- `override_system_messages` (`bool`): Переопределить ли дефолтное оформление сообщений ([подробнее см.](#override_defaults))
-- `autocompleter` (`AutoCompleter`): Сущность автодополнителя ввода.
-- `print_func` (`Callable[[str], None]`): Функция вывода текста в терминал.
-
----
-
-### ***methods***     
-
----
-
-#### **.start_polling() -> `None`**  
-
-*method mean* **::** Запускает цикл обработки ввода
-
----
-
-#### **.include_router(router: Router) -> `None`**  
-
-*param* `router: Router` **::** Регистрируемый роутер  
-*required* **::** True
-
-*method mean* **::** Регистрирует роутер в оболочке
-
----
-
-#### **.include_routers(\*routers: Router) -> `None`**  
-
-*param* `routers: Router` **::** Неограниченное количество регистрируемых роутеров    
-*required* **::** True
-
-*method mean* **::** Регистрирует роутер в оболочке
-
----
-
-#### **.set_description_message_pattern(pattern: str) -> `None`**  
-
-*param* `pattern: str` **::** Паттерн описания команды при её выводе в консоль  
-*required* **::** True  
-*example* **::** `"[{command}] *=*=* {description}"`
-
-*method mean* **::** Устанавливает паттерн описания команд, который будет использован
-при выводе в консоль
-
----
-
-#### **.add_message_on_startup(message: str) -> `None`**  
-
-*param* `message: str` **::** Сообщение, которое будет выведено при запуске приложения 
-*required* **::** True  
-*example* **::** `Message on startup`
-
-*method mean* **::** Устанавливает паттерн описания команд, который будет использован
-при выводе в консоль
-
----
-
-<a name="custom_handler"></a>
-#### **.repeated_input_flags_handler: `Callable[[str], None])`**
-
-*example* **::** `lambda raw_command: print_func(f'Repeated input flags: "{raw_command}"')`
-
-*attr mean* **::** Устанавливает функцию, которой будет передано управление при
-вводе юзером повторяющихся флагов
-
----
-
-#### **.invalid_input_flags_handler: `Callable[[str], None])`**  
-
-*example* **::** `lambda raw_command: print_func(f'Incorrect flag syntax: "{raw_command}"')`
-
-*attr mean* **::** Устанавливает функцию, которой будет передано управление при
-вводе юзером команды с некорректным синтаксисом флагов
-
----
-
-#### **.unknown_command_handler: `Callable[[str], None]`**  
-
-*example* **::** `lambda command: print_func(f"Unknown command: {command.get_string_entity()}")`
-
-*attr mean* **::** Устанавливает функцию, которой будет передано управление при
-вводе юзером неизвестной команды
-
----
-
-#### **.empty_command_handler: `Callable[[str], None])`**  
-
-*example* **::** `lambda: print_func(f'Empty input command')`
-
-*attr mean* **::** Устанавливает функцию, которой будет передано управление при
-вводе юзером пустой команды
-
----
-
-### Примечания  
-
-- В устанавливаемом паттерне сообщения описания команды необходимы быть два ключевых слова: 
-`command` и `description`, каждое из которых должно быть заключено в фигурные скобки, после обработки
-паттерна на места этих ключевых слов будут подставлены соответствующие атрибуты команды, при отсутствии
-этих двух ключевых слов будет вызвано исключение `InvalidDescriptionMessagePatternException`
-
-- Команды оболочки не должны повторяться, при значении атрибута `ignore_command_register` равным `True`
-допускается создание обработчиков для разных регистров одинаковых символов в команде, для примера `u` и `U`,
-при значении атрибута `ignore_command_register` класса `App` равным `False` тот же пример вызывает исключение 
-`RepeatedCommandInDifferentRoutersException`. Исключение вызывается только при наличии пересекающихся команд 
-у __<u>разных</u>__ роутеров
-
-- Наиболее частые сообщение при запуске предопределены и доступны для быстрого
-использования: `argenta.app.defaults.PredeterminedMessages`
-
-<a name="override_defaults"></a>
-- Если `override_system_messages`=`False`, то при переопределении таких атрибутов как `initial_message` и
-`farawell_message` будет использовано дефолтное оформление текста, в виде красного ascii арта, при значении
-`override_system_messages`=`True` системные сообщения будут отображены в точности какими были переданы
-
-
-
-
-### Исключения
-
-- `InvalidRouterInstanceException` — Переданный объект в метод `App().include_router()` не является экземпляром класса `Router`.
-- `InvalidDescriptionMessagePatternException` — Неправильный формат паттерна описания команд.
-- `IncorrectNumberOfHandlerArgsException` — У обработчика нестандартного поведения зарегистрировано неверное количество аргументов(в большинстве случаев у него должен быть один аргумент).
-- `NoRegisteredHandlersException` — У роутера нет ни одного обработчика команд.
-
----
-
-##  *class* :: `AutoCompleter` 
-Класс, экземпляр которого представляет собой автодополнитель ввода
-
-### Конструктор
-```python
-AutoCompleter(history_filename: str = False, 
-              autocomplete_button: str = 'tab')
+class App(BaseApp)
 ```
 
-**Аргументы:**
-- **name : mean**
-- `history_filename` (`str` | `False`): Путь к файлу, который будет являться или является 
-историй пользовательского ввода, в последующем эти команды будут автодополняться, файл
-может не существовать при инициализации, тогда он будет создан, при значении аргумента `False`
-история пользовательского ввода будет существовать только в пределах сессии и не сохраняться в файл
-- `autocomplete_button` (`str`): Строковое обозначение кнопки на клавиатуре, которая будет
-использоваться для автодополнения при вводе, по умолчанию `tab`
+<a id="argenta.app.models.App.__init__"></a>
 
----
+#### \_\_init\_\_
 
-##  *class* :: `StaticDivideLine` 
-Класс, экземпляр которого представляет собой строковый разделитель фиксированной длины
-
-### Конструктор
 ```python
-StaticDivideLine(unit_part: str = '-', 
-                 length: int = 25)
+def __init__(prompt: str = '[italic dim bold]What do you want to do?\n',
+             initial_message: str = '\nArgenta\n',
+             farewell_message: str = '\nSee you\n',
+             exit_command: Command = Command('Q', 'Exit command'),
+             system_router_title: str | None = 'System points:',
+             ignore_command_register: bool = True,
+             dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
+             repeat_command_groups: bool = True,
+             override_system_messages: bool = False,
+             autocompleter: AutoCompleter = AutoCompleter(),
+             print_func: Callable[[str], None] = Console().print) -> None
 ```
 
-**Аргументы:**
-- **name : mean**
-- `unit_part` (`str`): Единичная часть строкового разделителя
-- `length` (`int`): Длина строкового разделителя
+Public. The essence of the application itself.
+
+Configures and manages all aspects of the behavior and presentation of the user interacting with the user
+
+**Arguments**:
+
+- `prompt`: displayed before entering the command
+- `initial_message`: displayed at the start of the app
+- `farewell_message`: displayed at the end of the app
+- `exit_command`: the entity of the command that will be terminated when entered
+- `system_router_title`: system router title
+- `ignore_command_register`: whether to ignore the case of the entered commands
+- `dividing_line`: the entity of the dividing line
+- `repeat_command_groups`: whether to repeat the available commands and their description
+- `override_system_messages`: whether to redefine the default formatting of system messages
+- `autocompleter`: the entity of the autocompleter
+- `print_func`: system messages text output function
+
+**Returns**:
+
+`None`
 
 ---
 
-##  *class* :: `DinamicDivideLine` 
-Строковый разделитель динамической длины, которая определяется длиной обрамляемого вывода команды
+<a id="argenta.app.models.BaseApp.set_description_message_pattern"></a>
 
-### Конструктор
+#### set\_description\_message\_pattern
+
 ```python
-DinamicDivideLine(unit_part: str = '-')
+def set_description_message_pattern(
+        pattern: Callable[[str, str], str]) -> None
 ```
 
-**Аргументы:**
-- **name : mean**
-- `unit_part` (`str`): Единичная часть строкового разделителя
+Public. Sets the output pattern of the available commands
+
+**Arguments**:
+
+- `pattern`: output pattern of the available commands
+
+**Returns**:
+
+`None`
 
 ---
 
-##  *class* :: `Router` 
-Класс, который определяет и конфигурирует обработчики команд
+<a id="argenta.app.models.BaseApp.set_invalid_input_flags_handler"></a>
 
-### Конструктор
+#### set\_invalid\_input\_flags\_handler
+
 ```python
-Router(title: str | None = None,
-       name: str = 'Default')
+def set_invalid_input_flags_handler(handler: Callable[[str], None]) -> None
 ```
 
+Public. Sets the handler for incorrect flags when entering a command
 
+**Arguments**:
 
-**Аргументы:**
-- **name : mean**
-- `title` (`str`): Заголовок группы команд.
-- `name` (`str`): Персональное название роутера
+- `handler`: handler for incorrect flags when entering a command
 
----
+**Returns**:
 
-### ***methods***     
-
----
-
-#### **command(command: Command)**  
-
-*param* `command: Command` **::** Экземпляр класса `Command`, который определяет строковый триггер команды,
-допустимые флаги команды и другое  
-*required* **::** True  
-*example* **::** `Command(command='ssh', description='connect via ssh')`
-
-*method mean* **::** Декоратор, который регистрирует функцию как обработчик команды
+`None`
 
 ---
 
-#### **.get_name() -> `str`**  
+<a id="argenta.app.models.BaseApp.set_repeated_input_flags_handler"></a>
 
-*method mean* **::** Возвращает установленное название роутера
+#### set\_repeated\_input\_flags\_handler
 
----
-
-#### **.get_title() -> `str`**  
-
-*method mean* **::** Возвращает установленный заголовок группы команд данного роутера
-
----
-
-
-### Исключения
-- `RepeatedFlagNameException` - Повторяющиеся зарегистрированные флаги в команде
-- `TooManyTransferredArgsException` - Слишком много зарегистрированных аргументов у обработчика команды
-- `RequiredArgumentNotPassedException` - Не зарегистрирован обязательный аргумент у обработчика команды(аргумент, через который будут переданы флаги введённой команды)
-- `IncorrectNumberOfHandlerArgsException` - У обработчика нестандартного поведения зарегистрировано неверное количество аргументов(в большинстве случаев у него должен быть один аргумент)
-- `TriggerCannotContainSpacesException` - У регистрируемой команды в триггере содержатся пробелы
-
----
-
-##  *class* :: `Command` 
-Класс, экземпляр которого определяет строковый триггер хэндлера и конфигурирует его атрибуты
-
-### Конструктор
 ```python
-Command(trigger: str,
-        description: str = None,
-        flags: Flag | Flags = None)
+def set_repeated_input_flags_handler(handler: Callable[[str], None]) -> None
 ```
 
-**Аргументы:**
-- **name : mean**
-- `trigger` (`str`): Строковый триггер
-- `description` (`str`): Описание команды, которое будет выведено в консоль при запуске оболочки
-- `flags` (`Flag | Flags`): Флаги, которые будут обработаны при их наличии во вводе юзера
+Public. Sets the handler for repeated flags when entering a command
+
+**Arguments**:
+
+- `handler`: handler for repeated flags when entering a command
+
+**Returns**:
+
+`None`
 
 ---
 
-#### **.get_trigger() -> `str`**  
+<a id="argenta.app.models.BaseApp.set_unknown_command_handler"></a>
 
-*method mean* **::** Возвращает строковый триггер экземпляра
+#### set\_unknown\_command\_handler
 
----
-
-#### **.get_description() -> `str`**  
-
-*method mean* **::** Возвращает описание команды
-
----
-
-#### **.get_registered_flags() -> `Flags | None`**  
-
-*method mean* **::** Возвращает зарегистрированные флаги экземпляра
-
----
-
-### Исключения 
-- `UnprocessedInputFlagException` - Некорректный синтаксис ввода команды
-- `RepeatedInputFlagsException` - Повторяющиеся флаги во введённой команде
-- `EmptyInputCommandException` - Введённая команда является пустой(не содержит символов)  
-
-**Примечание**
-Все вышеуказанные исключения класса `Command` вызываются в рантайме запущенным экземпляром класса
-`App`, а также по дефолту обрабатываются, при желании можно задать пользовательские
-обработчики для этих исключений ([подробнее см.](#custom_handler))
-
----
-
-##  *class* :: `Flag` 
-Класс, экземпляры которого в большинстве случаев передаются при создании
-экземпляра класса `Command` для регистрации допустимого флага при вводе юзером команды
-
-### Конструктор
 ```python
-Flag(name: str,
-     prefix: typing.Literal['-', '--', '---'] = '-',
-     possible_values: list[str] | typing.Pattern[str] | False = True)
+def set_unknown_command_handler(handler: Callable[[str], None]) -> None
 ```
 
----
+Public. Sets the handler for unknown commands when entering a command
 
-**Аргументы:**
-- **name : mean**
-- `name` (`str`): Имя флага
-- `prefix` (`Literal['-', '--', '---']`): Префикс команды, допустимым значением является от одного до трёх минусов
-- `possible_values` (`list[str] | Pattern[str] | bool`): Множество допустимых значений флага, может быть задано
-списком с допустимыми значениями или регулярным выражением (рекомендуется `re.compile(r'example exspression')`), при значении
-аргумента `False` у введённого флага не может быть значения, иначе будет вызвано исключение и обработано соответствующим 
-еррор-хэндлером
+**Arguments**:
 
----
+- `handler`: handler for unknown commands when entering a command
 
-### ***methods***     
+**Returns**:
+
+`None`
 
 ---
 
-#### **.get_string_entity() -> `str`**  
+<a id="argenta.app.models.BaseApp.set_empty_command_handler"></a>
 
-*method mean* **::** Возвращает строковое представление флага(префикс + имя)
+#### set\_empty\_command\_handler
 
----
-
-#### **.get_name() -> `str`**  
-
-*method mean* **::** Возвращает имя флага
-
----
-
-#### **.get_prefix() -> `str`**  
-
-*method mean* **::** Возвращает префикс флага
-
----
-
-##  *class* :: `InputFlag` 
-Класс, экземпляры которого являются введёнными флагами команды, передаётся в хэндлер команды
-через `InputFlags`
-
----
-
-### Примечания  
-
-- Наиболее часто используемые флаги предопределены и доступны для быстрого использования:
-`argenta.command.flag.defaults.PredeterminedFlags` 
-
----
-
-
-### Конструктор
 ```python
-InputFlag(name: str,
-         prefix: typing.Literal['-', '--', '---'] = '-',
-         value: str = None)
+def set_empty_command_handler(handler: Callable[[], None]) -> None
 ```
 
----
+Public. Sets the handler for empty commands when entering a command
 
-**Аргументы:**
-- **name : mean**
-- `name` (`str`): Имя флага
-- `prefix` (`Literal['-', '--', '---']`): Префикс команды, допустимым значением является от одного до трёх минусов
-- `value` (`str`): Значение введённого флага, если оно есть
+**Arguments**:
 
----
+- `handler`: handler for empty commands when entering a command
 
-### ***methods***     
+**Returns**:
+
+`None`
 
 ---
 
-#### **.get_value() -> `str | None`**  
+<a id="argenta.app.models.BaseApp.set_exit_command_handler"></a>
 
-*method mean* **::** Возвращает значение введённого флага
+#### set\_exit\_command\_handler
 
----
-
-##  *class* :: `Flags` 
-Класс, объединяющий список флагов в один объект, используется в качестве 
-передаваемого аргумента `flags` экземпляру класса `Command`, при регистрации
-хэндлера
-
-### Конструктор
 ```python
-Flags(*flags: Flag)
+def set_exit_command_handler(handler: Callable[[], None]) -> None
 ```
 
----
+Public. Sets the handler for exit command when entering a command
 
-**Аргументы:**
-- **name : mean**
-- `*flags` (`Flag`): Неограниченное количество передаваемых флагов
+**Arguments**:
 
----
+- `handler`: handler for exit command when entering a command
 
-### ***methods***     
+**Returns**:
 
----
-
-#### **.get_flags() -> `list[Flag]`**  
-
-*method mean* **::** Возвращает зарегистрированные флаги
+`None`
 
 ---
 
-#### **.add_flag(flag: Flag) -> `None`**  
+<a id="argenta.app.models.App.run_polling"></a>
 
-*method mean* **::** Добавляет флаг в группу
+#### run\_polling
 
----
-
-#### **.add_flags(flags: list[Flag]) -> `None`**  
-
-*method mean* **::** Добавляет флаги в группу
-
----
-
-#### **.get_flag(name: str) -> `Flag | None`**  
-
-*param* `name: str` **::** Строковый триггер флага без префикса
-*required* **::** True  
-*example* **::** `'host'`
-
-*method mean* **::** Возвращает флаг по его триггеру или `None`, если флаг не найден
-
----
-
-##  *class* :: `InputFlags` 
-Класс, объединяющий список введённых флагов в один объект, передаётся соответствующему хэндлеру
-в качестве аргумента
-
-### Конструктор
 ```python
-InputFlags(*flags: Flag)
+def run_polling() -> None
 ```
 
----
+Private. Starts the user input processing cycle
 
-**Аргументы:**
-- **name : mean**
-- `*flags` (`InputFlag`): Неограниченное количество передаваемых флагов
+**Returns**:
 
----
-
-### ***methods***     
+`None`
 
 ---
 
-#### **.get_flags() -> `list[Flag]`**  
+<a id="argenta.app.models.App.include_router"></a>
 
-*method mean* **::** Возвращает введённые флаги
+#### include\_router
+
+```python
+def include_router(router: Router) -> None
+```
+
+Public. Registers the router in the application
+
+**Arguments**:
+
+- `router`: registered router
+
+**Returns**:
+
+`None`
 
 ---
 
-#### **.get_flag(name: str) -> `InputFlag | None`**  
+<a id="argenta.app.models.App.include_routers"></a>
 
-*param* `name: str` **::** Строковый триггер флага без префикса
-*required* **::** True  
-*example* **::** `'host'`
+#### include\_routers
 
-*method mean* **::** Возвращает введённый флаг по его триггеру или `None`, если флаг не найден
+```python
+def include_routers(*routers: Router) -> None
+```
+
+Public. Registers the routers in the application
+
+**Arguments**:
+
+- `routers`: registered routers
+
+**Returns**:
+
+`None`
 
 ---
 
-# Тесты
+<a id="argenta.app.models.App.add_message_on_startup"></a>
 
-Запуск тестов:
+#### add\_message\_on\_startup
+
+```python
+def add_message_on_startup(message: str) -> None
+```
+
+Public. Adds a message that will be displayed when the application is launched
+
+**Arguments**:
+
+- `message`: the message being added
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.app.autocompleter.entity"></a>
+
+# `.app.autocompleter`
+
+<a id="argenta.app.autocompleter.entity.AutoCompleter"></a>
+
+## AutoCompleter Objects
+
+```python
+class AutoCompleter()
+```
+
+<a id="argenta.app.autocompleter.entity.AutoCompleter.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(history_filename: str = False,
+             autocomplete_button: str = 'tab') -> None
+```
+
+Public. Configures and implements auto-completion of input command
+
+**Arguments**:
+
+- `history_filename`: the name of the file for saving the history of the autocompleter
+- `autocomplete_button`: the button for auto-completion
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.app.defaults"></a>
+
+# `.app.defaults`
+
+<a id="argenta.app.defaults.PredefinedMessages"></a>
+
+## PredefinedMessages Objects
+
+```python
+@dataclass
+class PredefinedMessages()
+```
+
+Public. A dataclass with predetermined messages for quick use
+
+---
+
+<a id="argenta.app.dividing_line.models"></a>
+
+# `.app.dividing_line`
+
+<a id="argenta.app.dividing_line.models.StaticDividingLine"></a>
+
+## StaticDividingLine Objects
+
+```python
+class StaticDividingLine(BaseDividingLine)
+```
+
+<a id="argenta.app.dividing_line.models.StaticDividingLine.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(unit_part: str = '-', length: int = 25) -> None
+```
+
+Public. The static dividing line
+
+**Arguments**:
+
+- `unit_part`: the single part of the dividing line
+- `length`: the length of the dividing line
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.app.dividing_line.models.StaticDividingLine.get_full_static_line"></a>
+
+#### get\_full\_static\_line
+
+```python
+def get_full_static_line(is_override: bool) -> str
+```
+
+Private. Returns the full line of the dividing line
+
+**Arguments**:
+
+- `is_override`: has the default text layout been redefined
+
+**Returns**:
+
+full line of dividing line as str
+
+---
+
+<a id="argenta.app.dividing_line.models.DynamicDividingLine"></a>
+
+## DynamicDividingLine Objects
+
+```python
+class DynamicDividingLine(BaseDividingLine)
+```
+
+<a id="argenta.app.dividing_line.models.DynamicDividingLine.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(unit_part: str = '-') -> None
+```
+
+Public. The dynamic dividing line
+
+**Arguments**:
+
+- `unit_part`: the single part of the dividing line
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.app.dividing_line.models.DynamicDividingLine.get_full_dynamic_line"></a>
+
+#### get\_full\_dynamic\_line
+
+```python
+def get_full_dynamic_line(length: int, is_override: bool) -> str
+```
+
+Private. Returns the full line of the dividing line
+
+**Arguments**:
+
+- `length`: the length of the dividing line
+- `is_override`: has the default text layout been redefined
+
+**Returns**:
+
+full line of dividing line as str
+
+---
+
+<a id="argenta.app.exceptions"></a>
+
+# `.app.exceptions`
+
+<a id="argenta.app.exceptions.NoRegisteredHandlersException"></a>
+
+## NoRegisteredHandlersException Objects
+
+```python
+class NoRegisteredHandlersException(Exception)
+```
+
+The router has no registered handlers
+
+---
+
+<a id="argenta.command.exceptions"></a>
+
+# `.command.exceptions`
+
+<a id="argenta.command.exceptions.BaseInputCommandException"></a>
+
+## UnprocessedInputFlagException Objects
+
+```python
+class UnprocessedInputFlagException(BaseInputCommandException)
+```
+
+Private. Raised when an unprocessed input flag is detected
+
+---
+
+<a id="argenta.command.exceptions.RepeatedInputFlagsException"></a>
+
+## RepeatedInputFlagsException Objects
+
+```python
+class RepeatedInputFlagsException(BaseInputCommandException)
+```
+
+Private. Raised when repeated input flags are detected
+
+---
+
+<a id="argenta.command.exceptions.EmptyInputCommandException"></a>
+
+## EmptyInputCommandException Objects
+
+```python
+class EmptyInputCommandException(BaseInputCommandException)
+```
+
+Private. Raised when an empty input command is detected
+
+---
+
+<a id="argenta.command.flag.defaults"></a>
+
+# `.command.flag.defaults`
+
+<a id="argenta.command.flag.defaults.PredefinedFlags"></a>
+
+## PredefinedFlags Objects
+
+```python
+@dataclass
+class PredefinedFlags()
+```
+
+Public. A dataclass with predefined flags and most frequently used flags for quick use
+
+---
+
+<a id="argenta.command.flag.models"></a>
+
+# `.command.flag`
+
+<a id="argenta.command.flag.models.InputFlag"></a>
+
+## InputFlag Objects
+
+```python
+class InputFlag(BaseFlag)
+```
+
+<a id="argenta.command.flag.models.InputFlag.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(name: str,
+             prefix: Literal['-', '--', '---'] = '--',
+             value: str = None)
+```
+
+Public. The entity of the flag of the entered command
+
+**Arguments**:
+
+- `name`: the name of the input flag
+- `prefix`: the prefix of the input flag
+- `value`: the value of the input flag
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.command.flag.models.InputFlag.get_value"></a>
+
+#### get\_value
+
+```python
+def get_value() -> str | None
+```
+
+Public. Returns the value of the flag
+
+**Returns**:
+
+the value of the flag as str
+
+---
+
+<a id="argenta.command.flag.models.Flag"></a>
+
+## Flag Objects
+
+```python
+class Flag(BaseFlag)
+```
+
+<a id="argenta.command.flag.models.Flag.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(name: str,
+             prefix: Literal['-', '--', '---'] = '--',
+             possible_values: list[str] | Pattern[str] | False = True) -> None
+```
+
+Public. The entity of the flag being registered for subsequent processing
+
+**Arguments**:
+
+- `name`: The name of the flag
+- `prefix`: The prefix of the flag
+- `possible_values`: The possible values of the flag, if False then the flag cannot have a value
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta/command/flag/models.Flags"></a>
+
+## Flags Objects
+
+```python
+class Flags(BaseFlags)
+```
+
+<a id="argenta/command/flag/models.Flags.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(*flags: Flag)
+```
+
+Public. A model that combines the registered flags
+
+**Arguments**:
+
+- `flags`: the flags that will be registered
+
+**Returns**:
+
+`None`
+
+---
+<a id="argenta.command.flag.models.BaseFlags.get_flags"></a>
+
+#### get\_flags
+
+```python
+def get_flags() -> list[Flag]
+```
+
+Public. Returns a list of flags
+
+**Returns**:
+
+list of flags as list[Flag]
+
+---
+
+<a id="argenta.command.flag.models.BaseFlags.add_flag"></a>
+
+#### add\_flag
+
+```python
+def add_flag(flag: Flag) -> None
+```
+
+Public. Adds a flag to the list of flags
+
+**Arguments**:
+
+- `flag`: flag to add
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.command.flag.models.BaseFlags.add_flags"></a>
+
+#### add\_flags
+
+```python
+def add_flags(flags: list[Flag]) -> None
+```
+
+Public. Adds a list of flags to the list of flags
+
+**Arguments**:
+
+- `flags`: list of flags to add
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.command.flag.models.BaseFlags.get_flag"></a>
+
+#### get\_flag
+
+```python
+def get_flag(name: str) -> Flag | None
+```
+
+Public. Returns the flag entity by its name or None if not found
+
+**Arguments**:
+
+- `name`: the name of the flag to get
+
+**Returns**:
+
+entity of the flag or None
+
+---
+
+<a id="argenta/command/flag/models.InputFlags"></a>
+
+## InputFlags Objects
+
+```python
+class InputFlags(BaseFlags)
+```
+
+<a id="argenta/command/flag/models.InputFlags.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(*flags: InputFlag)
+```
+
+Public. A model that combines the input flags of the input command
+
+**Arguments**:
+
+- `flags`: all input flags
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.command.flag.models.BaseFlags.get_flags"></a>
+
+#### get\_flags
+
+```python
+def get_flags() -> list[InputFlag]
+```
+
+Public. Returns a list of flags
+
+**Returns**:
+
+list of flags
+
+---
+
+<a id="argenta.command.flag.models.BaseFlags.add_flag"></a>
+
+#### add\_flag
+
+```python
+def add_flag(flag: InputFlag) -> None
+```
+
+Public. Adds a flag to the list of flags
+
+**Arguments**:
+
+- `flag`: flag to add
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.command.flag.models.BaseFlags.add_flags"></a>
+
+#### add\_flags
+
+```python
+def add_flags(flags: list[InputFlag]) -> None
+```
+
+Public. Adds a list of flags to the list of flags
+
+**Arguments**:
+
+- `flags`: list of flags to add
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.command.flag.models.BaseFlags.get_flag"></a>
+
+#### get\_flag
+
+```python
+def get_flag(name: str) -> InputFlag
+```
+
+Public. Returns the flag entity by its name or None if not found
+
+**Arguments**:
+
+- `name`: the name of the flag to get
+
+**Returns**:
+
+entity of the flag or None
+
+---
+
+<a id="argenta.command.models"></a>
+
+# `.command.models`
+
+<a id="argenta.command.models.Command"></a>
+
+## Command Objects
+
+```python
+class Command(BaseCommand)
+```
+
+<a id="argenta.command.models.Command.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(trigger: str,
+             description: str = None,
+             flags: Flag | Flags = None,
+             aliases: list[str] = None)
+```
+
+Public. The command that can and should be registered in the Router
+
+**Arguments**:
+
+- `trigger`: A string trigger, which, when entered by the user, indicates that the input corresponds to the command
+- `description`: the description of the command
+- `flags`: processed commands
+- `aliases`: string synonyms for the main trigger
+
+---
+
+<a id="argenta.orchestrator.argparse.arguments.models"></a>
+
+# `.orchestrator.argparse.arguments`
+
+<a id="argenta.orchestrator.argparse.arguments.models.PositionalArgument"></a>
+
+## PositionalArgument Objects
+
+```python
+class PositionalArgument(BaseArgument)
+```
+
+<a id="argenta.orchestrator.argparse.arguments.models.PositionalArgument.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(name: str)
+```
+
+Public. Required argument at startup
+
+**Arguments**:
+
+- `name`: name of the argument, must not start with minus (-)
+
+---
+
+<a id="argenta.orchestrator.argparse.arguments.models.OptionalArgument"></a>
+
+## OptionalArgument Objects
+
+```python
+class OptionalArgument(BaseArgument)
+```
+
+<a id="argenta.orchestrator.argparse.arguments.models.OptionalArgument.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(name: str, prefix: Literal['-', '--', '---'] = '--')
+```
+
+Public. Optional argument, must have the value
+
+**Arguments**:
+
+- `name`: name of the argument
+- `prefix`: prefix of the argument
+
+---
+
+<a id="argenta.orchestrator.argparse.arguments.models.BooleanArgument"></a>
+
+## BooleanArgument Objects
+
+```python
+class BooleanArgument(BaseArgument)
+```
+
+<a id="argenta.orchestrator.argparse.arguments.models.BooleanArgument.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(name: str,
+             prefix: Literal['-', '--', '---'] = '--')
+```
+
+Public. Boolean argument, does not require a value
+
+**Arguments**:
+
+- `name`: name of the argument
+- `prefix`: prefix of the argument
+
+---
+
+<a id="argenta.orchestrator.argparse.entity"></a>
+
+# `.orchestrator.argparser`
+
+<a id="argenta.orchestrator.argparse.entity.ArgParser"></a>
+
+## ArgParse Objects
+
+```python
+class ArgParse()
+```
+
+<a id="argenta.orchestrator.argparse.entity.ArgParse.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(processed_args: list[PositionalArgument | OptionalArgument | BooleanArgument],
+             name: str = 'Argenta',
+             description: str = 'Argenta available arguments',
+             epilog: str = 'github.com/koloideal/Argenta | made by kolo') -> None
+```
+
+Public. Cmd argument parser and configurator at startup
+
+**Arguments**:
+
+- `name`: the name of the ArgParse instance
+- `description`: the description of the ArgParse instance
+- `epilog`: the epilog of the ArgParse instance
+- `processed_args`: registered and processed arguments
+
+---
+
+<a id="argenta.orchestrator.argparse.entity.ArgParse.set_args"></a>
+
+#### set\_args
+
+```python
+def set_args(*args: PositionalArgument | OptionalArgument | BooleanArgument) -> None
+```
+
+Public. Sets the arguments to be processed
+
+**Arguments**:
+
+- `args`: processed arguments
+
+**Returns**:
+
+`None`
+
+---
+
+# `.orchestrator`
+
+<a id="argenta.orchestrator.entity.Orchestrator"></a>
+
+## Orchestrator Objects
+
+```python
+class Orchestrator()
+```
+
+<a id="argenta.orchestrator.entity.Orchestrator.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(arg_parser: ArgParse = False)
+```
+
+Public. An orchestrator and configurator that defines the behavior of an integrated system, one level higher than the App
+
+**Arguments**:
+
+- `arg_parser`: Cmd argument parser and configurator at startup
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.orchestrator.entity.Orchestrator.start_polling"></a>
+
+#### start\_polling
+
+```python
+@staticmethod
+def start_polling(app: App) -> None
+```
+
+Public. Starting the user input processing cycle
+
+**Arguments**:
+
+- `app`: a running application
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.orchestrator.entity.Orchestrator.get_input_args"></a>
+
+#### get\_input\_args
+
+```python
+def get_input_args() -> Namespace | None
+```
+
+Public. Returns the arguments parsed
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.router.entity"></a>
+
+# `.router`
+
+<a id="argenta.router.entity.Router"></a>
+
+## Router Objects
+
+```python
+class Router()
+```
+
+<a id="argenta.router.entity.Router.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(title: str = None)
+```
+
+Public. Directly configures and manages handlers
+
+**Arguments**:
+
+- `title`: the title of the router, displayed when displaying the available commands
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.router.entity.Router.command"></a>
+
+#### @command
+
+```python
+def command(command: Command) -> Callable
+```
+
+Public. Registers handler
+
+**Arguments**:
+
+- `command`: Registered command
+
+**Returns**:
+
+decorated handler as Callable[[Any], Any]
+
+---
+
+<a id="argenta.router.entity.Router.set_invalid_input_flag_handler"></a>
+
+#### set\_invalid\_input\_flag\_handler
+
+```python
+def set_invalid_input_flag_handler(func) -> None
+```
+
+Public. Registers handler for invalid input flag
+
+**Arguments**:
+
+- `func`: registered handler
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.router.entity.Router.input_command_handler"></a>
+
+#### input\_command\_handler
+
+```python
+def input_command_handler(input_command: InputCommand) -> None
+```
+
+Private. One handler for all input commands
+
+**Arguments**:
+
+- `input_command`: input command as InputCommand
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.router.entity.Router.set_command_register_ignore"></a>
+
+#### set\_command\_register\_ignore
+
+```python
+def set_command_register_ignore(_: bool) -> None
+```
+
+Private. Sets the router behavior on the input commands register
+
+**Arguments**:
+
+- `_`: is command register ignore
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.router.entity.Router.get_triggers"></a>
+
+#### get\_triggers
+
+```python
+def get_triggers() -> list[str]
+```
+
+Public. Gets registered triggers
+
+**Returns**:
+
+registered in router triggers as list[str]
+
+---
+
+<a id="argenta.router.entity.Router.get_aliases"></a>
+
+#### get\_aliases
+
+```python
+def get_aliases() -> list[str]
+```
+
+Public. Gets registered aliases
+
+**Returns**:
+
+registered in router aliases as list[str]
+
+---
+
+<a id="argenta.router.entity.Router.get_title"></a>
+
+#### get\_title
+
+```python
+def get_title() -> str | None
+```
+
+Public. Gets title of the router
+
+**Returns**:
+
+the title of the router as str or None
+
+---
+
+<a id="argenta.router.entity.Router.set_title"></a>
+
+#### set\_title
+
+```python
+def set_title(title: str) -> None
+```
+
+Public. Sets the title of the router
+
+**Arguments**:
+
+- `title`: title that will be setted
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.router.exceptions"></a>
+
+# `.router.exceptions`
+
+<a id="argenta.router.exceptions.RepeatedFlagNameException"></a>
+
+## RepeatedFlagNameException Objects
+
+```python
+class RepeatedFlagNameException(Exception)
+```
+
+Private. Raised when a repeated flag name is registered
+
+---
+
+<a id="argenta.router.exceptions.TooManyTransferredArgsException"></a>
+
+## TooManyTransferredArgsException Objects
+
+```python
+class TooManyTransferredArgsException(Exception)
+```
+
+Private. Raised when too many arguments are passed
+
+---
+
+<a id="argenta.router.exceptions.RequiredArgumentNotPassedException"></a>
+
+## RequiredArgumentNotPassedException Objects
+
+```python
+class RequiredArgumentNotPassedException(Exception)
+```
+
+Private. Raised when a required argument is not passed
+
+---
+
+<a id="argenta.router.exceptions.IncorrectNumberOfHandlerArgsException"></a>
+
+## IncorrectNumberOfHandlerArgsException Objects
+
+```python
+class IncorrectNumberOfHandlerArgsException(Exception)
+```
+
+Private. Raised when incorrect number of arguments are passed
+
+---
+
+<a id="argenta.router.exceptions.TriggerContainSpacesException"></a>
+
+## TriggerContainSpacesException Objects
+
+```python
+class TriggerContainSpacesException(Exception)
+```
+
+Private. Raised when there is a space in the trigger being registered
+
+<a id="argenta.router"></a>
+
+---
+
+# Tests
+
+Run tests:
 
 ```bash
 python -m unittest discover
@@ -582,3 +1429,8 @@ or
 ```bash
 python -m unittest discover -v
 ```
+
+---
+
+# made by kolo `MIT` `2025`
+
