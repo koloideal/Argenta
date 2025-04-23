@@ -2,6 +2,17 @@
 
 ### Python library for creating TUI
 
+---
+
+### Contents
+
+- [**Installing**](#installing)
+- [**Quick Start**](#quick-start)
+- [**Documentation**](#documentation)
+  - [**App**](#app)
+
+---
+
 ![preview](https://github.com/koloideal/Argenta/blob/kolo/imgs/mock_app_preview3.png?raw=True)  
 An example of the TUI appearance
 
@@ -85,174 +96,7 @@ def handler_with_flags(flags: InputFlags):
 
 ---
 
-<a id="argenta.app.autocompleter.entity"></a>
-
-# `.app.autocompleter`
-
-<a id="argenta.app.autocompleter.entity.AutoCompleter"></a>
-
-## AutoCompleter Objects
-
-```python
-class AutoCompleter()
-```
-
-<a id="argenta.app.autocompleter.entity.AutoCompleter.__init__"></a>
-
-#### \_\_init\_\_
-
-```python
-def __init__(history_filename: str = False,
-             autocomplete_button: str = 'tab') -> None
-```
-
-Public. Configures and implements auto-completion of input command
-
-**Arguments**:
-
-- `history_filename`: the name of the file for saving the history of the autocompleter
-- `autocomplete_button`: the button for auto-completion
-
-**Returns**:
-
-`None`
-
----
-
-<a id="argenta.app.defaults"></a>
-
-# `.app.defaults`
-
-<a id="argenta.app.defaults.PredefinedMessages"></a>
-
-## PredefinedMessages Objects
-
-```python
-@dataclass
-class PredefinedMessages()
-```
-
-Public. A dataclass with predetermined messages for quick use
-
----
-
-<a id="argenta.app.dividing_line.models"></a>
-
-# `.app.dividing_line`
-
-<a id="argenta.app.dividing_line.models.StaticDividingLine"></a>
-
-## StaticDividingLine Objects
-
-```python
-class StaticDividingLine(BaseDividingLine)
-```
-
-<a id="argenta.app.dividing_line.models.StaticDividingLine.__init__"></a>
-
-#### \_\_init\_\_
-
-```python
-def __init__(unit_part: str = '-', length: int = 25) -> None
-```
-
-Public. The static dividing line
-
-**Arguments**:
-
-- `unit_part`: the single part of the dividing line
-- `length`: the length of the dividing line
-
-**Returns**:
-
-`None`
-
----
-
-<a id="argenta.app.dividing_line.models.StaticDividingLine.get_full_static_line"></a>
-
-#### get\_full\_static\_line
-
-```python
-def get_full_static_line(is_override: bool) -> str
-```
-
-Private. Returns the full line of the dividing line
-
-**Arguments**:
-
-- `is_override`: has the default text layout been redefined
-
-**Returns**:
-
-full line of dividing line as str
-
----
-
-<a id="argenta.app.dividing_line.models.DynamicDividingLine"></a>
-
-## DynamicDividingLine Objects
-
-```python
-class DynamicDividingLine(BaseDividingLine)
-```
-
-<a id="argenta.app.dividing_line.models.DynamicDividingLine.__init__"></a>
-
-#### \_\_init\_\_
-
-```python
-def __init__(unit_part: str = '-') -> None
-```
-
-Public. The dynamic dividing line
-
-**Arguments**:
-
-- `unit_part`: the single part of the dividing line
-
-**Returns**:
-
-`None`
-
----
-
-<a id="argenta.app.dividing_line.models.DynamicDividingLine.get_full_dynamic_line"></a>
-
-#### get\_full\_dynamic\_line
-
-```python
-def get_full_dynamic_line(length: int, is_override: bool) -> str
-```
-
-Private. Returns the full line of the dividing line
-
-**Arguments**:
-
-- `length`: the length of the dividing line
-- `is_override`: has the default text layout been redefined
-
-**Returns**:
-
-full line of dividing line as str
-
----
-
-<a id="argenta.app.exceptions"></a>
-
-# `.app.exceptions`
-
-<a id="argenta.app.exceptions.NoRegisteredHandlersException"></a>
-
-## NoRegisteredHandlersException Objects
-
-```python
-class NoRegisteredHandlersException(Exception)
-```
-
-The router has no registered handlers
-
----
+# Documentation
 
 <a id="argenta.app.models"></a>
 
@@ -502,6 +346,175 @@ Public. Adds a message that will be displayed when the application is launched
 **Returns**:
 
 `None`
+
+---
+
+<a id="argenta.app.autocompleter.entity"></a>
+
+# `.app.autocompleter`
+
+<a id="argenta.app.autocompleter.entity.AutoCompleter"></a>
+
+## AutoCompleter Objects
+
+```python
+class AutoCompleter()
+```
+
+<a id="argenta.app.autocompleter.entity.AutoCompleter.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(history_filename: str = False,
+             autocomplete_button: str = 'tab') -> None
+```
+
+Public. Configures and implements auto-completion of input command
+
+**Arguments**:
+
+- `history_filename`: the name of the file for saving the history of the autocompleter
+- `autocomplete_button`: the button for auto-completion
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.app.defaults"></a>
+
+# `.app.defaults`
+
+<a id="argenta.app.defaults.PredefinedMessages"></a>
+
+## PredefinedMessages Objects
+
+```python
+@dataclass
+class PredefinedMessages()
+```
+
+Public. A dataclass with predetermined messages for quick use
+
+---
+
+<a id="argenta.app.dividing_line.models"></a>
+
+# `.app.dividing_line`
+
+<a id="argenta.app.dividing_line.models.StaticDividingLine"></a>
+
+## StaticDividingLine Objects
+
+```python
+class StaticDividingLine(BaseDividingLine)
+```
+
+<a id="argenta.app.dividing_line.models.StaticDividingLine.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(unit_part: str = '-', length: int = 25) -> None
+```
+
+Public. The static dividing line
+
+**Arguments**:
+
+- `unit_part`: the single part of the dividing line
+- `length`: the length of the dividing line
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.app.dividing_line.models.StaticDividingLine.get_full_static_line"></a>
+
+#### get\_full\_static\_line
+
+```python
+def get_full_static_line(is_override: bool) -> str
+```
+
+Private. Returns the full line of the dividing line
+
+**Arguments**:
+
+- `is_override`: has the default text layout been redefined
+
+**Returns**:
+
+full line of dividing line as str
+
+---
+
+<a id="argenta.app.dividing_line.models.DynamicDividingLine"></a>
+
+## DynamicDividingLine Objects
+
+```python
+class DynamicDividingLine(BaseDividingLine)
+```
+
+<a id="argenta.app.dividing_line.models.DynamicDividingLine.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(unit_part: str = '-') -> None
+```
+
+Public. The dynamic dividing line
+
+**Arguments**:
+
+- `unit_part`: the single part of the dividing line
+
+**Returns**:
+
+`None`
+
+---
+
+<a id="argenta.app.dividing_line.models.DynamicDividingLine.get_full_dynamic_line"></a>
+
+#### get\_full\_dynamic\_line
+
+```python
+def get_full_dynamic_line(length: int, is_override: bool) -> str
+```
+
+Private. Returns the full line of the dividing line
+
+**Arguments**:
+
+- `length`: the length of the dividing line
+- `is_override`: has the default text layout been redefined
+
+**Returns**:
+
+full line of dividing line as str
+
+---
+
+<a id="argenta.app.exceptions"></a>
+
+# `.app.exceptions`
+
+<a id="argenta.app.exceptions.NoRegisteredHandlersException"></a>
+
+## NoRegisteredHandlersException Objects
+
+```python
+class NoRegisteredHandlersException(Exception)
+```
+
+The router has no registered handlers
 
 ---
 
