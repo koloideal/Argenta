@@ -12,7 +12,7 @@ class ArgParse:
                  description: str = 'Argenta available arguments',
                  epilog: str = 'github.com/koloideal/Argenta | made by kolo') -> None:
         """
-        Cmd argument parser and configurator at startup
+        Public. Cmd argument parser and configurator at startup
         :param name: the name of the ArgParse instance
         :param description: the description of the ArgParse instance
         :param epilog: the epilog of the ArgParse instance
@@ -25,18 +25,18 @@ class ArgParse:
         self.entity: ArgumentParser = ArgumentParser(prog=name, description=description, epilog=epilog)
         self.args: list[PositionalArgument | OptionalArgument | BooleanArgument] | None = processed_args
 
-    def set_args(self, *args: PositionalArgument | OptionalArgument | BooleanArgument):
+    def set_args(self, *args: PositionalArgument | OptionalArgument | BooleanArgument) -> None:
         """
-        Sets the arguments to be processed
+        Public. Sets the arguments to be processed
         :param args: processed arguments
-        :return:
+        :return: None
         """
         self.args.extend(args)
 
-    def register_args(self):
+    def register_args(self) -> None:
         """
-        Registers initialized command line arguments
-        :return:
+        Private. Registers initialized command line arguments
+        :return: None
         """
         if not self.args:
             return
