@@ -1,11 +1,11 @@
 from argparse import ArgumentParser
 
-from argenta.orchestrator.argparse.arguments.models import (BooleanArgument,
-                                                            OptionalArgument,
-                                                            PositionalArgument)
+from argenta.orchestrator.argparser.arguments.models import (BooleanArgument,
+                                                             OptionalArgument,
+                                                             PositionalArgument)
 
 
-class ArgParse:
+class ArgParser:
     def __init__(self,
                  processed_args: list[PositionalArgument | OptionalArgument | BooleanArgument],
                  name: str = 'Argenta',

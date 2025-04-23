@@ -5,7 +5,7 @@
 ## Описание
 **Argenta** — Python library for creating TUI
 
-![preview](https://github.com/koloideal/Argenta/blob/kolo/imgs/mock_app_preview_last.png?raw=True)  
+![preview](https://github.com/koloideal/Argenta/blob/kolo/imgs/mock_app_preview3.png?raw=True)  
 Пример внешнего вида TUI, написанного с помощью Argenta  
 
 ---

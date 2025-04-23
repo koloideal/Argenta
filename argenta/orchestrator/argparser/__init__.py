@@ -1,4 +1,4 @@
-__all__ = ["ArgParse"]
+__all__ = ["ArgParser"]
 
 
-from argenta.orchestrator.argparse.entity import ArgParse
+from argenta.orchestrator.argparser.entity import ArgParser

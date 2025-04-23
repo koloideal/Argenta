@@ -230,7 +230,7 @@ class BaseApp:
             self._exit_command_handler()
 
         if system_router not in self._registered_routers.get_registered_routers():
-            system_router.set_ignore_command_register(self._ignore_command_register)
+            system_router.set_command_register_ignore(self._ignore_command_register)
             self._registered_routers.add_registered_router(system_router)
 
 
@@ -240,10 +240,10 @@ class BaseApp:
         :return: None
         """
         if not self._override_system_messages:
-            self._initial_message = f'\n[bold red]{text2art(self._initial_message, font='tarty1')}\n\n'
-            self._farewell_message = (f'[bold red]\n{text2art(f'\n{self._farewell_message}\n', font='chanky')}[/bold red]\n'
+            self._initial_message = f'\n[bold red]{text2art(self._initial_message, font="tarty1")}\n\n'
+            self._farewell_message = (f'[bold red]\n{text2art(f"\n{self._farewell_message}\n", font="chanky")}[/bold red]\n'
                                       f'[red i]github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]\n')
-            self._description_message_gen = lambda command, description: (f'[bold red]{escape('[' + command + ']')}[/bold red] '
+            self._description_message_gen = lambda command, description: (f'[bold red]{escape("[" + command + "]")}[/bold red] '
                                                                           f'[blue dim]*=*=*[/blue dim] '
                                                                           f'[bold yellow italic]{escape(description)}')
             self._invalid_input_flags_handler = lambda raw_command: self._print_func(f'[red bold]Incorrect flag syntax: {escape(raw_command)}')
@@ -369,7 +369,7 @@ class App(BaseApp):
         :param router: registered router
         :return: None
         """
-        router.set_ignore_command_register(self._ignore_command_register)
+        router.set_command_register_ignore(self._ignore_command_register)
         self._registered_routers.add_registered_router(router)
 
 

@@ -1,5 +1,4 @@
 from argenta.router import Router
 
 
-system_router = Router(title='System points:',
-                       name='System')
+system_router = Router(title='System points:')

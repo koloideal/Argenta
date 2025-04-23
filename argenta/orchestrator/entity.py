@@ -1,24 +1,24 @@
 from argparse import Namespace
 
 from argenta.app import App
-from argenta.orchestrator.argparse import ArgParse
+from argenta.orchestrator.argparser import ArgParser
 
 
 class Orchestrator:
-    def __init__(self, arg_parser: ArgParse = False):
+    def __init__(self, arg_parser: ArgParser = False):
         """
-        An orchestrator and configurator that defines the behavior of an integrated system, one level higher than the App
+        Public. An orchestrator and configurator that defines the behavior of an integrated system, one level higher than the App
         :param arg_parser: Cmd argument parser and configurator at startup
         :return: None
         """
-        self.arg_parser: ArgParse | False = arg_parser
+        self.arg_parser: ArgParser | False = arg_parser
         if arg_parser:
             self.arg_parser.register_args()
 
     @staticmethod
     def start_polling(app: App) -> None:
         """
-        Starting the user input processing cycle
+        Public. Starting the user input processing cycle
         :param app: a running application
         :return: None
         """
@@ -26,7 +26,7 @@ class Orchestrator:
 
     def get_input_args(self) -> Namespace | None:
         """
-        Returns the arguments parsed
+        Public. Returns the arguments parsed
         :return: None
         """
         if self.arg_parser:

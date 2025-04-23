@@ -30,7 +30,7 @@ class IncorrectNumberOfHandlerArgsException(Exception):
         return "Handler has incorrect number of arguments"
 
 
-class TriggerCannotContainSpacesException(Exception):
+class TriggerContainSpacesException(Exception):
     """
     Private. Raised when there is a space in the trigger being registered
     """

@@ -1,6 +1,5 @@
 from typing import Callable
 from inspect import getfullargspec
-
 from argenta.command import Command
 from argenta.command.models import InputCommand
 from argenta.router.command_handler.entity import CommandHandlers, CommandHandler
@@ -9,21 +8,18 @@ from argenta.router.exceptions import (RepeatedFlagNameException,
                                        TooManyTransferredArgsException,
                                        RequiredArgumentNotPassedException,
                                        IncorrectNumberOfHandlerArgsException,
-                                       TriggerCannotContainSpacesException)
+                                       TriggerContainSpacesException)
 
 
 class Router:
     def __init__(self,
-                 title: str = None,
-                 name: str = 'Default'):
+                 title: str = None):
         """
         Public. Directly configures and manages handlers
-        :param title: the title of the router
-        :param name: the name of the router
+        :param title: the title of the router, displayed when displaying the available commands
         :return: None
         """
         self._title = title
-        self._name = name
 
         self._command_handlers: CommandHandlers = CommandHandlers()
         self._ignore_command_register: bool = False
@@ -105,9 +101,15 @@ class Router:
                 return
 
 
-    def _validate_input_flags(self, handle_command: Command, input_flags: InputFlags):
+    def _validate_input_flags(self, handled_command: Command, input_flags: InputFlags) -> bool:
+        """
+        Private. Validates flags of input command
+        :param handled_command: entity of the handled command
+        :param input_flags:
+        :return: is flags of input command valid as bool
+        """
         for flag in input_flags:
-            is_valid = handle_command.validate_input_flag(flag)
+            is_valid: bool = handled_command.validate_input_flag(flag)
             if not is_valid:
                 self._not_valid_flag_handler(flag)
                 return False
@@ -115,10 +117,15 @@ class Router:
 
 
     @staticmethod
-    def _validate_command(command: Command):
+    def _validate_command(command: Command) -> None:
+        """
+        Private. Validates the command registered in handler
+        :param command: validated command
+        :return: None if command is valid else raise exception
+        """
         command_name: str = command.get_trigger()
         if command_name.find(' ') != -1:
-            raise TriggerCannotContainSpacesException()
+            raise TriggerContainSpacesException()
 
         flags: Flags = command.get_registered_flags()
         if flags:
@@ -128,7 +135,13 @@ class Router:
 
 
     @staticmethod
-    def _validate_func_args(command: Command, func: Callable):
+    def _validate_func_args(command: Command, func: Callable) -> None:
+        """
+        Private. Validates the arguments of the handler
+        :param command: registered command in handler
+        :param func: entity of the handler func
+        :return: None if func is valid else raise exception
+        """
         registered_args = command.get_registered_flags()
         transferred_args = getfullargspec(func).args
         if registered_args.get_flags() and transferred_args:
@@ -140,18 +153,31 @@ class Router:
             raise TooManyTransferredArgsException()
 
 
-    def set_ignore_command_register(self, ignore_command_register: bool):
-        self._ignore_command_register = ignore_command_register
+    def set_command_register_ignore(self, _: bool) -> None:
+        """
+        Private. Sets the router behavior on the input commands register
+        :param _: is command register ignore
+        :return: None
+        """
+        self._ignore_command_register = _
 
 
-    def get_triggers(self):
+    def get_triggers(self) -> list[str]:
+        """
+        Public. Gets registered triggers
+        :return: registered in router triggers as list[str]
+        """
         all_triggers: list[str] = []
         for command_handler in self._command_handlers:
             all_triggers.append(command_handler.get_handled_command().get_trigger())
         return all_triggers
 
 
-    def get_aliases(self):
+    def get_aliases(self) -> list[str]:
+        """
+        Public. Gets registered aliases
+        :return: registered in router aliases as list[str]
+        """
         all_aliases: list[str] = []
         for command_handler in self._command_handlers:
             if command_handler.get_handled_command().get_aliases():
@@ -160,16 +186,25 @@ class Router:
 
 
     def get_command_handlers(self) -> CommandHandlers:
+        """
+        Private. Gets registered command handlers
+        :return: registered command handlers as CommandHandlers
+        """
         return self._command_handlers
 
 
-    def get_name(self) -> str:
-        return self._name
-
-
     def get_title(self) -> str | None:
+        """
+        Public. Gets title of the router
+        :return: the title of the router as str or None
+        """
         return self._title
 
 
-    def set_title(self, title: str):
+    def set_title(self, title: str) -> None:
+        """
+        Public. Sets the title of the router
+        :param title: title that will be setted
+        :return: None
+        """
         self._title = title

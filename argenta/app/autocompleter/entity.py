@@ -40,7 +40,7 @@ class AutoCompleter:
 
     def initial_setup(self, all_commands: list[str]) -> None:
         """
-        Public. Initial setup function
+        Private. Initial setup function
         :param all_commands: Registered commands for adding them to the autocomplete history
         :return: None
         """
@@ -57,7 +57,7 @@ class AutoCompleter:
 
     def exit_setup(self) -> None:
         """
-        Public. Exit setup function
+        Private. Exit setup function
         :return: None
         """
         if self.history_filename:

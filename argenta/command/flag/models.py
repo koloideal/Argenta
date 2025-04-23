@@ -168,6 +168,11 @@ class BaseFlags(ABC):
 
 class Flags(BaseFlags, ABC):
     def __init__(self, *flags: Flag):
+        """
+        Public. A model that combines the registered flags
+        :param flags: the flags that will be registered
+        :return: None
+        """
         self._flags = flags if flags else []
 
     def get_flags(self) -> list[Flag]:
@@ -189,6 +194,11 @@ class Flags(BaseFlags, ABC):
 
 class InputFlags(BaseFlags, ABC):
     def __init__(self, *flags: InputFlag):
+        """
+        Public. A model that combines the input flags of the input command
+        :param flags: all input flags
+        :return: None
+        """
         self._flags = flags if flags else []
 
     def get_flags(self) -> list[InputFlag]:

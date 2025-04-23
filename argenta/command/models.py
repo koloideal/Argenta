@@ -18,7 +18,7 @@ class BaseCommand:
 
     def get_trigger(self) -> str:
         """
-        Returns the trigger of the command
+        Public. Returns the trigger of the command
         :return: the trigger of the command as str
         """
         return self._trigger

@@ -9,27 +9,17 @@ from .handlers_implementation.help_command import help_command
 
 work_router: Router = Router(title='Work points:')
 
-settings_router: Router = Router()
-
 console = Console()
 
 
 @work_router.command(Command('get', 'Get Help', aliases=['help', 'Get_help']))
 def command_help():
-    help_command()
+    pass
 
 
-@work_router.command(Command('start', 'Start Solving',
-                             flags=Flags(PredefinedFlags.HOST, PredefinedFlags.PORT),
-                             aliases=['starting']))
-def command_start_solving(args: InputFlags):
-    print(args.get_flag('host'))
-
-
-@settings_router.command(Command('update', 'Update WordMath'))
-def command_update():
-    print('eeeeeee')
-
+@work_router.command(Command('run', 'Run All'))
+def command_start_solving():
+    pass
 
 
 
