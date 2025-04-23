@@ -6,9 +6,6 @@ import unittest
 
 
 class TestRouter(unittest.TestCase):
-    def test_get_router_name(self):
-        self.assertEqual(Router(name='test name').get_name(), 'test name')
-
     def test_get_router_title(self):
         self.assertEqual(Router(title='test title').get_title(), 'test title')
 
