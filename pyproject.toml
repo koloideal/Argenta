@@ -1,15 +1,21 @@
 [project]
 name = "argenta"
-version = "0.5.0"
+version = "1.0.0-alpha"
 description = "Python library for creating TUI"
-authors = [
-    {name = "kolo", email = "kolo.is.main@gmail.com"}
-]
-license = {text = "MIT"}
-readme = "README.md"
+authors = [{ name = "kolo", email = "kolo.is.main@gmail.com" }]
 requires-python = ">=3.11, <4.0"
-dependencies = ["rich (>=14.0.0,<15.0.0)", "art (>=6.4,<7.0)", "pyreadline3 (>=3.5.4,<4.0.0)"]
+readme = "README.md"
+license = { text = "MIT" }
+dependencies = [
+    "rich (>=14.0.0,<15.0.0)",
+    "art (>=6.4,<7.0)",
+    "pyreadline3 (>=3.5.4,<4.0.0)",
+]
 
+[dependency-groups]
+dev = [
+    "pydoc-markdown>=4.8.2,<5",
+]
 
 [tool.ruff]
 exclude = [
@@ -21,12 +27,7 @@ exclude = [
     "tests"
     ]
 
-
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.group.dev.dependencies]
-sphinx = "^8.2.3"
-pydoc-markdown = "^4.8.2"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 

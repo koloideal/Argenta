@@ -42,12 +42,25 @@ class Command(BaseCommand):
         self._aliases = aliases if isinstance(aliases, list) else []
 
     def get_registered_flags(self) -> Flags:
+        """
+        Private. Returns the registered flags
+        :return: the registered flags as Flags
+        """
         return self._registered_flags
 
-    def get_aliases(self) -> list[str] | None:
+    def get_aliases(self) -> list[str] | list:
+        """
+        Public. Returns the aliases of the command
+        :return: the aliases of the command as list[str] | list
+        """
         return self._aliases
 
-    def validate_input_flag(self, flag: InputFlag):
+    def validate_input_flag(self, flag: InputFlag) -> bool:
+        """
+        Private. Validates the input flag
+        :param flag: input flag for validation
+        :return: is input flag valid as bool
+        """
         registered_flags: Flags | None = self.get_registered_flags()
         if registered_flags:
             if isinstance(registered_flags, Flag):
@@ -64,6 +77,10 @@ class Command(BaseCommand):
         return False
 
     def get_description(self) -> str:
+        """
+        Private. Returns the description of the command
+        :return: the description of the command as str
+        """
         return self._description
 
 
@@ -71,18 +88,38 @@ class Command(BaseCommand):
 class InputCommand(BaseCommand, Generic[InputCommandType]):
     def __init__(self, trigger: str,
                  input_flags: InputFlag | InputFlags = None):
+        """
+        Private. The model of the input command, after parsing
+        :param trigger:the trigger of the command
+        :param input_flags: the input flags
+        :return: None
+        """
         super().__init__(trigger)
         self._input_flags: InputFlags = input_flags if isinstance(input_flags, InputFlags) else InputFlags(input_flags) if isinstance(input_flags, InputFlag) else InputFlags()
 
-    def _set_input_flags(self, input_flags: InputFlags):
+    def _set_input_flags(self, input_flags: InputFlags) -> None:
+        """
+        Private. Sets the input flags
+        :param input_flags: the input flags to set
+        :return: None
+        """
         self._input_flags = input_flags
 
     def get_input_flags(self) -> InputFlags:
+        """
+        Private. Returns the input flags
+        :return: the input flags as InputFlags
+        """
         return self._input_flags
 
 
     @staticmethod
     def parse(raw_command: str) -> InputCommandType:
+        """
+        Private. Parse the raw input command
+        :param raw_command: raw input command
+        :return: model of the input command, after parsing as InputCommand
+        """
         if not raw_command:
             raise EmptyInputCommandException()
 

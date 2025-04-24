@@ -1,14 +1,14 @@
 from typing import Callable
 from inspect import getfullargspec
-from argenta.command import Command
-from argenta.command.models import InputCommand
-from argenta.router.command_handler.entity import CommandHandlers, CommandHandler
-from argenta.command.flag.models import Flag, Flags, InputFlags
-from argenta.router.exceptions import (RepeatedFlagNameException,
-                                       TooManyTransferredArgsException,
-                                       RequiredArgumentNotPassedException,
-                                       IncorrectNumberOfHandlerArgsException,
-                                       TriggerContainSpacesException)
+from src.argenta.command import Command
+from src.argenta.command.models import InputCommand
+from src.argenta.router.command_handler.entity import CommandHandlers, CommandHandler
+from src.argenta.command.flag.models import Flag, Flags, InputFlags
+from src.argenta.router.exceptions import (RepeatedFlagNameException,
+                                           TooManyTransferredArgsException,
+                                           RequiredArgumentNotPassedException,
+                                           IncorrectNumberOfHandlerArgsException,
+                                           TriggerContainSpacesException)
 
 
 class Router:
@@ -58,9 +58,9 @@ class Router:
             self._not_valid_flag_handler = func
 
 
-    def input_command_handler(self, input_command: InputCommand) -> None:
+    def finds_appropriate_handler(self, input_command: InputCommand) -> None:
         """
-        Private. One handler for all input commands
+        Private. Finds the appropriate handler for given input command and passes control to it
         :param input_command: input command as InputCommand
         :return: None
         """
@@ -70,15 +70,14 @@ class Router:
         for command_handler in self._command_handlers:
             handle_command = command_handler.get_handled_command()
             if input_command_name.lower() == handle_command.get_trigger().lower():
-                self._validate_input_command(input_command_flags, command_handler)
-            elif handle_command.get_aliases():
-                if input_command_name.lower() in handle_command.get_aliases():
-                    self._validate_input_command(input_command_flags, command_handler)
+                self.process_input_command(input_command_flags, command_handler)
+            if input_command_name.lower() in handle_command.get_aliases():
+                self.process_input_command(input_command_flags, command_handler)
 
 
-    def _validate_input_command(self, input_command_flags: InputFlags, command_handler: CommandHandler) -> None:
+    def process_input_command(self, input_command_flags: InputFlags, command_handler: CommandHandler) -> None:
         """
-        Private. Validates flags of input command
+        Private. Processes input command with the appropriate handler
         :param input_command_flags: input command flags as InputFlags
         :param command_handler: command handler for input command as CommandHandler
         :return: None

@@ -346,7 +346,7 @@ class App(BaseApp):
                 continue
 
             if self._is_exit_command(input_command):
-                system_router.input_command_handler(input_command)
+                system_router.finds_appropriate_handler(input_command)
                 self._autocompleter.exit_setup()
                 return
 
@@ -355,7 +355,7 @@ class App(BaseApp):
 
             with redirect_stdout(io.StringIO()) as f:
                 for registered_router in self._registered_routers:
-                    registered_router.input_command_handler(input_command)
+                    registered_router.finds_appropriate_handler(input_command)
                 res: str = f.getvalue()
             self._print_framed_text(res)
 

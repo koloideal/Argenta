@@ -69,6 +69,7 @@
   - [**RequiredArgumentNotPassedException** Objects](#requiredargumentnotpassedexception-objects) 
   - [**IncorrectNumberOfHandlerArgsException** Objects](#incorrectnumberofhandlerargsexception-objects) 
   - [**TriggerContainSpacesException** Objects](#triggercontainspacesexception-objects)
+- [**Tests**](#tests)
 </details>  
 
 ---

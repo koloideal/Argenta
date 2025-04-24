@@ -1,6 +1,6 @@
-from argenta.router import Router
-from argenta.command import Command
-from argenta.router.exceptions import TriggerContainSpacesException
+from src.argenta.router import Router
+from src.argenta.command import Command
+from src.argenta.router import TriggerContainSpacesException
 
 import unittest
 

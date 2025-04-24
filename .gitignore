@@ -1,7 +1,7 @@
 .venv
 .idea
 dist
-poetry.lock
+uv.lock
 *__pycache__/
 *.hist*
 build
