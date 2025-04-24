@@ -91,7 +91,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
         self.assertIn('\nflag value for port flag : 22\n', output)
 
 
-    @patch("builtins.input", side_effect=["test -h", "q"])
+    @patch("builtins.input", side_effect=["test -H", "q"])
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command_with_default_flag(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
@@ -99,7 +99,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         @router.command(Command('test', flags=flag))
         def test(args: InputFlags):
-            print(f'help for {args.get_flag('h').get_name()} flag')
+            print(f'help for {args.get_flag('H').get_name()} flag')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -108,7 +108,7 @@ class TestSystemHandlerNormalWork(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn('\nhelp for h flag\n', output)
+        self.assertIn('\nhelp for H flag\n', output)
 
 
     @patch("builtins.input", side_effect=["test --info", "q"])

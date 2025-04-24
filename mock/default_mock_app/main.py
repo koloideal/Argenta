@@ -1,5 +1,4 @@
 from argenta.app import App
-from argenta.app.defaults import PredefinedMessages
 from argenta.orchestrator import Orchestrator
 
 app = App(repeat_command_groups=True)

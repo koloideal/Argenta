@@ -1,15 +1,13 @@
-import argparse
+from argenta.command.flag.defaults import PredefinedFlags
 
+router = Router()
+flag = PredefinedFlags.SHORT_HELP
 
-parser = argparse.ArgumentParser(prog='ProgramName',
-                                 description='What the program does',
-                                 epilog='Text at the bottom of help')
+@router.command(Command('test', flags=flag))
+def test(args: InputFlags):
+    print(f'help for {args.get_flag('h').get_name()} flag')
 
-parser.add_argument('filename')           # positional argument
-parser.add_argument('-c', '--count')      # option that takes a value
-parser.add_argument('-v',
-                    action='store_const')
-
-args = parser.parse_args()
-print(args)
-print(args.filename, args.count, args.verbose)
+app = App(override_system_messages=True,
+          print_func=print)
+app.include_router(router)
+app.run_polling()

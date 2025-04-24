@@ -3,7 +3,7 @@ class RepeatedFlagNameException(Exception):
     Private. Raised when a repeated flag name is registered
     """
     def __str__(self):
-        return "Repeated registered_flag name in register command"
+        return "Repeated registered flag names in register command"
 
 
 class TooManyTransferredArgsException(Exception):
@@ -20,14 +20,6 @@ class RequiredArgumentNotPassedException(Exception):
     """
     def __str__(self):
         return "Required argument not passed"
-
-
-class IncorrectNumberOfHandlerArgsException(Exception):
-    """
-    Private. Raised when incorrect number of arguments are passed
-    """
-    def __str__(self):
-        return "Handler has incorrect number of arguments"
 
 
 class TriggerContainSpacesException(Exception):

@@ -1,4 +1,5 @@
-from argenta.command.models import InputCommand
+from argenta.command.flag import Flag, InputFlag, Flags
+from argenta.command.models import InputCommand, Command
 from argenta.command.exceptions import (UnprocessedInputFlagException,
                                         RepeatedInputFlagsException,
                                         EmptyInputCommandException)
@@ -21,4 +22,12 @@ class TestInputCommand(unittest.TestCase):
     def test_parse_empty_raw_command(self):
         with self.assertRaises(EmptyInputCommandException):
             InputCommand.parse('')
+
+    def test_validate_correct_input_flag1(self):
+        command = Command('some', flags=Flag('test'))
+        self.assertEqual(command.validate_input_flag(InputFlag('test')), True)
+
+    def test_validate_correct_input_flag2(self):
+        command = Command('some', flags=Flags(Flag('test'), Flag('more')))
+        self.assertEqual(command.validate_input_flag(InputFlag('more')), True)
 

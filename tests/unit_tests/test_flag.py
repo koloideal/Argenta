@@ -1,4 +1,4 @@
-from argenta.command.flag.models import Flag, InputFlag
+from argenta.command.flag.models import Flag, InputFlag, InputFlags, Flags
 
 import unittest
 import re
@@ -67,6 +67,44 @@ class TestFlag(unittest.TestCase):
     def test_validate_correct_random_flag_value_with_possible_flag_values(self):
         flag = Flag(name='test', possible_values=True)
         self.assertEqual(flag.validate_input_flag_value('random value'), True)
+
+    def test_get_input_flag1(self):
+        flag = InputFlag(name='test')
+        input_flags = InputFlags(flag)
+        self.assertEqual(input_flags.get_flag('test'), flag)
+
+    def test_get_input_flag2(self):
+        flag = InputFlag(name='test')
+        flag2 = InputFlag(name='some')
+        input_flags = InputFlags(flag, flag2)
+        self.assertEqual(input_flags.get_flag('some'), flag2)
+
+    def test_get_undefined_input_flag(self):
+        flag = InputFlag(name='test')
+        flag2 = InputFlag(name='some')
+        input_flags = InputFlags(flag, flag2)
+        self.assertEqual(input_flags.get_flag('case'), None)
+
+    def test_get_flags(self):
+        flags = Flags()
+        list_of_flags = [
+            Flag('test1'),
+            Flag('test2'),
+            Flag('test3'),
+        ]
+        flags.add_flags(list_of_flags)
+        self.assertEqual(flags.get_flags(),
+                         list_of_flags)
+
+    def test_add_flag(self):
+        flags = Flags()
+        flags.add_flag(Flag('test'))
+        self.assertEqual(len(flags.get_flags()), 1)
+
+    def test_add_flags(self):
+        flags = Flags()
+        flags.add_flags([Flag('test'), Flag('test2')])
+        self.assertEqual(len(flags.get_flags()), 2)
 
 
 

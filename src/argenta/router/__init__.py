@@ -1,4 +1,4 @@
 __all__ = ["Router"]
 
 
-from argenta.router.entity import Router
+from src.argenta.router.entity import Router

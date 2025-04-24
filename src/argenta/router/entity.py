@@ -7,7 +7,6 @@ from src.argenta.command.flag.models import Flag, Flags, InputFlags
 from src.argenta.router.exceptions import (RepeatedFlagNameException,
                                            TooManyTransferredArgsException,
                                            RequiredArgumentNotPassedException,
-                                           IncorrectNumberOfHandlerArgsException,
                                            TriggerContainSpacesException)
 
 
@@ -45,17 +44,13 @@ class Router:
         return command_decorator
 
 
-    def set_invalid_input_flag_handler(self, func) -> None:
+    def set_invalid_input_flag_handler(self, func: Callable[[Flag], None]) -> None:
         """
         Public. Registers handler for invalid input flag
         :param func: registered handler
         :return: None
         """
-        processed_args = getfullargspec(func).args
-        if len(processed_args) != 1:
-            raise IncorrectNumberOfHandlerArgsException()
-        else:
-            self._not_valid_flag_handler = func
+        self._not_valid_flag_handler = func
 
 
     def finds_appropriate_handler(self, input_command: InputCommand) -> None:
