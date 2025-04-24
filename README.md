@@ -4,8 +4,10 @@
 
 ---
 
-## Contents
+<details>
 
+<summary>Contents</summary>
+   
 - [**Installing**](#installing) 
 - [**Quick Start**](#quick-start) 
 - [**Documentation**](#documentation)
@@ -67,6 +69,7 @@
   - [**RequiredArgumentNotPassedException** Objects](#requiredargumentnotpassedexception-objects) 
   - [**IncorrectNumberOfHandlerArgsException** Objects](#incorrectnumberofhandlerargsexception-objects) 
   - [**TriggerContainSpacesException** Objects](#triggercontainspacesexception-objects)
+</details>  
 
 ---
 
