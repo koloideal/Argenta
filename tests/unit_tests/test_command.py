@@ -31,3 +31,19 @@ class TestInputCommand(unittest.TestCase):
         command = Command('some', flags=Flags(Flag('test'), Flag('more')))
         self.assertEqual(command.validate_input_flag(InputFlag('more')), True)
 
+    def test_validate_incorrect_input_flag1(self):
+        command = Command('some', flags=Flags(Flag('test')))
+        self.assertEqual(command.validate_input_flag(InputFlag('more')), False)
+
+    def test_validate_incorrect_input_flag2(self):
+        command = Command('some', flags=Flags(Flag('test'), Flag('more')))
+        self.assertEqual(command.validate_input_flag(InputFlag('case')), False)
+
+    def test_validate_incorrect_input_flag3(self):
+        command = Command('some')
+        self.assertEqual(command.validate_input_flag(InputFlag('case')), False)
+
+    def test_isinstance_parse_correct_raw_command(self):
+        cmd = InputCommand.parse('ssh --host 192.168.0.3')
+        self.assertIsInstance(cmd, InputCommand)
+

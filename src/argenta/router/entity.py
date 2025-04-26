@@ -1,13 +1,13 @@
 from typing import Callable
 from inspect import getfullargspec
-from src.argenta.command import Command
-from src.argenta.command.models import InputCommand
-from src.argenta.router.command_handler.entity import CommandHandlers, CommandHandler
-from src.argenta.command.flag.models import Flag, Flags, InputFlags
-from src.argenta.router.exceptions import (RepeatedFlagNameException,
-                                           TooManyTransferredArgsException,
-                                           RequiredArgumentNotPassedException,
-                                           TriggerContainSpacesException)
+from argenta.command import Command
+from argenta.command.models import InputCommand
+from argenta.router.command_handler.entity import CommandHandlers, CommandHandler
+from argenta.command.flag.models import Flag, Flags, InputFlags
+from argenta.router.exceptions import (RepeatedFlagNameException,
+                                       TooManyTransferredArgsException,
+                                       RequiredArgumentNotPassedException,
+                                       TriggerContainSpacesException)
 
 
 class Router:

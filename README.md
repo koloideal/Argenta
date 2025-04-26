@@ -334,22 +334,6 @@ Public. Sets the handler for exit command when entering a command
 
 ---
 
-<a id="argenta.app.models.App.run_polling"></a>
-
-#### run\_polling
-
-```python
-def run_polling() -> None
-```
-
-Private. Starts the user input processing cycle
-
-**Returns**:
-
-`None`
-
----
-
 <a id="argenta.app.models.App.include_router"></a>
 
 #### include\_router
@@ -494,26 +478,6 @@ Public. The static dividing line
 
 ---
 
-<a id="argenta.app.dividing_line.models.StaticDividingLine.get_full_static_line"></a>
-
-#### get\_full\_static\_line
-
-```python
-def get_full_static_line(is_override: bool) -> str
-```
-
-Private. Returns the full line of the dividing line
-
-**Arguments**:
-
-- `is_override`: has the default text layout been redefined
-
-**Returns**:
-
-full line of dividing line as str
-
----
-
 <a id="argenta.app.dividing_line.models.DynamicDividingLine"></a>
 
 ## DynamicDividingLine Objects
@@ -539,27 +503,6 @@ Public. The dynamic dividing line
 **Returns**:
 
 `None`
-
----
-
-<a id="argenta.app.dividing_line.models.DynamicDividingLine.get_full_dynamic_line"></a>
-
-#### get\_full\_dynamic\_line
-
-```python
-def get_full_dynamic_line(length: int, is_override: bool) -> str
-```
-
-Private. Returns the full line of the dividing line
-
-**Arguments**:
-
-- `length`: the length of the dividing line
-- `is_override`: has the default text layout been redefined
-
-**Returns**:
-
-full line of dividing line as str
 
 ---
 
@@ -1226,46 +1169,6 @@ Public. Registers handler for invalid input flag
 **Arguments**:
 
 - `func`: registered handler
-
-**Returns**:
-
-`None`
-
----
-
-<a id="argenta.router.entity.Router.input_command_handler"></a>
-
-#### input\_command\_handler
-
-```python
-def input_command_handler(input_command: InputCommand) -> None
-```
-
-Private. One handler for all input commands
-
-**Arguments**:
-
-- `input_command`: input command as InputCommand
-
-**Returns**:
-
-`None`
-
----
-
-<a id="argenta.router.entity.Router.set_command_register_ignore"></a>
-
-#### set\_command\_register\_ignore
-
-```python
-def set_command_register_ignore(_: bool) -> None
-```
-
-Private. Sets the router behavior on the input commands register
-
-**Arguments**:
-
-- `_`: is command register ignore
 
 **Returns**:
 

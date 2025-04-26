@@ -1,13 +1,6 @@
-from argenta.command.flag.defaults import PredefinedFlags
+from argenta.app import App
+from argenta.command.models import InputCommand
 
-router = Router()
-flag = PredefinedFlags.SHORT_HELP
-
-@router.command(Command('test', flags=flag))
-def test(args: InputFlags):
-    print(f'help for {args.get_flag('h').get_name()} flag')
-
-app = App(override_system_messages=True,
-          print_func=print)
-app.include_router(router)
-app.run_polling()
+app = App()
+app._all_registered_triggers_in_lower = ['fr', 'Tre', 'Pre']
+print(app._is_unknown_command(InputCommand('fr')))
