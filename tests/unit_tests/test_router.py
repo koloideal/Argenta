@@ -1,10 +1,10 @@
 from argenta.command.flag import InputFlags, InputFlag, Flag, Flags
-from src.argenta.router import Router
-from src.argenta.command import Command
-from src.argenta.router.exceptions import (TriggerContainSpacesException,
-                                           RepeatedFlagNameException,
-                                           TooManyTransferredArgsException,
-                                           RequiredArgumentNotPassedException)
+from argenta.router import Router
+from argenta.command import Command
+from argenta.router.exceptions import (TriggerContainSpacesException,
+                                       RepeatedFlagNameException,
+                                       TooManyTransferredArgsException,
+                                       RequiredArgumentNotPassedException)
 
 import unittest
 import re
