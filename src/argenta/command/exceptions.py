@@ -1,4 +1,4 @@
-from argenta.command.flag.models import InputFlag, Flag
+from argenta.command.flag.models import ValidInputFlag, Flag
 
 
 class BaseInputCommandException(Exception):
@@ -20,7 +20,7 @@ class RepeatedInputFlagsException(BaseInputCommandException):
     """
     Private. Raised when repeated input flags are detected
     """
-    def __init__(self, flag: Flag | InputFlag):
+    def __init__(self, flag: Flag | ValidInputFlag):
         self.flag = flag
     def __str__(self):
         return ("Repeated Input Flags\n"

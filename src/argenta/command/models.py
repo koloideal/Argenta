@@ -1,4 +1,4 @@
-from argenta.command.flag.models import Flag, InputFlag, Flags, InputFlags
+from argenta.command.flag.models import Flag, ValidInputFlag, Flags, InputFlags
 from argenta.command.exceptions import (UnprocessedInputFlagException,
                                         RepeatedInputFlagsException,
                                         EmptyInputCommandException)
@@ -55,7 +55,7 @@ class Command(BaseCommand):
         """
         return self._aliases
 
-    def validate_input_flag(self, flag: InputFlag) -> bool:
+    def validate_input_flag(self, flag: ValidInputFlag) -> bool:
         """
         Private. Validates the input flag
         :param flag: input flag for validation
@@ -87,7 +87,7 @@ class Command(BaseCommand):
 
 class InputCommand(BaseCommand, Generic[InputCommandType]):
     def __init__(self, trigger: str,
-                 input_flags: InputFlag | InputFlags = None):
+                 input_flags: ValidInputFlag | InputFlags = None):
         """
         Private. The model of the input command, after parsing
         :param trigger:the trigger of the command
@@ -95,7 +95,7 @@ class InputCommand(BaseCommand, Generic[InputCommandType]):
         :return: None
         """
         super().__init__(trigger)
-        self._input_flags: InputFlags = input_flags if isinstance(input_flags, InputFlags) else InputFlags(input_flags) if isinstance(input_flags, InputFlag) else InputFlags()
+        self._input_flags: InputFlags = input_flags if isinstance(input_flags, InputFlags) else InputFlags(input_flags) if isinstance(input_flags, ValidInputFlag) else InputFlags()
 
     def _set_input_flags(self, input_flags: InputFlags) -> None:
         """
@@ -144,10 +144,10 @@ class InputCommand(BaseCommand, Generic[InputCommandType]):
                     if not list_of_tokens[k+1].startswith('-'):
                         continue
 
-                input_flag = InputFlag(name=current_flag_name[current_flag_name.rfind('-')+1:],
-                                       prefix=cast(Literal['-', '--', '---'],
+                input_flag = ValidInputFlag(name=current_flag_name[current_flag_name.rfind('-') + 1:],
+                                            prefix=cast(Literal['-', '--', '---'],
                                                    current_flag_name[:current_flag_name.rfind('-')+1]),
-                                       value=current_flag_value)
+                                            value=current_flag_value)
 
                 all_flags = [flag.get_string_entity() for flag in input_flags.get_flags()]
                 if input_flag.get_string_entity() not in all_flags:

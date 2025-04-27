@@ -3,7 +3,8 @@ from inspect import getfullargspec
 from argenta.command import Command
 from argenta.command.models import InputCommand
 from argenta.router.command_handler.entity import CommandHandlers, CommandHandler
-from argenta.command.flag.models import Flag, Flags, InputFlags
+from argenta.command.flag.models import Flag
+from argenta.command.flags.models import Flags
 from argenta.router.exceptions import (RepeatedFlagNameException,
                                        TooManyTransferredArgsException,
                                        RequiredArgumentNotPassedException,
@@ -22,7 +23,6 @@ class Router:
 
         self._command_handlers: CommandHandlers = CommandHandlers()
         self._ignore_command_register: bool = False
-        self._not_valid_flag_handler: Callable[[Flag], None] = lambda flag: print(f"Undefined or incorrect input flag: {flag.get_string_entity()}{(' '+flag.get_value()) if flag.get_value() else ''}")
 
 
     def command(self, command: Command) -> Callable:
@@ -42,15 +42,6 @@ class Router:
             return wrapper
 
         return command_decorator
-
-
-    def set_invalid_input_flag_handler(self, func: Callable[[Flag], None]) -> None:
-        """
-        Public. Registers handler for invalid input flag
-        :param func: registered handler
-        :return: None
-        """
-        self._not_valid_flag_handler = func
 
 
     def finds_appropriate_handler(self, input_command: InputCommand) -> None:
@@ -136,15 +127,11 @@ class Router:
         :param func: entity of the handler func
         :return: None if func is valid else raise exception
         """
-        registered_args = command.get_registered_flags()
         transferred_args = getfullargspec(func).args
-        if registered_args.get_flags() and transferred_args:
-           if len(transferred_args) != 1:
-                raise TooManyTransferredArgsException()
-        elif registered_args.get_flags() and not transferred_args:
-            raise RequiredArgumentNotPassedException()
-        elif not registered_args.get_flags() and transferred_args:
+        if len(transferred_args) > 1:
             raise TooManyTransferredArgsException()
+        elif len(transferred_args) == 0:
+            raise RequiredArgumentNotPassedException()
 
 
     def set_command_register_ignore(self, _: bool) -> None:

@@ -1,4 +1,4 @@
-from argenta.command.flag import Flag, InputFlag, Flags
+from argenta.command.flag import Flag, ValidInputFlag, Flags
 from argenta.command.models import InputCommand, Command
 from argenta.command.exceptions import (UnprocessedInputFlagException,
                                         RepeatedInputFlagsException,
@@ -25,23 +25,23 @@ class TestInputCommand(unittest.TestCase):
 
     def test_validate_correct_input_flag1(self):
         command = Command('some', flags=Flag('test'))
-        self.assertEqual(command.validate_input_flag(InputFlag('test')), True)
+        self.assertEqual(command.validate_input_flag(ValidInputFlag('test')), True)
 
     def test_validate_correct_input_flag2(self):
         command = Command('some', flags=Flags(Flag('test'), Flag('more')))
-        self.assertEqual(command.validate_input_flag(InputFlag('more')), True)
+        self.assertEqual(command.validate_input_flag(ValidInputFlag('more')), True)
 
     def test_validate_incorrect_input_flag1(self):
         command = Command('some', flags=Flags(Flag('test')))
-        self.assertEqual(command.validate_input_flag(InputFlag('more')), False)
+        self.assertEqual(command.validate_input_flag(ValidInputFlag('more')), False)
 
     def test_validate_incorrect_input_flag2(self):
         command = Command('some', flags=Flags(Flag('test'), Flag('more')))
-        self.assertEqual(command.validate_input_flag(InputFlag('case')), False)
+        self.assertEqual(command.validate_input_flag(ValidInputFlag('case')), False)
 
     def test_validate_incorrect_input_flag3(self):
         command = Command('some')
-        self.assertEqual(command.validate_input_flag(InputFlag('case')), False)
+        self.assertEqual(command.validate_input_flag(ValidInputFlag('case')), False)
 
     def test_isinstance_parse_correct_raw_command(self):
         cmd = InputCommand.parse('ssh --host 192.168.0.3')
