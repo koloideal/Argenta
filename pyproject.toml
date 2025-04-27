@@ -1,6 +1,6 @@
 [project]
 name = "argenta"
-version = "1.0.0-alpha4"
+version = "1.0.0-alpha5"
 description = "Python library for creating TUI"
 authors = [{ name = "kolo", email = "kolo.is.main@gmail.com" }]
 requires-python = ">=3.11, <4.0"

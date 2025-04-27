@@ -138,7 +138,7 @@ class BaseApp:
         """
         if isinstance(self._dividing_line, StaticDividingLine):
             self._print_func(self._dividing_line.get_full_static_line(self._override_system_messages))
-            self._print_func(text)
+            print(text.strip('\n'))
             self._print_func(self._dividing_line.get_full_static_line(self._override_system_messages))
 
         elif isinstance(self._dividing_line, DynamicDividingLine):
