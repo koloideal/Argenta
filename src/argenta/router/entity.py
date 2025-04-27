@@ -35,7 +35,7 @@ class Router:
 
         def command_decorator(func):
             Router._validate_func_args(command, func)
-            self._command_handlers.add_command_handler(CommandHandler(func, command))
+            self._command_handlers.add_handler(CommandHandler(func, command))
 
             def wrapper(*args, **kwargs):
                 return func(*args, **kwargs)

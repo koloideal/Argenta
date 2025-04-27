@@ -49,14 +49,14 @@ class CommandHandlers:
         """
         self.command_handlers = command_handlers if command_handlers else []
 
-    def get_command_handlers(self) -> list[CommandHandler]:
+    def get_handlers(self) -> list[CommandHandler]:
         """
         Private. Returns the list of CommandHandlers
         :return: the list of CommandHandlers as list[CommandHandler]
         """
         return self.command_handlers
 
-    def add_command_handler(self, command_handler: CommandHandler) -> None:
+    def add_handler(self, command_handler: CommandHandler) -> None:
         """
         Private. Adds a CommandHandler to the list of CommandHandlers
         :param command_handler: CommandHandler to be added
@@ -64,7 +64,7 @@ class CommandHandlers:
         """
         self.command_handlers.append(command_handler)
 
-    def add_command_handlers(self, *command_handlers: CommandHandler) -> None:
+    def add_handlers(self, *command_handlers: CommandHandler) -> None:
         """
         Private. Extend a many CommandHandler to the list of CommandHandlers
         :param command_handlers: many CommandHandler to be added

@@ -15,7 +15,6 @@ from argenta.command.exceptions import (UnprocessedInputFlagException,
                                         RepeatedInputFlagsException,
                                         EmptyInputCommandException,
                                         BaseInputCommandException)
-from argenta.app.exceptions import NoRegisteredHandlersException
 from argenta.app.registered_routers.entity import RegisteredRouters
 
 
@@ -184,11 +183,6 @@ class BaseApp:
         else:
             if input_command_trigger in self._all_registered_triggers_in_default_case:
                 return False
-
-        with redirect_stdout(io.StringIO()) as f:
-            self._unknown_command_handler(command)
-            res: str = f.getvalue()
-        self._print_framed_text(res)
         return True
 
 
@@ -206,16 +200,6 @@ class BaseApp:
                 self._repeated_input_flags_handler(raw_command)
             case EmptyInputCommandException():
                 self._empty_input_command_handler()
-
-
-    def _validate_included_routers(self) -> None:
-        """
-        Private. Validates included routers
-        :return: None
-        """
-        for router in self._registered_routers:
-            if not router.get_command_handlers():
-                raise NoRegisteredHandlersException(router.get_name())
 
 
     def _setup_system_router(self) -> None:
@@ -259,7 +243,6 @@ class BaseApp:
         """
         self._setup_default_view()
         self._setup_system_router()
-        self._validate_included_routers()
 
         for router_entity in self._registered_routers:
             self._all_registered_triggers_in_default_case.extend(router_entity.get_triggers())
@@ -351,6 +334,10 @@ class App(BaseApp):
                 return
 
             if self._is_unknown_command(input_command):
+                with redirect_stdout(io.StringIO()) as f:
+                    self._unknown_command_handler(input_command)
+                    res: str = f.getvalue()
+                self._print_framed_text(res)
                 continue
 
             with redirect_stdout(io.StringIO()) as f:

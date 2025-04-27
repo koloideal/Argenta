@@ -176,9 +176,9 @@ class App(BaseApp)
 #### \_\_init\_\_
 
 ```python
-def __init__(prompt: str = '[italic dim bold]What do you want to do?\n',
-             initial_message: str = '\nArgenta\n',
-             farewell_message: str = '\nSee you\n',
+def __init__(prompt: str = 'What do you want to do?',
+             initial_message: str = 'Argenta',
+             farewell_message: str = 'See you',
              exit_command: Command = Command('Q', 'Exit command'),
              system_router_title: str | None = 'System points:',
              ignore_command_register: bool = True,
@@ -218,8 +218,7 @@ Configures and manages all aspects of the behavior and presentation of the user 
 #### set\_description\_message\_pattern
 
 ```python
-def set_description_message_pattern(
-        pattern: Callable[[str, str], str]) -> None
+def set_description_message_pattern(pattern: Callable[[str, str], str]) -> None
 ```
 
 Public. Sets the output pattern of the available commands
