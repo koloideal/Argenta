@@ -14,7 +14,7 @@ class AutoCompleter:
         self.autocomplete_button = autocomplete_button
         self.matches: list[str] = []
 
-    def complete(self, text, state) -> str | None:
+    def _complete(self, text, state) -> str | None:
         """
         Private. Auto-completion function
         :param text: part of the command being entered
@@ -51,7 +51,7 @@ class AutoCompleter:
                 for line in all_commands:
                     readline.add_history(line)
 
-        readline.set_completer(self.complete)
+        readline.set_completer(self._complete)
         readline.set_completer_delims(readline.get_completer_delims().replace(' ', ''))
         readline.parse_and_bind(f'{self.autocomplete_button}: complete')
 

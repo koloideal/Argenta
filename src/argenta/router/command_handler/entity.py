@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Iterator
 
 from argenta.command import Command
 from argenta.command.flag import InputFlags
@@ -64,16 +64,8 @@ class CommandHandlers:
         """
         self.command_handlers.append(command_handler)
 
-    def add_handlers(self, *command_handlers: CommandHandler) -> None:
-        """
-        Private. Extend a many CommandHandler to the list of CommandHandlers
-        :param command_handlers: many CommandHandler to be added
-        :return: None
-        """
-        self.command_handlers.extend(command_handlers)
-
-    def __iter__(self):
+    def __iter__(self) -> Iterator[CommandHandler]:
         return iter(self.command_handlers)
 
-    def __next__(self):
+    def __next__(self) -> CommandHandler:
         return next(iter(self.command_handlers))

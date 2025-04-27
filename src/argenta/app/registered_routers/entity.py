@@ -1,3 +1,5 @@
+from typing import Iterator
+
 from argenta.router import Router
 
 
@@ -25,16 +27,8 @@ class RegisteredRouters:
         """
         self._registered_routers.append(router)
 
-    def add_registered_routers(self, *routers: Router) -> None:
-        """
-        Private. Adds new registered routers
-        :param routers: registered routers
-        :return: None
-        """
-        self._registered_routers.extend(routers)
-
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Router]:
         return iter(self._registered_routers)
 
-    def __next__(self):
+    def __next__(self) -> Router:
         return next(iter(self._registered_routers))

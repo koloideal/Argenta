@@ -61,58 +61,58 @@ class BaseApp:
         self._exit_command_handler: Callable[[], None] = lambda: print_func(self._farewell_message)
 
 
-    def set_description_message_pattern(self, pattern: Callable[[str, str], str]) -> None:
+    def set_description_message_pattern(self, _: Callable[[str, str], str]) -> None:
         """
         Public. Sets the output pattern of the available commands
-        :param pattern: output pattern of the available commands
+        :param _: output pattern of the available commands
         :return: None
         """
-        self._description_message_gen: Callable[[str, str], str] = pattern
+        self._description_message_gen: Callable[[str, str], str] = _
 
 
-    def set_invalid_input_flags_handler(self, handler: Callable[[str], None]) -> None:
+    def set_invalid_input_flags_handler(self, _: Callable[[str], None]) -> None:
         """
         Public. Sets the handler for incorrect flags when entering a command
-        :param handler: handler for incorrect flags when entering a command
+        :param _: handler for incorrect flags when entering a command
         :return: None
         """
-        self._invalid_input_flags_handler = handler
+        self._invalid_input_flags_handler = _
 
 
-    def set_repeated_input_flags_handler(self, handler: Callable[[str], None]) -> None:
+    def set_repeated_input_flags_handler(self, _: Callable[[str], None]) -> None:
         """
         Public. Sets the handler for repeated flags when entering a command
-        :param handler: handler for repeated flags when entering a command
+        :param _: handler for repeated flags when entering a command
         :return: None
         """
-        self._repeated_input_flags_handler = handler
+        self._repeated_input_flags_handler = _
 
 
-    def set_unknown_command_handler(self, handler: Callable[[str], None]) -> None:
+    def set_unknown_command_handler(self, _: Callable[[str], None]) -> None:
         """
         Public. Sets the handler for unknown commands when entering a command
-        :param handler: handler for unknown commands when entering a command
+        :param _: handler for unknown commands when entering a command
         :return: None
         """
-        self._unknown_command_handler = handler
+        self._unknown_command_handler = _
 
 
-    def set_empty_command_handler(self, handler: Callable[[], None]) -> None:
+    def set_empty_command_handler(self, _: Callable[[], None]) -> None:
         """
         Public. Sets the handler for empty commands when entering a command
-        :param handler: handler for empty commands when entering a command
+        :param _: handler for empty commands when entering a command
         :return: None
         """
-        self._empty_input_command_handler = handler
+        self._empty_input_command_handler = _
 
 
-    def set_exit_command_handler(self, handler: Callable[[], None]) -> None:
+    def set_exit_command_handler(self, _: Callable[[], None]) -> None:
         """
         Public. Sets the handler for exit command when entering a command
-        :param handler: handler for exit command when entering a command
+        :param _: handler for exit command when entering a command
         :return: None
         """
-        self._exit_command_handler = handler
+        self._exit_command_handler = _
 
 
     def _print_command_group_description(self) -> None:
