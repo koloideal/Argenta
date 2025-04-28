@@ -1,8 +1,8 @@
 from typing import Literal, Pattern
-from abc import ABC, abstractmethod
 
 
-class BaseFlag(ABC):
+
+class BaseFlag:
     def __init__(self, name: str,
                  prefix: Literal['-', '--', '---'] = '--') -> None:
         """
@@ -35,7 +35,6 @@ class BaseFlag(ABC):
         :return: the prefix of the flag as str
         """
         return self._prefix
-
 
 
 class Flag(BaseFlag):
@@ -82,8 +81,7 @@ class Flag(BaseFlag):
             return True
 
 
-
-class ValidInputFlag(BaseFlag):
+class InputFlag(BaseFlag):
     def __init__(self, name: str,
                  prefix: Literal['-', '--', '---'] = '--',
                  value: str = None):
@@ -111,12 +109,4 @@ class ValidInputFlag(BaseFlag):
         :return: None
         """
         self._flag_value = value
-
-
-
-class UndefinedInputFlag(ValidInputFlag): pass
-
-
-
-class InvalidValueInputFlag(ValidInputFlag): pass
 

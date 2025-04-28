@@ -16,6 +16,7 @@ from argenta.command.exceptions import (UnprocessedInputFlagException,
                                         EmptyInputCommandException,
                                         BaseInputCommandException)
 from argenta.app.registered_routers.entity import RegisteredRouters
+from argenta.response import Response
 
 
 
@@ -58,7 +59,7 @@ class BaseApp:
         self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Repeated input flags: {raw_command}')
         self._empty_input_command_handler: Callable[[], None] = lambda: print_func('Empty input command')
         self._unknown_command_handler: Callable[[InputCommand], None] = lambda command: print_func(f"Unknown command: {command.get_trigger()}")
-        self._exit_command_handler: Callable[[], None] = lambda: print_func(self._farewell_message)
+        self._exit_command_handler: Callable[[Response], None] = lambda response: print_func(self._farewell_message)
 
 
     def set_description_message_pattern(self, _: Callable[[str, str], str]) -> None:
@@ -210,8 +211,8 @@ class BaseApp:
         system_router.set_title(self._system_router_title)
 
         @system_router.command(self._exit_command)
-        def exit_command():
-            self._exit_command_handler()
+        def exit_command(response: Response) -> None:
+            self._exit_command_handler(response)
 
         if system_router not in self._registered_routers.get_registered_routers():
             system_router.set_command_register_ignore(self._ignore_command_register)
@@ -345,9 +346,6 @@ class App(BaseApp):
                     registered_router.finds_appropriate_handler(input_command)
                 res: str = f.getvalue()
             self._print_framed_text(res)
-
-            if not self._repeat_command_groups_description:
-                self._print_func(self._prompt)
 
 
     def include_router(self, router: Router) -> None:

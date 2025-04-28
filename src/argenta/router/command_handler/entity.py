@@ -1,7 +1,7 @@
 from typing import Callable, Iterator
 
 from argenta.command import Command
-from argenta.command.flag import InputFlags
+from argenta.command.flags.models import InputFlags
 
 
 

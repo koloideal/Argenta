@@ -1,10 +1,11 @@
-from typing import Callable
+from typing import Callable, Literal
 from inspect import getfullargspec
 from argenta.command import Command
 from argenta.command.models import InputCommand
+from argenta.response import Response, Status
 from argenta.router.command_handler.entity import CommandHandlers, CommandHandler
 from argenta.command.flag.models import Flag
-from argenta.command.flags.models import Flags
+from argenta.command.flags.models import Flags, InputFlags, UndefinedInputFlags, ValidInputFlags, InvalidValueInputFlags
 from argenta.router.exceptions import (RepeatedFlagNameException,
                                        TooManyTransferredArgsException,
                                        RequiredArgumentNotPassedException,
@@ -69,36 +70,53 @@ class Router:
         :return: None
         """
         handle_command = command_handler.get_handled_command()
+        response: Response = Response()
         if handle_command.get_registered_flags().get_flags():
             if input_command_flags.get_flags():
-                if self._validate_input_flags(handle_command, input_command_flags):
-                    command_handler.handling(input_command_flags)
-                    return
+                response.status = Status.SUCCESSFUL
+                flags = self._validate_input_flags(handle_command, input_command_flags)
+                response.valid_flags, response.undefined_flags, response.invalid_flags = flags
+                command_handler.handling(response)
+                return
             else:
-                command_handler.handling(input_command_flags)
+                response.status = Status.SUCCESSFUL
+                command_handler.handling(response)
                 return
         else:
             if input_command_flags.get_flags():
-                self._not_valid_flag_handler(input_command_flags[0])
+                response.status = Status.UNSUCCESSFUL
+                response.undefined_flags = UndefinedInputFlags(*input_command_flags)
+                command_handler.handling(response)
                 return
             else:
-                command_handler.handling()
+                response.status = Status.SUCCESSFUL
+                command_handler.handling(response)
                 return
 
 
-    def _validate_input_flags(self, handled_command: Command, input_flags: InputFlags) -> bool:
+    @staticmethod
+    def _validate_input_flags(handled_command: Command, input_flags: InputFlags) -> (ValidInputFlags,
+                                                                                     UndefinedInputFlags,
+                                                                                     InvalidValueInputFlags):
         """
         Private. Validates flags of input command
         :param handled_command: entity of the handled command
         :param input_flags:
         :return: is flags of input command valid as bool
         """
+        valid_input_flags: ValidInputFlags = ValidInputFlags()
+        invalid_value_input_flags: InvalidValueInputFlags = InvalidValueInputFlags()
+        undefined_input_flags: UndefinedInputFlags = UndefinedInputFlags()
         for flag in input_flags:
-            is_valid: bool = handled_command.validate_input_flag(flag)
-            if not is_valid:
-                self._not_valid_flag_handler(flag)
-                return False
-        return True
+            flag_status: Literal['Undefined', 'Valid', 'Invalid'] = handled_command.validate_input_flag(flag)
+            match flag_status:
+                case 'Valid':
+                    valid_input_flags.add_flag(flag)
+                case 'Undefined':
+                    undefined_input_flags.add_flag(flag)
+                case 'Invalid':
+                    invalid_value_input_flags.add_flag(flag)
+        return valid_input_flags, undefined_input_flags, invalid_value_input_flags
 
 
     @staticmethod

@@ -1,9 +1,13 @@
-from argenta.command.flag import Flag, ValidInputFlag
+from argenta.command.flag.models import InputFlag, Flag
+from typing import Generic, TypeVar
 
 
 
-class Flags:
-    def __init__(self, *flags: Flag):
+FlagType = TypeVar('FlagType')
+
+
+class BaseFlags(Generic[FlagType]):
+    def __init__(self, *flags: FlagType):
         """
         Public. A model that combines the registered flags
         :param flags: the flags that will be registered
@@ -11,14 +15,14 @@ class Flags:
         """
         self._flags = flags if flags else []
 
-    def get_flags(self) -> list[Flag]:
+    def get_flags(self) -> list[FlagType]:
         """
         Public. Returns a list of flags
-        :return: list of flags
+        :return: list of flags as list[FlagType]
         """
         return self._flags
 
-    def add_flag(self, flag: Flag):
+    def add_flag(self, flag: FlagType):
         """
         Public. Adds a flag to the list of flags
         :param flag: flag to add
@@ -26,7 +30,7 @@ class Flags:
         """
         self._flags.append(flag)
 
-    def add_flags(self, flags: list[Flag]):
+    def add_flags(self, flags: list[FlagType]):
         """
         Public. Adds a list of flags to the list of flags
         :param flags: list of flags to add
@@ -34,7 +38,7 @@ class Flags:
         """
         self._flags.extend(flags)
 
-    def get_flag(self, name: str) -> Flag | None:
+    def get_flag(self, name: str) -> FlagType | None:
         """
         Public. Returns the flag entity by its name or None if not found
         :param name: the name of the flag to get
@@ -55,15 +59,17 @@ class Flags:
         return self._flags[item]
 
 
-
-class ValidInputFlags(ValidInputFlag):
-    pass
+class Flags(BaseFlags[Flag]): pass
 
 
-class UndefinedInputFlags(ValidInputFlags):
-    pass
+class InputFlags(BaseFlags[InputFlag]): pass
 
 
-class InvalidValueInputFlags(ValidInputFlags):
-    pass
+class ValidInputFlags(InputFlags): pass
+
+
+class UndefinedInputFlags(InputFlags): pass
+
+
+class InvalidValueInputFlags(InputFlags): pass
 

@@ -1,4 +1,4 @@
-from argenta.command.flag.models import Flag, ValidInputFlag, InputFlags, Flags
+from argenta.command.flag.models import Flag, InputFlag, InputFlags, Flags
 
 import unittest
 import re
@@ -28,11 +28,11 @@ class TestFlag(unittest.TestCase):
                          '--')
 
     def test_get_flag_value_without_set(self):
-        self.assertEqual(ValidInputFlag(name='test').get_value(),
+        self.assertEqual(InputFlag(name='test').get_value(),
                          None)
 
     def test_get_flag_value_with_set(self):
-        flag = ValidInputFlag(name='test')
+        flag = InputFlag(name='test')
         flag.set_value('example')
         self.assertEqual(flag.get_value(), 'example')
 
@@ -69,19 +69,19 @@ class TestFlag(unittest.TestCase):
         self.assertEqual(flag.validate_input_flag_value('random value'), True)
 
     def test_get_input_flag1(self):
-        flag = ValidInputFlag(name='test')
+        flag = InputFlag(name='test')
         input_flags = InputFlags(flag)
         self.assertEqual(input_flags.get_flag('test'), flag)
 
     def test_get_input_flag2(self):
-        flag = ValidInputFlag(name='test')
-        flag2 = ValidInputFlag(name='some')
+        flag = InputFlag(name='test')
+        flag2 = InputFlag(name='some')
         input_flags = InputFlags(flag, flag2)
         self.assertEqual(input_flags.get_flag('some'), flag2)
 
     def test_get_undefined_input_flag(self):
-        flag = ValidInputFlag(name='test')
-        flag2 = ValidInputFlag(name='some')
+        flag = InputFlag(name='test')
+        flag2 = InputFlag(name='some')
         input_flags = InputFlags(flag, flag2)
         self.assertEqual(input_flags.get_flag('case'), None)
 
