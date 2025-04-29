@@ -4,7 +4,6 @@ from argenta.command import Command
 from argenta.command.models import InputCommand
 from argenta.response import Response, Status
 from argenta.router.command_handler.entity import CommandHandlers, CommandHandler
-from argenta.command.flag.models import Flag
 from argenta.command.flags.models import Flags, InputFlags, UndefinedInputFlags, ValidInputFlags, InvalidValueInputFlags
 from argenta.router.exceptions import (RepeatedFlagNameException,
                                        TooManyTransferredArgsException,
@@ -30,7 +29,7 @@ class Router:
         """
         Public. Registers handler
         :param command: Registered command
-        :return: decorated handler as Callable[[Any], Any]
+        :return: decorated handler as Callable
         """
         self._validate_command(command)
 
@@ -75,29 +74,26 @@ class Router:
             if input_command_flags.get_flags():
                 response.status = Status.SUCCESSFUL
                 flags = self._validate_input_flags(handle_command, input_command_flags)
-                response.valid_flags, response.undefined_flags, response.invalid_flags = flags
+                response.valid_flags, response.undefined_flags, response.invalid_value_flags = flags
                 command_handler.handling(response)
-                return
             else:
                 response.status = Status.SUCCESSFUL
                 command_handler.handling(response)
-                return
         else:
             if input_command_flags.get_flags():
                 response.status = Status.UNSUCCESSFUL
-                response.undefined_flags = UndefinedInputFlags(*input_command_flags)
+                response.undefined_flags = UndefinedInputFlags()
+                response.undefined_flags.add_flags(input_command_flags.get_flags())
                 command_handler.handling(response)
-                return
             else:
                 response.status = Status.SUCCESSFUL
                 command_handler.handling(response)
-                return
 
 
     @staticmethod
-    def _validate_input_flags(handled_command: Command, input_flags: InputFlags) -> (ValidInputFlags,
-                                                                                     UndefinedInputFlags,
-                                                                                     InvalidValueInputFlags):
+    def _validate_input_flags(handled_command: Command, input_flags: InputFlags) -> tuple[ValidInputFlags,
+                                                                                          UndefinedInputFlags,
+                                                                                          InvalidValueInputFlags]:
         """
         Private. Validates flags of input command
         :param handled_command: entity of the handled command

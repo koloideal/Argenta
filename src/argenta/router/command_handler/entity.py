@@ -1,12 +1,11 @@
 from typing import Callable, Iterator
 
 from argenta.command import Command
-from argenta.command.flags.models import InputFlags
-
+from argenta.response import Response
 
 
 class CommandHandler:
-    def __init__(self, handler: Callable[[], None] | Callable[[InputFlags], None], handled_command: Command):
+    def __init__(self, handler: Callable[[Response], None], handled_command: Command):
         """
         Private. Entity of the model linking the handler and the command being processed
         :param handler: the handler being called
@@ -15,21 +14,18 @@ class CommandHandler:
         self._handler = handler
         self._handled_command = handled_command
 
-    def handling(self, input_flags: InputFlags = None) -> None:
+    def handling(self, response: Response) -> None:
         """
         Private. Direct processing of an input command
-        :param input_flags: the flags of the input command
+        :param response: the entity of response: various groups of flags and status of response
         :return: None
         """
-        if input_flags is not None:
-            self._handler(input_flags)
-        else:
-            self._handler()
+        self._handler(response)
 
-    def get_handler(self) -> Callable[[], None] | Callable[[InputFlags], None]:
+    def get_handler(self) -> Callable[[Response], None]:
         """
         Private. Returns the handler being called
-        :return: the handler being called as Callable[[], None] or Callable[[InputFlags], None]
+        :return: the handler being called as Callable[[Response], None]
         """
         return self._handler
 
