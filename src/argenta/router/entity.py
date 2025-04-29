@@ -34,7 +34,7 @@ class Router:
         self._validate_command(command)
 
         def command_decorator(func):
-            Router._validate_func_args(command, func)
+            Router._validate_func_args(func)
             self._command_handlers.add_handler(CommandHandler(func, command))
 
             def wrapper(*args, **kwargs):
@@ -134,10 +134,9 @@ class Router:
 
 
     @staticmethod
-    def _validate_func_args(command: Command, func: Callable) -> None:
+    def _validate_func_args(func: Callable) -> None:
         """
         Private. Validates the arguments of the handler
-        :param command: registered command in handler
         :param func: entity of the handler func
         :return: None if func is valid else raise exception
         """
