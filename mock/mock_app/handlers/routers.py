@@ -25,7 +25,6 @@ def command_help(response: Response):
 @work_router.command(Command('run', 'Run All'))
 def command_start_solving(response: Response):
     print(response.status)
-    print('srsfbd')
     print(response.undefined_flags.get_flags())
     print(response.valid_flags.get_flags())
     print(response.invalid_value_flags.get_flags())

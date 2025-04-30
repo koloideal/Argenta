@@ -72,28 +72,29 @@ class Router:
         response: Response = Response()
         if handle_command.get_registered_flags().get_flags():
             if input_command_flags.get_flags():
-                response.status = Status.SUCCESSFUL
-                flags = self._validate_input_flags(handle_command, input_command_flags)
+                flags, status = self._validate_input_flags(handle_command, input_command_flags)
                 response.valid_flags, response.undefined_flags, response.invalid_value_flags = flags
+                response.status = status
                 command_handler.handling(response)
             else:
-                response.status = Status.SUCCESSFUL
+                response.status = Status.ALL_FLAGS_VALID
                 command_handler.handling(response)
         else:
             if input_command_flags.get_flags():
-                response.status = Status.UNSUCCESSFUL
+                response.status = Status.UNDEFINED_FLAGS
                 response.undefined_flags = UndefinedInputFlags()
                 response.undefined_flags.add_flags(input_command_flags.get_flags())
                 command_handler.handling(response)
             else:
-                response.status = Status.SUCCESSFUL
+                response.status = Status.ALL_FLAGS_VALID
                 command_handler.handling(response)
 
 
     @staticmethod
-    def _validate_input_flags(handled_command: Command, input_flags: InputFlags) -> tuple[ValidInputFlags,
-                                                                                          UndefinedInputFlags,
-                                                                                          InvalidValueInputFlags]:
+    def _validate_input_flags(handled_command: Command, input_flags: InputFlags) -> tuple[tuple[ValidInputFlags,
+                                                                                                UndefinedInputFlags,
+                                                                                                InvalidValueInputFlags],
+                                                                                          Status]:
         """
         Private. Validates flags of input command
         :param handled_command: entity of the handled command
@@ -112,7 +113,17 @@ class Router:
                     undefined_input_flags.add_flag(flag)
                 case 'Invalid':
                     invalid_value_input_flags.add_flag(flag)
-        return valid_input_flags, undefined_input_flags, invalid_value_input_flags
+
+        if not invalid_value_input_flags.get_flags() and not undefined_input_flags.get_flags():
+            status = Status.ALL_FLAGS_VALID
+        elif invalid_value_input_flags.get_flags() and not undefined_input_flags.get_flags():
+            status = Status.INVALID_VALUE_FLAGS
+        elif not invalid_value_input_flags.get_flags() and undefined_input_flags.get_flags():
+            status = Status.UNDEFINED_FLAGS
+        else:
+            status = Status.UNDEFINED_AND_INVALID_FLAGS
+
+        return (valid_input_flags, undefined_input_flags, invalid_value_input_flags), status
 
 
     @staticmethod
