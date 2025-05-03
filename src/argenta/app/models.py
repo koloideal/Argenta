@@ -219,22 +219,43 @@ class BaseApp:
             self._registered_routers.add_registered_router(system_router)
 
 
+    def _most_similar_command(self, unknown_command: str) -> str | None:
+        all_commands = self._all_registered_triggers_in_lower if self._ignore_command_register else self._all_registered_triggers_in_default_case
+        matches: list[str] | list = sorted(cmd for cmd in all_commands if cmd.startswith(unknown_command))
+        if not matches:
+            matches: list[str] | list = sorted(cmd for cmd in all_commands if unknown_command.startswith(cmd))
+        if len(matches) == 1:
+            return matches[0]
+        elif len(matches) > 1:
+            return sorted(matches, key=lambda cmd: len(cmd))[0]
+        else:
+            return None
+
+
     def _setup_default_view(self) -> None:
         """
         Private. Sets up default app view
         :return: None
         """
-        if not self._override_system_messages:
-            self._initial_message = f'\n[bold red]{text2art(self._initial_message, font="tarty1")}\n\n'
-            self._farewell_message = (f'[bold red]\n{text2art(f"\n{self._farewell_message}\n", font="chanky")}[/bold red]\n'
-                                      f'[red i]github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]\n')
-            self._description_message_gen = lambda command, description: (f'[bold red]{escape("[" + command + "]")}[/bold red] '
-                                                                          f'[blue dim]*=*=*[/blue dim] '
-                                                                          f'[bold yellow italic]{escape(description)}')
-            self._invalid_input_flags_handler = lambda raw_command: self._print_func(f'[red bold]Incorrect flag syntax: {escape(raw_command)}')
-            self._repeated_input_flags_handler = lambda raw_command: self._print_func(f'[red bold]Repeated input flags: {escape(raw_command)}')
-            self._empty_input_command_handler = lambda: self._print_func('[red bold]Empty input command')
-            self._unknown_command_handler = lambda command: self._print_func(f"[red bold]Unknown command: {escape(command.get_trigger())}")
+        self._prompt = '[italic dim bold]What do you want to do?\n'
+        self._initial_message = f'\n[bold red]{text2art(self._initial_message, font="tarty1")}\n\n'
+        self._farewell_message = (f'[bold red]\n{text2art(f"\n{self._farewell_message}\n", font="chanky")}[/bold red]\n'
+                                  f'[red i]github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]\n')
+        self._description_message_gen = lambda command, description: (f'[bold red]{escape("[" + command + "]")}[/bold red] '
+                                                                      f'[blue dim]*=*=*[/blue dim] '
+                                                                      f'[bold yellow italic]{escape(description)}')
+        self._invalid_input_flags_handler = lambda raw_command: self._print_func(f'[red bold]Incorrect flag syntax: {escape(raw_command)}')
+        self._repeated_input_flags_handler = lambda raw_command: self._print_func(f'[red bold]Repeated input flags: {escape(raw_command)}')
+        self._empty_input_command_handler = lambda: self._print_func('[red bold]Empty input command')
+
+        def unknown_command_handler(command: InputCommand) -> None:
+            cmd_trg: str = command.get_trigger()
+            mst_sim_cmd: str | None = self._most_similar_command(cmd_trg)
+            first_part_of_text = f"[red]Unknown command:[/red] [blue]{escape(cmd_trg)}[/blue]"
+            second_part_of_text = ('[red], most similar:[/red] ' + ('[blue]' + mst_sim_cmd + '[/blue]')) if mst_sim_cmd else ''
+            self._print_func(first_part_of_text + second_part_of_text)
+
+        self._unknown_command_handler = unknown_command_handler
 
 
     def _pre_cycle_setup(self) -> None:
@@ -242,7 +263,6 @@ class BaseApp:
         Private. Configures various aspects of the application before the start of the cycle
         :return: None
         """
-        self._setup_default_view()
         self._setup_system_router()
 
         for router_entity in self._registered_routers:
@@ -253,6 +273,9 @@ class BaseApp:
             self._all_registered_triggers_in_lower.extend([x.lower() for x in router_entity.get_aliases()])
 
         self._autocompleter.initial_setup(self._all_registered_triggers_in_lower)
+
+        if not self._override_system_messages:
+            self._setup_default_view()
 
         self._print_func(self._initial_message)
 
@@ -268,7 +291,7 @@ class BaseApp:
 
 class App(BaseApp):
     def __init__(self,
-                 prompt: str = '[italic dim bold]What do you want to do?\n',
+                 prompt: str = 'What do you want to do?\n',
                  initial_message: str = '\nArgenta\n',
                  farewell_message: str = '\nSee you\n',
                  exit_command: Command = Command('Q', 'Exit command'),

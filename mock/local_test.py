@@ -11,13 +11,7 @@ from argenta.router import Router
 from argenta.orchestrator import Orchestrator
 
 from argenta.command.models import InputCommand
+from argenta.app.utils import most_similar_command
 
 
-while True:
-    cmd = input(">>> ")
-    if cmd == "exit":
-        break
-    else:
-        parse_cmd: InputCommand = InputCommand.parse(cmd)
-        print(f'name: {parse_cmd.get_trigger()}\n'
-              f'flags: {parse_cmd.get_input_flags().get_flags()}\n')
+print(most_similar_command('case', ['case', 'tester', 'poster', 'caser']))

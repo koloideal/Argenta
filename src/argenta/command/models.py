@@ -139,11 +139,11 @@ class InputCommand(BaseCommand, Generic[InputCommandType]):
 
         for k, _ in enumerate(list_of_tokens):
             if _.startswith('-'):
-                if current_flag_name or len(_) < 2 or len(_[:_.rfind('-')]) > 3:
+                if len(_) < 2 or len(_[:_.rfind('-')]) > 3:
                     raise UnprocessedInputFlagException()
                 current_flag_name = _
             else:
-                if not current_flag_name:
+                if not current_flag_name or current_flag_value:
                     raise UnprocessedInputFlagException()
                 current_flag_value = _
 
@@ -153,9 +153,9 @@ class InputCommand(BaseCommand, Generic[InputCommandType]):
                         continue
 
                 input_flag = InputFlag(name=current_flag_name[current_flag_name.rfind('-') + 1:],
-                                        prefix=cast(Literal['-', '--', '---'],
-                                               current_flag_name[:current_flag_name.rfind('-')+1]),
-                                        value=current_flag_value)
+                                       prefix=cast(Literal['-', '--', '---'],
+                                              current_flag_name[:current_flag_name.rfind('-')+1]),
+                                       value=current_flag_value)
 
                 all_flags = [flag.get_string_entity() for flag in input_flags.get_flags()]
                 if input_flag.get_string_entity() not in all_flags:

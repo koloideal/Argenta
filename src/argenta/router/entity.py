@@ -1,5 +1,7 @@
-from typing import Callable, Literal
-from inspect import getfullargspec
+from typing import Callable, Literal, Type
+from inspect import getfullargspec, get_annotations
+from rich.console import Console
+
 from argenta.command import Command
 from argenta.command.models import InputCommand
 from argenta.response import Response, Status
@@ -12,8 +14,7 @@ from argenta.router.exceptions import (RepeatedFlagNameException,
 
 
 class Router:
-    def __init__(self,
-                 title: str = None):
+    def __init__(self, title: str = None):
         """
         Public. Directly configures and manages handlers
         :param title: the title of the router, displayed when displaying the available commands
@@ -156,6 +157,12 @@ class Router:
             raise TooManyTransferredArgsException()
         elif len(transferred_args) == 0:
             raise RequiredArgumentNotPassedException()
+
+        arg_annotation: Type = get_annotations(func)[transferred_args[0]]
+        if not arg_annotation is Response:
+            Console().print(f'\n\n[b red]WARNING:[/b red] [i]The type of argument passed to the handler is [/i][blue]{Response}[/blue],'
+                            f' [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]', highlight=False)
+
 
 
     def set_command_register_ignore(self, _: bool) -> None:
