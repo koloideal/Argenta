@@ -36,6 +36,9 @@ class BaseFlag:
         """
         return self._prefix
 
+    def __eq__(self, other) -> bool:
+        return self.get_string_entity() == other.get_string_entity()
+
 
 class Flag(BaseFlag):
     def __init__(self, name: str,
@@ -109,4 +112,7 @@ class InputFlag(BaseFlag):
         :return: None
         """
         self._flag_value = value
+
+    def __eq__(self, other) -> bool:
+        return self.get_string_entity() == other.get_string_entity() and self.get_value() == other.get_value()
 

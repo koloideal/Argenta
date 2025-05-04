@@ -1,4 +1,5 @@
-from argenta.command.flag.models import Flag, InputFlag, InputFlags, Flags
+from argenta.command.flag import Flag, InputFlag
+from argenta.command.flags import InputFlags, Flags
 
 import unittest
 import re

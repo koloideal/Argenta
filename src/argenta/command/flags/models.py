@@ -58,6 +58,15 @@ class BaseFlags(Generic[FlagType]):
     def __getitem__(self, item):
         return self._flags[item]
 
+    def __eq__(self, other):
+        if len(self.get_flags()) != len(other.get_flags()):
+            return False
+        else:
+            for flag, other_flag in zip(self.get_flags(), other.get_flags()):
+                if not flag == other_flag:
+                    return False
+        return True
+
 
 class Flags(BaseFlags[Flag]): pass
 

@@ -13,10 +13,9 @@ from argenta.orchestrator import Orchestrator
 from argenta.command.models import InputCommand
 import inspect
 
-def some():
-    ellipsis
-    global inspect
-    pass
+
+inv = InvalidValueInputFlags(InputFlag('test'))
+inve = InvalidValueInputFlags(InputFlag('test'))
 
 
-print(inspect.getsourcelines(some))
+print(inv == inve)

@@ -3,6 +3,11 @@ from argenta.response.status import Status
 
 
 class Response:
+    __slots__ = ('status',
+                 'valid_flags',
+                 'undefined_flags',
+                 'invalid_value_flags')
+
     def __init__(self, status: Status = None,
                  valid_flags: ValidInputFlags = ValidInputFlags(),
                  undefined_flags: UndefinedInputFlags = UndefinedInputFlags(),

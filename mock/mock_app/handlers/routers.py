@@ -13,7 +13,7 @@ console = Console()
 
 
 @work_router.command(Command('get', 'Get Help', aliases=['help', 'Get_help'], flags=Flags(PredefinedFlags.PORT, PredefinedFlags.HOST)))
-def command_help(response: int):
+def command_help(response: Response):
     print(response.status)
     print(response.undefined_flags.get_flags())
     print(response.valid_flags.get_flags())
@@ -21,7 +21,7 @@ def command_help(response: int):
 
 
 @work_router.command(Command('run', 'Run All'))
-def command_start_solving(response: str):
+def command_start_solving(response: Response):
     print(response.status)
     print(response.undefined_flags.get_flags())
     print(response.valid_flags.get_flags())

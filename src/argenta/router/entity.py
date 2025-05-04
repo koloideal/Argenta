@@ -73,9 +73,7 @@ class Router:
         response: Response = Response()
         if handle_command.get_registered_flags().get_flags():
             if input_command_flags.get_flags():
-                flags, status = self._validate_input_flags(handle_command, input_command_flags)
-                response.valid_flags, response.undefined_flags, response.invalid_value_flags = flags
-                response.status = status
+                response: Response = self._structuring_input_flags(handle_command, input_command_flags)
                 command_handler.handling(response)
             else:
                 response.status = Status.ALL_FLAGS_VALID
@@ -92,15 +90,12 @@ class Router:
 
 
     @staticmethod
-    def _validate_input_flags(handled_command: Command, input_flags: InputFlags) -> tuple[tuple[ValidInputFlags,
-                                                                                                UndefinedInputFlags,
-                                                                                                InvalidValueInputFlags],
-                                                                                          Status]:
+    def _structuring_input_flags(handled_command: Command, input_flags: InputFlags) -> Response:
         """
         Private. Validates flags of input command
         :param handled_command: entity of the handled command
         :param input_flags:
-        :return: is flags of input command valid as bool
+        :return: entity of response as Response
         """
         valid_input_flags: ValidInputFlags = ValidInputFlags()
         invalid_value_input_flags: InvalidValueInputFlags = InvalidValueInputFlags()
@@ -124,7 +119,12 @@ class Router:
         else:
             status = Status.UNDEFINED_AND_INVALID_FLAGS
 
-        return (valid_input_flags, undefined_input_flags, invalid_value_input_flags), status
+        response = Response(invalid_value_flags=invalid_value_input_flags,
+                            valid_flags=valid_input_flags,
+                            status=status,
+                            undefined_flags=undefined_input_flags,)
+
+        return response
 
 
     @staticmethod
@@ -160,7 +160,7 @@ class Router:
 
         arg_annotation: Type = get_annotations(func)[transferred_args[0]]
         if not arg_annotation is Response:
-            Console().print(f'\n\nFile "{getsourcefile(func).replace("\\", "/")}", line {getsourcelines(func)[1]+1}\n'
+            Console().print(f'\n\nFile "{getsourcefile(func)}", line {getsourcelines(func)[1]+1}\n'
                             f'[b red]WARNING:[/b red] [i]The typehint of argument([green]{transferred_args[0]}[/green]) passed to the handler is [/i][blue]{Response}[/blue],'
                             f' [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]', highlight=False)
 
