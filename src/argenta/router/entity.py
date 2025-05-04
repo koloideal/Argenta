@@ -1,5 +1,5 @@
 from typing import Callable, Literal, Type
-from inspect import getfullargspec, get_annotations
+from inspect import getfullargspec, get_annotations, getsourcefile, getsourcelines
 from rich.console import Console
 
 from argenta.command import Command
@@ -160,7 +160,8 @@ class Router:
 
         arg_annotation: Type = get_annotations(func)[transferred_args[0]]
         if not arg_annotation is Response:
-            Console().print(f'\n\n[b red]WARNING:[/b red] [i]The type of argument passed to the handler is [/i][blue]{Response}[/blue],'
+            Console().print(f'\n\nFile "{getsourcefile(func).replace("\\", "/")}", line {getsourcelines(func)[1]+1}\n'
+                            f'[b red]WARNING:[/b red] [i]The typehint of argument([green]{transferred_args[0]}[/green]) passed to the handler is [/i][blue]{Response}[/blue],'
                             f' [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]', highlight=False)
 
 

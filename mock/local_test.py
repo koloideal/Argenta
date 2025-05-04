@@ -11,7 +11,12 @@ from argenta.router import Router
 from argenta.orchestrator import Orchestrator
 
 from argenta.command.models import InputCommand
-from argenta.app.utils import most_similar_command
+import inspect
+
+def some():
+    ellipsis
+    global inspect
+    pass
 
 
-print(most_similar_command('case', ['case', 'tester', 'poster', 'caser']))
+print(inspect.getsourcelines(some))
