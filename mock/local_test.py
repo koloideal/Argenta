@@ -14,8 +14,10 @@ from argenta.command.models import InputCommand
 import inspect
 
 
-inv = InvalidValueInputFlags(InputFlag('test'))
-inve = InvalidValueInputFlags(InputFlag('test'))
+router = Router()
 
 
-print(inv == inve)
+@router.command(Command('some'))
+def handler(res: Response) -> Response:
+    pass
+

@@ -20,7 +20,7 @@ def command_help(response: Response):
     print(response.invalid_value_flags.get_flags())
 
 
-@work_router.command(Command('run', 'Run All'))
+@work_router.command('run')
 def command_start_solving(response: Response):
     print(response.status)
     print(response.undefined_flags.get_flags())

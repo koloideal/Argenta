@@ -6,7 +6,10 @@ from argenta.command import Command
 from argenta.command.models import InputCommand
 from argenta.response import Response, Status
 from argenta.router.command_handler.entity import CommandHandlers, CommandHandler
-from argenta.command.flags.models import Flags, InputFlags, UndefinedInputFlags, ValidInputFlags, InvalidValueInputFlags
+from argenta.command.flags.models import (Flags, InputFlags,
+                                          UndefinedInputFlags,
+                                          ValidInputFlags,
+                                          InvalidValueInputFlags)
 from argenta.router.exceptions import (RepeatedFlagNameException,
                                        TooManyTransferredArgsException,
                                        RequiredArgumentNotPassedException,
@@ -26,13 +29,15 @@ class Router:
         self._ignore_command_register: bool = False
 
 
-    def command(self, command: Command) -> Callable:
+    def command(self, command: Command | str) -> Callable:
         """
         Public. Registers handler
         :param command: Registered command
         :return: decorated handler as Callable
         """
         self._validate_command(command)
+        if isinstance(command, str):
+            command = Command(command)
 
         def command_decorator(func):
             Router._validate_func_args(func)
@@ -128,21 +133,25 @@ class Router:
 
 
     @staticmethod
-    def _validate_command(command: Command) -> None:
+    def _validate_command(command: Command | str) -> None:
         """
         Private. Validates the command registered in handler
         :param command: validated command
         :return: None if command is valid else raise exception
         """
-        command_name: str = command.get_trigger()
-        if command_name.find(' ') != -1:
-            raise TriggerContainSpacesException()
-
-        flags: Flags = command.get_registered_flags()
-        if flags:
-            flags_name: list = [x.get_string_entity().lower() for x in flags]
-            if len(set(flags_name)) < len(flags_name):
-                raise RepeatedFlagNameException()
+        match type(command).__name__:
+            case 'Command':
+                command_name: str = command.get_trigger()
+                if command_name.find(' ') != -1:
+                    raise TriggerContainSpacesException()
+                flags: Flags = command.get_registered_flags()
+                if flags:
+                    flags_name: list = [x.get_string_entity().lower() for x in flags]
+                    if len(set(flags_name)) < len(flags_name):
+                        raise RepeatedFlagNameException()
+            case 'str':
+                if command.find(' ') != -1:
+                    raise TriggerContainSpacesException()
 
 
     @staticmethod
@@ -158,13 +167,19 @@ class Router:
         elif len(transferred_args) == 0:
             raise RequiredArgumentNotPassedException()
 
+        transferred_arg: str = transferred_args[0]
         func_annotations: dict[str, Type] = get_annotations(func)
-        if func_annotations:
-            arg_annotation: Type = func_annotations[transferred_args[0]]
-            if not arg_annotation is Response:
-                Console().print(f'\n\nFile "{getsourcefile(func)}", line {getsourcelines(func)[1]+1}\n'
-                                f'[b red]WARNING:[/b red] [i]The typehint of argument([green]{transferred_args[0]}[/green]) passed to the handler is [/i][blue]{Response}[/blue],'
-                                f' [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]', highlight=False)
+
+        if arg_annotation := func_annotations.get(transferred_arg):
+            if arg_annotation is Response:
+                pass
+            else:
+                file_path: str = getsourcefile(func)
+                source_line: int = getsourcelines(func)[1]+1
+                fprint = Console().print
+                fprint(f'\nFile "{file_path}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
+                       f'of argument([green]{transferred_arg}[/green]) passed to the handler is [/i][bold blue]{Response}[/bold blue],'
+                       f' [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]\n', highlight=False)
 
 
 

@@ -39,7 +39,7 @@ class Command(BaseCommand):
         """
         super().__init__(trigger)
         self._registered_flags: Flags = flags if isinstance(flags, Flags) else Flags(flags) if isinstance(flags, Flag) else Flags()
-        self._description = f'Description for "{self._trigger}" command' if not description else description
+        self._description = f'Very useful command' if not description else description
         self._aliases = aliases if isinstance(aliases, list) else []
 
     def get_registered_flags(self) -> Flags:
