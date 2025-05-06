@@ -1,10 +1,12 @@
-from argenta.command.flag import Flag, InputFlag, Flags
+from argenta.command.flag import Flag, InputFlag
+from argenta.command.flags import Flags
 from argenta.command.models import InputCommand, Command
 from argenta.command.exceptions import (UnprocessedInputFlagException,
                                         RepeatedInputFlagsException,
                                         EmptyInputCommandException)
 
 import unittest
+import re
 
 
 class TestInputCommand(unittest.TestCase):
@@ -23,25 +25,37 @@ class TestInputCommand(unittest.TestCase):
         with self.assertRaises(EmptyInputCommandException):
             InputCommand.parse('')
 
-    def test_validate_correct_input_flag1(self):
+    def test_validate_valid_input_flag1(self):
         command = Command('some', flags=Flag('test'))
-        self.assertEqual(command.validate_input_flag(InputFlag('test')), True)
+        self.assertEqual(command.validate_input_flag(InputFlag('test')), 'Valid')
 
-    def test_validate_correct_input_flag2(self):
+    def test_validate_valid_input_flag2(self):
         command = Command('some', flags=Flags(Flag('test'), Flag('more')))
-        self.assertEqual(command.validate_input_flag(InputFlag('more')), True)
+        self.assertEqual(command.validate_input_flag(InputFlag('more')), 'Valid')
 
-    def test_validate_incorrect_input_flag1(self):
-        command = Command('some', flags=Flags(Flag('test')))
-        self.assertEqual(command.validate_input_flag(InputFlag('more')), False)
+    def test_validate_undefined_input_flag1(self):
+        command = Command('some', flags=Flag('test'))
+        self.assertEqual(command.validate_input_flag(InputFlag('more')), 'Undefined')
 
-    def test_validate_incorrect_input_flag2(self):
+    def test_validate_undefined_input_flag2(self):
         command = Command('some', flags=Flags(Flag('test'), Flag('more')))
-        self.assertEqual(command.validate_input_flag(InputFlag('case')), False)
+        self.assertEqual(command.validate_input_flag(InputFlag('case')), 'Undefined')
 
-    def test_validate_incorrect_input_flag3(self):
+    def test_validate_undefined_input_flag3(self):
         command = Command('some')
-        self.assertEqual(command.validate_input_flag(InputFlag('case')), False)
+        self.assertEqual(command.validate_input_flag(InputFlag('case')), 'Undefined')
+
+    def test_invalid_input_flag1(self):
+        command = Command('some', flags=Flag('test', possible_values=False))
+        self.assertEqual(command.validate_input_flag(InputFlag('test', value='example')), 'Invalid')
+
+    def test_invalid_input_flag2(self):
+        command = Command('some', flags=Flag('test', possible_values=['some', 'case']))
+        self.assertEqual(command.validate_input_flag(InputFlag('test', value='slay')), 'Invalid')
+
+    def test_invalid_input_flag3(self):
+        command = Command('some', flags=Flag('test', possible_values=re.compile(r'^ex\d{, 2}op$')))
+        self.assertEqual(command.validate_input_flag(InputFlag('test', value='example')), 'Invalid')
 
     def test_isinstance_parse_correct_raw_command(self):
         cmd = InputCommand.parse('ssh --host 192.168.0.3')

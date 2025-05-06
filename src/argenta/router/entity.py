@@ -158,11 +158,13 @@ class Router:
         elif len(transferred_args) == 0:
             raise RequiredArgumentNotPassedException()
 
-        arg_annotation: Type = get_annotations(func)[transferred_args[0]]
-        if not arg_annotation is Response:
-            Console().print(f'\n\nFile "{getsourcefile(func)}", line {getsourcelines(func)[1]+1}\n'
-                            f'[b red]WARNING:[/b red] [i]The typehint of argument([green]{transferred_args[0]}[/green]) passed to the handler is [/i][blue]{Response}[/blue],'
-                            f' [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]', highlight=False)
+        func_annotations: dict[str, Type] = get_annotations(func)
+        if func_annotations:
+            arg_annotation: Type = func_annotations[transferred_args[0]]
+            if not arg_annotation is Response:
+                Console().print(f'\n\nFile "{getsourcefile(func)}", line {getsourcelines(func)[1]+1}\n'
+                                f'[b red]WARNING:[/b red] [i]The typehint of argument([green]{transferred_args[0]}[/green]) passed to the handler is [/i][blue]{Response}[/blue],'
+                                f' [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]', highlight=False)
 
 
 

@@ -1,5 +1,5 @@
 from argenta.command.flag import InputFlag, Flag
-from argenta.command.flags import Flags, InputFlags, UndefinedInputFlags
+from argenta.command.flags import Flags, InputFlags, UndefinedInputFlags, InvalidValueInputFlags, ValidInputFlags
 from argenta.response import Response
 from argenta.router import Router
 from argenta.command import Command
@@ -26,65 +26,61 @@ class TestRouter(unittest.TestCase):
         with self.assertRaises(RepeatedFlagNameException):
             router._validate_command(Command(trigger='command', flags=Flags(Flag('test'), Flag('test'))))
 
-    def test_validate_incorrect_input_flag1(self):
+    def test_structuring_input_flags1(self):
         router = Router()
         cmd = Command('cmd')
         input_flags = InputFlags(InputFlag('ssh'))
         self.assertEqual(router._structuring_input_flags(cmd, input_flags).undefined_flags, UndefinedInputFlags(InputFlag('ssh')))
 
-    def test_validate_incorrect_input_flag2(self):
+    def test_structuring_input_flags2(self):
         router = Router()
-        self.assertEqual(router._structuring_input_flags(Command('cmd'), InputFlags(InputFlag('ssh', value='some'))), False)
+        cmd = Command('cmd')
+        input_flags = InputFlags(InputFlag('ssh', value='some'))
+        self.assertEqual(router._structuring_input_flags(cmd, input_flags).undefined_flags, UndefinedInputFlags(InputFlag('ssh', value='some')))
 
-    def test_validate_incorrect_input_flag3(self):
+    def test_structuring_input_flags3(self):
         router = Router()
-        command = Command('cmd', flags=Flag('port'))
+        cmd = Command('cmd', flags=Flag('port'))
         input_flags = InputFlags(InputFlag('ssh', value='some2'))
-        self.assertEqual(router._structuring_input_flags(command, input_flags), False)
+        self.assertEqual(router._structuring_input_flags(cmd, input_flags).undefined_flags, UndefinedInputFlags(InputFlag('ssh', value='some2')))
 
-    def test_validate_incorrect_input_flag4(self):
+    def test_structuring_input_flags4(self):
         router = Router()
         command = Command('cmd', flags=Flag('ssh', possible_values=False))
         input_flags = InputFlags(InputFlag('ssh', value='some3'))
-        self.assertEqual(router._structuring_input_flags(command, input_flags), False)
+        self.assertEqual(router._structuring_input_flags(command, input_flags).invalid_value_flags, InvalidValueInputFlags(InputFlag('ssh', value='some3')))
 
-    def test_validate_incorrect_input_flag5(self):
+    def test_structuring_input_flags5(self):
         router = Router()
         command = Command('cmd', flags=Flag('ssh', possible_values=re.compile(r'some[1-5]$')))
         input_flags = InputFlags(InputFlag('ssh', value='some40'))
-        self.assertEqual(router._structuring_input_flags(command, input_flags), False)
+        self.assertEqual(router._structuring_input_flags(command, input_flags).invalid_value_flags, InvalidValueInputFlags(InputFlag('ssh', value='some40')))
 
-    def test_validate_incorrect_input_flag6(self):
+    def test_structuring_input_flags6(self):
         router = Router()
         command = Command('cmd', flags=Flag('ssh', possible_values=['example']))
         input_flags = InputFlags(InputFlag('ssh', value='example2'))
-        self.assertEqual(router._structuring_input_flags(command, input_flags), False)
+        self.assertEqual(router._structuring_input_flags(command, input_flags).invalid_value_flags, InvalidValueInputFlags(InputFlag('ssh', value='example2')))
 
-    def test_validate_incorrect_input_flag7(self):
-        router = Router()
-        command = Command('cmd', flags=Flag('ssh', possible_values=['example']))
-        input_flags = InputFlags(InputFlag('ssh'))
-        self.assertEqual(router._structuring_input_flags(command, input_flags), False)
-
-    def test_validate_correct_input_flag1(self):
+    def test_structuring_input_flags7(self):
         command = Command('cmd', flags=Flag('port'))
         input_flags = InputFlags(InputFlag('port', value='some2'))
-        self.assertEqual(Router()._structuring_input_flags(command, input_flags), True)
+        self.assertEqual(Router()._structuring_input_flags(command, input_flags).valid_flags, ValidInputFlags(InputFlag('port', value='some2')))
 
-    def test_validate_correct_input_flag2(self):
+    def test_structuring_input_flags8(self):
         command = Command('cmd', flags=Flag('port', possible_values=['some2', 'some3']))
         input_flags = InputFlags(InputFlag('port', value='some2'))
-        self.assertEqual(Router()._structuring_input_flags(command, input_flags), True)
+        self.assertEqual(Router()._structuring_input_flags(command, input_flags).valid_flags, ValidInputFlags(InputFlag('port', value='some2')))
 
-    def test_validate_correct_input_flag3(self):
+    def test_structuring_input_flags9(self):
         command = Command('cmd', flags=Flag('ssh', possible_values=re.compile(r'more[1-5]$')))
         input_flags = InputFlags(InputFlag('ssh', value='more5'))
-        self.assertEqual(Router()._structuring_input_flags(command, input_flags), True)
+        self.assertEqual(Router()._structuring_input_flags(command, input_flags).valid_flags, ValidInputFlags(InputFlag('ssh', value='more5')))
 
-    def test_validate_correct_input_flag4(self):
+    def test_structuring_input_flags10(self):
         command = Command('cmd', flags=Flag('ssh', possible_values=False))
         input_flags = InputFlags(InputFlag('ssh'))
-        self.assertEqual(Router()._structuring_input_flags(command, input_flags), True)
+        self.assertEqual(Router()._structuring_input_flags(command, input_flags).valid_flags, ValidInputFlags(InputFlag('ssh')))
 
     def test_validate_incorrect_func_args1(self):
         def handler():
@@ -101,17 +97,17 @@ class TestRouter(unittest.TestCase):
     def test_get_router_aliases(self):
         router = Router()
         @router.command(Command('some', aliases=['test', 'case']))
-        def handler():
+        def handler(response):
             pass
         self.assertListEqual(router.get_aliases(), ['test', 'case'])
 
     def test_get_router_aliases2(self):
         router = Router()
         @router.command(Command('some', aliases=['test', 'case']))
-        def handler():
+        def handler(response):
             pass
         @router.command(Command('ext', aliases=['more', 'foo']))
-        def handler2():
+        def handler2(response):
             pass
         self.assertListEqual(router.get_aliases(), ['test', 'case', 'more', 'foo'])
 
