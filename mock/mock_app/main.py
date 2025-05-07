@@ -11,7 +11,7 @@ from argenta.orchestrator.argparser.arguments import BooleanArgument
 
 arg_parser = ArgParser(processed_args=[BooleanArgument('repeat')])
 app: App = App(dividing_line=DynamicDividingLine(),
-               autocompleter=AutoCompleter('./mock/.hist'),
+               autocompleter=AutoCompleter(),
                repeat_command_groups=False,)
 orchestrator: Orchestrator = Orchestrator(arg_parser)
 

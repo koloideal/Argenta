@@ -1,5 +1,6 @@
 import os
 import readline
+from typing import Never
 
 
 class AutoCompleter:
@@ -12,7 +13,6 @@ class AutoCompleter:
         """
         self.history_filename = history_filename
         self.autocomplete_button = autocomplete_button
-        self.matches: list[str] = []
 
     def _complete(self, text, state) -> str | None:
         """
@@ -55,18 +55,26 @@ class AutoCompleter:
         readline.set_completer_delims(readline.get_completer_delims().replace(' ', ''))
         readline.parse_and_bind(f'{self.autocomplete_button}: complete')
 
-    def exit_setup(self) -> None:
+    def exit_setup(self, all_commands: list[str]) -> None:
         """
         Private. Exit setup function
         :return: None
         """
         if self.history_filename:
             readline.write_history_file(self.history_filename)
+            with open(self.history_filename, 'r') as history_file:
+                raw_history = history_file.read()
+            pretty_history: list[str] = []
+            for line in set(raw_history.strip().split('\n')):
+                if line.split()[0] in all_commands:
+                    pretty_history.append(line)
+            with open(self.history_filename, 'w') as history_file:
+                history_file.write('\n'.join(pretty_history))
 
     @staticmethod
-    def get_history_items() -> list[str] | list:
+    def get_history_items() -> list[str] | list[Never]:
         """
         Private. Returns a list of all commands entered by the user
-        :return: all commands entered by the user as list[str]
+        :return: all commands entered by the user as list[str] | list[Never]
         """
         return [readline.get_history_item(i) for i in range(1, readline.get_current_history_length() + 1)]

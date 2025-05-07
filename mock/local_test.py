@@ -1,3 +1,5 @@
+import platform
+
 from argenta.response import Response, Status
 from argenta.app import App
 from argenta.app.dividing_line import StaticDividingLine, DynamicDividingLine
@@ -14,10 +16,5 @@ from argenta.command.models import InputCommand
 import inspect
 
 
-router = Router()
-
-
-@router.command(Command('some'))
-def handler(res: Response) -> Response:
-    pass
+print(platform.system())
 

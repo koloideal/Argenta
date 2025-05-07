@@ -354,7 +354,10 @@ class App(BaseApp):
 
             if self._is_exit_command(input_command):
                 system_router.finds_appropriate_handler(input_command)
-                self._autocompleter.exit_setup()
+                if self._ignore_command_register:
+                    self._autocompleter.exit_setup(self._all_registered_triggers_in_lower)
+                else:
+                    self._autocompleter.exit_setup(self._all_registered_triggers_in_default_case)
                 return
 
             if self._is_unknown_command(input_command):

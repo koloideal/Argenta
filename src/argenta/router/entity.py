@@ -17,7 +17,7 @@ from argenta.router.exceptions import (RepeatedFlagNameException,
 
 
 class Router:
-    def __init__(self, title: str = None):
+    def __init__(self, title: str | None = 'Awesome title'):
         """
         Public. Directly configures and manages handlers
         :param title: the title of the router, displayed when displaying the available commands
