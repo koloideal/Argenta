@@ -238,7 +238,7 @@ class BaseApp:
         :return: None
         """
         self._prompt = '[italic dim bold]What do you want to do?\n'
-        self._initial_message = f'\n[bold red]{text2art(self._initial_message, font="tarty1")}\n\n'
+        self._initial_message = f'\n[bold red]{text2art(self._initial_message, font="tarty1")}\n'
         self._farewell_message = (f'[bold red]\n{text2art(f"\n{self._farewell_message}\n", font="chanky")}[/bold red]\n'
                                   f'[red i]github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]\n')
         self._description_message_gen = lambda command, description: (f'[bold red]{escape("[" + command + "]")}[/bold red] '
@@ -282,7 +282,7 @@ class BaseApp:
         for message in self._messages_on_startup:
             self._print_func(message)
         if self._messages_on_startup:
-            print('\n\n')
+            print('\n')
 
         if not self._repeat_command_groups_description:
             self._print_command_group_description()

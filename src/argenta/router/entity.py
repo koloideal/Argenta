@@ -124,12 +124,10 @@ class Router:
         else:
             status = Status.UNDEFINED_AND_INVALID_FLAGS
 
-        response = Response(invalid_value_flags=invalid_value_input_flags,
-                            valid_flags=valid_input_flags,
-                            status=status,
-                            undefined_flags=undefined_input_flags,)
-
-        return response
+        return Response(invalid_value_flags=invalid_value_input_flags,
+                        valid_flags=valid_input_flags,
+                        status=status,
+                        undefined_flags=undefined_input_flags)
 
 
     @staticmethod
