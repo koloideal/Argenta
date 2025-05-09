@@ -52,6 +52,14 @@ def main() -> None:
 if __name__ == '__main__':
     main()
 ```
+
+---
+
+# Фичи в разработке
+
+- Полноценная поддержка автокомплитера на Linux
+- Возможность настройки захвата stdout при обработке хэндлером ввода
+
 ## Полная [документация](https://argenta-docs.vercel.app) | MIT 2025 kolo | made by [kolo](https://t.me/kolo_id)
 
 
