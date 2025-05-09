@@ -1,9 +1,9 @@
 [project]
 name = "argenta"
-version = "1.0.1"
+version = "1.0.2"
 description = "Python library for building modular CLI applications"
 authors = [{ name = "kolo", email = "kolo.is.main@gmail.com" }]
-requires-python = ">=3.11, <4.0"
+requires-python = ">=3.8"
 readme = "README.md"
 license = { text = "MIT" }
 dependencies = [
