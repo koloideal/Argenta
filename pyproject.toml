@@ -1,6 +1,6 @@
 [project]
 name = "argenta"
-version = "1.0.0-beta2"
+version = "1.0.0"
 description = "Python library for building modular CLI applications"
 authors = [{ name = "kolo", email = "kolo.is.main@gmail.com" }]
 requires-python = ">=3.11, <4.0"
@@ -10,12 +10,6 @@ dependencies = [
     "rich (>=14.0.0,<15.0.0)",
     "art (>=6.4,<7.0)",
     "pyreadline3>=3.5.4",
-]
-
-[dependency-groups]
-dev = [
-    "psutil>=7.0.0",
-    "pydoc-markdown>=4.8.2,<5",
 ]
 
 [tool.ruff]
