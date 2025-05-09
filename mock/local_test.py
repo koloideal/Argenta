@@ -64,9 +64,9 @@ def show_ip(response: Response):
 # Создание приложения и регистрация маршрутизаторов
 app = App(
     prompt="System> ",
-    initial_message="Системный монитор v1.0",
+    initial_message="Pingator",
     dividing_line=DynamicDividingLine("*"),
-    autocompleter=AutoCompleter('.hist')
+    autocompleter=AutoCompleter('.hist', 'e'),
 )
 
 # Добавляем все маршрутизаторы

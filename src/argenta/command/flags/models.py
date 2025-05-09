@@ -71,17 +71,22 @@ class BaseFlags(Generic[FlagType]):
         return True
 
 
-class Flags(BaseFlags[Flag]): pass
+class Flags(BaseFlags[Flag]):
+    pass
 
 
-class InputFlags(BaseFlags[InputFlag]): pass
+class InputFlags(BaseFlags[InputFlag]):
+    pass
 
 
-class ValidInputFlags(InputFlags): pass
+class ValidInputFlags(InputFlags):
+    pass
 
 
-class UndefinedInputFlags(InputFlags): pass
+class UndefinedInputFlags(InputFlags):
+    pass
 
 
-class InvalidValueInputFlags(InputFlags): pass
+class InvalidValueInputFlags(InputFlags):
+    pass
 
