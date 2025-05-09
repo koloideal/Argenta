@@ -6,6 +6,7 @@ class BaseArgument(ABC):
     """
     Private. Base class for all arguments
     """
+
     @abstractmethod
     def get_string_entity(self) -> str:
         """
@@ -28,7 +29,7 @@ class PositionalArgument(BaseArgument):
 
 
 class OptionalArgument(BaseArgument):
-    def __init__(self, name: str, prefix: Literal['-', '--', '---'] = '--'):
+    def __init__(self, name: str, prefix: Literal["-", "--", "---"] = "--"):
         """
         Public. Optional argument, must have the value
         :param name: name of the argument
@@ -42,7 +43,7 @@ class OptionalArgument(BaseArgument):
 
 
 class BooleanArgument(BaseArgument):
-    def __init__(self, name: str, prefix: Literal['-', '--', '---'] = '--'):
+    def __init__(self, name: str, prefix: Literal["-", "--", "---"] = "--"):
         """
         Public. Boolean argument, does not require a value
         :param name: name of the argument

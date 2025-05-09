@@ -1,12 +1,14 @@
 from argenta.command.flag.models import Flag, InputFlag
 from argenta.command.flags.models import InputFlags, Flags
-from argenta.command.exceptions import (UnprocessedInputFlagException,
-                                        RepeatedInputFlagsException,
-                                        EmptyInputCommandException)
+from argenta.command.exceptions import (
+    UnprocessedInputFlagException,
+    RepeatedInputFlagsException,
+    EmptyInputCommandException,
+)
 from typing import Generic, TypeVar, cast, Literal
 
 
-InputCommandType = TypeVar('InputCommandType')
+InputCommandType = TypeVar("InputCommandType")
 
 
 class BaseCommand:
@@ -26,10 +28,13 @@ class BaseCommand:
 
 
 class Command(BaseCommand):
-    def __init__(self, trigger: str,
-                 description: str = None,
-                 flags: Flag | Flags = None,
-                 aliases: list[str] = None):
+    def __init__(
+        self,
+        trigger: str,
+        description: str = None,
+        flags: Flag | Flags = None,
+        aliases: list[str] = None,
+    ):
         """
         Public. The command that can and should be registered in the Router
         :param trigger: A string trigger, which, when entered by the user, indicates that the input corresponds to the command
@@ -38,8 +43,14 @@ class Command(BaseCommand):
         :param aliases: string synonyms for the main trigger
         """
         super().__init__(trigger)
-        self._registered_flags: Flags = flags if isinstance(flags, Flags) else Flags(flags) if isinstance(flags, Flag) else Flags()
-        self._description = 'Very useful command' if not description else description
+        self._registered_flags: Flags = (
+            flags
+            if isinstance(flags, Flags)
+            else Flags(flags)
+            if isinstance(flags, Flag)
+            else Flags()
+        )
+        self._description = "Very useful command" if not description else description
         self._aliases = aliases if isinstance(aliases, list) else []
 
     def get_registered_flags(self) -> Flags:
@@ -56,7 +67,9 @@ class Command(BaseCommand):
         """
         return self._aliases
 
-    def validate_input_flag(self, flag: InputFlag) -> Literal['Undefined', 'Valid', 'Invalid']:
+    def validate_input_flag(
+        self, flag: InputFlag
+    ) -> Literal["Undefined", "Valid", "Invalid"]:
         """
         Private. Validates the input flag
         :param flag: input flag for validation
@@ -66,23 +79,27 @@ class Command(BaseCommand):
         if registered_flags:
             if isinstance(registered_flags, Flag):
                 if registered_flags.get_string_entity() == flag.get_string_entity():
-                    is_valid = registered_flags.validate_input_flag_value(flag.get_value())
+                    is_valid = registered_flags.validate_input_flag_value(
+                        flag.get_value()
+                    )
                     if is_valid:
-                        return 'Valid'
+                        return "Valid"
                     else:
-                        return 'Invalid'
+                        return "Invalid"
                 else:
-                    return 'Undefined'
+                    return "Undefined"
             else:
                 for registered_flag in registered_flags:
                     if registered_flag.get_string_entity() == flag.get_string_entity():
-                        is_valid = registered_flag.validate_input_flag_value(flag.get_value())
+                        is_valid = registered_flag.validate_input_flag_value(
+                            flag.get_value()
+                        )
                         if is_valid:
-                            return 'Valid'
+                            return "Valid"
                         else:
-                            return 'Invalid'
-                return 'Undefined'
-        return 'Undefined'
+                            return "Invalid"
+                return "Undefined"
+        return "Undefined"
 
     def get_description(self) -> str:
         """
@@ -92,10 +109,8 @@ class Command(BaseCommand):
         return self._description
 
 
-
 class InputCommand(BaseCommand, Generic[InputCommandType]):
-    def __init__(self, trigger: str,
-                 input_flags: InputFlag | InputFlags = None):
+    def __init__(self, trigger: str, input_flags: InputFlag | InputFlags = None):
         """
         Private. The model of the input command, after parsing
         :param trigger:the trigger of the command
@@ -103,7 +118,13 @@ class InputCommand(BaseCommand, Generic[InputCommandType]):
         :return: None
         """
         super().__init__(trigger)
-        self._input_flags: InputFlags = input_flags if isinstance(input_flags, InputFlags) else InputFlags(input_flags) if isinstance(input_flags, InputFlag) else InputFlags()
+        self._input_flags: InputFlags = (
+            input_flags
+            if isinstance(input_flags, InputFlags)
+            else InputFlags(input_flags)
+            if isinstance(input_flags, InputFlag)
+            else InputFlags()
+        )
 
     def _set_input_flags(self, input_flags: InputFlags) -> None:
         """
@@ -119,7 +140,6 @@ class InputCommand(BaseCommand, Generic[InputCommandType]):
         :return: the input flags as InputFlags
         """
         return self._input_flags
-
 
     @staticmethod
     def parse(raw_command: str) -> InputCommandType:
@@ -138,8 +158,8 @@ class InputCommand(BaseCommand, Generic[InputCommandType]):
         current_flag_name, current_flag_value = None, None
 
         for k, _ in enumerate(list_of_tokens):
-            if _.startswith('-'):
-                if len(_) < 2 or len(_[:_.rfind('-')]) > 3:
+            if _.startswith("-"):
+                if len(_) < 2 or len(_[: _.rfind("-")]) > 3:
                     raise UnprocessedInputFlagException()
                 current_flag_name = _
             else:
@@ -148,16 +168,22 @@ class InputCommand(BaseCommand, Generic[InputCommandType]):
                 current_flag_value = _
 
             if current_flag_name:
-                if not len(list_of_tokens) == k+1:
-                    if not list_of_tokens[k+1].startswith('-'):
+                if not len(list_of_tokens) == k + 1:
+                    if not list_of_tokens[k + 1].startswith("-"):
                         continue
 
-                input_flag = InputFlag(name=current_flag_name[current_flag_name.rfind('-') + 1:],
-                                       prefix=cast(Literal['-', '--', '---'],
-                                              current_flag_name[:current_flag_name.rfind('-')+1]),
-                                       value=current_flag_value)
+                input_flag = InputFlag(
+                    name=current_flag_name[current_flag_name.rfind("-") + 1 :],
+                    prefix=cast(
+                        Literal["-", "--", "---"],
+                        current_flag_name[: current_flag_name.rfind("-") + 1],
+                    ),
+                    value=current_flag_value,
+                )
 
-                all_flags = [flag.get_string_entity() for flag in input_flags.get_flags()]
+                all_flags = [
+                    flag.get_string_entity() for flag in input_flags.get_flags()
+                ]
                 if input_flag.get_string_entity() not in all_flags:
                     input_flags.add_flag(input_flag)
                 else:
@@ -169,4 +195,3 @@ class InputCommand(BaseCommand, Generic[InputCommandType]):
             raise UnprocessedInputFlagException()
         else:
             return InputCommand(trigger=command, input_flags=input_flags)
-

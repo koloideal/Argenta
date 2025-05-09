@@ -8,8 +8,8 @@ from argenta.orchestrator.argparser import ArgParser
 from argenta.orchestrator.argparser.arguments import BooleanArgument
 
 
-arg_parser = ArgParser(processed_args=[BooleanArgument('repeat')])
-app: App = App(autocompleter=AutoCompleter('.hist'))
+arg_parser = ArgParser(processed_args=[BooleanArgument("repeat")])
+app: App = App(autocompleter=AutoCompleter(".hist"))
 orchestrator: Orchestrator = Orchestrator()
 
 
@@ -21,6 +21,7 @@ def main():
     app.add_message_on_startup(PredefinedMessages.HELP)
 
     orchestrator.start_polling(app)
+
 
 if __name__ == "__main__":
     main()

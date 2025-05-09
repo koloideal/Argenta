@@ -9,10 +9,12 @@ from argenta.orchestrator.argparser import ArgParser
 from argenta.orchestrator.argparser.arguments import BooleanArgument
 
 
-arg_parser = ArgParser(processed_args=[BooleanArgument('repeat')])
-app: App = App(dividing_line=DynamicDividingLine(),
-               autocompleter=AutoCompleter(),
-               repeat_command_groups=False,)
+arg_parser = ArgParser(processed_args=[BooleanArgument("repeat")])
+app: App = App(
+    dividing_line=DynamicDividingLine(),
+    autocompleter=AutoCompleter(),
+    repeat_command_groups=False,
+)
 orchestrator: Orchestrator = Orchestrator(arg_parser)
 
 
@@ -24,6 +26,7 @@ def main():
     app.add_message_on_startup(PredefinedMessages.HELP)
 
     orchestrator.start_polling(app)
+
 
 if __name__ == "__main__":
     main()

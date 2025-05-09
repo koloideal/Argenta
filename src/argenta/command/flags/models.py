@@ -2,8 +2,7 @@ from argenta.command.flag.models import InputFlag, Flag
 from typing import Generic, TypeVar
 
 
-
-FlagType = TypeVar('FlagType')
+FlagType = TypeVar("FlagType")
 
 
 class BaseFlags(Generic[FlagType]):
@@ -89,4 +88,3 @@ class UndefinedInputFlags(InputFlags):
 
 class InvalidValueInputFlags(InputFlags):
     pass
-

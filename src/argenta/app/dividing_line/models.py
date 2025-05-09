@@ -2,7 +2,7 @@ from abc import ABC
 
 
 class BaseDividingLine(ABC):
-    def __init__(self, unit_part: str = '-') -> None:
+    def __init__(self, unit_part: str = "-") -> None:
         """
         Private. The basic dividing line
         :param unit_part: the single part of the dividing line
@@ -16,13 +16,13 @@ class BaseDividingLine(ABC):
         :return: unit_part of dividing line as str
         """
         if len(self._unit_part) == 0:
-            return ' '
+            return " "
         else:
             return self._unit_part[0]
 
 
 class StaticDividingLine(BaseDividingLine):
-    def __init__(self, unit_part: str = '-', length: int = 25) -> None:
+    def __init__(self, unit_part: str = "-", length: int = 25) -> None:
         """
         Public. The static dividing line
         :param unit_part: the single part of the dividing line
@@ -39,13 +39,13 @@ class StaticDividingLine(BaseDividingLine):
         :return: full line of dividing line as str
         """
         if is_override:
-            return f'\n{self.length * self.get_unit_part()}\n'
+            return f"\n{self.length * self.get_unit_part()}\n"
         else:
-            return f'\n[dim]{self.length * self.get_unit_part()}[/dim]\n'
+            return f"\n[dim]{self.length * self.get_unit_part()}[/dim]\n"
 
 
 class DynamicDividingLine(BaseDividingLine):
-    def __init__(self, unit_part: str = '-') -> None:
+    def __init__(self, unit_part: str = "-") -> None:
         """
         Public. The dynamic dividing line
         :param unit_part: the single part of the dividing line
@@ -61,8 +61,6 @@ class DynamicDividingLine(BaseDividingLine):
         :return: full line of dividing line as str
         """
         if is_override:
-            return f'\n{length * self.get_unit_part()}\n'
+            return f"\n{length * self.get_unit_part()}\n"
         else:
-            return f'\n[dim]{self.get_unit_part() * length}[/dim]\n'
-
-
+            return f"\n[dim]{self.get_unit_part() * length}[/dim]\n"

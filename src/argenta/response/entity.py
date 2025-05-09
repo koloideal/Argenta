@@ -1,19 +1,21 @@
 from argenta.response.status import Status
-from argenta.command.flags import (ValidInputFlags,
-                                   UndefinedInputFlags,
-                                   InvalidValueInputFlags)
+from argenta.command.flags import (
+    ValidInputFlags,
+    UndefinedInputFlags,
+    InvalidValueInputFlags,
+)
 
 
 class Response:
-    __slots__ = ('status',
-                 'valid_flags',
-                 'undefined_flags',
-                 'invalid_value_flags')
+    __slots__ = ("status", "valid_flags", "undefined_flags", "invalid_value_flags")
 
-    def __init__(self, status: Status = None,
-                 valid_flags: ValidInputFlags = ValidInputFlags(),
-                 undefined_flags: UndefinedInputFlags = UndefinedInputFlags(),
-                 invalid_value_flags: InvalidValueInputFlags = InvalidValueInputFlags()):
+    def __init__(
+        self,
+        status: Status = None,
+        valid_flags: ValidInputFlags = ValidInputFlags(),
+        undefined_flags: UndefinedInputFlags = UndefinedInputFlags(),
+        invalid_value_flags: InvalidValueInputFlags = InvalidValueInputFlags(),
+    ):
         """
         Public. The entity of the user input sent to the handler
         :param status: the status of the response

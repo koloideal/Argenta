@@ -1,16 +1,20 @@
 from argparse import ArgumentParser
 
-from argenta.orchestrator.argparser.arguments.models import (BooleanArgument,
-                                                             OptionalArgument,
-                                                             PositionalArgument)
+from argenta.orchestrator.argparser.arguments.models import (
+    BooleanArgument,
+    OptionalArgument,
+    PositionalArgument,
+)
 
 
 class ArgParser:
-    def __init__(self,
-                 processed_args: list[PositionalArgument | OptionalArgument | BooleanArgument],
-                 name: str = 'Argenta',
-                 description: str = 'Argenta available arguments',
-                 epilog: str = 'github.com/koloideal/Argenta | made by kolo') -> None:
+    def __init__(
+        self,
+        processed_args: list[PositionalArgument | OptionalArgument | BooleanArgument],
+        name: str = "Argenta",
+        description: str = "Argenta available arguments",
+        epilog: str = "github.com/koloideal/Argenta | made by kolo",
+    ) -> None:
         """
         Public. Cmd argument parser and configurator at startup
         :param name: the name of the ArgParse instance
@@ -22,10 +26,16 @@ class ArgParser:
         self.description = description
         self.epilog = epilog
 
-        self.entity: ArgumentParser = ArgumentParser(prog=name, description=description, epilog=epilog)
-        self.args: list[PositionalArgument | OptionalArgument | BooleanArgument] | None = processed_args
+        self.entity: ArgumentParser = ArgumentParser(
+            prog=name, description=description, epilog=epilog
+        )
+        self.args: (
+            list[PositionalArgument | OptionalArgument | BooleanArgument] | None
+        ) = processed_args
 
-    def set_args(self, *args: PositionalArgument | OptionalArgument | BooleanArgument) -> None:
+    def set_args(
+        self, *args: PositionalArgument | OptionalArgument | BooleanArgument
+    ) -> None:
         """
         Public. Sets the arguments to be processed
         :param args: processed arguments
@@ -46,4 +56,4 @@ class ArgParser:
             elif type(arg) is OptionalArgument:
                 self.entity.add_argument(arg.get_string_entity())
             elif type(arg) is BooleanArgument:
-                self.entity.add_argument(arg.get_string_entity(), action='store_true')
+                self.entity.add_argument(arg.get_string_entity(), action="store_true")

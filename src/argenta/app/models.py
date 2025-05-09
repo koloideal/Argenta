@@ -11,28 +11,31 @@ from argenta.router import Router
 from argenta.router.defaults import system_router
 from argenta.app.autocompleter import AutoCompleter
 from argenta.app.dividing_line.models import StaticDividingLine, DynamicDividingLine
-from argenta.command.exceptions import (UnprocessedInputFlagException,
-                                        RepeatedInputFlagsException,
-                                        EmptyInputCommandException,
-                                        BaseInputCommandException)
+from argenta.command.exceptions import (
+    UnprocessedInputFlagException,
+    RepeatedInputFlagsException,
+    EmptyInputCommandException,
+    BaseInputCommandException,
+)
 from argenta.app.registered_routers.entity import RegisteredRouters
 from argenta.response import Response
 
 
-
 class BaseApp:
-    def __init__(self, prompt: str,
-                 initial_message: str,
-                 farewell_message: str,
-                 exit_command: Command,
-                 system_router_title: str | None,
-                 ignore_command_register: bool,
-                 dividing_line: StaticDividingLine | DynamicDividingLine,
-                 repeat_command_groups: bool,
-                 override_system_messages: bool,
-                 autocompleter: AutoCompleter,
-                 print_func: Callable[[str], None]) -> None:
-
+    def __init__(
+        self,
+        prompt: str,
+        initial_message: str,
+        farewell_message: str,
+        exit_command: Command,
+        system_router_title: str | None,
+        ignore_command_register: bool,
+        dividing_line: StaticDividingLine | DynamicDividingLine,
+        repeat_command_groups: bool,
+        override_system_messages: bool,
+        autocompleter: AutoCompleter,
+        print_func: Callable[[str], None],
+    ) -> None:
         self._prompt = prompt
         self._print_func = print_func
         self._exit_command = exit_command
@@ -46,20 +49,30 @@ class BaseApp:
         self._farewell_message = farewell_message
         self._initial_message = initial_message
 
-
-        self._description_message_gen: Callable[[str, str], str] = lambda command, description: f'[{command}] *=*=* {description}'
+        self._description_message_gen: Callable[[str, str], str] = (
+            lambda command, description: f"[{command}] *=*=* {description}"
+        )
         self._registered_routers: RegisteredRouters = RegisteredRouters()
         self._messages_on_startup: list[str] = []
 
         self._all_registered_triggers_in_lower: list[str] = []
         self._all_registered_triggers_in_default_case: list[str] = []
 
-        self._incorrect_input_syntax_handler: Callable[[str], None] = lambda raw_command: print_func(f'Incorrect flag syntax: {raw_command}')
-        self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Repeated input flags: {raw_command}')
-        self._empty_input_command_handler: Callable[[], None] = lambda: print_func('Empty input command')
-        self._unknown_command_handler: Callable[[InputCommand], None] = lambda command: print_func(f"Unknown command: {command.get_trigger()}")
-        self._exit_command_handler: Callable[[Response], None] = lambda response: print_func(self._farewell_message)
-
+        self._incorrect_input_syntax_handler: Callable[[str], None] = (
+            lambda raw_command: print_func(f"Incorrect flag syntax: {raw_command}")
+        )
+        self._repeated_input_flags_handler: Callable[[str], None] = (
+            lambda raw_command: print_func(f"Repeated input flags: {raw_command}")
+        )
+        self._empty_input_command_handler: Callable[[], None] = lambda: print_func(
+            "Empty input command"
+        )
+        self._unknown_command_handler: Callable[[InputCommand], None] = (
+            lambda command: print_func(f"Unknown command: {command.get_trigger()}")
+        )
+        self._exit_command_handler: Callable[[Response], None] = (
+            lambda response: print_func(self._farewell_message)
+        )
 
     def set_description_message_pattern(self, _: Callable[[str, str], str]) -> None:
         """
@@ -69,7 +82,6 @@ class BaseApp:
         """
         self._description_message_gen: Callable[[str, str], str] = _
 
-
     def set_incorrect_input_syntax_handler(self, _: Callable[[str], None]) -> None:
         """
         Public. Sets the handler for incorrect flags when entering a command
@@ -77,7 +89,6 @@ class BaseApp:
         :return: None
         """
         self._incorrect_input_syntax_handler = _
-
 
     def set_repeated_input_flags_handler(self, _: Callable[[str], None]) -> None:
         """
@@ -87,7 +98,6 @@ class BaseApp:
         """
         self._repeated_input_flags_handler = _
 
-
     def set_unknown_command_handler(self, _: Callable[[str], None]) -> None:
         """
         Public. Sets the handler for unknown commands when entering a command
@@ -95,7 +105,6 @@ class BaseApp:
         :return: None
         """
         self._unknown_command_handler = _
-
 
     def set_empty_command_handler(self, _: Callable[[], None]) -> None:
         """
@@ -105,7 +114,6 @@ class BaseApp:
         """
         self._empty_input_command_handler = _
 
-
     def set_exit_command_handler(self, _: Callable[[], None]) -> None:
         """
         Public. Sets the handler for exit command when entering a command
@@ -113,7 +121,6 @@ class BaseApp:
         :return: None
         """
         self._exit_command_handler = _
-
 
     def _print_command_group_description(self) -> None:
         """
@@ -124,11 +131,13 @@ class BaseApp:
             if registered_router.title:
                 self._print_func(registered_router.title)
             for command_handler in registered_router.get_command_handlers():
-                self._print_func(self._description_message_gen(
+                self._print_func(
+                    self._description_message_gen(
                         command_handler.get_handled_command().get_trigger(),
-                        command_handler.get_handled_command().get_description()))
-            self._print_func('')
-
+                        command_handler.get_handled_command().get_description(),
+                    )
+                )
+            self._print_func("")
 
     def _print_framed_text(self, text: str) -> None:
         """
@@ -137,19 +146,36 @@ class BaseApp:
         :return: None
         """
         if isinstance(self._dividing_line, StaticDividingLine):
-            self._print_func(self._dividing_line.get_full_static_line(self._override_system_messages))
-            print(text.strip('\n'))
-            self._print_func(self._dividing_line.get_full_static_line(self._override_system_messages))
+            self._print_func(
+                self._dividing_line.get_full_static_line(self._override_system_messages)
+            )
+            print(text.strip("\n"))
+            self._print_func(
+                self._dividing_line.get_full_static_line(self._override_system_messages)
+            )
 
         elif isinstance(self._dividing_line, DynamicDividingLine):
-            clear_text = re.sub(r'\u001b\[[0-9;]*m', '', text)
-            max_length_line = max([len(line) for line in clear_text.split('\n')])
-            max_length_line = max_length_line if 10 <= max_length_line <= 80 else 80 if max_length_line > 80 else 10
+            clear_text = re.sub(r"\u001b\[[0-9;]*m", "", text)
+            max_length_line = max([len(line) for line in clear_text.split("\n")])
+            max_length_line = (
+                max_length_line
+                if 10 <= max_length_line <= 80
+                else 80
+                if max_length_line > 80
+                else 10
+            )
 
-            self._print_func(self._dividing_line.get_full_dynamic_line(max_length_line, self._override_system_messages))
-            print(text.strip('\n'))
-            self._print_func(self._dividing_line.get_full_dynamic_line(max_length_line, self._override_system_messages))
-
+            self._print_func(
+                self._dividing_line.get_full_dynamic_line(
+                    max_length_line, self._override_system_messages
+                )
+            )
+            print(text.strip("\n"))
+            self._print_func(
+                self._dividing_line.get_full_dynamic_line(
+                    max_length_line, self._override_system_messages
+                )
+            )
 
     def _is_exit_command(self, command: InputCommand) -> bool:
         """
@@ -158,9 +184,14 @@ class BaseApp:
         :return: is it an exit command or not as bool
         """
         if self._ignore_command_register:
-            if command.get_trigger().lower() == self._exit_command.get_trigger().lower():
+            if (
+                command.get_trigger().lower()
+                == self._exit_command.get_trigger().lower()
+            ):
                 return True
-            elif command.get_trigger().lower() in [x.lower() for x in self._exit_command.get_aliases()]:
+            elif command.get_trigger().lower() in [
+                x.lower() for x in self._exit_command.get_aliases()
+            ]:
                 return True
         else:
             if command.get_trigger() == self._exit_command.get_trigger():
@@ -168,7 +199,6 @@ class BaseApp:
             elif command.get_trigger() in self._exit_command.get_aliases():
                 return True
         return False
-
 
     def _is_unknown_command(self, command: InputCommand) -> bool:
         """
@@ -185,8 +215,9 @@ class BaseApp:
                 return False
         return True
 
-
-    def _error_handler(self, error: BaseInputCommandException, raw_command: str) -> None:
+    def _error_handler(
+        self, error: BaseInputCommandException, raw_command: str
+    ) -> None:
         """
         Private. Handles parsing errors of the entered command
         :param error: error being handled
@@ -200,7 +231,6 @@ class BaseApp:
                 self._repeated_input_flags_handler(raw_command)
             case EmptyInputCommandException():
                 self._empty_input_command_handler()
-
 
     def _setup_system_router(self) -> None:
         """
@@ -217,12 +247,19 @@ class BaseApp:
             system_router.set_command_register_ignore(self._ignore_command_register)
             self._registered_routers.add_registered_router(system_router)
 
-
     def _most_similar_command(self, unknown_command: str) -> str | None:
-        all_commands = self._all_registered_triggers_in_lower if self._ignore_command_register else self._all_registered_triggers_in_default_case
-        matches: list[str] | list = sorted(cmd for cmd in all_commands if cmd.startswith(unknown_command))
+        all_commands = (
+            self._all_registered_triggers_in_lower
+            if self._ignore_command_register
+            else self._all_registered_triggers_in_default_case
+        )
+        matches: list[str] | list = sorted(
+            cmd for cmd in all_commands if cmd.startswith(unknown_command)
+        )
         if not matches:
-            matches: list[str] | list = sorted(cmd for cmd in all_commands if unknown_command.startswith(cmd))
+            matches: list[str] | list = sorted(
+                cmd for cmd in all_commands if unknown_command.startswith(cmd)
+            )
         if len(matches) == 1:
             return matches[0]
         elif len(matches) > 1:
@@ -230,32 +267,48 @@ class BaseApp:
         else:
             return None
 
-
     def _setup_default_view(self) -> None:
         """
         Private. Sets up default app view
         :return: None
         """
-        self._prompt = '[italic dim bold]What do you want to do?\n'
-        self._initial_message = f'\n[bold red]{text2art(self._initial_message, font="tarty1")}\n'
-        self._farewell_message = (f'[bold red]\n{text2art(f"\n{self._farewell_message}\n", font="chanky")}[/bold red]\n'
-                                  f'[red i]github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]\n')
-        self._description_message_gen = lambda command, description: (f'[bold red]{escape("[" + command + "]")}[/bold red] '
-                                                                      f'[blue dim]*=*=*[/blue dim] '
-                                                                      f'[bold yellow italic]{escape(description)}')
-        self._incorrect_input_syntax_handler = lambda raw_command: self._print_func(f'[red bold]Incorrect flag syntax: {escape(raw_command)}')
-        self._repeated_input_flags_handler = lambda raw_command: self._print_func(f'[red bold]Repeated input flags: {escape(raw_command)}')
-        self._empty_input_command_handler = lambda: self._print_func('[red bold]Empty input command')
+        self._prompt = "[italic dim bold]What do you want to do?\n"
+        self._initial_message = (
+            f"\n[bold red]{text2art(self._initial_message, font='tarty1')}\n"
+        )
+        self._farewell_message = (
+            f"[bold red]\n{text2art(f'\n{self._farewell_message}\n', font='chanky')}[/bold red]\n"
+            f"[red i]github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]\n"
+        )
+        self._description_message_gen = lambda command, description: (
+            f"[bold red]{escape('[' + command + ']')}[/bold red] "
+            f"[blue dim]*=*=*[/blue dim] "
+            f"[bold yellow italic]{escape(description)}"
+        )
+        self._incorrect_input_syntax_handler = lambda raw_command: self._print_func(
+            f"[red bold]Incorrect flag syntax: {escape(raw_command)}"
+        )
+        self._repeated_input_flags_handler = lambda raw_command: self._print_func(
+            f"[red bold]Repeated input flags: {escape(raw_command)}"
+        )
+        self._empty_input_command_handler = lambda: self._print_func(
+            "[red bold]Empty input command"
+        )
 
         def unknown_command_handler(command: InputCommand) -> None:
             cmd_trg: str = command.get_trigger()
             mst_sim_cmd: str | None = self._most_similar_command(cmd_trg)
-            first_part_of_text = f"[red]Unknown command:[/red] [blue]{escape(cmd_trg)}[/blue]"
-            second_part_of_text = ('[red], most similar:[/red] ' + ('[blue]' + mst_sim_cmd + '[/blue]')) if mst_sim_cmd else ''
+            first_part_of_text = (
+                f"[red]Unknown command:[/red] [blue]{escape(cmd_trg)}[/blue]"
+            )
+            second_part_of_text = (
+                ("[red], most similar:[/red] " + ("[blue]" + mst_sim_cmd + "[/blue]"))
+                if mst_sim_cmd
+                else ""
+            )
             self._print_func(first_part_of_text + second_part_of_text)
 
         self._unknown_command_handler = unknown_command_handler
-
 
     def _pre_cycle_setup(self) -> None:
         """
@@ -265,11 +318,19 @@ class BaseApp:
         self._setup_system_router()
 
         for router_entity in self._registered_routers:
-            self._all_registered_triggers_in_default_case.extend(router_entity.get_triggers())
-            self._all_registered_triggers_in_default_case.extend(router_entity.get_aliases())
+            self._all_registered_triggers_in_default_case.extend(
+                router_entity.get_triggers()
+            )
+            self._all_registered_triggers_in_default_case.extend(
+                router_entity.get_aliases()
+            )
 
-            self._all_registered_triggers_in_lower.extend([x.lower() for x in router_entity.get_triggers()])
-            self._all_registered_triggers_in_lower.extend([x.lower() for x in router_entity.get_aliases()])
+            self._all_registered_triggers_in_lower.extend(
+                [x.lower() for x in router_entity.get_triggers()]
+            )
+            self._all_registered_triggers_in_lower.extend(
+                [x.lower() for x in router_entity.get_aliases()]
+            )
 
         self._autocompleter.initial_setup(self._all_registered_triggers_in_lower)
 
@@ -281,26 +342,27 @@ class BaseApp:
         for message in self._messages_on_startup:
             self._print_func(message)
         if self._messages_on_startup:
-            print('\n')
+            print("\n")
 
         if not self._repeat_command_groups_description:
             self._print_command_group_description()
 
 
-
 class App(BaseApp):
-    def __init__(self,
-                 prompt: str = 'What do you want to do?\n',
-                 initial_message: str = '\nArgenta\n',
-                 farewell_message: str = '\nSee you\n',
-                 exit_command: Command = Command('Q', 'Exit command'),
-                 system_router_title: str | None = 'System points:',
-                 ignore_command_register: bool = True,
-                 dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
-                 repeat_command_groups: bool = True,
-                 override_system_messages: bool = False,
-                 autocompleter: AutoCompleter = AutoCompleter(),
-                 print_func: Callable[[str], None] = Console().print) -> None:
+    def __init__(
+        self,
+        prompt: str = "What do you want to do?\n",
+        initial_message: str = "\nArgenta\n",
+        farewell_message: str = "\nSee you\n",
+        exit_command: Command = Command("Q", "Exit command"),
+        system_router_title: str | None = "System points:",
+        ignore_command_register: bool = True,
+        dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
+        repeat_command_groups: bool = True,
+        override_system_messages: bool = False,
+        autocompleter: AutoCompleter = AutoCompleter(),
+        print_func: Callable[[str], None] = Console().print,
+    ) -> None:
         """
         Public. The essence of the application itself.
         Configures and manages all aspects of the behavior and presentation of the user interacting with the user
@@ -317,18 +379,19 @@ class App(BaseApp):
         :param print_func: system messages text output function
         :return: None
         """
-        super().__init__(prompt=prompt,
-                         initial_message=initial_message,
-                         farewell_message=farewell_message,
-                         exit_command=exit_command,
-                         system_router_title=system_router_title,
-                         ignore_command_register=ignore_command_register,
-                         dividing_line=dividing_line,
-                         repeat_command_groups=repeat_command_groups,
-                         override_system_messages=override_system_messages,
-                         autocompleter=autocompleter,
-                         print_func=print_func)
-
+        super().__init__(
+            prompt=prompt,
+            initial_message=initial_message,
+            farewell_message=farewell_message,
+            exit_command=exit_command,
+            system_router_title=system_router_title,
+            ignore_command_register=ignore_command_register,
+            dividing_line=dividing_line,
+            repeat_command_groups=repeat_command_groups,
+            override_system_messages=override_system_messages,
+            autocompleter=autocompleter,
+            print_func=print_func,
+        )
 
     def run_polling(self) -> None:
         """
@@ -343,7 +406,9 @@ class App(BaseApp):
             raw_command: str = Console().input(self._prompt)
 
             try:
-                input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
+                input_command: InputCommand = InputCommand.parse(
+                    raw_command=raw_command
+                )
             except BaseInputCommandException as error:
                 with redirect_stdout(io.StringIO()) as f:
                     self._error_handler(error, raw_command)
@@ -354,9 +419,13 @@ class App(BaseApp):
             if self._is_exit_command(input_command):
                 system_router.finds_appropriate_handler(input_command)
                 if self._ignore_command_register:
-                    self._autocompleter.exit_setup(self._all_registered_triggers_in_lower)
+                    self._autocompleter.exit_setup(
+                        self._all_registered_triggers_in_lower
+                    )
                 else:
-                    self._autocompleter.exit_setup(self._all_registered_triggers_in_default_case)
+                    self._autocompleter.exit_setup(
+                        self._all_registered_triggers_in_default_case
+                    )
                 return
 
             if self._is_unknown_command(input_command):
@@ -372,7 +441,6 @@ class App(BaseApp):
                 res: str = f.getvalue()
             self._print_framed_text(res)
 
-
     def include_router(self, router: Router) -> None:
         """
         Public. Registers the router in the application
@@ -381,7 +449,6 @@ class App(BaseApp):
         """
         router.set_command_register_ignore(self._ignore_command_register)
         self._registered_routers.add_registered_router(router)
-
 
     def include_routers(self, *routers: Router) -> None:
         """
@@ -392,7 +459,6 @@ class App(BaseApp):
         for router in routers:
             self.include_router(router)
 
-
     def add_message_on_startup(self, message: str) -> None:
         """
         Public. Adds a message that will be displayed when the application is launched
@@ -400,4 +466,3 @@ class App(BaseApp):
         :return: None
         """
         self._messages_on_startup.append(message)
-
