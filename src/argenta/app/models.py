@@ -21,8 +21,7 @@ from argenta.response import Response
 
 
 class BaseApp:
-    def __init__(self,
-                 prompt: str,
+    def __init__(self, prompt: str,
                  initial_message: str,
                  farewell_message: str,
                  exit_command: Command,
@@ -55,7 +54,7 @@ class BaseApp:
         self._all_registered_triggers_in_lower: list[str] = []
         self._all_registered_triggers_in_default_case: list[str] = []
 
-        self._invalid_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Incorrect flag syntax: {raw_command}')
+        self._incorrect_input_syntax_handler: Callable[[str], None] = lambda raw_command: print_func(f'Incorrect flag syntax: {raw_command}')
         self._repeated_input_flags_handler: Callable[[str], None] = lambda raw_command: print_func(f'Repeated input flags: {raw_command}')
         self._empty_input_command_handler: Callable[[], None] = lambda: print_func('Empty input command')
         self._unknown_command_handler: Callable[[InputCommand], None] = lambda command: print_func(f"Unknown command: {command.get_trigger()}")
@@ -71,13 +70,13 @@ class BaseApp:
         self._description_message_gen: Callable[[str, str], str] = _
 
 
-    def set_invalid_input_flags_handler(self, _: Callable[[str], None]) -> None:
+    def set_incorrect_input_syntax_handler(self, _: Callable[[str], None]) -> None:
         """
         Public. Sets the handler for incorrect flags when entering a command
         :param _: handler for incorrect flags when entering a command
         :return: None
         """
-        self._invalid_input_flags_handler = _
+        self._incorrect_input_syntax_handler = _
 
 
     def set_repeated_input_flags_handler(self, _: Callable[[str], None]) -> None:
@@ -122,8 +121,8 @@ class BaseApp:
         :return: None
         """
         for registered_router in self._registered_routers:
-            if registered_router.get_title():
-                self._print_func(registered_router.get_title())
+            if registered_router.title:
+                self._print_func(registered_router.title)
             for command_handler in registered_router.get_command_handlers():
                 self._print_func(self._description_message_gen(
                         command_handler.get_handled_command().get_trigger(),
@@ -196,7 +195,7 @@ class BaseApp:
         """
         match error:
             case UnprocessedInputFlagException():
-                self._invalid_input_flags_handler(raw_command)
+                self._incorrect_input_syntax_handler(raw_command)
             case RepeatedInputFlagsException():
                 self._repeated_input_flags_handler(raw_command)
             case EmptyInputCommandException():
@@ -208,7 +207,7 @@ class BaseApp:
         Private. Sets up system router
         :return: None
         """
-        system_router.set_title(self._system_router_title)
+        system_router.title = self._system_router_title
 
         @system_router.command(self._exit_command)
         def exit_command(response: Response) -> None:
@@ -244,7 +243,7 @@ class BaseApp:
         self._description_message_gen = lambda command, description: (f'[bold red]{escape("[" + command + "]")}[/bold red] '
                                                                       f'[blue dim]*=*=*[/blue dim] '
                                                                       f'[bold yellow italic]{escape(description)}')
-        self._invalid_input_flags_handler = lambda raw_command: self._print_func(f'[red bold]Incorrect flag syntax: {escape(raw_command)}')
+        self._incorrect_input_syntax_handler = lambda raw_command: self._print_func(f'[red bold]Incorrect flag syntax: {escape(raw_command)}')
         self._repeated_input_flags_handler = lambda raw_command: self._print_func(f'[red bold]Repeated input flags: {escape(raw_command)}')
         self._empty_input_command_handler = lambda: self._print_func('[red bold]Empty input command')
 

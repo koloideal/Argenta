@@ -23,7 +23,7 @@ class Router:
         :param title: the title of the router, displayed when displaying the available commands
         :return: None
         """
-        self._title = title
+        self.title = title
 
         self._command_handlers: CommandHandlers = CommandHandlers()
         self._ignore_command_register: bool = False
@@ -219,20 +219,3 @@ class Router:
         :return: registered command handlers as CommandHandlers
         """
         return self._command_handlers
-
-
-    def get_title(self) -> str | None:
-        """
-        Public. Gets title of the router
-        :return: the title of the router as str or None
-        """
-        return self._title
-
-
-    def set_title(self, title: str) -> None:
-        """
-        Public. Sets the title of the router
-        :param title: title that will be setted
-        :return: None
-        """
-        self._title = title

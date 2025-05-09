@@ -180,7 +180,7 @@ class TestSystemHandlerNormalWork(TestCase):
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.set_invalid_input_flags_handler(lambda command: print(f'Incorrect flag syntax: "{command}"'))
+        app.set_incorrect_input_syntax_handler(lambda command: print(f'Incorrect flag syntax: "{command}"'))
         orchestrator.start_polling(app)
 
         output = mock_stdout.getvalue()

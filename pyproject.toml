@@ -14,6 +14,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "psutil>=7.0.0",
     "pydoc-markdown>=4.8.2,<5",
 ]
 

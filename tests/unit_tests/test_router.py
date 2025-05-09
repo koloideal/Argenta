@@ -12,9 +12,6 @@ import re
 
 
 class TestRouter(unittest.TestCase):
-    def test_get_router_title(self):
-        self.assertEqual(Router(title='test title').get_title(), 'test title')
-
     def test_register_command_with_spaces_in_trigger(self):
         router = Router()
         with self.assertRaises(TriggerContainSpacesException):
