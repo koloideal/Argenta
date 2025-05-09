@@ -30,7 +30,7 @@ router = Router()
 
 @router.command(Command("hello"))
 def handler():
-  print("Hello, world!")
+    print("Hello, world!")
 ```
 
 ```python
