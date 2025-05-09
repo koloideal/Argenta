@@ -24,12 +24,13 @@ poetry add argenta
 # routers.py
 from argenta.router import Router
 from argenta.command import Command
+from argenta.response import Response
 
 
 router = Router()
 
 @router.command(Command("hello"))
-def handler():
+def handler(response: Response):
     print("Hello, world!")
 ```
 

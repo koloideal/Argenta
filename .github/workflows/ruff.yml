@@ -27,4 +27,4 @@ jobs:
         pip install ruff
 
     - name: Run linter
-      run: ruff check ./argenta
+      run: ruff check ./src
