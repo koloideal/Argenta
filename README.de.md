@@ -1,14 +1,12 @@
 # Argenta
 
-### Library for creating modular CLI applications
-
-#### RU - [README.ru.md](https://github.com/koloideal/Argenta/blob/kolo/README.ru.md) • DE - [README.de.md](https://github.com/koloideal/Argenta/blob/kolo/README.de.md)
+### Bibliothek zum Erstellen modularer CLI-Anwendungen
 
 ![preview](https://github.com/koloideal/Argenta/blob/kolo/imgs/mock_app_preview4.png?raw=True)  
 
 ---
 
-# Installing
+# Installation
 ```bash
 pip install argenta
 ```
@@ -19,9 +17,9 @@ poetry add argenta
 
 ---
 
-# Quick start
+# Schnellstart
 
-An example of a simple application
+Ein Beispiel für eine einfache Anwendung
 ```python
 # routers.py
 from argenta.router import Router
@@ -57,12 +55,12 @@ if __name__ == '__main__':
 
 ---
 
-# Features in development
+# Funktionen in der Entwicklung
 
-- Full support for autocompleter on Linux
-- Ability to configure stdout capture when handling input by the handler
+- Vollständige Unterstützung für Autocompleter unter Linux
+- Möglichkeit zur Konfiguration der Standardausgabeerfassung bei der Verarbeitung von Eingaben durch den Handler
 
-## Full [docs](https://argenta-docs.vercel.app) | MIT 2025 kolo | made by [kolo](https://t.me/kolo_id)
+## Vollständige [Dokumentation](https://argenta-docs.vercel.app) | MIT 2025 kolo | made by [kolo](https://t.me/kolo_id)
 
 
 
