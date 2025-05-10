@@ -192,14 +192,12 @@ class Router:
                 pass
             else:
                 file_path: str = getsourcefile(func)
-                source_line: int = getsourcelines(func)[1] + 1
+                source_line: int = getsourcelines(func)[1]
                 fprint = Console().print
-                fprint(
-                    f'\nFile "{file_path}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
+                fprint(f'\nFile "{file_path}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
                     f"of argument([green]{transferred_arg}[/green]) passed to the handler is [/i][bold blue]{Response}[/bold blue],"
-                    f" [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]\n",
-                    highlight=False,
-                )
+                    f" [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]",
+                    highlight=False)
 
     def set_command_register_ignore(self, _: bool) -> None:
         """

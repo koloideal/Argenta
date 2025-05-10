@@ -17,10 +17,13 @@ copy_flags = Flags(
     Flag('recursive', '--', False),  # Булевый флаг без значения
     Flag('force', '-', False)        # Короткий булевый флаг
 )
+@file_router.command(Command('case', aliases=['cp', 'ch']))
+def handler(response: Response):
+    print('test')
 
 # Регистрация команды копирования
 @file_router.command(Command(
-    trigger="copy",
+    trigger="ch",
     description="Копирование файлов",
     flags=copy_flags,
     aliases=["cp"]

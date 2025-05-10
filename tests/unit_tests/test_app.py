@@ -33,13 +33,13 @@ class MyTestCase(unittest.TestCase):
     def test_is_unknown_command1(self):
         app = App()
         app.set_unknown_command_handler(lambda command: None)
-        app._all_registered_triggers_in_lower = ['fr', 'tr', 'de']
+        app._all_registered_triggers_in_lower_case = ['fr', 'tr', 'de']
         self.assertEqual(app._is_unknown_command(InputCommand('fr')), False)
 
     def test_is_unknown_command2(self):
         app = App()
         app.set_unknown_command_handler(lambda command: None)
-        app._all_registered_triggers_in_lower = ['fr', 'tr', 'de']
+        app._all_registered_triggers_in_lower_case = ['fr', 'tr', 'de']
         self.assertEqual(app._is_unknown_command(InputCommand('cr')), True)
 
     def test_is_unknown_command3(self):

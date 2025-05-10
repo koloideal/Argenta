@@ -22,20 +22,18 @@ from argenta.response import Response
 
 
 class BaseApp:
-    def __init__(
-        self,
-        prompt: str,
-        initial_message: str,
-        farewell_message: str,
-        exit_command: Command,
-        system_router_title: str | None,
-        ignore_command_register: bool,
-        dividing_line: StaticDividingLine | DynamicDividingLine,
-        repeat_command_groups: bool,
-        override_system_messages: bool,
-        autocompleter: AutoCompleter,
-        print_func: Callable[[str], None],
-    ) -> None:
+    def __init__(self,
+                 prompt: str,
+                 initial_message: str,
+                 farewell_message: str,
+                 exit_command: Command,
+                 system_router_title: str | None,
+                 ignore_command_register: bool,
+                 dividing_line: StaticDividingLine | DynamicDividingLine,
+                 repeat_command_groups: bool,
+                 override_system_messages: bool,
+                 autocompleter: AutoCompleter,
+                 print_func: Callable[[str], None]) -> None:
         self._prompt = prompt
         self._print_func = print_func
         self._exit_command = exit_command
@@ -49,30 +47,18 @@ class BaseApp:
         self._farewell_message = farewell_message
         self._initial_message = initial_message
 
-        self._description_message_gen: Callable[[str, str], str] = (
-            lambda command, description: f"[{command}] *=*=* {description}"
-        )
+        self._description_message_gen: Callable[[str, str], str] = (lambda command, description: f"[{command}] *=*=* {description}")
         self._registered_routers: RegisteredRouters = RegisteredRouters()
         self._messages_on_startup: list[str] = []
 
-        self._all_registered_triggers_in_lower: list[str] = []
+        self._all_registered_triggers_in_lower_case: list[str] = []
         self._all_registered_triggers_in_default_case: list[str] = []
 
-        self._incorrect_input_syntax_handler: Callable[[str], None] = (
-            lambda raw_command: print_func(f"Incorrect flag syntax: {raw_command}")
-        )
-        self._repeated_input_flags_handler: Callable[[str], None] = (
-            lambda raw_command: print_func(f"Repeated input flags: {raw_command}")
-        )
-        self._empty_input_command_handler: Callable[[], None] = lambda: print_func(
-            "Empty input command"
-        )
-        self._unknown_command_handler: Callable[[InputCommand], None] = (
-            lambda command: print_func(f"Unknown command: {command.get_trigger()}")
-        )
-        self._exit_command_handler: Callable[[Response], None] = (
-            lambda response: print_func(self._farewell_message)
-        )
+        self._incorrect_input_syntax_handler: Callable[[str], None] = (lambda raw_command: print_func(f"Incorrect flag syntax: {raw_command}"))
+        self._repeated_input_flags_handler: Callable[[str], None] = (lambda raw_command: print_func(f"Repeated input flags: {raw_command}"))
+        self._empty_input_command_handler: Callable[[], None] = lambda: print_func("Empty input command")
+        self._unknown_command_handler: Callable[[InputCommand], None] = (lambda command: print_func(f"Unknown command: {command.get_trigger()}"))
+        self._exit_command_handler: Callable[[Response], None] = (lambda response: print_func(self._farewell_message))
 
     def set_description_message_pattern(self, _: Callable[[str, str], str]) -> None:
         """
@@ -208,7 +194,7 @@ class BaseApp:
         """
         input_command_trigger = command.get_trigger()
         if self._ignore_command_register:
-            if input_command_trigger.lower() in self._all_registered_triggers_in_lower:
+            if input_command_trigger.lower() in self._all_registered_triggers_in_lower_case:
                 return False
         else:
             if input_command_trigger in self._all_registered_triggers_in_default_case:
@@ -249,7 +235,7 @@ class BaseApp:
 
     def _most_similar_command(self, unknown_command: str) -> str | None:
         all_commands = (
-            self._all_registered_triggers_in_lower
+            self._all_registered_triggers_in_lower_case
             if self._ignore_command_register
             else self._all_registered_triggers_in_default_case
         )
@@ -318,21 +304,22 @@ class BaseApp:
         self._setup_system_router()
 
         for router_entity in self._registered_routers:
-            self._all_registered_triggers_in_default_case.extend(
-                router_entity.get_triggers()
-            )
-            self._all_registered_triggers_in_default_case.extend(
-                router_entity.get_aliases()
-            )
+            self._all_registered_triggers_in_default_case.extend(router_entity.get_triggers())
+            self._all_registered_triggers_in_default_case.extend(router_entity.get_aliases())
 
-            self._all_registered_triggers_in_lower.extend(
-                [x.lower() for x in router_entity.get_triggers()]
-            )
-            self._all_registered_triggers_in_lower.extend(
-                [x.lower() for x in router_entity.get_aliases()]
-            )
+            self._all_registered_triggers_in_lower_case.extend([x.lower() for x in router_entity.get_triggers()])
+            self._all_registered_triggers_in_lower_case.extend([x.lower() for x in router_entity.get_aliases()])
 
-        self._autocompleter.initial_setup(self._all_registered_triggers_in_lower)
+        self._autocompleter.initial_setup(self._all_registered_triggers_in_lower_case)
+
+        if self._ignore_command_register:
+            for cmd in set(self._all_registered_triggers_in_lower_case):
+                if self._all_registered_triggers_in_lower_case.count(cmd) != 1:
+                    Console().print(f"\n[b red]WARNING:[/b red] Overlapping trigger or alias: [b blue]{cmd}[/b blue]")
+        else:
+            for cmd in set(self._all_registered_triggers_in_default_case):
+                if self._all_registered_triggers_in_default_case.count(cmd) != 1:
+                    Console().print(f"\n[b red]WARNING:[/b red] Overlapping trigger or alias: [b blue]{cmd}[/b blue]")
 
         if not self._override_system_messages:
             self._setup_default_view()
@@ -349,20 +336,18 @@ class BaseApp:
 
 
 class App(BaseApp):
-    def __init__(
-        self,
-        prompt: str = "What do you want to do?\n",
-        initial_message: str = "\nArgenta\n",
-        farewell_message: str = "\nSee you\n",
-        exit_command: Command = Command("Q", "Exit command"),
-        system_router_title: str | None = "System points:",
-        ignore_command_register: bool = True,
-        dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
-        repeat_command_groups: bool = True,
-        override_system_messages: bool = False,
-        autocompleter: AutoCompleter = AutoCompleter(),
-        print_func: Callable[[str], None] = Console().print,
-    ) -> None:
+    def __init__(self,
+                 prompt: str = "What do you want to do?\n",
+                 initial_message: str = "Argenta\n",
+                 farewell_message: str = "\nSee you\n",
+                 exit_command: Command = Command("Q", "Exit command"),
+                 system_router_title: str | None = "System points:",
+                 ignore_command_register: bool = True,
+                 dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
+                 repeat_command_groups: bool = True,
+                 override_system_messages: bool = False,
+                 autocompleter: AutoCompleter = AutoCompleter(),
+                 print_func: Callable[[str], None] = Console().print) -> None:
         """
         Public. The essence of the application itself.
         Configures and manages all aspects of the behavior and presentation of the user interacting with the user
@@ -379,19 +364,17 @@ class App(BaseApp):
         :param print_func: system messages text output function
         :return: None
         """
-        super().__init__(
-            prompt=prompt,
-            initial_message=initial_message,
-            farewell_message=farewell_message,
-            exit_command=exit_command,
-            system_router_title=system_router_title,
-            ignore_command_register=ignore_command_register,
-            dividing_line=dividing_line,
-            repeat_command_groups=repeat_command_groups,
-            override_system_messages=override_system_messages,
-            autocompleter=autocompleter,
-            print_func=print_func,
-        )
+        super().__init__(prompt=prompt,
+                         initial_message=initial_message,
+                         farewell_message=farewell_message,
+                         exit_command=exit_command,
+                         system_router_title=system_router_title,
+                         ignore_command_register=ignore_command_register,
+                         dividing_line=dividing_line,
+                         repeat_command_groups=repeat_command_groups,
+                         override_system_messages=override_system_messages,
+                         autocompleter=autocompleter,
+                         print_func=print_func)
 
     def run_polling(self) -> None:
         """
@@ -420,7 +403,7 @@ class App(BaseApp):
                 system_router.finds_appropriate_handler(input_command)
                 if self._ignore_command_register:
                     self._autocompleter.exit_setup(
-                        self._all_registered_triggers_in_lower
+                        self._all_registered_triggers_in_lower_case
                     )
                 else:
                     self._autocompleter.exit_setup(
