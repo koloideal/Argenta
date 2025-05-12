@@ -2,7 +2,7 @@ from rich.console import Console
 
 from argenta.command import Command
 from argenta.command.flag.defaults import PredefinedFlags
-from argenta.command.flags import Flags
+from argenta.command.flag import Flags
 from argenta.response import Response
 from argenta.router import Router
 

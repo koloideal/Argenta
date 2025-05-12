@@ -6,7 +6,7 @@ from argenta.command import Command
 from argenta.command.models import InputCommand
 from argenta.response import Response, Status
 from argenta.router.command_handler.entity import CommandHandlers, CommandHandler
-from argenta.command.flags.models import (
+from argenta.command.flag.flags import (
     Flags,
     InputFlags,
     UndefinedInputFlags,

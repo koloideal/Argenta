@@ -1,6 +1,6 @@
 [project]
 name = "argenta"
-version = "1.0.4"
+version = "1.0.5"
 description = "Python library for building modular CLI applications"
 authors = [{ name = "kolo", email = "kolo.is.main@gmail.com" }]
 requires-python = ">=3.8"

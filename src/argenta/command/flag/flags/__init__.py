@@ -7,7 +7,7 @@ __all__ = [
 ]
 
 
-from argenta.command.flags.models import (
+from argenta.command.flag.flags.models import (
     Flags,
     InputFlags,
     UndefinedInputFlags,

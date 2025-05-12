@@ -201,9 +201,7 @@ class BaseApp:
                 return False
         return True
 
-    def _error_handler(
-        self, error: BaseInputCommandException, raw_command: str
-    ) -> None:
+    def _error_handler(self, error: BaseInputCommandException, raw_command: str) -> None:
         """
         Private. Handles parsing errors of the entered command
         :param error: error being handled
@@ -296,7 +294,7 @@ class BaseApp:
 
         self._unknown_command_handler = unknown_command_handler
 
-    def _pre_cycle_setup(self) -> None:
+    def pre_cycle_setup(self) -> None:
         """
         Private. Configures various aspects of the application before the start of the cycle
         :return: None
@@ -330,7 +328,6 @@ class BaseApp:
             self._print_func(message)
         if self._messages_on_startup:
             print("\n")
-
         if not self._repeat_command_groups_description:
             self._print_command_group_description()
 
@@ -381,7 +378,7 @@ class App(BaseApp):
         Private. Starts the user input processing cycle
         :return: None
         """
-        self._pre_cycle_setup()
+        self.pre_cycle_setup()
         while True:
             if self._repeat_command_groups_description:
                 self._print_command_group_description()

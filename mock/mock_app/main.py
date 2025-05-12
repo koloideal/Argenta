@@ -1,4 +1,4 @@
-from mock.mock_app.handlers.routers import work_router
+from mock.mock_app.routers import work_router
 
 from argenta.app import App
 from argenta.app.defaults import PredefinedMessages

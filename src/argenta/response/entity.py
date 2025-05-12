@@ -1,5 +1,5 @@
 from argenta.response.status import Status
-from argenta.command.flags import (
+from argenta.command.flag.flags import (
     ValidInputFlags,
     UndefinedInputFlags,
     InvalidValueInputFlags,

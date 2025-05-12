@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class PredefinedMessages(Enum):
+class PredefinedMessages(StrEnum):
     """
     Public. A dataclass with predetermined messages for quick use
     """
