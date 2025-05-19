@@ -1,5 +1,5 @@
 from argenta.command.flag import InputFlag, Flag
-from argenta.command.flags import Flags, InputFlags, UndefinedInputFlags, InvalidValueInputFlags, ValidInputFlags
+from argenta.command.flag.flags import Flags, InputFlags, UndefinedInputFlags, InvalidValueInputFlags, ValidInputFlags
 from argenta.router import Router
 from argenta.command import Command
 from argenta.router.exceptions import (TriggerContainSpacesException,

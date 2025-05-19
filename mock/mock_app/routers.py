@@ -7,7 +7,7 @@ from argenta.response import Response
 from argenta.router import Router
 
 
-work_router: Router = Router(title="Work points:")
+work_router: Router = Router(title="Work points:", disable_redirect_stdout=True)
 
 console = Console()
 
@@ -21,6 +21,8 @@ console = Console()
     )
 )
 def command_help(response: Response):
+    case = input('test')
+    print(case)
     print(response.status)
     print(response.undefined_flags.get_flags())
     print(response.valid_flags.get_flags())

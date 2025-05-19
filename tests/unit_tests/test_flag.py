@@ -1,5 +1,5 @@
 from argenta.command.flag import Flag, InputFlag
-from argenta.command.flags import InputFlags, Flags
+from argenta.command.flag.flags import InputFlags, Flags
 
 import unittest
 import re

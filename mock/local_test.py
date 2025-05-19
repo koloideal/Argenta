@@ -13,7 +13,7 @@ router = Router()
 for i in range(10000):
     trigger = f"cmd{i}"
 
-    @router.command(Command(trigger, aliases=[f'dfs{i}', f'fds{i}']))
+    @router.command(Command(trigger, aliases=[f'dfs{i}']))
     def handler(response: Response):
         print(response.status)
 
@@ -23,6 +23,8 @@ app = App(repeat_command_groups=False)
 app.include_router(router)
 
 print(get_time_of_pre_cycle_setup(app))
+
+
 
 
 

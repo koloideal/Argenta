@@ -1,5 +1,5 @@
 from argenta.command.flag import Flag, InputFlag
-from argenta.command.flags import Flags
+from argenta.command.flag.flags import Flags
 from argenta.command.models import InputCommand, Command
 from argenta.command.exceptions import (UnprocessedInputFlagException,
                                         RepeatedInputFlagsException,

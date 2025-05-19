@@ -302,22 +302,30 @@ class BaseApp:
         self._setup_system_router()
 
         for router_entity in self._registered_routers:
-            self._all_registered_triggers_in_default_case.extend(router_entity.get_triggers())
-            self._all_registered_triggers_in_default_case.extend(router_entity.get_aliases())
+            router_triggers = router_entity.get_triggers()
+            router_aliases = router_entity.get_aliases()
+            combined = router_triggers + router_aliases
 
-            self._all_registered_triggers_in_lower_case.extend([x.lower() for x in router_entity.get_triggers()])
-            self._all_registered_triggers_in_lower_case.extend([x.lower() for x in router_entity.get_aliases()])
+            self._all_registered_triggers_in_default_case.extend(combined)
+
+            self._all_registered_triggers_in_lower_case.extend(x.lower() for x in combined)
 
         self._autocompleter.initial_setup(self._all_registered_triggers_in_lower_case)
 
         if self._ignore_command_register:
-            for cmd in set(self._all_registered_triggers_in_lower_case):
-                if self._all_registered_triggers_in_lower_case.count(cmd) != 1:
-                    Console().print(f"\n[b red]WARNING:[/b red] Overlapping trigger or alias: [b blue]{cmd}[/b blue]")
+            seen = {}
+            for item in self._all_registered_triggers_in_lower_case:
+                if item in seen:
+                    Console().print(f"\n[b red]WARNING:[/b red] Overlapping trigger or alias: [b blue]{item}[/b blue]")
+                else:
+                    seen[item] = True
         else:
-            for cmd in set(self._all_registered_triggers_in_default_case):
-                if self._all_registered_triggers_in_default_case.count(cmd) != 1:
-                    Console().print(f"\n[b red]WARNING:[/b red] Overlapping trigger or alias: [b blue]{cmd}[/b blue]")
+            seen = {}
+            for item in self._all_registered_triggers_in_default_case:
+                if item in seen:
+                    Console().print(f"\n[b red]WARNING:[/b red] Overlapping trigger or alias: [b blue]{item}[/b blue]")
+                else:
+                    seen[item] = True
 
         if not self._override_system_messages:
             self._setup_default_view()
@@ -415,11 +423,14 @@ class App(BaseApp):
                 self._print_framed_text(res)
                 continue
 
-            with redirect_stdout(io.StringIO()) as f:
-                for registered_router in self._registered_routers:
+            for registered_router in self._registered_routers:
+                if registered_router.disable_redirect_stdout:
                     registered_router.finds_appropriate_handler(input_command)
-                res: str = f.getvalue()
-            self._print_framed_text(res)
+                else:
+                    with redirect_stdout(io.StringIO()) as f:
+                        registered_router.finds_appropriate_handler(input_command)
+                        res: str = f.getvalue()
+                    self._print_framed_text(res)
 
     def include_router(self, router: Router) -> None:
         """

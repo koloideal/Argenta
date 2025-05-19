@@ -22,13 +22,19 @@ from argenta.router.exceptions import (
 
 
 class Router:
-    def __init__(self, title: str | None = "Awesome title"):
+    def __init__(self, title: str | None = "Awesome title", disable_redirect_stdout: bool = False):
         """
         Public. Directly configures and manages handlers
         :param title: the title of the router, displayed when displaying the available commands
+        :param disable_redirect_stdout: Disables stdout forwarding, if the argument value is True,
+               the StaticDividingLine will be forced to be used as a line separator for this router,
+               disabled forwarding is needed when there is text output in conjunction with a text input request (for example, input()),
+               if the argument value is True, the output of the input() prompt is intercepted and not displayed,
+               which is ambiguous behavior and can lead to unexpected work
         :return: None
         """
         self.title = title
+        self.disable_redirect_stdout = disable_redirect_stdout
 
         self._command_handlers: CommandHandlers = CommandHandlers()
         self._ignore_command_register: bool = False

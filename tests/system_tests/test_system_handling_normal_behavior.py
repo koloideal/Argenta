@@ -10,7 +10,7 @@ from argenta.response import Response
 from argenta.router import Router
 from argenta.orchestrator import Orchestrator
 from argenta.command.flag import Flag
-from argenta.command.flags import Flags
+from argenta.command.flag.flags import Flags
 from argenta.command.flag.defaults import PredefinedFlags
 
 
