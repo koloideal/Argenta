@@ -4,7 +4,7 @@ from argenta.router import Router
 
 
 class RegisteredRouters:
-    def __init__(self, registered_routers: list[Router] = None) -> None:
+    def __init__(self, registered_routers: list[Router] | None = None) -> None:
         """
         Private. Combines registered routers
         :param registered_routers: list of the registered routers

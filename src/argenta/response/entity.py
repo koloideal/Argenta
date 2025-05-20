@@ -11,7 +11,7 @@ class Response:
 
     def __init__(
         self,
-        status: Status = None,
+        status: Status | None = None,
         valid_flags: ValidInputFlags = ValidInputFlags(),
         undefined_flags: UndefinedInputFlags = UndefinedInputFlags(),
         invalid_value_flags: InvalidValueInputFlags = InvalidValueInputFlags(),

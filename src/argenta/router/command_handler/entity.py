@@ -38,7 +38,7 @@ class CommandHandler:
 
 
 class CommandHandlers:
-    def __init__(self, command_handlers: list[CommandHandler] = None):
+    def __init__(self, command_handlers: list[CommandHandler] | None = None):
         """
         Private. The model that unites all CommandHandler of the routers
         :param command_handlers: list of CommandHandlers for register

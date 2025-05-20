@@ -58,7 +58,6 @@ if __name__ == '__main__':
 # Funktionen in der Entwicklung
 
 - Vollständige Unterstützung für Autocompleter unter Linux
-- Möglichkeit zur Konfiguration der Standardausgabeerfassung bei der Verarbeitung von Eingaben durch den Handler
 
 ## Vollständige [Dokumentation](https://argenta-docs.vercel.app) | MIT 2025 kolo | made by [kolo](https://t.me/kolo_id)
 

@@ -60,7 +60,6 @@ if __name__ == '__main__':
 # Features in development
 
 - Full support for autocompleter on Linux
-- Ability to configure stdout capture when handling input by the handler
 
 ## Full [docs](https://argenta-docs.vercel.app) | MIT 2025 kolo | made by [kolo](https://t.me/kolo_id)
 

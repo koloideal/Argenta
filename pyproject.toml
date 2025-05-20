@@ -1,6 +1,6 @@
 [project]
 name = "argenta"
-version = "1.0.5"
+version = "1.0.6"
 description = "Python library for building modular CLI applications"
 authors = [{ name = "kolo", email = "kolo.is.main@gmail.com" }]
 requires-python = ">=3.8"
@@ -25,9 +25,4 @@ exclude = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[dependency-groups]
-dev = [
-    "pandas>=2.0.3",
-]
 

@@ -5,10 +5,7 @@ from argenta.command.exceptions import (
     RepeatedInputFlagsException,
     EmptyInputCommandException,
 )
-from typing import Generic, TypeVar, cast, Literal
-
-
-InputCommandType = TypeVar("InputCommandType")
+from typing import cast, Literal
 
 
 class BaseCommand:
@@ -31,9 +28,9 @@ class Command(BaseCommand):
     def __init__(
         self,
         trigger: str,
-        description: str = None,
-        flags: Flag | Flags = None,
-        aliases: list[str] = None,
+        description: str | None = None,
+        flags: Flag | Flags | None = None,
+        aliases: list[str] | None = None,
     ):
         """
         Public. The command that can and should be registered in the Router
@@ -109,8 +106,8 @@ class Command(BaseCommand):
         return self._description
 
 
-class InputCommand(BaseCommand, Generic[InputCommandType]):
-    def __init__(self, trigger: str, input_flags: InputFlag | InputFlags = None):
+class InputCommand(BaseCommand):
+    def __init__(self, trigger: str, input_flags: InputFlag | InputFlags | None = None):
         """
         Private. The model of the input command, after parsing
         :param trigger:the trigger of the command
@@ -142,7 +139,7 @@ class InputCommand(BaseCommand, Generic[InputCommandType]):
         return self._input_flags
 
     @staticmethod
-    def parse(raw_command: str) -> InputCommandType:
+    def parse(raw_command: str) -> 'InputCommand':
         """
         Private. Parse the raw input command
         :param raw_command: raw input command

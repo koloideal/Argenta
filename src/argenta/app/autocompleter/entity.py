@@ -5,7 +5,7 @@ from typing import Never
 
 class AutoCompleter:
     def __init__(
-        self, history_filename: str = False, autocomplete_button: str = "tab"
+        self, history_filename: str | None = None, autocomplete_button: str = "tab"
     ) -> None:
         """
         Public. Configures and implements auto-completion of input command

@@ -45,13 +45,15 @@ class Router:
         :param command: Registered command
         :return: decorated handler as Callable
         """
-        self._validate_command(command)
         if isinstance(command, str):
-            command = Command(command)
+            redefined_command = Command(command)
+        else:
+            redefined_command = command
+        self._validate_command(redefined_command)
 
         def command_decorator(func):
             Router._validate_func_args(func)
-            self._command_handlers.add_handler(CommandHandler(func, command))
+            self._command_handlers.add_handler(CommandHandler(func, redefined_command))
 
             def wrapper(*args, **kwargs):
                 return func(*args, **kwargs)
@@ -123,13 +125,12 @@ class Router:
             flag_status: Literal["Undefined", "Valid", "Invalid"] = (
                 handled_command.validate_input_flag(flag)
             )
-            match flag_status:
-                case "Valid":
-                    valid_input_flags.add_flag(flag)
-                case "Undefined":
-                    undefined_input_flags.add_flag(flag)
-                case "Invalid":
-                    invalid_value_input_flags.add_flag(flag)
+            if flag_status == "Valid":
+                valid_input_flags.add_flag(flag)
+            elif flag_status == "Undefined":
+                undefined_input_flags.add_flag(flag)
+            elif flag_status == "Invalid":
+                invalid_value_input_flags.add_flag(flag)
 
         if (
             not invalid_value_input_flags.get_flags()
@@ -163,19 +164,14 @@ class Router:
         :param command: validated command
         :return: None if command is valid else raise exception
         """
-        match type(command).__name__:
-            case "Command":
-                command_name: str = command.get_trigger()
-                if command_name.find(" ") != -1:
-                    raise TriggerContainSpacesException()
-                flags: Flags = command.get_registered_flags()
-                if flags:
-                    flags_name: list = [x.get_string_entity().lower() for x in flags]
-                    if len(set(flags_name)) < len(flags_name):
-                        raise RepeatedFlagNameException()
-            case "str":
-                if command.find(" ") != -1:
-                    raise TriggerContainSpacesException()
+        command_name: str = command.get_trigger()
+        if command_name.find(" ") != -1:
+            raise TriggerContainSpacesException()
+        flags: Flags = command.get_registered_flags()
+        if flags:
+            flags_name: list = [x.get_string_entity().lower() for x in flags]
+            if len(set(flags_name)) < len(flags_name):
+                raise RepeatedFlagNameException()
 
     @staticmethod
     def _validate_func_args(func: Callable) -> None:
@@ -197,7 +193,7 @@ class Router:
             if arg_annotation is Response:
                 pass
             else:
-                file_path: str = getsourcefile(func)
+                file_path: str | None = getsourcefile(func)
                 source_line: int = getsourcelines(func)[1]
                 fprint = Console().print
                 fprint(f'\nFile "{file_path}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '

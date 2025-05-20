@@ -208,13 +208,12 @@ class BaseApp:
         :param raw_command: the raw input command
         :return: None
         """
-        match error:
-            case UnprocessedInputFlagException():
-                self._incorrect_input_syntax_handler(raw_command)
-            case RepeatedInputFlagsException():
-                self._repeated_input_flags_handler(raw_command)
-            case EmptyInputCommandException():
-                self._empty_input_command_handler()
+        if isinstance(error, UnprocessedInputFlagException):
+            self._incorrect_input_syntax_handler(raw_command)
+        elif isinstance(error, RepeatedInputFlagsException):
+            self._repeated_input_flags_handler(raw_command)
+        elif isinstance(error, EmptyInputCommandException):
+            self._empty_input_command_handler()
 
     def _setup_system_router(self) -> None:
         """
@@ -258,11 +257,11 @@ class BaseApp:
         """
         self._prompt = "[italic dim bold]What do you want to do?\n"
         self._initial_message = (
-            f"\n[bold red]{text2art(self._initial_message, font='tarty1')}\n"
+            "\n"+f"[bold red]{text2art(self._initial_message, font='tarty1')}"+"\n"
         )
         self._farewell_message = (
-            f"[bold red]\n{text2art(f'\n{self._farewell_message}\n', font='chanky')}[/bold red]\n"
-            f"[red i]github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]\n"
+            "[bold red]\n\n"+text2art(self._farewell_message, font='chanky')+"\n[/bold red]\n"
+            "[red i]github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]\n"
         )
         self._description_message_gen = lambda command, description: (
             f"[bold red]{escape('[' + command + ']')}[/bold red] "
@@ -425,12 +424,20 @@ class App(BaseApp):
 
             for registered_router in self._registered_routers:
                 if registered_router.disable_redirect_stdout:
-                    registered_router.finds_appropriate_handler(input_command)
+                    if isinstance(self._dividing_line, StaticDividingLine):
+                        self._print_func(self._dividing_line.get_full_static_line(self._override_system_messages))
+                        registered_router.finds_appropriate_handler(input_command)
+                        self._print_func(self._dividing_line.get_full_static_line(self._override_system_messages))
+                    else:
+                        self._print_func(StaticDividingLine(self._dividing_line.get_unit_part()).get_full_static_line(self._override_system_messages))
+                        registered_router.finds_appropriate_handler(input_command)
+                        self._print_func(StaticDividingLine(self._dividing_line.get_unit_part()).get_full_static_line(self._override_system_messages))
                 else:
                     with redirect_stdout(io.StringIO()) as f:
                         registered_router.finds_appropriate_handler(input_command)
                         res: str = f.getvalue()
-                    self._print_framed_text(res)
+                    if res:
+                        self._print_framed_text(res)
 
     def include_router(self, router: Router) -> None:
         """
