@@ -16,11 +16,3 @@ def get_time_of_pre_cycle_setup(app: App) -> float:
         app.pre_cycle_setup()
     end = time()
     return end - start
-
-
-
-
-
-
-
-

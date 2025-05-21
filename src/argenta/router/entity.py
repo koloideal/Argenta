@@ -22,7 +22,9 @@ from argenta.router.exceptions import (
 
 
 class Router:
-    def __init__(self, title: str | None = "Awesome title", disable_redirect_stdout: bool = False):
+    def __init__(
+        self, title: str | None = "Awesome title", disable_redirect_stdout: bool = False
+    ):
         """
         Public. Directly configures and manages handlers
         :param title: the title of the router, displayed when displaying the available commands
@@ -196,10 +198,12 @@ class Router:
                 file_path: str | None = getsourcefile(func)
                 source_line: int = getsourcelines(func)[1]
                 fprint = Console().print
-                fprint(f'\nFile "{file_path}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
+                fprint(
+                    f'\nFile "{file_path}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
                     f"of argument([green]{transferred_arg}[/green]) passed to the handler is [/i][bold blue]{Response}[/bold blue],"
                     f" [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]",
-                    highlight=False)
+                    highlight=False,
+                )
 
     def set_command_register_ignore(self, _: bool) -> None:
         """

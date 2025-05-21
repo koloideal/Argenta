@@ -10,22 +10,13 @@ from argenta.orchestrator import Orchestrator
 
 router = Router()
 
-@router.command(Command('case are'))
+
+@router.command(Command("case are"))
 def handler(response: Response):
     print(response.status)
-
 
 
 app = App(repeat_command_groups=False)
 app.include_router(router)
 
 app.run_polling()
-
-
-
-
-
-
-
-
-

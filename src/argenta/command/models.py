@@ -139,7 +139,7 @@ class InputCommand(BaseCommand):
         return self._input_flags
 
     @staticmethod
-    def parse(raw_command: str) -> 'InputCommand':
+    def parse(raw_command: str) -> "InputCommand":
         """
         Private. Parse the raw input command
         :param raw_command: raw input command

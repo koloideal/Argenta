@@ -87,7 +87,10 @@ class Flag(BaseFlag):
 
 class InputFlag(BaseFlag):
     def __init__(
-        self, name: str, prefix: Literal["-", "--", "---"] = "--", value: str | None = None
+        self,
+        name: str,
+        prefix: Literal["-", "--", "---"] = "--",
+        value: str | None = None,
     ):
         """
         Public. The entity of the flag of the entered command
