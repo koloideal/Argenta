@@ -43,7 +43,7 @@ class Flag(BaseFlag):
         self,
         name: str,
         prefix: Literal["-", "--", "---"] = "--",
-        possible_values: list[str] | Pattern[str] | False = True,
+        possible_values: list[str] | Pattern[str] | bool = True,
     ) -> None:
         """
         Public. The entity of the flag being registered for subsequent processing

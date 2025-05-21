@@ -158,7 +158,7 @@ class Router:
         )
 
     @staticmethod
-    def _validate_command(command: Command | str) -> None:
+    def _validate_command(command: Command) -> None:
         """
         Private. Validates the command registered in handler
         :param command: validated command
