@@ -50,7 +50,7 @@ class BaseApp:
         self._initial_message = initial_message
 
         self._description_message_gen: Callable[[str, str], str] = (
-            lambda command, description: f"[{command}] *=*=* {description}"
+            lambda command, description: f"{command} *=*=* {description}"
         )
         self._registered_routers: RegisteredRouters = RegisteredRouters()
         self._messages_on_startup: list[str] = []
@@ -274,7 +274,7 @@ class BaseApp:
         Private. Sets up default app view
         :return: None
         """
-        self._prompt = "[italic dim bold]What do you want to do?\n"
+        self._prompt = f"[italic dim bold]{self._prompt}"
         self._initial_message = (
             "\n" + f"[bold red]{text2art(self._initial_message, font='tarty1')}" + "\n"
         )
@@ -456,6 +456,7 @@ class App(BaseApp):
             for registered_router in self._registered_routers:
                 if registered_router.disable_redirect_stdout:
                     if isinstance(self._dividing_line, StaticDividingLine):
+                        print('k')
                         self._print_func(
                             self._dividing_line.get_full_static_line(
                                 self._override_system_messages
@@ -468,6 +469,7 @@ class App(BaseApp):
                             )
                         )
                     else:
+                        print('j')
                         self._print_func(
                             StaticDividingLine(
                                 self._dividing_line.get_unit_part()
@@ -480,10 +482,12 @@ class App(BaseApp):
                             ).get_full_static_line(self._override_system_messages)
                         )
                 else:
+                    print('m')
                     with redirect_stdout(io.StringIO()) as f:
                         registered_router.finds_appropriate_handler(input_command)
                         res: str = f.getvalue()
                     if res:
+                        print('w')
                         self._print_framed_text(res)
 
     def include_router(self, router: Router) -> None:

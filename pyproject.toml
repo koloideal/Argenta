@@ -26,3 +26,8 @@ exclude = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[dependency-groups]
+dev = [
+    "psutil>=7.0.0",
+]
+
