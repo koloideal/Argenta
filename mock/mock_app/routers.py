@@ -2,7 +2,7 @@ from rich.console import Console
 
 from argenta.command import Command
 from argenta.command.flag.defaults import PredefinedFlags
-from argenta.command.flag import Flags
+from argenta.command.flag import Flags, Flag, PossibleValues
 from argenta.response import Response
 from argenta.router import Router
 
@@ -10,6 +10,8 @@ from argenta.router import Router
 work_router: Router = Router(title="Work points:", disable_redirect_stdout=True)
 
 console = Console()
+
+flag = Flag('csdv', possible_values=PossibleValues.DISABLE)
 
 
 @work_router.command(

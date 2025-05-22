@@ -1,4 +1,14 @@
+from enum import Enum
 from typing import Literal, Pattern
+
+
+
+class PossibleValues(Enum):
+    DISABLE: Literal[False] = False
+    ALL: Literal[True] = True
+
+    def __eq__(self, other: bool) -> bool:
+        return self.value == other
 
 
 class BaseFlag:
@@ -43,7 +53,7 @@ class Flag(BaseFlag):
         self,
         name: str,
         prefix: Literal["-", "--", "---"] = "--",
-        possible_values: list[str] | Pattern[str] | bool = True,
+        possible_values: list[str] | Pattern[str] | PossibleValues = PossibleValues.ALL,
     ) -> None:
         """
         Public. The entity of the flag being registered for subsequent processing
@@ -61,7 +71,7 @@ class Flag(BaseFlag):
         :param input_flag_value: The input flag value to validate
         :return: whether the entered flag is valid as bool
         """
-        if self.possible_values is False:
+        if self.possible_values == PossibleValues.DISABLE:
             if input_flag_value is None:
                 return True
             else:

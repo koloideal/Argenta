@@ -4,11 +4,11 @@ __all__ = [
     "UndefinedInputFlags",
     "ValidInputFlags",
     "InvalidValueInputFlags",
-    "Flags",
+    "Flags", "PossibleValues"
 ]
 
 
-from argenta.command.flag.models import Flag, InputFlag
+from argenta.command.flag.models import Flag, InputFlag, PossibleValues
 from argenta.command.flag.flags.models import (
     UndefinedInputFlags,
     ValidInputFlags,

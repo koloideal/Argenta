@@ -91,6 +91,7 @@ class Command(BaseCommand):
                         is_valid = registered_flag.validate_input_flag_value(
                             flag.get_value()
                         )
+
                         if is_valid:
                             return "Valid"
                         else:
