@@ -1,6 +1,7 @@
 from rich.console import Console
 
 from argenta.app import App
+from argenta.app.autocompleter import AutoCompleter
 from argenta.router import Router
 from argenta.command import Command
 from argenta.response import Response
@@ -54,7 +55,7 @@ network_router = Router("Сетевые операции", disable_redirect_stdo
 def ping_host(response: Response):
     host = input("Введите имя хоста: ")
     print(f"Пингую {host}...")
-    subprocess.run(["ping", "-c", "4", host])
+    subprocess.run(["ping", host])
 
 @network_router.command(Command("ip", "Показать IP-адреса"))
 def show_ip(response: Response):
@@ -78,12 +79,13 @@ def delete_user(response: Response):
 # Создаем приложение и регистрируем маршрутизаторы
 app = App(
     prompt="MyApp> ",
-    initial_message="Сложное тестовое приложение Argenta!",
-    farewell_message="До свидания!",
-    dividing_line=StaticDividingLine("*"),
+    initial_message="Caser",
+    farewell_message="Pokeda",
+    dividing_line=DynamicDividingLine("*"),
     repeat_command_groups=False,
     ignore_command_register=True,
-    override_system_messages=True,
+    override_system_messages=False,
+    autocompleter=AutoCompleter('.history')
 )
 
 app.include_routers(file_router, system_router, network_router, user_router)

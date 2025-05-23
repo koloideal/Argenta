@@ -93,9 +93,7 @@ class Router:
         response: Response = Response()
         if handle_command.get_registered_flags().get_flags():
             if input_command_flags.get_flags():
-                response: Response = self._structuring_input_flags(
-                    handle_command, input_command_flags
-                )
+                response: Response = self._structuring_input_flags( handle_command, input_command_flags )
                 command_handler.handling(response)
             else:
                 response.status = Status.ALL_FLAGS_VALID
