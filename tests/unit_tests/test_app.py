@@ -3,6 +3,8 @@ from argenta.app import App
 
 import unittest
 
+from argenta.router import Router
+
 
 class MyTestCase(unittest.TestCase):
     def test_is_exit_command1(self):
@@ -33,25 +35,25 @@ class MyTestCase(unittest.TestCase):
     def test_is_unknown_command1(self):
         app = App()
         app.set_unknown_command_handler(lambda command: None)
-        app._all_registered_triggers_in_lower_case = ['fr', 'tr', 'de']
+        app._current_matching_triggers_with_routers = {'fr': Router(), 'tr': Router(), 'de': Router()}
         self.assertEqual(app._is_unknown_command(InputCommand('fr')), False)
 
     def test_is_unknown_command2(self):
         app = App()
         app.set_unknown_command_handler(lambda command: None)
-        app._all_registered_triggers_in_lower_case = ['fr', 'tr', 'de']
+        app._current_matching_triggers_with_routers = {'fr': Router(), 'tr': Router(), 'de': Router()}
         self.assertEqual(app._is_unknown_command(InputCommand('cr')), True)
 
     def test_is_unknown_command3(self):
         app = App(ignore_command_register=False)
         app.set_unknown_command_handler(lambda command: None)
-        app._all_registered_triggers_in_default_case = ['Pr', 'tW', 'deQW']
+        app._current_matching_triggers_with_routers = {'Pr': Router(), 'tW': Router(), 'deQW': Router()}
         self.assertEqual(app._is_unknown_command(InputCommand('pr')), True)
 
     def test_is_unknown_command4(self):
         app = App(ignore_command_register=False)
         app.set_unknown_command_handler(lambda command: None)
-        app._all_registered_triggers_in_default_case = ['Pr', 'tW', 'deQW']
+        app._current_matching_triggers_with_routers = {'Pr': Router(), 'tW': Router(), 'deQW': Router()}
         self.assertEqual(app._is_unknown_command(InputCommand('tW')), False)
 
 

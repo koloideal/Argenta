@@ -415,7 +415,7 @@ class App(BaseApp):
                 self._print_framed_text(res)
                 continue
 
-            processing_router = self._current_matching_triggers_with_routers[input_command.get_trigger()]
+            processing_router = self._current_matching_triggers_with_routers[input_command.get_trigger().lower()]
 
             if processing_router.disable_redirect_stdout:
                 if isinstance(self._dividing_line, StaticDividingLine):

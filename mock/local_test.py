@@ -1,4 +1,18 @@
-from metrics_tests.get_time_of_pre_cycle_setup import TimeOfPreCycleSetup
+from argenta.app import App
+from argenta.command import Command
+from argenta.orchestrator import Orchestrator
+from argenta.router import Router
 
 
-print(TimeOfPreCycleSetup.one_hundred_thousands_commands_with_two_aliases())
+router = Router()
+orchestrator = Orchestrator()
+
+@router.command(Command('test'))
+def test(response):
+    print('test command')
+
+app = App(ignore_command_register=True,
+          override_system_messages=True,
+          print_func=print)
+app.include_router(router)
+orchestrator.start_polling(app)
