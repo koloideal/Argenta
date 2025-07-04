@@ -1,5 +1,6 @@
 *venv
 .idea
+.vscode
 dist
 uv.lock
 *__pycache__/
