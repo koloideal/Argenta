@@ -4,6 +4,12 @@
 
 #### RU - [README.ru.md](https://github.com/koloideal/Argenta/blob/kolo/README.ru.md) • DE - [README.de.md](https://github.com/koloideal/Argenta/blob/kolo/README.de.md)
 
+---
+
+Argenta allows you to encapsulate CLI functionality in isolated, abstracted environments. Eg: you are creating a utility similar to the Metasploit Framework, where the user first logs into a specific scope (for example, selects a module to scan), and then gets access to a set of commands specific only to that context. Argenta provides a simple and concise way to build such an architecture.
+
+---
+
 ![preview](https://github.com/koloideal/Argenta/blob/kolo/imgs/mock_app_preview4.png?raw=True)  
 
 ---
