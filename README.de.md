@@ -2,6 +2,10 @@
 
 ### Bibliothek zum Erstellen modularer CLI-Anwendungen
 
+Mit Argenta können Sie die CLI-Funktionalität in isolierte, abstrahierte Umgebungen einkapseln. Zum Beispiel: Sie erstellen ein Dienstprogramm ähnlich dem Metasploit Framework, bei dem der Benutzer zuerst in einen bestimmten Scoop eintritt (z. B. ein Modul zum Scannen auswählt) und dann auf eine Reihe von Befehlen zugreift, die nur für diesen Kontext spezifisch sind. Argenta bietet eine einfache und prägnante Möglichkeit, eine solche Architektur zu konstruieren.
+
+---
+
 ![preview](https://github.com/koloideal/Argenta/blob/kolo/imgs/mock_app_preview4.png?raw=True)  
 
 ---
