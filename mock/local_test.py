@@ -1,18 +1,16 @@
-from argenta.app import App
-from argenta.command import Command
-from argenta.orchestrator import Orchestrator
-from argenta.router import Router
+from typing import Protocol, Any, Callable
 
 
-router = Router()
-orchestrator = Orchestrator()
+class Printer(Protocol):
+    def __call__(self, text: str, *args: Any, **kwargs: Any) -> None:
+        raise NotImplementedError()
 
-@router.command(Command('test'))
-def test(response):
-    print('test command')
 
-app = App(ignore_command_register=True,
-          override_system_messages=True,
-          print_func=print)
-app.include_router(router)
-orchestrator.start_polling(app)
+class WhoNeedsPrinter:
+    def __init__(self, print_func: Printer) -> None:
+        self.print_func = print_func
+
+def my_printer(text: str, **kwargs) -> None:
+    pass
+
+WhoNeedsPrinter(my_printer)

@@ -1,5 +1,6 @@
 from argenta.command.flag import InputFlag, Flag
 from argenta.command.flag.flags import Flags, InputFlags, UndefinedInputFlags, InvalidValueInputFlags, ValidInputFlags
+from argenta.command.flag.models import PossibleValues
 from argenta.router import Router
 from argenta.command import Command
 from argenta.router.exceptions import (TriggerContainSpacesException,
@@ -42,7 +43,7 @@ class TestRouter(unittest.TestCase):
 
     def test_structuring_input_flags4(self):
         router = Router()
-        command = Command('cmd', flags=Flag('ssh', possible_values=False))
+        command = Command('cmd', flags=Flag('ssh', possible_values=PossibleValues.NEITHER))
         input_flags = InputFlags(InputFlag('ssh', value='some3'))
         self.assertEqual(router._structuring_input_flags(command, input_flags).invalid_value_flags, InvalidValueInputFlags(InputFlag('ssh', value='some3')))
 
@@ -74,7 +75,7 @@ class TestRouter(unittest.TestCase):
         self.assertEqual(Router()._structuring_input_flags(command, input_flags).valid_flags, ValidInputFlags(InputFlag('ssh', value='more5')))
 
     def test_structuring_input_flags10(self):
-        command = Command('cmd', flags=Flag('ssh', possible_values=False))
+        command = Command('cmd', flags=Flag('ssh', possible_values=PossibleValues.NEITHER))
         input_flags = InputFlags(InputFlag('ssh'))
         self.assertEqual(Router()._structuring_input_flags(command, input_flags).valid_flags, ValidInputFlags(InputFlag('ssh')))
 

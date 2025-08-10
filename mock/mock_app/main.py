@@ -1,12 +1,9 @@
 from mock.mock_app.routers import work_router
 
-from argenta.app import App
-from argenta.app.defaults import PredefinedMessages
-from argenta.app.dividing_line import DynamicDividingLine
-from argenta.app.autocompleter import AutoCompleter
-from argenta.orchestrator import Orchestrator
-from argenta.orchestrator.argparser import ArgParser
-from argenta.orchestrator.argparser.arguments import BooleanArgument
+from argenta import App, Orchestrator
+from argenta.app import PredefinedMessages, DynamicDividingLine, AutoCompleter
+from argenta.orchestrator import ArgParser
+from argenta.orchestrator.argparser import BooleanArgument
 
 
 arg_parser = ArgParser(processed_args=[BooleanArgument("repeat")])

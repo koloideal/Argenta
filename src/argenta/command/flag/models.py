@@ -1,18 +1,17 @@
+from abc import abstractmethod
 from enum import Enum
-from typing import Literal, Pattern
+from typing import Literal, Optional, Pattern
 
 
 
 class PossibleValues(Enum):
-    DISABLE: Literal[False] = False
-    ALL: Literal[True] = True
-
-    def __eq__(self, other: bool) -> bool:
-        return self.value == other
+    NEITHER = 'NEITHER'
+    ALL = 'ALL'
 
 
 class BaseFlag:
-    def __init__(self, name: str, prefix: Literal["-", "--", "---"] = "--") -> None:
+    def __init__(self, name: str, *,
+                 prefix: Literal["-", "--", "---"] = "--") -> None:
         """
         Private. Base class for flags
         :param name: the name of the flag
@@ -44,14 +43,15 @@ class BaseFlag:
         """
         return self._prefix
 
+    @abstractmethod
     def __eq__(self, other) -> bool:
-        return self.get_string_entity() == other.get_string_entity()
+        raise NotImplementedError
 
 
 class Flag(BaseFlag):
     def __init__(
         self,
-        name: str,
+        name: str, *, 
         prefix: Literal["-", "--", "---"] = "--",
         possible_values: list[str] | Pattern[str] | PossibleValues = PossibleValues.ALL,
     ) -> None:
@@ -62,7 +62,7 @@ class Flag(BaseFlag):
         :param possible_values: The possible values of the flag, if False then the flag cannot have a value
         :return: None
         """
-        super().__init__(name, prefix)
+        super().__init__(name, prefix=prefix)
         self.possible_values = possible_values
 
     def validate_input_flag_value(self, input_flag_value: str | None):
@@ -71,11 +71,12 @@ class Flag(BaseFlag):
         :param input_flag_value: The input flag value to validate
         :return: whether the entered flag is valid as bool
         """
-        if self.possible_values == PossibleValues.DISABLE:
+        if self.possible_values == PossibleValues.NEITHER:
             if input_flag_value is None:
                 return True
             else:
                 return False
+            
         elif isinstance(self.possible_values, Pattern):
             if isinstance(input_flag_value, str):
                 is_valid = bool(self.possible_values.match(input_flag_value))
@@ -93,14 +94,17 @@ class Flag(BaseFlag):
                 return False
         else:
             return True
+        
+    def __eq__(self, other) -> bool:
+        return self.get_string_entity() == other.get_string_entity()
 
 
 class InputFlag(BaseFlag):
     def __init__(
         self,
-        name: str,
+        name: str, *,
         prefix: Literal["-", "--", "---"] = "--",
-        value: str | None = None,
+        value: Optional[str] = None,
     ):
         """
         Public. The entity of the flag of the entered command
@@ -109,10 +113,10 @@ class InputFlag(BaseFlag):
         :param value: the value of the input flag
         :return: None
         """
-        super().__init__(name, prefix)
+        super().__init__(name, prefix=prefix)
         self._flag_value = value
 
-    def get_value(self) -> str | None:
+    def get_value(self) -> Optional[str]:
         """
         Public. Returns the value of the flag
         :return: the value of the flag as str

@@ -203,7 +203,7 @@ class Router:
                     highlight=False,
                 )
 
-    def set_command_register_ignore(self, _: bool) -> None:
+    def set_command_register_ignore(self, _: bool, /) -> None:
         """
         Private. Sets the router behavior on the input commands register
         :param _: is command register ignore

@@ -22,7 +22,7 @@ class BaseDividingLine(ABC):
 
 
 class StaticDividingLine(BaseDividingLine):
-    def __init__(self, unit_part: str = "-", length: int = 25) -> None:
+    def __init__(self, unit_part: str = "-", *, length: int = 25) -> None:
         """
         Public. The static dividing line
         :param unit_part: the single part of the dividing line
@@ -32,7 +32,7 @@ class StaticDividingLine(BaseDividingLine):
         super().__init__(unit_part)
         self.length = length
 
-    def get_full_static_line(self, is_override: bool) -> str:
+    def get_full_static_line(self, *, is_override: bool) -> str:
         """
         Private. Returns the full line of the dividing line
         :param is_override: has the default text layout been redefined
@@ -53,7 +53,7 @@ class DynamicDividingLine(BaseDividingLine):
         """
         super().__init__(unit_part)
 
-    def get_full_dynamic_line(self, length: int, is_override: bool) -> str:
+    def get_full_dynamic_line(self, *, length: int, is_override: bool) -> str:
         """
         Private. Returns the full line of the dividing line
         :param length: the length of the dividing line

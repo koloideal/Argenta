@@ -1,11 +1,11 @@
 import os
 import readline
-from typing import Never
+from typing import Never, Optional
 
 
 class AutoCompleter:
     def __init__(
-        self, history_filename: str | None = None, autocomplete_button: str = "tab"
+        self, history_filename: Optional[str] = None, autocomplete_button: str = "tab"
     ) -> None:
         """
         Public. Configures and implements auto-completion of input command
@@ -16,7 +16,7 @@ class AutoCompleter:
         self.history_filename = history_filename
         self.autocomplete_button = autocomplete_button
 
-    def _complete(self, text, state) -> str | None:
+    def _complete(self, text: str, state: int) -> Optional[str]:
         """
         Private. Auto-completion function
         :param text: part of the command being entered
@@ -38,8 +38,8 @@ class AutoCompleter:
                     i += 1
                 common_prefix = common_prefix[:i]
             if state == 0:
-                readline.insert_text(common_prefix[len(text) :])
-                readline.redisplay()
+                readline.insert_text(common_prefix[len(text) :]) # type: ignore
+                readline.redisplay() # type: ignore
             return None
         elif len(matches) == 1:
             return matches[0] if state == 0 else None
@@ -54,14 +54,14 @@ class AutoCompleter:
         """
         if self.history_filename:
             if os.path.exists(self.history_filename):
-                readline.read_history_file(self.history_filename)
+                readline.read_history_file(self.history_filename) # type: ignore
             else:
                 for line in all_commands:
-                    readline.add_history(line)
+                    readline.add_history(line) # type: ignore
 
-        readline.set_completer(self._complete)
-        readline.set_completer_delims(readline.get_completer_delims().replace(" ", ""))
-        readline.parse_and_bind(f"{self.autocomplete_button}: complete")
+        readline.set_completer(self._complete) # type: ignore
+        readline.set_completer_delims(readline.get_completer_delims().replace(" ", "")) # type: ignore
+        readline.parse_and_bind(f"{self.autocomplete_button}: complete") # type: ignore
 
     def exit_setup(self, all_commands: list[str]) -> None:
         """
@@ -69,7 +69,7 @@ class AutoCompleter:
         :return: None
         """
         if self.history_filename:
-            readline.write_history_file(self.history_filename)
+            readline.write_history_file(self.history_filename) # type: ignore
             with open(self.history_filename, "r") as history_file:
                 raw_history = history_file.read()
             pretty_history: list[str] = []
@@ -86,6 +86,6 @@ class AutoCompleter:
         :return: all commands entered by the user as list[str] | list[Never]
         """
         return [
-            readline.get_history_item(i)
-            for i in range(1, readline.get_current_history_length() + 1)
+            readline.get_history_item(i) # type: ignore
+            for i in range(1, readline.get_current_history_length() + 1) # type: ignore
         ]

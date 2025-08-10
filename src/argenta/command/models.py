@@ -5,7 +5,14 @@ from argenta.command.exceptions import (
     RepeatedInputFlagsException,
     EmptyInputCommandException,
 )
-from typing import cast, Literal
+from typing import Optional, Self, cast, Literal
+from enum import Enum
+
+
+class ValidationStatus(Enum):
+    VALID = 'VALID'
+    INVALID = 'INVALID'
+    UNDEFINED = 'UNDEFINED'
 
 
 class BaseCommand:
@@ -27,10 +34,10 @@ class BaseCommand:
 class Command(BaseCommand):
     def __init__(
         self,
-        trigger: str,
-        description: str | None = None,
-        flags: Flag | Flags | None = None,
-        aliases: list[str] | None = None,
+        trigger: str, *, 
+        description: Optional[str] = None,
+        flags: Optional[Flag | Flags] = None,
+        aliases: Optional[list[str]] = None,
     ):
         """
         Public. The command that can and should be registered in the Router
@@ -40,15 +47,10 @@ class Command(BaseCommand):
         :param aliases: string synonyms for the main trigger
         """
         super().__init__(trigger)
-        self._registered_flags: Flags = (
-            flags
-            if isinstance(flags, Flags)
-            else Flags(flags)
-            if isinstance(flags, Flag)
-            else Flags()
-        )
-        self._description = "Very useful command" if not description else description
-        self._aliases = aliases if isinstance(aliases, list) else []
+        flags = flags if isinstance(flags, Flags)  else Flags([flags]) if isinstance(flags, Flag) else Flags()
+        self._registered_flags: Flags = flags
+        self._description = "Command without description" if not description else description
+        self._aliases = aliases if aliases else []
 
     def get_registered_flags(self) -> Flags:
         """
@@ -57,16 +59,16 @@ class Command(BaseCommand):
         """
         return self._registered_flags
 
-    def get_aliases(self) -> list[str] | list:
+    def get_aliases(self) -> list[str]:
         """
         Public. Returns the aliases of the command
-        :return: the aliases of the command as list[str] | list
+        :return: the aliases of the command as list[str]
         """
         return self._aliases
 
     def validate_input_flag(
         self, flag: InputFlag
-    ) -> Literal["Undefined", "Valid", "Invalid"]:
+    ) -> ValidationStatus:
         """
         Private. Validates the input flag
         :param flag: input flag for validation
@@ -80,11 +82,11 @@ class Command(BaseCommand):
                         flag.get_value()
                     )
                     if is_valid:
-                        return "Valid"
+                        return ValidationStatus.VALID
                     else:
-                        return "Invalid"
+                        return ValidationStatus.INVALID
                 else:
-                    return "Undefined"
+                    return ValidationStatus.UNDEFINED
             else:
                 for registered_flag in registered_flags:
                     if registered_flag.get_string_entity() == flag.get_string_entity():
@@ -93,11 +95,11 @@ class Command(BaseCommand):
                         )
 
                         if is_valid:
-                            return "Valid"
+                            return ValidationStatus.VALID
                         else:
-                            return "Invalid"
-                return "Undefined"
-        return "Undefined"
+                            return ValidationStatus.INVALID
+                return ValidationStatus.UNDEFINED
+        return ValidationStatus.UNDEFINED
 
     def get_description(self) -> str:
         """
@@ -108,7 +110,8 @@ class Command(BaseCommand):
 
 
 class InputCommand(BaseCommand):
-    def __init__(self, trigger: str, input_flags: InputFlag | InputFlags | None = None):
+    def __init__(self, trigger: str, *, 
+                 input_flags: Optional[InputFlag | InputFlags] = None):
         """
         Private. The model of the input command, after parsing
         :param trigger:the trigger of the command
@@ -116,13 +119,8 @@ class InputCommand(BaseCommand):
         :return: None
         """
         super().__init__(trigger)
-        self._input_flags: InputFlags = (
-            input_flags
-            if isinstance(input_flags, InputFlags)
-            else InputFlags(input_flags)
-            if isinstance(input_flags, InputFlag)
-            else InputFlags()
-        )
+        input_flags = input_flags if isinstance(input_flags, InputFlags) else InputFlags([input_flags]) if isinstance(input_flags, InputFlag) else InputFlags()
+        self._input_flags: InputFlags = input_flags
 
     def _set_input_flags(self, input_flags: InputFlags) -> None:
         """
@@ -139,8 +137,8 @@ class InputCommand(BaseCommand):
         """
         return self._input_flags
 
-    @staticmethod
-    def parse(raw_command: str) -> "InputCommand":
+    @classmethod
+    def parse(cls, raw_command: str) -> Self:
         """
         Private. Parse the raw input command
         :param raw_command: raw input command
@@ -149,8 +147,8 @@ class InputCommand(BaseCommand):
         if not raw_command:
             raise EmptyInputCommandException()
 
-        list_of_tokens = raw_command.split()
-        command = list_of_tokens.pop(0)
+        list_of_tokens: list[str] = raw_command.split()
+        command: str = list_of_tokens.pop(0)
 
         input_flags: InputFlags = InputFlags()
         current_flag_name, current_flag_value = None, None
@@ -192,4 +190,4 @@ class InputCommand(BaseCommand):
         if any([current_flag_name, current_flag_value]):
             raise UnprocessedInputFlagException()
         else:
-            return InputCommand(trigger=command, input_flags=input_flags)
+            return cls(trigger=command, input_flags=input_flags)
