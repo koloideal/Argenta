@@ -7,4 +7,5 @@ uv.lock
 *.hist*
 build
 source
+*cache
 
