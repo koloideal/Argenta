@@ -2,7 +2,7 @@
 
 ### Library for creating modular CLI applications
 
-#### RU - [README.ru.md](https://github.com/koloideal/Argenta/blob/kolo/README.ru.md) • DE - [README.de.md](https://github.com/koloideal/Argenta/blob/kolo/README.de.md)
+#### RU - [README.ru.md](https://github.com/koloideal/Argenta/blob/main/README.ru.md) • DE - [README.de.md](https://github.com/koloideal/Argenta/blob/main/README.de.md)
 
 ---
 
@@ -10,7 +10,7 @@ Argenta allows you to encapsulate CLI functionality in isolated, abstracted envi
 
 ---
 
-![preview](https://github.com/koloideal/Argenta/blob/kolo/imgs/mock_app_preview4.png?raw=True)  
+![preview](https://github.com/koloideal/Argenta/blob/main/imgs/mock_app_preview4.png?raw=True)  
 
 ---
 

@@ -6,7 +6,7 @@ Argenta позволяет инкапсулировать CLI фукционал
 
 ---
 
-![preview](https://github.com/koloideal/Argenta/blob/kolo/imgs/mock_app_preview4.png?raw=True)  
+![preview](https://github.com/koloideal/Argenta/blob/main/imgs/mock_app_preview4.png?raw=True)  
 
 ---
 
