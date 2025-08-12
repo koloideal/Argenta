@@ -1,16 +1,10 @@
-from typing import Protocol, Any, Callable
+from argenta.command.flag.flags.models import InputFlags, UndefinedInputFlags
+from argenta.command.flag.models import InputFlag
+from argenta.command.models import Command
+from argenta.router.entity import Router
 
 
-class Printer(Protocol):
-    def __call__(self, text: str, *args: Any, **kwargs: Any) -> None:
-        raise NotImplementedError()
-
-
-class WhoNeedsPrinter:
-    def __init__(self, print_func: Printer) -> None:
-        self.print_func = print_func
-
-def my_printer(text: str, **kwargs) -> None:
-    pass
-
-WhoNeedsPrinter(my_printer)
+router = Router()
+cmd = Command('cmd')
+input_flags = InputFlags([InputFlag('ssh')])
+print(router._structuring_input_flags(cmd, input_flags).undefined_flags == UndefinedInputFlags([InputFlag('ssh')]))

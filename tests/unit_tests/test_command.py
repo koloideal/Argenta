@@ -1,8 +1,7 @@
 from argenta.command.flag import Flag, InputFlag
 from argenta.command.flag.flags import Flags
 from argenta.command.flag.models import PossibleValues
-from argenta.command.models import InputCommand, Command
-from argenta.command.validation import ValidationStatus
+from argenta.command.models import InputCommand, Command, ValidationStatus
 from argenta.command.exceptions import (UnprocessedInputFlagException,
                                         RepeatedInputFlagsException,
                                         EmptyInputCommandException)
@@ -32,7 +31,7 @@ class TestInputCommand(unittest.TestCase):
         self.assertEqual(command.validate_input_flag(InputFlag('test')), ValidationStatus.VALID)
 
     def test_validate_valid_input_flag2(self):
-        command = Command('some', flags=Flags(Flag('test'), Flag('more')))
+        command = Command('some', flags=Flags([Flag('test'), Flag('more')]))
         self.assertEqual(command.validate_input_flag(InputFlag('more')), ValidationStatus.VALID)
 
     def test_validate_undefined_input_flag1(self):
@@ -40,7 +39,7 @@ class TestInputCommand(unittest.TestCase):
         self.assertEqual(command.validate_input_flag(InputFlag('more')), ValidationStatus.UNDEFINED)
 
     def test_validate_undefined_input_flag2(self):
-        command = Command('some', flags=Flags(Flag('test'), Flag('more')))
+        command = Command('some', flags=Flags([Flag('test'), Flag('more')]))
         self.assertEqual(command.validate_input_flag(InputFlag('case')), ValidationStatus.UNDEFINED)
 
     def test_validate_undefined_input_flag3(self):

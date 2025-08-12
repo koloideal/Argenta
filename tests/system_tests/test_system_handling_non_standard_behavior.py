@@ -66,7 +66,9 @@ class TestSystemHandlerNormalWork(TestCase):
 
         @router.command(Command('test'))
         def test(response: Response):
-            print(f'test command with undefined flag: {response.undefined_flags.get_flag('help').get_string_entity()}')
+            undefined_flag = response.undefined_flags.get_flag('help')
+            if undefined_flag:
+                print(f'test command with undefined flag: {undefined_flag.get_string_entity()}')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -87,7 +89,8 @@ class TestSystemHandlerNormalWork(TestCase):
         @router.command(Command('test'))
         def test(response: Response):
             flag = response.undefined_flags.get_flag("port")
-            print(f'test command with undefined flag with value: {flag.get_string_entity()} {flag.get_value()}')
+            if flag:
+                print(f'test command with undefined flag with value: {flag.get_string_entity()} {flag.get_value()}')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -104,12 +107,13 @@ class TestSystemHandlerNormalWork(TestCase):
     def test_input_correct_command_with_one_correct_flag_an_one_incorrect_flag(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
         orchestrator = Orchestrator()
-        flags = Flags(PredefinedFlags.HOST)
+        flags = Flags([PredefinedFlags.HOST])
 
         @router.command(Command('test', flags=flags))
         def test(response: Response):
-            flag = response.undefined_flags.get_flag("port")
-            print(f'connecting to host with flag: {flag.get_string_entity()} {flag.get_value()}')
+            undefined_flag = response.undefined_flags.get_flag("port")
+            if undefined_flag:
+                print(f'connecting to host with flag: {undefined_flag.get_string_entity()} {undefined_flag.get_value()}')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -153,7 +157,7 @@ class TestSystemHandlerNormalWork(TestCase):
             print(f'test command')
 
         @router.command(Command('more'))
-        def test(response: Response):
+        def test1(response: Response):
             print(f'more command')
 
         app = App(override_system_messages=True,

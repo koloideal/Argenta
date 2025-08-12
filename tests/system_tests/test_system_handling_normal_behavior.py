@@ -6,6 +6,7 @@ import re
 
 from argenta.app import App
 from argenta.command import Command
+from argenta.command.flag.models import PossibleValues
 from argenta.response import Response
 from argenta.router import Router
 from argenta.orchestrator import Orchestrator
@@ -62,11 +63,13 @@ class TestSystemHandlerNormalWork(TestCase):
     def test_input_correct_command_with_custom_flag(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
         orchestrator = Orchestrator()
-        flag = Flag('help', '--', False)
+        flag = Flag('help', prefix='--', possible_values=PossibleValues.NEITHER)
 
         @router.command(Command('test', flags=flag))
         def test(response: Response):
-            print(f'\nhelp for {response.valid_flags.get_flag('help').get_name()} flag\n')
+            valid_flag = response.valid_flags.get_flag('help')
+            if valid_flag:
+                print(f'\nhelp for {valid_flag.get_name()} flag\n')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -82,12 +85,13 @@ class TestSystemHandlerNormalWork(TestCase):
     def test_input_correct_command_with_custom_flag2(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
         orchestrator = Orchestrator()
-        flag = Flag('port', '--', re.compile(r'^\d{1,5}$'))
+        flag = Flag('port', prefix='--', possible_values=re.compile(r'^\d{1,5}$'))
 
         @router.command(Command('test', flags=flag))
         def test(response: Response):
-            input_flag = response.valid_flags.get_flag('port')
-            print(f'flag value for {input_flag.get_name()} flag : {input_flag.get_value()}')
+            valid_flag = response.valid_flags.get_flag('port')
+            if valid_flag:
+                print(f'flag value for {valid_flag.get_name()} flag : {valid_flag.get_value()}')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -108,7 +112,9 @@ class TestSystemHandlerNormalWork(TestCase):
 
         @router.command(Command('test', flags=flag))
         def test(response: Response):
-            print(f'help for {response.valid_flags.get_flag('H').get_name()} flag')
+            valid_flag = response.valid_flags.get_flag('H')
+            if valid_flag:
+                print(f'help for {valid_flag.get_name()} flag')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -151,7 +157,9 @@ class TestSystemHandlerNormalWork(TestCase):
 
         @router.command(Command('test', flags=flag))
         def test(response: Response):
-            print(f'connecting to host {response.valid_flags.get_flag('host').get_value()}')
+            valid_flag = response.valid_flags.get_flag('host')
+            if valid_flag:
+                print(f'connecting to host {valid_flag.get_value()}')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -168,12 +176,14 @@ class TestSystemHandlerNormalWork(TestCase):
     def test_input_correct_command_with_two_flags(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
         orchestrator = Orchestrator()
-        flags = Flags(PredefinedFlags.HOST, PredefinedFlags.PORT)
+        flags = Flags([PredefinedFlags.HOST, PredefinedFlags.PORT])
 
         @router.command(Command('test', flags=flags))
         def test(response: Response):
-            valid_flags = response.valid_flags
-            print(f'connecting to host {valid_flags.get_flag('host').get_value()} and port {valid_flags.get_flag('port').get_value()}')
+            host_flag = response.valid_flags.get_flag('host')
+            port_flag = response.valid_flags.get_flag('port')
+            if host_flag and port_flag:
+                print(f'connecting to host {host_flag.get_value()} and port {port_flag.get_value()}')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -220,11 +230,11 @@ class TestSystemHandlerNormalWork(TestCase):
             print(f'test command')
 
         @router.command(Command('some'))
-        def test(response):
+        def test1(response):
             print(f'some command')
 
         @router.command(Command('more'))
-        def test(response):
+        def test2(response):
             print(f'more command')
 
         app = App(override_system_messages=True,

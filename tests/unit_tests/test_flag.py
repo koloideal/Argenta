@@ -71,19 +71,19 @@ class TestFlag(unittest.TestCase):
 
     def test_get_input_flag1(self):
         flag = InputFlag(name='test')
-        input_flags = InputFlags(flag)
+        input_flags = InputFlags([flag])
         self.assertEqual(input_flags.get_flag('test'), flag)
 
     def test_get_input_flag2(self):
         flag = InputFlag(name='test')
         flag2 = InputFlag(name='some')
-        input_flags = InputFlags(flag, flag2)
+        input_flags = InputFlags([flag, flag2])
         self.assertEqual(input_flags.get_flag('some'), flag2)
 
     def test_get_undefined_input_flag(self):
         flag = InputFlag(name='test')
         flag2 = InputFlag(name='some')
-        input_flags = InputFlags(flag, flag2)
+        input_flags = InputFlags([flag, flag2])
         self.assertEqual(input_flags.get_flag('case'), None)
 
     def test_get_flags(self):

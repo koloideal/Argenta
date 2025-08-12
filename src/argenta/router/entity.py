@@ -1,9 +1,9 @@
-from typing import Callable, Literal, Type
+from typing import Callable, Type
 from inspect import getfullargspec, get_annotations, getsourcefile, getsourcelines
 from rich.console import Console
 
 from argenta.command import Command
-from argenta.command.models import InputCommand
+from argenta.command.models import InputCommand, ValidationStatus
 from argenta.response import Response, Status
 from argenta.router.command_handler.entity import CommandHandlers, CommandHandler
 from argenta.command.flag.flags import (
@@ -23,7 +23,8 @@ from argenta.router.exceptions import (
 
 class Router:
     def __init__(
-        self, title: str | None = "Awesome title", disable_redirect_stdout: bool = False
+        self, *, title: str | None = "Default title",
+        disable_redirect_stdout: bool = False
     ):
         """
         Public. Directly configures and manages handlers
@@ -122,14 +123,14 @@ class Router:
         invalid_value_input_flags: InvalidValueInputFlags = InvalidValueInputFlags()
         undefined_input_flags: UndefinedInputFlags = UndefinedInputFlags()
         for flag in input_flags:
-            flag_status: Literal["Undefined", "Valid", "Invalid"] = (
+            flag_status: ValidationStatus = (
                 handled_command.validate_input_flag(flag)
             )
-            if flag_status == "Valid":
+            if flag_status == ValidationStatus.VALID:
                 valid_input_flags.add_flag(flag)
-            elif flag_status == "Undefined":
+            elif flag_status == ValidationStatus.UNDEFINED:
                 undefined_input_flags.add_flag(flag)
-            elif flag_status == "Invalid":
+            elif flag_status == ValidationStatus.INVALID:
                 invalid_value_input_flags.add_flag(flag)
 
         if (

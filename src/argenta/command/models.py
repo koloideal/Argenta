@@ -15,23 +15,7 @@ class ValidationStatus(Enum):
     UNDEFINED = 'UNDEFINED'
 
 
-class BaseCommand:
-    def __init__(self, trigger: str) -> None:
-        """
-        Private. Base class for all commands
-        :param trigger: A string trigger, which, when entered by the user, indicates that the input corresponds to the command
-        """
-        self._trigger = trigger
-
-    def get_trigger(self) -> str:
-        """
-        Public. Returns the trigger of the command
-        :return: the trigger of the command as str
-        """
-        return self._trigger
-
-
-class Command(BaseCommand):
+class Command:
     def __init__(
         self,
         trigger: str, *, 
@@ -46,8 +30,8 @@ class Command(BaseCommand):
         :param flags: processed commands
         :param aliases: string synonyms for the main trigger
         """
-        super().__init__(trigger)
         flags = flags if isinstance(flags, Flags)  else Flags([flags]) if isinstance(flags, Flag) else Flags()
+        self._trigger = trigger
         self._registered_flags: Flags = flags
         self._description = "Command without description" if not description else description
         self._aliases = aliases if aliases else []
@@ -107,9 +91,16 @@ class Command(BaseCommand):
         :return: the description of the command as str
         """
         return self._description
+    
+    def get_trigger(self) -> str:
+        """
+        Public. Returns the trigger of the command
+        :return: the trigger of the command as str
+        """
+        return self._trigger
 
 
-class InputCommand(BaseCommand):
+class InputCommand:
     def __init__(self, trigger: str, *, 
                  input_flags: Optional[InputFlag | InputFlags] = None):
         """
@@ -118,7 +109,7 @@ class InputCommand(BaseCommand):
         :param input_flags: the input flags
         :return: None
         """
-        super().__init__(trigger)
+        self._trigger = trigger
         input_flags = input_flags if isinstance(input_flags, InputFlags) else InputFlags([input_flags]) if isinstance(input_flags, InputFlag) else InputFlags()
         self._input_flags: InputFlags = input_flags
 
@@ -191,3 +182,10 @@ class InputCommand(BaseCommand):
             raise UnprocessedInputFlagException()
         else:
             return cls(trigger=command, input_flags=input_flags)
+        
+    def get_trigger(self) -> str:
+        """
+        Public. Returns the trigger of the command
+        :return: the trigger of the command as str
+        """
+        return self._trigger
