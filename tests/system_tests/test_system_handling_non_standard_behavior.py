@@ -6,6 +6,7 @@ import re
 
 from argenta.app import App
 from argenta.command import Command
+from argenta.command.flag.models import ValidationStatus
 from argenta.router import Router
 from argenta.command.flag.flags.models import Flags
 from argenta.command.flag.defaults import PredefinedFlags
@@ -66,8 +67,8 @@ class TestSystemHandlerNormalWork(TestCase):
 
         @router.command(Command('test'))
         def test(response: Response):
-            undefined_flag = response.undefined_flags.get_flag('help')
-            if undefined_flag:
+            undefined_flag = response.input_flags.get_flag('help')
+            if undefined_flag and undefined_flag.get_status() == ValidationStatus.UNDEFINED:
                 print(f'test command with undefined flag: {undefined_flag.get_string_entity()}')
 
         app = App(override_system_messages=True,
@@ -88,9 +89,9 @@ class TestSystemHandlerNormalWork(TestCase):
 
         @router.command(Command('test'))
         def test(response: Response):
-            flag = response.undefined_flags.get_flag("port")
-            if flag:
-                print(f'test command with undefined flag with value: {flag.get_string_entity()} {flag.get_value()}')
+            undefined_flag = response.input_flags.get_flag("port")
+            if undefined_flag and undefined_flag.get_status() == ValidationStatus.UNDEFINED:
+                print(f'test command with undefined flag with value: {undefined_flag.get_string_entity()} {undefined_flag.get_value()}')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -111,8 +112,8 @@ class TestSystemHandlerNormalWork(TestCase):
 
         @router.command(Command('test', flags=flags))
         def test(response: Response):
-            undefined_flag = response.undefined_flags.get_flag("port")
-            if undefined_flag:
+            undefined_flag = response.input_flags.get_flag("port")
+            if undefined_flag and undefined_flag.get_status() == ValidationStatus.UNDEFINED:
                 print(f'connecting to host with flag: {undefined_flag.get_string_entity()} {undefined_flag.get_value()}')
 
         app = App(override_system_messages=True,

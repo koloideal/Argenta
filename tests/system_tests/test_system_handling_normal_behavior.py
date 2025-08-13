@@ -6,7 +6,7 @@ import re
 
 from argenta.app import App
 from argenta.command import Command
-from argenta.command.flag.models import PossibleValues
+from argenta.command.flag.models import PossibleValues, ValidationStatus
 from argenta.response import Response
 from argenta.router import Router
 from argenta.orchestrator import Orchestrator
@@ -67,8 +67,8 @@ class TestSystemHandlerNormalWork(TestCase):
 
         @router.command(Command('test', flags=flag))
         def test(response: Response):
-            valid_flag = response.valid_flags.get_flag('help')
-            if valid_flag:
+            valid_flag = response.input_flags.get_flag('help')
+            if valid_flag and valid_flag.get_status() == ValidationStatus.VALID:
                 print(f'\nhelp for {valid_flag.get_name()} flag\n')
 
         app = App(override_system_messages=True,
@@ -89,8 +89,8 @@ class TestSystemHandlerNormalWork(TestCase):
 
         @router.command(Command('test', flags=flag))
         def test(response: Response):
-            valid_flag = response.valid_flags.get_flag('port')
-            if valid_flag:
+            valid_flag = response.input_flags.get_flag('port')
+            if valid_flag and valid_flag.get_status() == ValidationStatus.VALID:
                 print(f'flag value for {valid_flag.get_name()} flag : {valid_flag.get_value()}')
 
         app = App(override_system_messages=True,
@@ -112,8 +112,8 @@ class TestSystemHandlerNormalWork(TestCase):
 
         @router.command(Command('test', flags=flag))
         def test(response: Response):
-            valid_flag = response.valid_flags.get_flag('H')
-            if valid_flag:
+            valid_flag = response.input_flags.get_flag('H')
+            if valid_flag and valid_flag.get_status() == ValidationStatus.VALID:
                 print(f'help for {valid_flag.get_name()} flag')
 
         app = App(override_system_messages=True,
@@ -135,7 +135,8 @@ class TestSystemHandlerNormalWork(TestCase):
 
         @router.command(Command('test', flags=flag))
         def test(response: Response):
-            if response.valid_flags.get_flag('info'):
+            valid_flag = response.input_flags.get_flag('info')
+            if valid_flag and valid_flag.get_status() == ValidationStatus.VALID:
                 print('info about test command')
 
         app = App(override_system_messages=True,
@@ -157,8 +158,8 @@ class TestSystemHandlerNormalWork(TestCase):
 
         @router.command(Command('test', flags=flag))
         def test(response: Response):
-            valid_flag = response.valid_flags.get_flag('host')
-            if valid_flag:
+            valid_flag = response.input_flags.get_flag('host')
+            if valid_flag and valid_flag.get_status() == ValidationStatus.VALID:
                 print(f'connecting to host {valid_flag.get_value()}')
 
         app = App(override_system_messages=True,
@@ -180,9 +181,9 @@ class TestSystemHandlerNormalWork(TestCase):
 
         @router.command(Command('test', flags=flags))
         def test(response: Response):
-            host_flag = response.valid_flags.get_flag('host')
-            port_flag = response.valid_flags.get_flag('port')
-            if host_flag and port_flag:
+            host_flag = response.input_flags.get_flag('host')
+            port_flag = response.input_flags.get_flag('port')
+            if (host_flag and host_flag.get_status() == ValidationStatus.VALID) and (port_flag and port_flag.get_status() == ValidationStatus.VALID):
                 print(f'connecting to host {host_flag.get_value()} and port {port_flag.get_value()}')
 
         app = App(override_system_messages=True,

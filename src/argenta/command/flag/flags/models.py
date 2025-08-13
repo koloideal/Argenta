@@ -50,12 +50,10 @@ class BaseFlags(Generic[FlagType]):
         return bool(self._flags)
 
     def __eq__(self, other):
-        print(self.get_flags())
-        print(other.get_flags())
         if len(self.get_flags()) != len(other.get_flags()):
             return False
         else:
-            for flag, other_flag in zip(self.get_flags(), other.get_flags()):
+            for flag, other_flag in zip(self.get_flags(), other.get_flags()): 
                 if not (flag == other_flag):
                     return False
         return True
@@ -86,14 +84,3 @@ class InputFlags(BaseFlags[InputFlag]):
         else:
             return None
 
-
-class ValidInputFlags(InputFlags):
-    pass
-
-
-class UndefinedInputFlags(InputFlags):
-    pass
-
-
-class InvalidValueInputFlags(InputFlags):
-    pass

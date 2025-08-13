@@ -1,4 +1,4 @@
-from argenta.command.flag.models import Flag, InputFlag
+from argenta.command.flag.models import Flag, InputFlag, ValidationStatus
 from argenta.command.flag.flags.models import InputFlags, Flags
 from argenta.command.exceptions import (
     UnprocessedInputFlagException,
@@ -6,13 +6,6 @@ from argenta.command.exceptions import (
     EmptyInputCommandException,
 )
 from typing import Optional, Self, cast, Literal
-from enum import Enum
-
-
-class ValidationStatus(Enum):
-    VALID = 'VALID'
-    INVALID = 'INVALID'
-    UNDEFINED = 'UNDEFINED'
 
 
 class Command:
@@ -60,29 +53,16 @@ class Command:
         """
         registered_flags: Flags | None = self.get_registered_flags()
         if registered_flags:
-            if isinstance(registered_flags, Flag):
-                if registered_flags.get_string_entity() == flag.get_string_entity():
-                    is_valid = registered_flags.validate_input_flag_value(
+            for registered_flag in registered_flags:
+                if registered_flag.get_string_entity() == flag.get_string_entity():
+                    is_valid = registered_flag.validate_input_flag_value(
                         flag.get_value()
                     )
                     if is_valid:
                         return ValidationStatus.VALID
                     else:
                         return ValidationStatus.INVALID
-                else:
-                    return ValidationStatus.UNDEFINED
-            else:
-                for registered_flag in registered_flags:
-                    if registered_flag.get_string_entity() == flag.get_string_entity():
-                        is_valid = registered_flag.validate_input_flag_value(
-                            flag.get_value()
-                        )
-
-                        if is_valid:
-                            return ValidationStatus.VALID
-                        else:
-                            return ValidationStatus.INVALID
-                return ValidationStatus.UNDEFINED
+            return ValidationStatus.UNDEFINED
         return ValidationStatus.UNDEFINED
 
     def get_description(self) -> str:
@@ -166,6 +146,7 @@ class InputCommand:
                         current_flag_name[: current_flag_name.rfind("-") + 1],
                     ),
                     value=current_flag_value,
+                    status=None
                 )
 
                 all_flags = [

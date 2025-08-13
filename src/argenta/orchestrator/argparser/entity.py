@@ -1,4 +1,4 @@
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
 from argenta.orchestrator.argparser.arguments.models import (
     BooleanArgument,
@@ -10,7 +10,7 @@ from argenta.orchestrator.argparser.arguments.models import (
 class ArgParser:
     def __init__(
         self,
-        processed_args: list[PositionalArgument | OptionalArgument | BooleanArgument],
+        processed_args: list[PositionalArgument | OptionalArgument | BooleanArgument], *,
         name: str = "Argenta",
         description: str = "Argenta available arguments",
         epilog: str = "github.com/koloideal/Argenta | made by kolo",
@@ -22,38 +22,37 @@ class ArgParser:
         :param epilog: the epilog of the ArgParse instance
         :param processed_args: registered and processed arguments
         """
-        self.name = name
-        self.description = description
-        self.epilog = epilog
+        self._name = name
+        self._description = description
+        self._epilog = epilog
 
-        self.entity: ArgumentParser = ArgumentParser(
-            prog=name, description=description, epilog=epilog
-        )
-        self.args: (
-            list[PositionalArgument | OptionalArgument | BooleanArgument] | None
-        ) = processed_args
+        self._entity: ArgumentParser = ArgumentParser(prog=name, description=description, epilog=epilog)
+        self._args: list[PositionalArgument | OptionalArgument | BooleanArgument] = processed_args
 
     def set_args(
-        self, *args: PositionalArgument | OptionalArgument | BooleanArgument
+        self, args: list[PositionalArgument | OptionalArgument | BooleanArgument]
     ) -> None:
         """
         Public. Sets the arguments to be processed
         :param args: processed arguments
         :return: None
         """
-        self.args.extend(args)
+        self._args.extend(args)
 
     def register_args(self) -> None:
         """
         Private. Registers initialized command line arguments
         :return: None
         """
-        if not self.args:
-            return
-        for arg in self.args:
-            if type(arg) is PositionalArgument:
-                self.entity.add_argument(arg.get_string_entity())
-            elif type(arg) is OptionalArgument:
-                self.entity.add_argument(arg.get_string_entity())
-            elif type(arg) is BooleanArgument:
-                self.entity.add_argument(arg.get_string_entity(), action="store_true")
+        for arg in self._args:
+            if isinstance(arg, PositionalArgument):
+                self._entity.add_argument(arg.get_string_entity())
+            elif isinstance(arg, OptionalArgument):
+                self._entity.add_argument(arg.get_string_entity())
+            elif isinstance(arg, BooleanArgument):
+                self._entity.add_argument(arg.get_string_entity(), action="store_true")
+            else:
+                raise
+
+    def parse_args(self) -> Namespace:
+        return self._entity.parse_args()

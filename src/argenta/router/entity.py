@@ -4,14 +4,11 @@ from rich.console import Console
 
 from argenta.command import Command
 from argenta.command.models import InputCommand, ValidationStatus
-from argenta.response import Response, Status
+from argenta.response import Response, ResponseStatus
 from argenta.router.command_handler.entity import CommandHandlers, CommandHandler
 from argenta.command.flag.flags import (
     Flags,
-    InputFlags,
-    UndefinedInputFlags,
-    ValidInputFlags,
-    InvalidValueInputFlags,
+    InputFlags
 )
 from argenta.router.exceptions import (
     RepeatedFlagNameException,
@@ -91,22 +88,19 @@ class Router:
         :return: None
         """
         handle_command = command_handler.get_handled_command()
-        response: Response = Response()
         if handle_command.get_registered_flags().get_flags():
             if input_command_flags.get_flags():
-                response: Response = self._structuring_input_flags( handle_command, input_command_flags )
+                response: Response = self._structuring_input_flags(handle_command, input_command_flags)
                 command_handler.handling(response)
             else:
-                response.status = Status.ALL_FLAGS_VALID
+                response = Response(ResponseStatus.ALL_FLAGS_VALID)
                 command_handler.handling(response)
         else:
             if input_command_flags.get_flags():
-                response.status = Status.UNDEFINED_FLAGS
-                response.undefined_flags = UndefinedInputFlags()
-                response.undefined_flags.add_flags(input_command_flags.get_flags())
+                response = Response(ResponseStatus.UNDEFINED_FLAGS)
                 command_handler.handling(response)
             else:
-                response.status = Status.ALL_FLAGS_VALID
+                response = Response(ResponseStatus.ALL_FLAGS_VALID)
                 command_handler.handling(response)
 
     @staticmethod
@@ -119,43 +113,33 @@ class Router:
         :param input_flags:
         :return: entity of response as Response
         """
-        valid_input_flags: ValidInputFlags = ValidInputFlags()
-        invalid_value_input_flags: InvalidValueInputFlags = InvalidValueInputFlags()
-        undefined_input_flags: UndefinedInputFlags = UndefinedInputFlags()
+        result_input_flags: InputFlags = InputFlags()
+        invalid_value_flags = False
+        undefined_flags = False
         for flag in input_flags:
             flag_status: ValidationStatus = (
                 handled_command.validate_input_flag(flag)
             )
-            if flag_status == ValidationStatus.VALID:
-                valid_input_flags.add_flag(flag)
-            elif flag_status == ValidationStatus.UNDEFINED:
-                undefined_input_flags.add_flag(flag)
-            elif flag_status == ValidationStatus.INVALID:
-                invalid_value_input_flags.add_flag(flag)
+            flag.set_status(flag_status)
+            result_input_flags.add_flag(flag)
 
-        if (
-            not invalid_value_input_flags.get_flags()
-            and not undefined_input_flags.get_flags()
-        ):
-            status = Status.ALL_FLAGS_VALID
-        elif (
-            invalid_value_input_flags.get_flags()
-            and not undefined_input_flags.get_flags()
-        ):
-            status = Status.INVALID_VALUE_FLAGS
-        elif (
-            not invalid_value_input_flags.get_flags()
-            and undefined_input_flags.get_flags()
-        ):
-            status = Status.UNDEFINED_FLAGS
+            if flag_status == ValidationStatus.INVALID:
+                invalid_value_flags = True
+            elif flag_status == ValidationStatus.UNDEFINED:
+                undefined_flags = True
+
+        if invalid_value_flags and undefined_flags:
+            status = ResponseStatus.UNDEFINED_AND_INVALID_FLAGS
+        elif invalid_value_flags and not undefined_flags:
+            status = ResponseStatus.INVALID_VALUE_FLAGS
+        elif not invalid_value_flags and undefined_flags:
+            status = ResponseStatus.UNDEFINED_FLAGS
         else:
-            status = Status.UNDEFINED_AND_INVALID_FLAGS
+            status = ResponseStatus.ALL_FLAGS_VALID
 
         return Response(
-            invalid_value_flags=invalid_value_input_flags,
-            valid_flags=valid_input_flags,
             status=status,
-            undefined_flags=undefined_input_flags,
+            input_flags=input_flags
         )
 
     @staticmethod
@@ -196,8 +180,7 @@ class Router:
             else:
                 file_path: str | None = getsourcefile(func)
                 source_line: int = getsourcelines(func)[1]
-                fprint = Console().print
-                fprint(
+                Console().print(
                     f'\nFile "{file_path}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
                     f"of argument([green]{transferred_arg}[/green]) passed to the handler is [/i][bold blue]{Response}[/bold blue],"
                     f" [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]",

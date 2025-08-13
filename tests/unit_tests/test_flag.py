@@ -29,12 +29,11 @@ class TestFlag(unittest.TestCase):
                          '--')
 
     def test_get_flag_value_without_set(self):
-        self.assertEqual(InputFlag(name='test').get_value(),
+        self.assertEqual(InputFlag(name='test', value=None, status=None).get_value(),
                          None)
 
     def test_get_flag_value_with_set(self):
-        flag = InputFlag(name='test')
-        flag.set_value('example')
+        flag = InputFlag(name='test', value='example', status=None)
         self.assertEqual(flag.get_value(), 'example')
 
     def test_validate_incorrect_flag_value_with_list_of_possible_flag_values(self):
@@ -70,19 +69,19 @@ class TestFlag(unittest.TestCase):
         self.assertEqual(flag.validate_input_flag_value('random value'), True)
 
     def test_get_input_flag1(self):
-        flag = InputFlag(name='test')
+        flag = InputFlag(name='test', value=None, status=None)
         input_flags = InputFlags([flag])
         self.assertEqual(input_flags.get_flag('test'), flag)
 
     def test_get_input_flag2(self):
-        flag = InputFlag(name='test')
-        flag2 = InputFlag(name='some')
+        flag = InputFlag(name='test', value=None, status=None)
+        flag2 = InputFlag(name='some', value=None, status=None)
         input_flags = InputFlags([flag, flag2])
         self.assertEqual(input_flags.get_flag('some'), flag2)
 
     def test_get_undefined_input_flag(self):
-        flag = InputFlag(name='test')
-        flag2 = InputFlag(name='some')
+        flag = InputFlag(name='test', value=None, status=None)
+        flag2 = InputFlag(name='some', value=None, status=None)
         input_flags = InputFlags([flag, flag2])
         self.assertEqual(input_flags.get_flag('case'), None)
 

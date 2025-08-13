@@ -2,7 +2,7 @@ import io
 from contextlib import redirect_stdout
 from time import time
 
-from argenta.app import App
+from argenta import App
 
 
 def get_time_of_pre_cycle_setup(app: App) -> float:

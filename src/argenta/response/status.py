@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class Status(Enum):
+class ResponseStatus(Enum):
     ALL_FLAGS_VALID = "ALL_FLAGS_VALID"
     UNDEFINED_FLAGS = "UNDEFINED_FLAGS"
     INVALID_VALUE_FLAGS = "INVALID_VALUE_FLAGS"

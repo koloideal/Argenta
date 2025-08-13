@@ -332,7 +332,7 @@ class BaseApp:
 class App(BaseApp):
     def __init__(
         self, *,
-        prompt: str = "What do you want to do?\n",
+        prompt: str = "What do you want to do?\n\n",
         initial_message: str = "Argenta\n",
         farewell_message: str = "\nSee you\n",
         exit_command: Command = Command("Q", description="Exit command"),
