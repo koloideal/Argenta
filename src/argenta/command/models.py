@@ -23,7 +23,7 @@ class Command:
         :param flags: processed commands
         :param aliases: string synonyms for the main trigger
         """
-        flags = flags if isinstance(flags, Flags)  else Flags([flags]) if isinstance(flags, Flag) else Flags()
+        flags = flags if isinstance(flags, Flags) else Flags([flags]) if isinstance(flags, Flag) else Flags()
         self._trigger = trigger
         self._registered_flags: Flags = flags
         self._description = "Command without description" if not description else description
@@ -52,17 +52,13 @@ class Command:
         :return: is input flag valid as bool
         """
         registered_flags: Flags | None = self.get_registered_flags()
-        if registered_flags:
-            for registered_flag in registered_flags:
-                if registered_flag.get_string_entity() == flag.get_string_entity():
-                    is_valid = registered_flag.validate_input_flag_value(
-                        flag.get_value()
-                    )
-                    if is_valid:
-                        return ValidationStatus.VALID
-                    else:
-                        return ValidationStatus.INVALID
-            return ValidationStatus.UNDEFINED
+        for registered_flag in registered_flags:
+            if registered_flag.get_string_entity() == flag.get_string_entity():
+                is_valid = registered_flag.validate_input_flag_value(flag.get_value())
+                if is_valid:
+                    return ValidationStatus.VALID
+                else:
+                    return ValidationStatus.INVALID
         return ValidationStatus.UNDEFINED
 
     def get_description(self) -> str:
@@ -93,14 +89,6 @@ class InputCommand:
         input_flags = input_flags if isinstance(input_flags, InputFlags) else InputFlags([input_flags]) if isinstance(input_flags, InputFlag) else InputFlags()
         self._input_flags: InputFlags = input_flags
 
-    def _set_input_flags(self, input_flags: InputFlags) -> None:
-        """
-        Private. Sets the input flags
-        :param input_flags: the input flags to set
-        :return: None
-        """
-        self._input_flags = input_flags
-
     def get_input_flags(self) -> InputFlags:
         """
         Private. Returns the input flags
@@ -126,7 +114,7 @@ class InputCommand:
 
         for k, _ in enumerate(list_of_tokens):
             if _.startswith("-"):
-                if len(_) < 2 or len(_[: _.rfind("-")]) > 3:
+                if len(_) < 2 or len(_[: _.rfind("-")]) > 2:
                     raise UnprocessedInputFlagException()
                 current_flag_name = _
             else:
@@ -142,16 +130,15 @@ class InputCommand:
                 input_flag = InputFlag(
                     name=current_flag_name[current_flag_name.rfind("-") + 1 :],
                     prefix=cast(
-                        Literal["-", "--", "---"],
+                        Literal["-", "--"],
                         current_flag_name[: current_flag_name.rfind("-") + 1],
                     ),
                     value=current_flag_value,
                     status=None
                 )
 
-                all_flags = [
-                    flag.get_string_entity() for flag in input_flags.get_flags()
-                ]
+                all_flags = [flag.get_string_entity() for flag in input_flags.get_flags()]
+                
                 if input_flag.get_string_entity() not in all_flags:
                     input_flags.add_flag(input_flag)
                 else:

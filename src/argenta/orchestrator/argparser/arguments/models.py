@@ -6,7 +6,6 @@ class BaseArgument(ABC):
     """
     Private. Base class for all arguments
     """
-
     @abstractmethod
     def get_string_entity(self) -> str:
         """

@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from enum import Enum
 from typing import Literal, Pattern
 
@@ -83,6 +82,12 @@ class Flag:
         :return: the prefix of the flag as str
         """
         return self._prefix
+    
+    def __str__(self):
+        return self.get_string_entity()
+    
+    def __repr__(self) -> str:
+        return f'Flag<name={self.get_name()}, prefix={self.get_prefix()}>'
         
     def __eq__(self, other) -> bool:
         if isinstance(other, Flag):
@@ -162,6 +167,11 @@ class InputFlag:
         string_entity: str = self._prefix + self._name
         return string_entity
 
+    def __str__(self):
+        return f'{self.get_string_entity()} {self.get_value()}'
+    
+    def __repr__(self) -> str:
+        return f'InputFlag<name={self.get_name()}, prefix={self.get_prefix()}, value={self.get_value()}, status={self.get_status()}>'
 
     def __eq__(self, other) -> bool:
         if isinstance(other, InputFlag):

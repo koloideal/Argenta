@@ -97,7 +97,11 @@ class Router:
                 command_handler.handling(response)
         else:
             if input_command_flags.get_flags():
-                response = Response(ResponseStatus.UNDEFINED_FLAGS)
+                undefined_flags = InputFlags()
+                for input_flag in input_command_flags:
+                    input_flag.set_status(ValidationStatus.UNDEFINED)
+                    undefined_flags.add_flag(input_flag)
+                response = Response(ResponseStatus.UNDEFINED_FLAGS, input_flags=undefined_flags)
                 command_handler.handling(response)
             else:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
@@ -116,6 +120,7 @@ class Router:
         result_input_flags: InputFlags = InputFlags()
         invalid_value_flags = False
         undefined_flags = False
+
         for flag in input_flags:
             flag_status: ValidationStatus = (
                 handled_command.validate_input_flag(flag)

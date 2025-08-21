@@ -29,5 +29,6 @@ build-backend = "hatchling.build"
 [dependency-groups]
 dev = [
     "psutil>=7.0.0",
+    "pytest>=8.3.2",
 ]
 

@@ -291,7 +291,7 @@ class BaseApp:
 
         self._unknown_command_handler = unknown_command_handler
 
-    def pre_cycle_setup(self) -> None:
+    def _pre_cycle_setup(self) -> None:
         """
         Private. Configures various aspects of the application before the start of the cycle
         :return: None
@@ -379,7 +379,7 @@ class App(BaseApp):
         Private. Starts the user input processing cycle
         :return: None
         """
-        self.pre_cycle_setup()
+        self._pre_cycle_setup()
         while True:
             if self._repeat_command_groups_description:
                 self._print_command_group_description()

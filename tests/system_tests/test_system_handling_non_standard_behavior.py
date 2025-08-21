@@ -92,6 +92,8 @@ class TestSystemHandlerNormalWork(TestCase):
             undefined_flag = response.input_flags.get_flag("port")
             if undefined_flag and undefined_flag.get_status() == ValidationStatus.UNDEFINED:
                 print(f'test command with undefined flag with value: {undefined_flag.get_string_entity()} {undefined_flag.get_value()}')
+            else:
+                raise
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -232,4 +234,25 @@ class TestSystemHandlerNormalWork(TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn("\nRepeated input flags: \"test --port 22 --port 33\"\n", output)
+        self.assertIn('Repeated input flags: "test --port 22 --port 33"', output)
+
+    @patch("builtins.input", side_effect=["test --help", "q"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_input_correct_command_with_unregistered_flag3(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
+        router = Router()
+        orchestrator = Orchestrator()
+
+        @router.command(Command('test'))
+        def test(response: Response):
+            undefined_flag = response.input_flags.get_flag('help')
+            if undefined_flag and undefined_flag.get_status() == ValidationStatus.UNDEFINED:
+                print(f'test command with undefined flag: {undefined_flag.get_string_entity()}')
+
+        app = App(override_system_messages=True,
+                  print_func=print)
+        app.include_router(router)
+        orchestrator.start_polling(app)
+
+        output = mock_stdout.getvalue()
+
+        self.assertIn('\ntest command with undefined flag: --help\n', output)
