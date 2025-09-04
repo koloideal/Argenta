@@ -146,7 +146,7 @@ class BaseApp:
                 self._dividing_line.get_full_static_line(is_override=self._override_system_messages)
             )
 
-        elif isinstance(self._dividing_line, DynamicDividingLine):
+        elif isinstance(self._dividing_line, DynamicDividingLine): # pyright: ignore[reportUnnecessaryIsInstance]
             clear_text = re.sub(r"\u001b\[[0-9;]*m", "", text)
             max_length_line = max([len(line) for line in clear_text.split("\n")])
             max_length_line = (
@@ -168,6 +168,9 @@ class BaseApp:
                     length=max_length_line, is_override=self._override_system_messages
                 )
             )
+
+        else:
+            raise NotImplementedError
 
     def _is_exit_command(self, command: InputCommand) -> bool:
         """
@@ -232,7 +235,7 @@ class BaseApp:
         system_router.title = self._system_router_title
 
         @system_router.command(self._exit_command)
-        def exit_command(response: Response) -> None:
+        def _(response: Response) -> None:
             self._exit_command_handler(response)
 
         if system_router not in self._registered_routers.get_registered_routers():
@@ -265,7 +268,7 @@ class BaseApp:
         self._initial_message = ("\n" + f"[bold red]{text2art(self._initial_message, font='tarty1')}" + "\n")
         self._farewell_message = (
             "[bold red]\n\n" +
-            str(text2art(self._farewell_message, font="chanky")) +
+            str(text2art(self._farewell_message, font="chanky")) + # pyright: ignore[reportUnknownArgumentType]
             "\n[/bold red]\n" +
             "[red i]github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]\n"
         )

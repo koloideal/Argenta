@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Literal, Pattern
+from typing import Literal, Pattern, Self
 
 
 
@@ -89,8 +89,8 @@ class Flag:
     def __repr__(self) -> str:
         return f'Flag<name={self.get_name()}, prefix={self.get_prefix()}>'
         
-    def __eq__(self, other) -> bool:
-        if isinstance(other, Flag):
+    def __eq__(self, other: Self) -> bool: # pyright: ignore[reportIncompatibleMethodOverride]
+        if isinstance(other, Self):
             return self.get_string_entity() == other.get_string_entity()
         else:
             raise NotImplementedError
@@ -173,8 +173,8 @@ class InputFlag:
     def __repr__(self) -> str:
         return f'InputFlag<name={self.get_name()}, prefix={self.get_prefix()}, value={self.get_value()}, status={self.get_status()}>'
 
-    def __eq__(self, other) -> bool:
-        if isinstance(other, InputFlag):
+    def __eq__(self, other: Self) -> bool: # pyright: ignore[reportIncompatibleMethodOverride]
+        if isinstance(other, Self):
             return (
                 self.get_name() == other.get_name()
                 and self.get_value() == other.get_value()

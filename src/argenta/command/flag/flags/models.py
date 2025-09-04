@@ -1,5 +1,5 @@
 from argenta.command.flag.models import InputFlag, Flag
-from typing import Generic, Optional, TypeVar
+from typing import Generic, Optional, Self, TypeVar
 
 
 FlagType = TypeVar("FlagType")
@@ -43,13 +43,16 @@ class BaseFlags(Generic[FlagType]):
     def __next__(self):
         return next(iter(self))
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: int) -> FlagType:
         return self._flags[item]
 
     def __bool__(self):
         return bool(self._flags)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Self): # pyright: ignore[reportIncompatibleMethodOverride]
+        if not isinstance(other, Self):
+            return NotImplemented
+        
         if len(self.get_flags()) != len(other.get_flags()):
             return False
         else:

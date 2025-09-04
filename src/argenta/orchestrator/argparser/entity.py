@@ -50,7 +50,7 @@ class ArgParser:
                 self._entity.add_argument(arg.get_string_entity())
             elif isinstance(arg, OptionalArgument):
                 self._entity.add_argument(arg.get_string_entity())
-            elif isinstance(arg, BooleanArgument):
+            elif isinstance(arg, BooleanArgument): # pyright: ignore[reportUnnecessaryIsInstance]
                 self._entity.add_argument(arg.get_string_entity(), action="store_true")
             else:
                 raise NotImplementedError

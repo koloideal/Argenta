@@ -28,7 +28,7 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "psutil>=7.0.0",
+    "mypy>=1.14.1",
     "pytest>=8.3.2",
 ]
 
