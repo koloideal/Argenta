@@ -1,16 +1,19 @@
-from typing import Protocol, TypeVar
+from typing import Protocol, TypeVar, overload, Any, Never
 
 T = TypeVar('T', contravariant=True)
+_default: Any = object()
 
 
 class Handler(Protocol[T]):
-    def __call__(self, __param: T) -> None:
+    @overload
+    def __call__(self: "Handler[Never]") -> None: ...
+    
+    @overload
+    def __call__(self, __param: T) -> None: ...
+        
+    def __call__(self, __param: T = _default) -> None:
         raise NotImplementedError
-
-class EmptyHandler(Protocol):
-    def __call__(self) -> None:
-        raise NotImplementedError
-
+        
 
 class Printer(Protocol):
     def __call__(self, __text: str) -> None:
