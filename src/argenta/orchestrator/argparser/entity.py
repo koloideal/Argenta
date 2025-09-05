@@ -45,7 +45,6 @@ class ArgParser:
         :return: None
         """
         for arg in self._args:
-            print(arg)
             if isinstance(arg, PositionalArgument):
                 self._entity.add_argument(arg.get_string_entity())
             elif isinstance(arg, OptionalArgument):

@@ -1,7 +1,7 @@
-from typing import Never, Optional
+from typing import Never, Optional, TypeAlias
 from rich.console import Console
 from rich.markup import escape
-from art import text2art
+from art import text2art # pyright: ignore[reportUnknownVariableType, reportMissingTypeStubs]
 from contextlib import redirect_stdout
 import io
 import re
@@ -20,6 +20,9 @@ from argenta.command.exceptions import (
 )
 from argenta.app.registered_routers.entity import RegisteredRouters
 from argenta.response import Response
+
+
+Matches: TypeAlias = list[str] | list[Never]
 
 
 class BaseApp:
@@ -54,10 +57,7 @@ class BaseApp:
         self._matching_lower_triggers_with_routers: dict[str, Router] = {}
         self._matching_default_triggers_with_routers: dict[str, Router] = {}
 
-        if self._ignore_command_register:
-            self._current_matching_triggers_with_routers: dict[str, Router] = self._matching_lower_triggers_with_routers
-        else:
-            self._current_matching_triggers_with_routers: dict[str, Router] = self._matching_default_triggers_with_routers
+        self._current_matching_triggers_with_routers: dict[str, Router] = self._matching_lower_triggers_with_routers if self._ignore_command_register else self._matching_default_triggers_with_routers
 
         self._incorrect_input_syntax_handler: Handler[str] = lambda _: print_func(f"Incorrect flag syntax: {_}")
         self._repeated_input_flags_handler: Handler[str] = lambda _: print_func(f"Repeated input flags: {_}")
@@ -244,14 +244,16 @@ class BaseApp:
 
     def _most_similar_command(self, unknown_command: str) -> str | None:
         all_commands = list(self._current_matching_triggers_with_routers.keys())
-
-        matches: list[str] | list[Never] = sorted(
+        
+        matches_startswith_unknown_command: Matches = sorted(
             cmd for cmd in all_commands if cmd.startswith(unknown_command)
         )
-        if not matches:
-            matches: list[str] | list[Never] = sorted(
-                cmd for cmd in all_commands if unknown_command.startswith(cmd)
-            )
+        matches_startswith_cmd: Matches = sorted(
+            cmd for cmd in all_commands if unknown_command.startswith(cmd)
+        )
+
+        matches: Matches = matches_startswith_unknown_command or matches_startswith_cmd
+
         if len(matches) == 1:
             return matches[0]
         elif len(matches) > 1:
