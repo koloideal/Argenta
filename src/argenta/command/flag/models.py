@@ -60,8 +60,9 @@ class Flag:
                 return False
         else:
             return True
-        
-    def get_string_entity(self) -> str:
+    
+    @property
+    def string_entity(self) -> str:
         """
         Public. Returns a string representation of the flag
         :return: string representation of the flag as str
@@ -69,14 +70,16 @@ class Flag:
         string_entity: str = self._prefix + self._name
         return string_entity
 
-    def get_name(self) -> str:
+    @property
+    def name(self) -> str:
         """
         Public. Returns the name of the flag
         :return: the name of the flag as str
         """
         return self._name
 
-    def get_prefix(self) -> str:
+    @property
+    def prefix(self) -> str:
         """
         Public. Returns the prefix of the flag
         :return: the prefix of the flag as str
@@ -84,14 +87,14 @@ class Flag:
         return self._prefix
     
     def __str__(self) -> str:
-        return self.get_string_entity()
+        return self.string_entity
     
     def __repr__(self) -> str:
-        return f'Flag<name={self.get_name()}, prefix={self.get_prefix()}>'
+        return f'Flag<name={self.name}, prefix={self.prefix}>'
         
     def __eq__(self, other: object) -> bool: 
         if isinstance(other, Flag):
-            return self.get_string_entity() == other.get_string_entity()
+            return self.string_entity == other.string_entity
         else:
             raise NotImplementedError
 
@@ -115,7 +118,8 @@ class InputFlag:
         self._value = value
         self._status = status
 
-    def get_value(self) -> str | None:
+    @property
+    def value(self) -> str | None:
         """
         Public. Returns the value of the flag
         :return: the value of the flag as str
@@ -130,21 +134,24 @@ class InputFlag:
         """
         self._value = value
 
-    def get_name(self) -> str:
+    @property
+    def name(self) -> str:
         """
         Public. Returns the name of the flag
         :return: the name of the flag as str
         """
         return self._name
     
-    def get_prefix(self) -> str:
+    @property
+    def prefix(self) -> str:
         """
         Public. Returns the prefix of the flag
         :return: the prefix of the flag as str
         """
         return self._prefix
     
-    def get_status(self) -> ValidationStatus | None:
+    @property
+    def status(self) -> ValidationStatus | None:
         """
         Public. Returns the status of the flag
         :return: the status of the flag as ValidationStatus
@@ -159,7 +166,8 @@ class InputFlag:
         """
         self._status = status
     
-    def get_string_entity(self) -> str:
+    @property
+    def string_entity(self) -> str:
         """
         Public. Returns a string representation of the flag
         :return: string representation of the flag as str
@@ -168,16 +176,16 @@ class InputFlag:
         return string_entity
 
     def __str__(self) -> str:
-        return f'{self.get_string_entity()} {self.get_value()}'
+        return f'{self.string_entity} {self.value}'
     
     def __repr__(self) -> str:
-        return f'InputFlag<name={self.get_name()}, prefix={self.get_prefix()}, value={self.get_value()}, status={self.get_status()}>'
+        return f'InputFlag<name={self.name}, prefix={self.prefix}, value={self.value}, status={self.status}>'
 
     def __eq__(self, other: object) -> bool: 
         if isinstance(other, InputFlag):
             return (
-                self.get_name() == other.get_name()
-                and self.get_value() == other.get_value()
+                self.name == other.name
+                and self.value == other.value
             )
         else:
             raise NotImplementedError

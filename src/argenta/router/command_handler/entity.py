@@ -22,14 +22,16 @@ class CommandHandler:
         """
         self._handler(response)
 
-    def get_handler(self) -> Callable[[Response], None]:
+    @property
+    def handler(self) -> Callable[[Response], None]:
         """
         Private. Returns the handler being called
         :return: the handler being called as Callable[[Response], None]
         """
         return self._handler
 
-    def get_handled_command(self) -> Command:
+    @property
+    def handled_command(self) -> Command:
         """
         Private. Returns the command being processed
         :return: the command being processed as Command
@@ -45,7 +47,8 @@ class CommandHandlers:
         """
         self.command_handlers = command_handlers if command_handlers else []
 
-    def get_handlers(self) -> list[CommandHandler]:
+    @property
+    def handlers(self) -> list[CommandHandler]:
         """
         Private. Returns the list of CommandHandlers
         :return: the list of CommandHandlers as list[CommandHandler]

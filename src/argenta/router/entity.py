@@ -65,14 +65,14 @@ class Router:
         :param input_command: input command as InputCommand
         :return: None
         """
-        input_command_name: str = input_command.get_trigger()
-        input_command_flags: InputFlags = input_command.get_input_flags()
+        input_command_name: str = input_command.trigger
+        input_command_flags: InputFlags = input_command.input_flags
 
         for command_handler in self._command_handlers:
-            handle_command = command_handler.get_handled_command()
-            if input_command_name.lower() == handle_command.get_trigger().lower():
+            handle_command = command_handler.handled_command
+            if input_command_name.lower() == handle_command.trigger.lower():
                 self.process_input_command(input_command_flags, command_handler)
-            if input_command_name.lower() in handle_command.get_aliases():
+            if input_command_name.lower() in handle_command.aliases:
                 self.process_input_command(input_command_flags, command_handler)
 
     def process_input_command(
@@ -84,16 +84,16 @@ class Router:
         :param command_handler: command handler for input command as CommandHandler
         :return: None
         """
-        handle_command = command_handler.get_handled_command()
-        if handle_command.get_registered_flags().get_flags():
-            if input_command_flags.get_flags():
+        handle_command = command_handler.handled_command
+        if handle_command.registered_flags.flags:
+            if input_command_flags.flags:
                 response: Response = self._structuring_input_flags(handle_command, input_command_flags)
                 command_handler.handling(response)
             else:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
                 command_handler.handling(response)
         else:
-            if input_command_flags.get_flags():
+            if input_command_flags.flags:
                 undefined_flags = InputFlags()
                 for input_flag in input_command_flags:
                     input_flag.set_status(ValidationStatus.UNDEFINED)
@@ -151,12 +151,12 @@ class Router:
         :param command: validated command
         :return: None if command is valid else raise exception
         """
-        command_name: str = command.get_trigger()
+        command_name: str = command.trigger
         if command_name.find(" ") != -1:
             raise TriggerContainSpacesException()
-        flags: Flags = command.get_registered_flags()
+        flags: Flags = command.registered_flags
         if flags:
-            flags_name: list[str] = [x.get_string_entity().lower() for x in flags]
+            flags_name: list[str] = [x.string_entity.lower() for x in flags]
             if len(set(flags_name)) < len(flags_name):
                 raise RepeatedFlagNameException()
 
@@ -197,28 +197,31 @@ class Router:
         """
         self._ignore_command_register = _
 
-    def get_triggers(self) -> list[str]:
+    @property
+    def triggers(self) -> list[str]:
         """
         Public. Gets registered triggers
         :return: registered in router triggers as list[str]
         """
         all_triggers: list[str] = []
         for command_handler in self._command_handlers:
-            all_triggers.append(command_handler.get_handled_command().get_trigger())
+            all_triggers.append(command_handler.handled_command.trigger)
         return all_triggers
 
-    def get_aliases(self) -> list[str]:
+    @property
+    def aliases(self) -> list[str]:
         """
         Public. Gets registered aliases
         :return: registered in router aliases as list[str]
         """
         all_aliases: list[str] = []
         for command_handler in self._command_handlers:
-            if command_handler.get_handled_command().get_aliases():
-                all_aliases.extend(command_handler.get_handled_command().get_aliases())
+            if command_handler.handled_command.aliases:
+                all_aliases.extend(command_handler.handled_command.aliases)
         return all_aliases
 
-    def get_command_handlers(self) -> CommandHandlers:
+    @property
+    def command_handlers(self) -> CommandHandlers:
         """
         Private. Gets registered command handlers
         :return: registered command handlers as CommandHandlers

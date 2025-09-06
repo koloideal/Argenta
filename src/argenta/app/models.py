@@ -62,7 +62,7 @@ class BaseApp:
         self._incorrect_input_syntax_handler: Handler[str] = lambda _: print_func(f"Incorrect flag syntax: {_}")
         self._repeated_input_flags_handler: Handler[str] = lambda _: print_func(f"Repeated input flags: {_}")
         self._empty_input_command_handler: EmptyCommandHandler = lambda: print_func("Empty input command")
-        self._unknown_command_handler: Handler[InputCommand] = lambda _: print_func(f"Unknown command: {_.get_trigger()}")
+        self._unknown_command_handler: Handler[InputCommand] = lambda _: print_func(f"Unknown command: {_.trigger}")
         self._exit_command_handler: Handler[Response] = lambda _: print_func(self._farewell_message)
 
     def set_description_message_pattern(self, _: DescriptionMessageGenerator, /) -> None:
@@ -121,12 +121,12 @@ class BaseApp:
         for registered_router in self._registered_routers:
             if registered_router.title:
                 self._print_func(registered_router.title)
-            for command_handler in registered_router.get_command_handlers():
-                handled_command = command_handler.get_handled_command()
+            for command_handler in registered_router.command_handlers:
+                handled_command = command_handler.handled_command
                 self._print_func(
                     self._description_message_gen(
-                        handled_command.get_trigger(),
-                        handled_command.get_description(),
+                        handled_command.trigger,
+                        handled_command.description,
                     )
                 )
             self._print_func("")
@@ -178,21 +178,21 @@ class BaseApp:
         :param command: command to check
         :return: is it an exit command or not as bool
         """
-        trigger = command.get_trigger()
-        exit_trigger = self._exit_command.get_trigger()
+        trigger = command.trigger
+        exit_trigger = self._exit_command.trigger
         if self._ignore_command_register:
             if (
                 trigger.lower() == exit_trigger.lower()
             ):
                 return True
             elif trigger.lower() in [
-                x.lower() for x in self._exit_command.get_aliases()
+                x.lower() for x in self._exit_command.aliases
             ]:
                 return True
         else:
             if trigger == exit_trigger:
                 return True
-            elif trigger in self._exit_command.get_aliases():
+            elif trigger in self._exit_command.aliases:
                 return True
         return False
 
@@ -202,7 +202,7 @@ class BaseApp:
         :param command: command to check
         :return: is it an unknown command or not as bool
         """
-        input_command_trigger = command.get_trigger()
+        input_command_trigger = command.trigger
         if self._ignore_command_register:
             if input_command_trigger.lower() in list(self._current_matching_triggers_with_routers.keys()):
                 return False
@@ -284,7 +284,7 @@ class BaseApp:
         self._empty_input_command_handler = lambda: self._print_func("[red bold]Empty input command")
 
         def unknown_command_handler(command: InputCommand) -> None:
-            cmd_trg: str = command.get_trigger()
+            cmd_trg: str = command.trigger
             mst_sim_cmd: str | None = self._most_similar_command(cmd_trg)
             first_part_of_text = f"[red]Unknown command:[/red] [blue]{escape(cmd_trg)}[/blue]"
             second_part_of_text = (
@@ -304,8 +304,8 @@ class BaseApp:
         self._setup_system_router()
 
         for router_entity in self._registered_routers:
-            router_triggers = router_entity.get_triggers()
-            router_aliases = router_entity.get_aliases()
+            router_triggers = router_entity.triggers
+            router_aliases = router_entity.aliases
             combined = router_triggers + router_aliases
 
             for trigger in combined:
@@ -412,7 +412,7 @@ class App(BaseApp):
                 self._print_framed_text(res2)
                 continue
 
-            processing_router = self._current_matching_triggers_with_routers[input_command.get_trigger().lower()]
+            processing_router = self._current_matching_triggers_with_routers[input_command.trigger.lower()]
 
             if processing_router.disable_redirect_stdout:
                 if isinstance(self._dividing_line, StaticDividingLine):

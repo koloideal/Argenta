@@ -29,14 +29,16 @@ class Command:
         self._description = "Command without description" if not description else description
         self._aliases = aliases if aliases else []
 
-    def get_registered_flags(self) -> Flags:
+    @property
+    def registered_flags(self) -> Flags:
         """
         Private. Returns the registered flags
         :return: the registered flags as Flags
         """
         return self._registered_flags
 
-    def get_aliases(self) -> list[str]:
+    @property
+    def aliases(self) -> list[str]:
         """
         Public. Returns the aliases of the command
         :return: the aliases of the command as list[str]
@@ -51,24 +53,26 @@ class Command:
         :param flag: input flag for validation
         :return: is input flag valid as bool
         """
-        registered_flags: Flags = self.get_registered_flags()
+        registered_flags: Flags = self.registered_flags
         for registered_flag in registered_flags:
-            if registered_flag.get_string_entity() == flag.get_string_entity():
-                is_valid = registered_flag.validate_input_flag_value(flag.get_value())
+            if registered_flag.string_entity == flag.string_entity:
+                is_valid = registered_flag.validate_input_flag_value(flag.value)
                 if is_valid:
                     return ValidationStatus.VALID
                 else:
                     return ValidationStatus.INVALID
         return ValidationStatus.UNDEFINED
 
-    def get_description(self) -> str:
+    @property
+    def description(self) -> str:
         """
         Private. Returns the description of the command
         :return: the description of the command as str
         """
         return self._description
     
-    def get_trigger(self) -> str:
+    @property
+    def trigger(self) -> str:
         """
         Public. Returns the trigger of the command
         :return: the trigger of the command as str
@@ -89,7 +93,8 @@ class InputCommand:
         input_flags = input_flags if isinstance(input_flags, InputFlags) else InputFlags([input_flags]) if isinstance(input_flags, InputFlag) else InputFlags()
         self._input_flags: InputFlags = input_flags
 
-    def get_input_flags(self) -> InputFlags:
+    @property
+    def input_flags(self) -> InputFlags:
         """
         Private. Returns the input flags
         :return: the input flags as InputFlags
@@ -137,9 +142,9 @@ class InputCommand:
                     status=None
                 )
 
-                all_flags = [flag.get_string_entity() for flag in input_flags.get_flags()]
+                all_flags = [flag.string_entity for flag in input_flags.flags]
                 
-                if input_flag.get_string_entity() not in all_flags:
+                if input_flag.string_entity not in all_flags:
                     input_flags.add_flag(input_flag)
                 else:
                     raise RepeatedInputFlagsException(input_flag)
@@ -151,7 +156,8 @@ class InputCommand:
         else:
             return cls(trigger=command, input_flags=input_flags)
         
-    def get_trigger(self) -> str:
+    @property
+    def trigger(self) -> str:
         """
         Public. Returns the trigger of the command
         :return: the trigger of the command as str

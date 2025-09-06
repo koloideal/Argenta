@@ -29,7 +29,7 @@ class RepeatedInputFlagsException(BaseInputCommandException):
     def __str__(self) -> str:
         return (
             "Repeated Input Flags\n"
-            f"Duplicate flag was detected in the input: '{self.flag.get_string_entity()}'"
+            f"Duplicate flag was detected in the input: '{self.flag.string_entity}'"
         )
 
 
