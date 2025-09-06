@@ -1,12 +1,12 @@
 from typing import Never, Optional, TypeAlias
 from rich.console import Console
 from rich.markup import escape
-from art import text2art # pyright: ignore[reportUnknownVariableType, reportMissingTypeStubs]
+from art import text2art  # type: ignore
 from contextlib import redirect_stdout
 import io
 import re
 
-from argenta.app.protocols import DescriptionMessageGenerator, Printer, Handler
+from argenta.app.protocols import DescriptionMessageGenerator, EmptyCommandHandler, Printer, Handler
 from argenta.command.models import Command, InputCommand
 from argenta.router import Router
 from argenta.router.defaults import system_router
@@ -61,7 +61,7 @@ class BaseApp:
 
         self._incorrect_input_syntax_handler: Handler[str] = lambda _: print_func(f"Incorrect flag syntax: {_}")
         self._repeated_input_flags_handler: Handler[str] = lambda _: print_func(f"Repeated input flags: {_}")
-        self._empty_input_command_handler: Handler[Never] = lambda: print_func("Empty input command")
+        self._empty_input_command_handler: EmptyCommandHandler = lambda: print_func("Empty input command")
         self._unknown_command_handler: Handler[InputCommand] = lambda _: print_func(f"Unknown command: {_.get_trigger()}")
         self._exit_command_handler: Handler[Response] = lambda _: print_func(self._farewell_message)
 
@@ -71,7 +71,7 @@ class BaseApp:
         :param _: output pattern of the available commands
         :return: None
         """
-        self._description_message_gen: DescriptionMessageGenerator = _
+        self._description_message_gen = _
 
     def set_incorrect_input_syntax_handler(self, _: Handler[str], /) -> None:
         """
@@ -97,7 +97,7 @@ class BaseApp:
         """
         self._unknown_command_handler = _
 
-    def set_empty_command_handler(self, _: Handler[Never], /) -> None:
+    def set_empty_command_handler(self, _: EmptyCommandHandler, /) -> None:
         """
         Public. Sets the handler for empty commands when entering a command
         :param _: handler for empty commands when entering a command

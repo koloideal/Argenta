@@ -1,17 +1,14 @@
-from typing import Protocol, TypeVar, overload, Any, Never
+from typing import Protocol, TypeVar
 
 T = TypeVar('T', contravariant=True)
-_default: Any = object()
 
 
 class Handler(Protocol[T]):
-    @overload
-    def __call__(self: "Handler[Never]") -> None: ...
+    def __call__(self, __param: T) -> None:
+        raise NotImplementedError
     
-    @overload
-    def __call__(self, __param: T) -> None: ...
-        
-    def __call__(self, __param: T = _default) -> None:
+class EmptyCommandHandler(Protocol):
+    def __call__(self) -> None:
         raise NotImplementedError
         
 

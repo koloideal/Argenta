@@ -30,5 +30,7 @@ build-backend = "hatchling.build"
 dev = [
     "mypy>=1.14.1",
     "pytest>=8.3.2",
+    "ruff>=0.12.12",
+    "wemake-python-styleguide>=0.17.0",
 ]
 

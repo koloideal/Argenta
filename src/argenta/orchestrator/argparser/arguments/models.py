@@ -23,7 +23,7 @@ class PositionalArgument(BaseArgument):
         """
         self.name = name
 
-    def get_string_entity(self):
+    def get_string_entity(self) -> str:
         return self.name
 
 
@@ -37,7 +37,7 @@ class OptionalArgument(BaseArgument):
         self.name = name
         self.prefix = prefix
 
-    def get_string_entity(self):
+    def get_string_entity(self) -> str:
         return self.prefix + self.name
 
 
@@ -51,5 +51,5 @@ class BooleanArgument(BaseArgument):
         self.name = name
         self.prefix = prefix
 
-    def get_string_entity(self):
+    def get_string_entity(self) -> str:
         return self.prefix + self.name

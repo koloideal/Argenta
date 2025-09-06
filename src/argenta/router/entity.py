@@ -1,9 +1,9 @@
-from typing import Callable, Type
+from typing import Callable
 from inspect import getfullargspec, get_annotations, getsourcefile, getsourcelines
 from rich.console import Console
 
-from argenta.command import Command
-from argenta.command.models import InputCommand, ValidationStatus
+from argenta.command import Command, InputCommand
+from argenta.command.flag import ValidationStatus
 from argenta.response import Response, ResponseStatus
 from argenta.router.command_handler.entity import CommandHandlers, CommandHandler
 from argenta.command.flag.flags import (
@@ -51,10 +51,10 @@ class Router:
             redefined_command = command
         self._validate_command(redefined_command)
 
-        def command_decorator(func: Callable[[Response], None]):
+        def command_decorator(func: Callable[[Response], None]) -> Callable[[Response], None]:
             Router._validate_func_args(func)
             self._command_handlers.add_handler(CommandHandler(func, redefined_command))
-            def wrapper(response: Response):
+            def wrapper(response: Response) -> None:
                 return func(response)
             return wrapper
         return command_decorator

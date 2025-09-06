@@ -1,5 +1,5 @@
 from argenta.command.flag.models import InputFlag, Flag
-from typing import Generic, Optional, Self, TypeVar
+from typing import Generic, Iterator, Optional, TypeVar
 
 
 FlagType = TypeVar("FlagType")
@@ -21,7 +21,7 @@ class BaseFlags(Generic[FlagType]):
         """
         return self._flags
 
-    def add_flag(self, flag: FlagType):
+    def add_flag(self, flag: FlagType) -> None:
         """
         Public. Adds a flag to the list of flags
         :param flag: flag to add
@@ -29,7 +29,7 @@ class BaseFlags(Generic[FlagType]):
         """
         self._flags.append(flag)
 
-    def add_flags(self, flags: list[FlagType]):
+    def add_flags(self, flags: list[FlagType]) -> None:
         """
         Public. Adds a list of flags to the list of flags
         :param flags: list of flags to add
@@ -37,29 +37,17 @@ class BaseFlags(Generic[FlagType]):
         """
         self._flags.extend(flags)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[FlagType]:
         return iter(self._flags)
 
-    def __next__(self):
+    def __next__(self) -> FlagType:
         return next(iter(self))
 
     def __getitem__(self, item: int) -> FlagType:
         return self._flags[item]
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return bool(self._flags)
-
-    def __eq__(self, other: Self): # pyright: ignore[reportIncompatibleMethodOverride]
-        if not isinstance(other, Self):
-            return NotImplemented
-        
-        if len(self.get_flags()) != len(other.get_flags()):
-            return False
-        else:
-            for flag, other_flag in zip(self.get_flags(), other.get_flags()): 
-                if not (flag == other_flag):
-                    return False
-        return True
 
 
 class Flags(BaseFlags[Flag]):
@@ -73,6 +61,18 @@ class Flags(BaseFlags[Flag]):
             return list(filter(lambda flag: flag.get_name() == name, self._flags))[0]
         else:
             return None
+        
+    def __eq__(self, other: object) -> bool: 
+        if isinstance(other, Flags):
+            if len(self.get_flags()) != len(other.get_flags()):
+                return False
+            else:
+                for flag, other_flag in zip(self.get_flags(), other.get_flags()): 
+                    if not (flag == other_flag):
+                        return False
+            return True
+        else:
+            raise NotImplementedError
 
 
 class InputFlags(BaseFlags[InputFlag]):
@@ -86,4 +86,16 @@ class InputFlags(BaseFlags[InputFlag]):
             return list(filter(lambda flag: flag.get_name() == name, self._flags))[0]
         else:
             return None
+        
+    def __eq__(self, other: object) -> bool: 
+        if isinstance(other, InputFlags):
+            if len(self.get_flags()) != len(other.get_flags()):
+                return False
+            else:
+                for flag, other_flag in zip(self.get_flags(), other.get_flags()): 
+                    if not (flag == other_flag):
+                        return False
+            return True
+        else:
+            raise NotImplementedError
 

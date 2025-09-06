@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Literal, Pattern, Self
+from typing import Literal, Pattern
 
 
 
@@ -31,7 +31,7 @@ class Flag:
         self._prefix = prefix
         self._possible_values = possible_values
 
-    def validate_input_flag_value(self, input_flag_value: str | None):
+    def validate_input_flag_value(self, input_flag_value: str | None) -> bool:
         """
         Private. Validates the input flag value
         :param input_flag_value: The input flag value to validate
@@ -83,14 +83,14 @@ class Flag:
         """
         return self._prefix
     
-    def __str__(self):
+    def __str__(self) -> str:
         return self.get_string_entity()
     
     def __repr__(self) -> str:
         return f'Flag<name={self.get_name()}, prefix={self.get_prefix()}>'
         
-    def __eq__(self, other: Self) -> bool: # pyright: ignore[reportIncompatibleMethodOverride]
-        if isinstance(other, Self):
+    def __eq__(self, other: object) -> bool: 
+        if isinstance(other, Flag):
             return self.get_string_entity() == other.get_string_entity()
         else:
             raise NotImplementedError
@@ -167,14 +167,14 @@ class InputFlag:
         string_entity: str = self._prefix + self._name
         return string_entity
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.get_string_entity()} {self.get_value()}'
     
     def __repr__(self) -> str:
         return f'InputFlag<name={self.get_name()}, prefix={self.get_prefix()}, value={self.get_value()}, status={self.get_status()}>'
 
-    def __eq__(self, other: Self) -> bool: # pyright: ignore[reportIncompatibleMethodOverride]
-        if isinstance(other, Self):
+    def __eq__(self, other: object) -> bool: 
+        if isinstance(other, InputFlag):
             return (
                 self.get_name() == other.get_name()
                 and self.get_value() == other.get_value()

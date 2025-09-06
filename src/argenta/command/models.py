@@ -51,7 +51,7 @@ class Command:
         :param flag: input flag for validation
         :return: is input flag valid as bool
         """
-        registered_flags: Flags | None = self.get_registered_flags()
+        registered_flags: Flags = self.get_registered_flags()
         for registered_flag in registered_flags:
             if registered_flag.get_string_entity() == flag.get_string_entity():
                 is_valid = registered_flag.validate_input_flag_value(flag.get_value())
