@@ -98,21 +98,18 @@ class InputFlags(BaseFlags[InputFlag]):
             return None
         
     def __eq__(self, other: object) -> bool: 
-        if isinstance(other, InputFlags):
-            if len(self.all_flags) != len(other.all_flags):
-                return False
-            else:
-                for flag, other_flag in zip(self.all_flags, other.all_flags): 
-                    if not (flag == other_flag):
-                        return False
-            return True
-        else:
-            raise TypeError
+        if not isinstance(other, InputFlags):
+            raise NotImplementedError
+
+        if len(self.all_flags) != len(other.all_flags):
+            return False
+
+        return all(my_flag == other_flag for my_flag, other_flag in zip(self.all_flags, other.all_flags))
         
-    def __contains__(self, item: object) -> bool:
-        if isinstance(item, InputFlag):
+    def __contains__(self, ingressable_item: object) -> bool:
+        if isinstance(ingressable_item, InputFlag):
             for flag in self._flags:
-                if flag == item:
+                if flag == ingressable_item:
                     return True
             return False
         else:

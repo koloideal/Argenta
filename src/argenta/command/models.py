@@ -8,8 +8,9 @@ from argenta.command.exceptions import (
 from typing import Never, Optional, Self, cast, Literal
 
 
-ParseFlagsResult = tuple[InputFlags, str | None, str | None]
+ParseFlagsResult = tuple[InputFlags, Optional[str], Optional[str]]
 ParseResult = tuple[str, InputFlags]
+MIN_FLAG_PREFIX: str = "-"
 
 
 class Command:
@@ -27,9 +28,16 @@ class Command:
         :param flags: processed commands
         :param aliases: string synonyms for the main trigger
         """
-        self.registered_flags: Flags = flags if isinstance(flags, Flags) else Flags([flags]) if isinstance(flags, Flag) else Flags()
+        match flags:
+            case Flags() as flags_obj:
+                self.registered_flags = flags_obj
+            case Flag() as single_flag:
+                self.registered_flags = Flags([single_flag])
+            case None:
+                self.registered_flags = Flags()
+
         self.trigger = trigger
-        self.description = "Command without description" if not description else description
+        self.description =  description if description else "Command without description"
         self.aliases = aliases if aliases else []
 
     def validate_input_flag(
@@ -43,7 +51,7 @@ class Command:
         registered_flags: Flags = self.registered_flags
         for registered_flag in registered_flags:
             if registered_flag.string_entity == flag.string_entity:
-                is_valid = registered_flag.validate_input_flag_value(flag.value)
+                is_valid = registered_flag.validate_input_flag_value(flag.input_value)
                 if is_valid:
                     return ValidationStatus.VALID
                 else:
@@ -61,7 +69,13 @@ class InputCommand:
         :return: None
         """
         self.trigger = trigger
-        self.input_flags = input_flags if isinstance(input_flags, InputFlags) else InputFlags([input_flags]) if isinstance(input_flags, InputFlag) else InputFlags()
+        match input_flags:
+            case InputFlags() as flags_obj:
+                self.input_flags = flags_obj
+            case InputFlag() as single_flag:
+                self.input_flags = InputFlags([single_flag])
+            case None: 
+                self.input_flags = InputFlags()
 
     @classmethod
     def parse(cls, raw_command: str) -> Self:
@@ -76,10 +90,11 @@ class InputCommand:
         
 
 class CommandParser:
-    __slots__ = ("raw_command", "tokens", "trigger")
+    __slots__ = ("raw_command", "tokens", "trigger", "_parsed_input_flags")
 
     def __init__(self, raw_command: str) -> None:
         self.raw_command = raw_command
+        self._parsed_input_flags = InputFlags()
 
     def parse_raw_command(self) -> ParseResult:
         if not self.raw_command:
@@ -96,36 +111,54 @@ class CommandParser:
             return (self.trigger, input_flags)
 
     def _parse_flags(self) -> ParseFlagsResult:
-        input_flags: InputFlags = InputFlags()
         current_flag_name, current_flag_value = None, None
-        for k, _ in enumerate(self.tokens):
-            if _.startswith("-"):
-                if len(_) < 2 or len(_[: _.rfind("-")]) > 2:
-                    raise UnprocessedInputFlagException()
-                current_flag_name = _
-            else:
-                if not current_flag_name or current_flag_value:
-                    raise UnprocessedInputFlagException()
-                current_flag_value = _
+        for index, token in enumerate(self.tokens):
+            current_flag_name, current_flag_value = _parse_single_token(token, current_flag_name, current_flag_value)
 
-            if current_flag_name:
-                if k + 1 < len(self.tokens) and not self.tokens[k + 1].startswith("-"):
-                    continue
+            if not current_flag_name or self._is_next_token_value(index):
+                continue
 
-                input_flag = InputFlag(
-                    name=current_flag_name[current_flag_name.rfind("-") + 1:],
-                    prefix=cast(
-                        Literal["-", "--", "---"],
-                        current_flag_name[:current_flag_name.rfind("-") + 1],
-                    ),
-                    value=current_flag_value,
-                    status=None
-                )
-                
-                if input_flag in input_flags:
-                    raise RepeatedInputFlagsException(input_flag)
-                else:
-                    input_flags.add_flag(input_flag)
-                    current_flag_name, current_flag_value = None, None
+            input_flag = InputFlag(
+                name=current_flag_name[current_flag_name.rfind(MIN_FLAG_PREFIX) + 1:],
+                prefix=cast(
+                    Literal["-", "--", "---"],
+                    current_flag_name[:current_flag_name.rfind(MIN_FLAG_PREFIX) + 1],
+                ),
+                input_value=current_flag_value,
+                status=None
+            )
+            
+            if input_flag in self._parsed_input_flags:
+                raise RepeatedInputFlagsException(input_flag)
+            
+            self._parsed_input_flags.add_flag(input_flag)
+            current_flag_name, current_flag_value = None, None
 
-        return (input_flags, current_flag_name, current_flag_value)
+        return (self._parsed_input_flags, current_flag_name, current_flag_value)
+    
+    def _is_next_token_value(self, current_index: int) -> bool:
+        next_index = current_index + 1
+        if next_index >= len(self.tokens):
+            return False  
+        
+        next_token = self.tokens[next_index]
+        return not next_token.startswith(MIN_FLAG_PREFIX)
+    
+def _parse_single_token(
+    token: str,
+    current_flag_name: Optional[str],
+    current_flag_value: Optional[str]
+) -> tuple[Optional[str], Optional[str]]:
+    if not token.startswith(MIN_FLAG_PREFIX):
+        if not current_flag_name or current_flag_value:
+            raise UnprocessedInputFlagException
+        return current_flag_name, token
+
+    prefix = token[:token.rfind(MIN_FLAG_PREFIX)]
+    if len(token) < 2 or len(prefix) > 2:
+        raise UnprocessedInputFlagException
+
+    new_flag_name = token
+    new_flag_value = None
+
+    return new_flag_name, new_flag_value
