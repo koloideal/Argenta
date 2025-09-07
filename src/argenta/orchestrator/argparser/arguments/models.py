@@ -12,7 +12,7 @@ class BaseArgument(ABC):
         Public. Returns the string representation of the argument
         :return: the string representation as a str
         """
-        pass
+        raise NotImplementedError
 
 
 class PositionalArgument(BaseArgument):
@@ -23,7 +23,8 @@ class PositionalArgument(BaseArgument):
         """
         self.name = name
 
-    def get_string_entity(self) -> str:
+    @property
+    def string_entity(self) -> str:
         return self.name
 
 
@@ -37,7 +38,8 @@ class OptionalArgument(BaseArgument):
         self.name = name
         self.prefix = prefix
 
-    def get_string_entity(self) -> str:
+    @property
+    def string_entity(self) -> str:
         return self.prefix + self.name
 
 
@@ -51,5 +53,6 @@ class BooleanArgument(BaseArgument):
         self.name = name
         self.prefix = prefix
 
-    def get_string_entity(self) -> str:
+    @property
+    def string_entity(self) -> str:
         return self.prefix + self.name

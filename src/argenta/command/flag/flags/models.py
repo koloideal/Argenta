@@ -15,7 +15,7 @@ class BaseFlags(Generic[FlagType]):
         self._flags: list[FlagType] = flags if flags else []
 
     @property
-    def flags(self) -> list[FlagType]:
+    def all_flags(self) -> list[FlagType]:
         """
         Public. Returns a list of flags
         :return: list of flags as list[FlagType]
@@ -65,15 +65,24 @@ class Flags(BaseFlags[Flag]):
         
     def __eq__(self, other: object) -> bool: 
         if isinstance(other, Flags):
-            if len(self.flags) != len(other.flags):
+            if len(self.all_flags) != len(other.all_flags):
                 return False
             else:
-                for flag, other_flag in zip(self.flags, other.flags): 
+                for flag, other_flag in zip(self.all_flags, other.all_flags): 
                     if not (flag == other_flag):
                         return False
             return True
         else:
-            raise NotImplementedError
+            raise TypeError
+            
+    def __contains__(self, item: object) -> bool:
+        if isinstance(item, Flag):
+            for flag in self._flags:
+                if flag == item:
+                    return True
+            return False
+        else:
+            raise TypeError
 
 
 class InputFlags(BaseFlags[InputFlag]):
@@ -90,13 +99,22 @@ class InputFlags(BaseFlags[InputFlag]):
         
     def __eq__(self, other: object) -> bool: 
         if isinstance(other, InputFlags):
-            if len(self.flags) != len(other.flags):
+            if len(self.all_flags) != len(other.all_flags):
                 return False
             else:
-                for flag, other_flag in zip(self.flags, other.flags): 
+                for flag, other_flag in zip(self.all_flags, other.all_flags): 
                     if not (flag == other_flag):
                         return False
             return True
         else:
-            raise NotImplementedError
+            raise TypeError
+        
+    def __contains__(self, item: object) -> bool:
+        if isinstance(item, InputFlag):
+            for flag in self._flags:
+                if flag == item:
+                    return True
+            return False
+        else:
+            raise TypeError
 

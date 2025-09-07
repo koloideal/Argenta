@@ -158,14 +158,6 @@ class InputFlag:
         """
         return self._status
     
-    def set_status(self, status: ValidationStatus) -> None:
-        """
-        Private. Sets the status of the flag
-        :param value: the flag status to set
-        :return: None
-        """
-        self._status = status
-    
     @property
     def string_entity(self) -> str:
         """
@@ -189,3 +181,11 @@ class InputFlag:
             )
         else:
             raise NotImplementedError
+    
+    def set_status(self, status: ValidationStatus) -> None:
+        """
+        Private. Sets the status of the flag
+        :param value: the flag status to set
+        :return: None
+        """
+        self._status = status

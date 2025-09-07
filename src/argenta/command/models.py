@@ -5,7 +5,11 @@ from argenta.command.exceptions import (
     RepeatedInputFlagsException,
     EmptyInputCommandException,
 )
-from typing import Optional, Self, cast, Literal
+from typing import Never, Optional, Self, cast, Literal
+
+
+ParseFlagsResult = tuple[InputFlags, str | None, str | None]
+ParseResult = tuple[str, InputFlags]
 
 
 class Command:
@@ -23,27 +27,10 @@ class Command:
         :param flags: processed commands
         :param aliases: string synonyms for the main trigger
         """
-        flags = flags if isinstance(flags, Flags) else Flags([flags]) if isinstance(flags, Flag) else Flags()
-        self._trigger = trigger
-        self._registered_flags: Flags = flags
-        self._description = "Command without description" if not description else description
-        self._aliases = aliases if aliases else []
-
-    @property
-    def registered_flags(self) -> Flags:
-        """
-        Private. Returns the registered flags
-        :return: the registered flags as Flags
-        """
-        return self._registered_flags
-
-    @property
-    def aliases(self) -> list[str]:
-        """
-        Public. Returns the aliases of the command
-        :return: the aliases of the command as list[str]
-        """
-        return self._aliases
+        self.registered_flags: Flags = flags if isinstance(flags, Flags) else Flags([flags]) if isinstance(flags, Flag) else Flags()
+        self.trigger = trigger
+        self.description = "Command without description" if not description else description
+        self.aliases = aliases if aliases else []
 
     def validate_input_flag(
         self, flag: InputFlag
@@ -63,22 +50,6 @@ class Command:
                     return ValidationStatus.INVALID
         return ValidationStatus.UNDEFINED
 
-    @property
-    def description(self) -> str:
-        """
-        Private. Returns the description of the command
-        :return: the description of the command as str
-        """
-        return self._description
-    
-    @property
-    def trigger(self) -> str:
-        """
-        Public. Returns the trigger of the command
-        :return: the trigger of the command as str
-        """
-        return self._trigger
-
 
 class InputCommand:
     def __init__(self, trigger: str, *, 
@@ -89,17 +60,8 @@ class InputCommand:
         :param input_flags: the input flags
         :return: None
         """
-        self._trigger = trigger
-        input_flags = input_flags if isinstance(input_flags, InputFlags) else InputFlags([input_flags]) if isinstance(input_flags, InputFlag) else InputFlags()
-        self._input_flags: InputFlags = input_flags
-
-    @property
-    def input_flags(self) -> InputFlags:
-        """
-        Private. Returns the input flags
-        :return: the input flags as InputFlags
-        """
-        return self._input_flags
+        self.trigger = trigger
+        self.input_flags = input_flags if isinstance(input_flags, InputFlags) else InputFlags([input_flags]) if isinstance(input_flags, InputFlag) else InputFlags()
 
     @classmethod
     def parse(cls, raw_command: str) -> Self:
@@ -108,16 +70,35 @@ class InputCommand:
         :param raw_command: raw input command
         :return: model of the input command, after parsing as InputCommand
         """
-        if not raw_command:
+        trigger, input_flags = CommandParser(raw_command).parse_raw_command()
+
+        return cls(trigger=trigger, input_flags=input_flags)
+        
+
+class CommandParser:
+    __slots__ = ("raw_command", "tokens", "trigger")
+
+    def __init__(self, raw_command: str) -> None:
+        self.raw_command = raw_command
+
+    def parse_raw_command(self) -> ParseResult:
+        if not self.raw_command:
             raise EmptyInputCommandException()
+        
+        self.tokens: list[str] | list[Never] = self.raw_command.split()[1:]
+        self.trigger: str = self.raw_command.split()[0]
 
-        list_of_tokens: list[str] = raw_command.split()
-        command: str = list_of_tokens.pop(0)
+        input_flags, current_flag_name, current_flag_value = self._parse_flags()
 
+        if any([current_flag_name, current_flag_value]):
+            raise UnprocessedInputFlagException()
+        else:
+            return (self.trigger, input_flags)
+
+    def _parse_flags(self) -> ParseFlagsResult:
         input_flags: InputFlags = InputFlags()
         current_flag_name, current_flag_value = None, None
-
-        for k, _ in enumerate(list_of_tokens):
+        for k, _ in enumerate(self.tokens):
             if _.startswith("-"):
                 if len(_) < 2 or len(_[: _.rfind("-")]) > 2:
                     raise UnprocessedInputFlagException()
@@ -128,38 +109,23 @@ class InputCommand:
                 current_flag_value = _
 
             if current_flag_name:
-                if not len(list_of_tokens) == k + 1:
-                    if not list_of_tokens[k + 1].startswith("-"):
-                        continue
+                if k + 1 < len(self.tokens) and not self.tokens[k + 1].startswith("-"):
+                    continue
 
                 input_flag = InputFlag(
-                    name=current_flag_name[current_flag_name.rfind("-") + 1 :],
+                    name=current_flag_name[current_flag_name.rfind("-") + 1:],
                     prefix=cast(
-                        Literal["-", "--"],
-                        current_flag_name[: current_flag_name.rfind("-") + 1],
+                        Literal["-", "--", "---"],
+                        current_flag_name[:current_flag_name.rfind("-") + 1],
                     ),
                     value=current_flag_value,
                     status=None
                 )
-
-                all_flags = [flag.string_entity for flag in input_flags.flags]
                 
-                if input_flag.string_entity not in all_flags:
-                    input_flags.add_flag(input_flag)
-                else:
+                if input_flag in input_flags:
                     raise RepeatedInputFlagsException(input_flag)
+                else:
+                    input_flags.add_flag(input_flag)
+                    current_flag_name, current_flag_value = None, None
 
-                current_flag_name, current_flag_value = None, None
-
-        if any([current_flag_name, current_flag_value]):
-            raise UnprocessedInputFlagException()
-        else:
-            return cls(trigger=command, input_flags=input_flags)
-        
-    @property
-    def trigger(self) -> str:
-        """
-        Public. Returns the trigger of the command
-        :return: the trigger of the command as str
-        """
-        return self._trigger
+        return (input_flags, current_flag_name, current_flag_value)

@@ -239,7 +239,7 @@ class BaseApp:
             self._exit_command_handler(response)
 
         if system_router not in self._registered_routers.get_registered_routers():
-            system_router.set_command_register_ignore(self._ignore_command_register)
+            system_router.command_register_ignore = self._ignore_command_register
             self._registered_routers.add_registered_router(system_router)
 
     def _most_similar_command(self, unknown_command: str) -> str | None:
@@ -436,7 +436,7 @@ class App(BaseApp):
         :param router: registered router
         :return: None
         """
-        router.set_command_register_ignore(self._ignore_command_register)
+        router.command_register_ignore = self._ignore_command_register
         self._registered_routers.add_registered_router(router)
 
     def include_routers(self, *routers: Router) -> None:

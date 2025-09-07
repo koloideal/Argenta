@@ -5,14 +5,14 @@ from argenta.response import Response
 
 
 class CommandHandler:
-    def __init__(self, handler: Callable[[Response], None], handled_command: Command):
+    def __init__(self, handler_as_func: Callable[[Response], None], handled_command: Command):
         """
         Private. Entity of the model linking the handler and the command being processed
         :param handler: the handler being called
         :param handled_command: the command being processed
         """
-        self._handler = handler
-        self._handled_command = handled_command
+        self.handler_as_func = handler_as_func
+        self.handled_command = handled_command
 
     def handling(self, response: Response) -> None:
         """
@@ -20,23 +20,7 @@ class CommandHandler:
         :param response: the entity of response: various groups of flags and status of response
         :return: None
         """
-        self._handler(response)
-
-    @property
-    def handler(self) -> Callable[[Response], None]:
-        """
-        Private. Returns the handler being called
-        :return: the handler being called as Callable[[Response], None]
-        """
-        return self._handler
-
-    @property
-    def handled_command(self) -> Command:
-        """
-        Private. Returns the command being processed
-        :return: the command being processed as Command
-        """
-        return self._handled_command
+        self.handler_as_func(response)
 
 
 class CommandHandlers:
@@ -46,14 +30,6 @@ class CommandHandlers:
         :param command_handlers: list of CommandHandlers for register
         """
         self.command_handlers = command_handlers if command_handlers else []
-
-    @property
-    def handlers(self) -> list[CommandHandler]:
-        """
-        Private. Returns the list of CommandHandlers
-        :return: the list of CommandHandlers as list[CommandHandler]
-        """
-        return self.command_handlers
 
     def add_handler(self, command_handler: CommandHandler) -> None:
         """

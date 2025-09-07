@@ -1,3 +1,4 @@
+from typing import Optional
 from argenta.command.flag.flags.models import InputFlags
 from argenta.response.status import ResponseStatus
 
@@ -8,7 +9,7 @@ class Response:
     def __init__(
         self,
         status: ResponseStatus,
-        input_flags: InputFlags = InputFlags()
+        input_flags: Optional[InputFlags] = None
     ):
         """
         Public. The entity of the user input sent to the handler
