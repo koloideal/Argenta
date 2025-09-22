@@ -16,10 +16,10 @@ flag = Flag('csdv', possible_values=PossibleValues.NEITHER)
                      PredefinedFlags.HOST])))
 def command_help(response: Response):
     print(response.status)
-    print(response.input_flags.get_flags())
+    print(response.input_flags.all_flags)
 
 
 @work_router.command("run")
 def command_start_solving(response: Response):
     print(response.status)
-    print(response.input_flags.get_flags())
+    print(response.input_flags.all_flags)

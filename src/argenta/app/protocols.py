@@ -6,11 +6,11 @@ T = TypeVar('T', contravariant=True)
 class Handler(Protocol[T]):
     def __call__(self, __param: T) -> None:
         raise NotImplementedError
-
-class EmptyHandler(Protocol):
+    
+class EmptyCommandHandler(Protocol):
     def __call__(self) -> None:
         raise NotImplementedError
-
+        
 
 class Printer(Protocol):
     def __call__(self, __text: str) -> None:

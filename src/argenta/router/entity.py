@@ -1,9 +1,9 @@
-from typing import Callable, Type
+from typing import Callable
 from inspect import getfullargspec, get_annotations, getsourcefile, getsourcelines
 from rich.console import Console
 
-from argenta.command import Command
-from argenta.command.models import InputCommand, ValidationStatus
+from argenta.command import Command, InputCommand
+from argenta.command.flag import ValidationStatus
 from argenta.response import Response, ResponseStatus
 from argenta.router.command_handler.entity import CommandHandlers, CommandHandler
 from argenta.command.flag.flags import (
@@ -36,8 +36,8 @@ class Router:
         self.title = title
         self.disable_redirect_stdout = disable_redirect_stdout
 
-        self._command_handlers: CommandHandlers = CommandHandlers()
-        self._ignore_command_register: bool = False
+        self.command_handlers: CommandHandlers = CommandHandlers()
+        self.command_register_ignore: bool = False
 
     def command(self, command: Command | str) -> Callable[[Callable[[Response], None]], Callable[[Response], None]]:
         """
@@ -49,7 +49,8 @@ class Router:
             redefined_command = Command(command)
         else:
             redefined_command = command
-        self._validate_command(redefined_command)
+
+        _validate_command(redefined_command)
 
         def command_decorator(func: Callable[[Response], None]) -> Callable[[Response], None]:
             Router._validate_func_args(func)
@@ -68,14 +69,14 @@ class Router:
         :param input_command: input command as InputCommand
         :return: None
         """
-        input_command_name: str = input_command.get_trigger()
-        input_command_flags: InputFlags = input_command.get_input_flags()
+        input_command_name: str = input_command.trigger
+        input_command_flags: InputFlags = input_command.input_flags
 
-        for command_handler in self._command_handlers:
-            handle_command = command_handler.get_handled_command()
-            if input_command_name.lower() == handle_command.get_trigger().lower():
+        for command_handler in self.command_handlers:
+            handle_command = command_handler.handled_command
+            if input_command_name.lower() == handle_command.trigger.lower():
                 self.process_input_command(input_command_flags, command_handler)
-            if input_command_name.lower() in handle_command.get_aliases():
+            if input_command_name.lower() in handle_command.aliases:
                 self.process_input_command(input_command_flags, command_handler)
 
     def process_input_command(
@@ -87,19 +88,19 @@ class Router:
         :param command_handler: command handler for input command as CommandHandler
         :return: None
         """
-        handle_command = command_handler.get_handled_command()
-        if handle_command.get_registered_flags().get_flags():
-            if input_command_flags.get_flags():
-                response: Response = self._structuring_input_flags(handle_command, input_command_flags)
+        handle_command = command_handler.handled_command
+        if handle_command.registered_flags.all_flags:
+            if input_command_flags.all_flags:
+                response: Response = _structuring_input_flags(handle_command, input_command_flags)
                 command_handler.handling(response)
             else:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
                 command_handler.handling(response)
         else:
-            if input_command_flags.get_flags():
+            if input_command_flags.all_flags:
                 undefined_flags = InputFlags()
                 for input_flag in input_command_flags:
-                    input_flag.set_status(ValidationStatus.UNDEFINED)
+                    input_flag.status = ValidationStatus.UNDEFINED
                     undefined_flags.add_flag(input_flag)
                 response = Response(ResponseStatus.UNDEFINED_FLAGS, input_flags=undefined_flags)
                 command_handler.handling(response)
@@ -107,45 +108,66 @@ class Router:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
                 command_handler.handling(response)
 
-    @staticmethod
-    def _structuring_input_flags(
-        handled_command: Command, input_flags: InputFlags
-    ) -> Response:
+    @property
+    def triggers(self) -> list[str]:
         """
-        Private. Validates flags of input command
-        :param handled_command: entity of the handled command
-        :param input_flags:
-        :return: entity of response as Response
+        Public. Gets registered triggers
+        :return: registered in router triggers as list[str]
         """
-        result_input_flags: InputFlags = InputFlags()
-        invalid_value_flags = False
-        undefined_flags = False
+        all_triggers: list[str] = []
+        for command_handler in self.command_handlers:
+            all_triggers.append(command_handler.handled_command.trigger)
+        return all_triggers
 
-        for flag in input_flags:
-            flag_status: ValidationStatus = (
-                handled_command.validate_input_flag(flag)
-            )
-            flag.set_status(flag_status)
-            result_input_flags.add_flag(flag)
+    @property
+    def aliases(self) -> list[str]:
+        """
+        Public. Gets registered aliases
+        :return: registered in router aliases as list[str]
+        """
+        all_aliases: list[str] = []
+        for command_handler in self.command_handlers:
+            if command_handler.handled_command.aliases:
+                all_aliases.extend(command_handler.handled_command.aliases)
+        return all_aliases
 
-            if flag_status == ValidationStatus.INVALID:
-                invalid_value_flags = True
-            elif flag_status == ValidationStatus.UNDEFINED:
-                undefined_flags = True
 
-        if invalid_value_flags and undefined_flags:
-            status = ResponseStatus.UNDEFINED_AND_INVALID_FLAGS
-        elif invalid_value_flags and not undefined_flags:
-            status = ResponseStatus.INVALID_VALUE_FLAGS
-        elif not invalid_value_flags and undefined_flags:
-            status = ResponseStatus.UNDEFINED_FLAGS
-        else:
-            status = ResponseStatus.ALL_FLAGS_VALID
+class CommandDecorator:
+    def __init__(self, router_instance: Router, command: Command):
+        self.router = router_instance
+        self.command = command
 
-        return Response(
-            status=status,
-            input_flags=input_flags
-        )
+    def __call__(self, handler_func: Callable[[Response], None]) -> Callable[[Response], None]:
+        _validate_func_args(handler_func)
+        self.router.command_handlers.add_handler(CommandHandler(handler_func, self.command))
+        return handler_func
+
+
+def _structuring_input_flags(handled_command: Command, 
+                             input_flags: InputFlags) -> Response:
+    """
+    Private. Validates flags of input command
+    :param handled_command: entity of the handled command
+    :param input_flags:
+    :return: entity of response as Response
+    """
+    invalid_value_flags, undefined_flags = False, False
+
+    for flag in input_flags:
+        flag_status: ValidationStatus = (handled_command.validate_input_flag(flag))
+        flag.status = flag_status
+        if flag_status == ValidationStatus.INVALID:
+            invalid_value_flags = True
+        elif flag_status == ValidationStatus.UNDEFINED:
+            undefined_flags = True
+
+    status = ResponseStatus.from_flags(has_invalid_value_flags = invalid_value_flags,
+                                       has_undefined_flags = undefined_flags)
+
+    return Response(
+        status=status,
+        input_flags=input_flags
+    )
 
     @staticmethod
     def _validate_command(command: Command) -> None:
@@ -192,38 +214,17 @@ class Router:
                     highlight=False,
                 )
 
-    def set_command_register_ignore(self, _: bool, /) -> None:
-        """
-        Private. Sets the router behavior on the input commands register
-        :param _: is command register ignore
-        :return: None
-        """
-        self._ignore_command_register = _
 
-    def get_triggers(self) -> list[str]:
-        """
-        Public. Gets registered triggers
-        :return: registered in router triggers as list[str]
-        """
-        all_triggers: list[str] = []
-        for command_handler in self._command_handlers:
-            all_triggers.append(command_handler.get_handled_command().get_trigger())
-        return all_triggers
-
-    def get_aliases(self) -> list[str]:
-        """
-        Public. Gets registered aliases
-        :return: registered in router aliases as list[str]
-        """
-        all_aliases: list[str] = []
-        for command_handler in self._command_handlers:
-            if command_handler.get_handled_command().get_aliases():
-                all_aliases.extend(command_handler.get_handled_command().get_aliases())
-        return all_aliases
-
-    def get_command_handlers(self) -> CommandHandlers:
-        """
-        Private. Gets registered command handlers
-        :return: registered command handlers as CommandHandlers
-        """
-        return self._command_handlers
+def _validate_command(command: Command) -> None:
+    """
+    Private. Validates the command registered in handler
+    :param command: validated command
+    :return: None if command is valid else raise exception
+    """
+    command_name: str = command.trigger
+    if command_name.find(" ") != -1:
+        raise TriggerContainSpacesException()
+    flags: Flags = command.registered_flags
+    flags_name: list[str] = [flag.string_entity.lower() for flag in flags]
+    if len(set(flags_name)) < len(flags_name):
+        raise RepeatedFlagNameException()

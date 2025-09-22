@@ -1,12 +1,12 @@
-from typing import Never, Optional
+from typing import Never, Optional, TypeAlias
 from rich.console import Console
 from rich.markup import escape
-from art import text2art
+from art import text2art  # type: ignore
 from contextlib import redirect_stdout
 import io
 import re
 
-from argenta.app.protocols import DescriptionMessageGenerator, Printer, Handler, EmptyHandler
+from argenta.app.protocols import DescriptionMessageGenerator, EmptyCommandHandler, Printer, Handler
 from argenta.command.models import Command, InputCommand
 from argenta.router import Router
 from argenta.router.defaults import system_router
@@ -20,6 +20,9 @@ from argenta.command.exceptions import (
 )
 from argenta.app.registered_routers.entity import RegisteredRouters
 from argenta.response import Response
+
+
+Matches: TypeAlias = list[str] | list[Never]
 
 
 class BaseApp:
@@ -54,15 +57,12 @@ class BaseApp:
         self._matching_lower_triggers_with_routers: dict[str, Router] = {}
         self._matching_default_triggers_with_routers: dict[str, Router] = {}
 
-        if self._ignore_command_register:
-            self._current_matching_triggers_with_routers: dict[str, Router] = self._matching_lower_triggers_with_routers
-        else:
-            self._current_matching_triggers_with_routers: dict[str, Router] = self._matching_default_triggers_with_routers
+        self._current_matching_triggers_with_routers: dict[str, Router] = self._matching_lower_triggers_with_routers if self._ignore_command_register else self._matching_default_triggers_with_routers
 
         self._incorrect_input_syntax_handler: Handler[str] = lambda _: print_func(f"Incorrect flag syntax: {_}")
         self._repeated_input_flags_handler: Handler[str] = lambda _: print_func(f"Repeated input flags: {_}")
-        self._empty_input_command_handler: EmptyHandler = lambda: print_func("Empty input command")
-        self._unknown_command_handler: Handler[InputCommand] = lambda _: print_func(f"Unknown command: {_.get_trigger()}")
+        self._empty_input_command_handler: EmptyCommandHandler = lambda: print_func("Empty input command")
+        self._unknown_command_handler: Handler[InputCommand] = lambda _: print_func(f"Unknown command: {_.trigger}")
         self._exit_command_handler: Handler[Response] = lambda _: print_func(self._farewell_message)
 
     def set_description_message_pattern(self, _: DescriptionMessageGenerator, /) -> None:
@@ -71,7 +71,7 @@ class BaseApp:
         :param _: output pattern of the available commands
         :return: None
         """
-        self._description_message_gen: DescriptionMessageGenerator = _
+        self._description_message_gen = _
 
     def set_incorrect_input_syntax_handler(self, _: Handler[str], /) -> None:
         """
@@ -97,7 +97,7 @@ class BaseApp:
         """
         self._unknown_command_handler = _
 
-    def set_empty_command_handler(self, _: EmptyHandler, /) -> None:
+    def set_empty_command_handler(self, _: EmptyCommandHandler, /) -> None:
         """
         Public. Sets the handler for empty commands when entering a command
         :param _: handler for empty commands when entering a command
@@ -121,12 +121,12 @@ class BaseApp:
         for registered_router in self._registered_routers:
             if registered_router.title:
                 self._print_func(registered_router.title)
-            for command_handler in registered_router.get_command_handlers():
-                handled_command = command_handler.get_handled_command()
+            for command_handler in registered_router.command_handlers:
+                handled_command = command_handler.handled_command
                 self._print_func(
                     self._description_message_gen(
-                        handled_command.get_trigger(),
-                        handled_command.get_description(),
+                        handled_command.trigger,
+                        handled_command.description,
                     )
                 )
             self._print_func("")
@@ -178,21 +178,21 @@ class BaseApp:
         :param command: command to check
         :return: is it an exit command or not as bool
         """
-        trigger = command.get_trigger()
-        exit_trigger = self._exit_command.get_trigger()
+        trigger = command.trigger
+        exit_trigger = self._exit_command.trigger
         if self._ignore_command_register:
             if (
                 trigger.lower() == exit_trigger.lower()
             ):
                 return True
             elif trigger.lower() in [
-                x.lower() for x in self._exit_command.get_aliases()
+                x.lower() for x in self._exit_command.aliases
             ]:
                 return True
         else:
             if trigger == exit_trigger:
                 return True
-            elif trigger in self._exit_command.get_aliases():
+            elif trigger in self._exit_command.aliases:
                 return True
         return False
 
@@ -202,7 +202,7 @@ class BaseApp:
         :param command: command to check
         :return: is it an unknown command or not as bool
         """
-        input_command_trigger = command.get_trigger()
+        input_command_trigger = command.trigger
         if self._ignore_command_register:
             if input_command_trigger.lower() in list(self._current_matching_triggers_with_routers.keys()):
                 return False
@@ -236,22 +236,25 @@ class BaseApp:
 
         @system_router.command(self._exit_command)
         def _(response: Response) -> None:
+        def _(response: Response) -> None:
             self._exit_command_handler(response)
 
         if system_router not in self._registered_routers.get_registered_routers():
-            system_router.set_command_register_ignore(self._ignore_command_register)
+            system_router.command_register_ignore = self._ignore_command_register
             self._registered_routers.add_registered_router(system_router)
 
     def _most_similar_command(self, unknown_command: str) -> str | None:
         all_commands = list(self._current_matching_triggers_with_routers.keys())
-
-        matches: list[str] | list[Never] = sorted(
+        
+        matches_startswith_unknown_command: Matches = sorted(
             cmd for cmd in all_commands if cmd.startswith(unknown_command)
         )
-        if not matches:
-            matches: list[str] | list[Never] = sorted(
-                cmd for cmd in all_commands if unknown_command.startswith(cmd)
-            )
+        matches_startswith_cmd: Matches = sorted(
+            cmd for cmd in all_commands if unknown_command.startswith(cmd)
+        )
+
+        matches: Matches = matches_startswith_unknown_command or matches_startswith_cmd
+
         if len(matches) == 1:
             return matches[0]
         elif len(matches) > 1:
@@ -268,7 +271,7 @@ class BaseApp:
         self._initial_message = ("\n" + f"[bold red]{text2art(self._initial_message, font='tarty1')}" + "\n")
         self._farewell_message = (
             "[bold red]\n\n" +
-            str(text2art(self._farewell_message, font="chanky")) +
+            str(text2art(self._farewell_message, font="chanky")) + # pyright: ignore[reportUnknownArgumentType]
             "\n[/bold red]\n" +
             "[red i]github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]\n"
         )
@@ -282,7 +285,7 @@ class BaseApp:
         self._empty_input_command_handler = lambda: self._print_func("[red bold]Empty input command")
 
         def unknown_command_handler(command: InputCommand) -> None:
-            cmd_trg: str = command.get_trigger()
+            cmd_trg: str = command.trigger
             mst_sim_cmd: str | None = self._most_similar_command(cmd_trg)
             first_part_of_text = f"[red]Unknown command:[/red] [blue]{escape(cmd_trg)}[/blue]"
             second_part_of_text = (
@@ -302,8 +305,8 @@ class BaseApp:
         self._setup_system_router()
 
         for router_entity in self._registered_routers:
-            router_triggers = router_entity.get_triggers()
-            router_aliases = router_entity.get_aliases()
+            router_triggers = router_entity.triggers
+            router_aliases = router_entity.aliases
             combined = router_triggers + router_aliases
 
             for trigger in combined:
@@ -410,7 +413,7 @@ class App(BaseApp):
                 self._print_framed_text(res2)
                 continue
 
-            processing_router = self._current_matching_triggers_with_routers[input_command.get_trigger().lower()]
+            processing_router = self._current_matching_triggers_with_routers[input_command.trigger.lower()]
 
             if processing_router.disable_redirect_stdout:
                 if isinstance(self._dividing_line, StaticDividingLine):
@@ -434,7 +437,7 @@ class App(BaseApp):
         :param router: registered router
         :return: None
         """
-        router.set_command_register_ignore(self._ignore_command_register)
+        router.command_register_ignore = self._ignore_command_register
         self._registered_routers.add_registered_router(router)
 
     def include_routers(self, *routers: Router) -> None:

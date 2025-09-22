@@ -14,7 +14,7 @@ class UnprocessedInputFlagException(BaseInputCommandException):
     Private. Raised when an unprocessed input flag is detected
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Unprocessed Input Flags"
 
 
@@ -26,10 +26,10 @@ class RepeatedInputFlagsException(BaseInputCommandException):
     def __init__(self, flag: Flag | InputFlag):
         self.flag = flag
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             "Repeated Input Flags\n"
-            f"Duplicate flag was detected in the input: '{self.flag.get_string_entity()}'"
+            f"Duplicate flag was detected in the input: '{self.flag.string_entity}'"
         )
 
 
@@ -38,5 +38,5 @@ class EmptyInputCommandException(BaseInputCommandException):
     Private. Raised when an empty input command is detected
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Input Command is empty"
