@@ -45,15 +45,14 @@ class ArgParser:
         :return: None
         """
         for arg in self._args:
-            print(arg)
             if isinstance(arg, PositionalArgument):
                 self._entity.add_argument(arg.get_string_entity())
             elif isinstance(arg, OptionalArgument):
                 self._entity.add_argument(arg.get_string_entity())
-            elif isinstance(arg, BooleanArgument):
+            elif isinstance(arg, BooleanArgument): # pyright: ignore[reportUnnecessaryIsInstance]
                 self._entity.add_argument(arg.get_string_entity(), action="store_true")
             else:
-                raise NotImplementedError
+                raise NotImplementedError()
 
     def parse_args(self) -> Namespace:
         return self._entity.parse_args()

@@ -39,7 +39,7 @@ class Router:
         self._command_handlers: CommandHandlers = CommandHandlers()
         self._ignore_command_register: bool = False
 
-    def command(self, command: Command | str) -> Callable:
+    def command(self, command: Command | str) -> Callable[[Callable[[Response], None]], Callable[[Response], None]]:
         """
         Public. Registers handler
         :param command: Registered command
@@ -51,12 +51,12 @@ class Router:
             redefined_command = command
         self._validate_command(redefined_command)
 
-        def command_decorator(func):
+        def command_decorator(func: Callable[[Response], None]) -> Callable[[Response], None]:
             Router._validate_func_args(func)
             self._command_handlers.add_handler(CommandHandler(func, redefined_command))
 
-            def wrapper(*args, **kwargs):
-                return func(*args, **kwargs)
+            def wrapper(response: Response):
+                return func(response)
 
             return wrapper
 
@@ -159,12 +159,12 @@ class Router:
             raise TriggerContainSpacesException()
         flags: Flags = command.get_registered_flags()
         if flags:
-            flags_name: list = [x.get_string_entity().lower() for x in flags]
+            flags_name: list[str] = [x.get_string_entity().lower() for x in flags]
             if len(set(flags_name)) < len(flags_name):
                 raise RepeatedFlagNameException()
 
     @staticmethod
-    def _validate_func_args(func: Callable) -> None:
+    def _validate_func_args(func: Callable[[Response], None]) -> None:
         """
         Private. Validates the arguments of the handler
         :param func: entity of the handler func
@@ -177,7 +177,7 @@ class Router:
             raise RequiredArgumentNotPassedException()
 
         transferred_arg: str = transferred_args[0]
-        func_annotations: dict[str, Type] = get_annotations(func)
+        func_annotations: dict[str, None] = get_annotations(func)
 
         if arg_annotation := func_annotations.get(transferred_arg):
             if arg_annotation is Response:
@@ -187,7 +187,7 @@ class Router:
                 source_line: int = getsourcelines(func)[1]
                 Console().print(
                     f'\nFile "{file_path}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
-                    f"of argument([green]{transferred_arg}[/green]) passed to the handler is [/i][bold blue]{Response}[/bold blue],"
+                    f"of argument([green]{transferred_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue],"
                     f" [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]",
                     highlight=False,
                 )

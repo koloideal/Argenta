@@ -137,16 +137,7 @@ class BaseApp:
         :param text: framed text
         :return: None
         """
-        if isinstance(self._dividing_line, StaticDividingLine):
-            self._print_func(
-                self._dividing_line.get_full_static_line(is_override=self._override_system_messages)
-            )
-            print(text.strip("\n"))
-            self._print_func(
-                self._dividing_line.get_full_static_line(is_override=self._override_system_messages)
-            )
-
-        elif isinstance(self._dividing_line, DynamicDividingLine):
+        if isinstance(self._dividing_line, DynamicDividingLine):
             clear_text = re.sub(r"\u001b\[[0-9;]*m", "", text)
             max_length_line = max([len(line) for line in clear_text.split("\n")])
             max_length_line = (
@@ -168,6 +159,18 @@ class BaseApp:
                     length=max_length_line, is_override=self._override_system_messages
                 )
             )
+        
+        elif isinstance(self._dividing_line, StaticDividingLine): # pyright: ignore[reportUnnecessaryIsInstance]
+            self._print_func(
+                self._dividing_line.get_full_static_line(is_override=self._override_system_messages)
+            )
+            print(text.strip("\n"))
+            self._print_func(
+                self._dividing_line.get_full_static_line(is_override=self._override_system_messages)
+            )
+
+        else:
+            raise NotImplementedError
 
     def _is_exit_command(self, command: InputCommand) -> bool:
         """
@@ -232,7 +235,7 @@ class BaseApp:
         system_router.title = self._system_router_title
 
         @system_router.command(self._exit_command)
-        def exit_command(response: Response) -> None:
+        def _(response: Response) -> None:
             self._exit_command_handler(response)
 
         if system_router not in self._registered_routers.get_registered_routers():
