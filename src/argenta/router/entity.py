@@ -185,9 +185,7 @@ def _validate_func_args(func: Callable[[Response], None]) -> None:
     func_annotations: dict[str, None] = get_annotations(func)
 
     if arg_annotation := func_annotations.get(transferred_arg):
-        if arg_annotation is Response:
-            pass
-        else:
+        if arg_annotation is not Response:
             file_path: str | None = getsourcefile(func)
             source_line: int = getsourcelines(func)[1]
             Console().print(
