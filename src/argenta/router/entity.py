@@ -56,7 +56,7 @@ class Router:
             _validate_func_args(func)
             self.command_handlers.add_handler(CommandHandler(func, redefined_command))
 
-            def wrapper(response: Response):
+            def wrapper(response: Response) -> None:
                 return func(response)
 
             return wrapper
