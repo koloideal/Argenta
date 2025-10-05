@@ -53,8 +53,8 @@ class Router:
         _validate_command(redefined_command)
 
         def command_decorator(func: Callable[[Response], None]) -> Callable[[Response], None]:
-            Router._validate_func_args(func)
-            self._command_handlers.add_handler(CommandHandler(func, redefined_command))
+            _validate_func_args(func)
+            self.command_handlers.add_handler(CommandHandler(func, redefined_command))
 
             def wrapper(response: Response):
                 return func(response)
@@ -169,50 +169,33 @@ def _structuring_input_flags(handled_command: Command,
         input_flags=input_flags
     )
 
-    @staticmethod
-    def _validate_command(command: Command) -> None:
-        """
-        Private. Validates the command registered in handler
-        :param command: validated command
-        :return: None if command is valid else raise exception
-        """
-        command_name: str = command.get_trigger()
-        if command_name.find(" ") != -1:
-            raise TriggerContainSpacesException()
-        flags: Flags = command.get_registered_flags()
-        if flags:
-            flags_name: list[str] = [x.get_string_entity().lower() for x in flags]
-            if len(set(flags_name)) < len(flags_name):
-                raise RepeatedFlagNameException()
+def _validate_func_args(func: Callable[[Response], None]) -> None:
+    """
+    Private. Validates the arguments of the handler
+    :param func: entity of the handler func
+    :return: None if func is valid else raise exception
+    """
+    transferred_args = getfullargspec(func).args
+    if len(transferred_args) > 1:
+        raise TooManyTransferredArgsException()
+    elif len(transferred_args) == 0:
+        raise RequiredArgumentNotPassedException()
 
-    @staticmethod
-    def _validate_func_args(func: Callable[[Response], None]) -> None:
-        """
-        Private. Validates the arguments of the handler
-        :param func: entity of the handler func
-        :return: None if func is valid else raise exception
-        """
-        transferred_args = getfullargspec(func).args
-        if len(transferred_args) > 1:
-            raise TooManyTransferredArgsException()
-        elif len(transferred_args) == 0:
-            raise RequiredArgumentNotPassedException()
+    transferred_arg: str = transferred_args[0]
+    func_annotations: dict[str, None] = get_annotations(func)
 
-        transferred_arg: str = transferred_args[0]
-        func_annotations: dict[str, None] = get_annotations(func)
-
-        if arg_annotation := func_annotations.get(transferred_arg):
-            if arg_annotation is Response:
-                pass
-            else:
-                file_path: str | None = getsourcefile(func)
-                source_line: int = getsourcelines(func)[1]
-                Console().print(
-                    f'\nFile "{file_path}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
-                    f"of argument([green]{transferred_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue],"
-                    f" [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]",
-                    highlight=False,
-                )
+    if arg_annotation := func_annotations.get(transferred_arg):
+        if arg_annotation is Response:
+            pass
+        else:
+            file_path: str | None = getsourcefile(func)
+            source_line: int = getsourcelines(func)[1]
+            Console().print(
+                f'\nFile "{file_path}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
+                f"of argument([green]{transferred_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue],"
+                f" [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]",
+                highlight=False,
+            )
 
 
 def _validate_command(command: Command) -> None:

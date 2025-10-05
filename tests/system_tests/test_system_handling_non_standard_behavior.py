@@ -23,13 +23,13 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print('test command')
 
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
         orchestrator.start_polling(app)
 
         output = mock_stdout.getvalue()
@@ -44,14 +44,14 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print('test command')
 
         app = App(ignore_command_register=False,
                   override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
         orchestrator.start_polling(app)
 
         output = mock_stdout.getvalue()
@@ -66,10 +66,10 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
-            undefined_flag = response.input_flags.get_flag('help')
-            if undefined_flag and undefined_flag.get_status() == ValidationStatus.UNDEFINED:
-                print(f'test command with undefined flag: {undefined_flag.get_string_entity()}')
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
+            undefined_flag = response.input_flags.get_flag_by_name('help')
+            if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
+                print(f'test command with undefined flag: {undefined_flag.string_entity}')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -88,10 +88,10 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
-            undefined_flag = response.input_flags.get_flag("port")
-            if undefined_flag and undefined_flag.get_status() == ValidationStatus.UNDEFINED:
-                print(f'test command with undefined flag with value: {undefined_flag.get_string_entity()} {undefined_flag.get_value()}')
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
+            undefined_flag = response.input_flags.get_flag_by_name("port")
+            if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
+                print(f'test command with undefined flag with value: {undefined_flag.string_entity} {undefined_flag.input_value}')
             else:
                 raise
 
@@ -113,10 +113,10 @@ class TestSystemHandlerNormalWork(TestCase):
         flags = Flags([PredefinedFlags.HOST])
 
         @router.command(Command('test', flags=flags))
-        def test(response: Response):
-            undefined_flag = response.input_flags.get_flag("port")
-            if undefined_flag and undefined_flag.get_status() == ValidationStatus.UNDEFINED:
-                print(f'connecting to host with flag: {undefined_flag.get_string_entity()} {undefined_flag.get_value()}')
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
+            undefined_flag = response.input_flags.get_flag_by_name("port")
+            if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
+                print(f'connecting to host with flag: {undefined_flag.string_entity} {undefined_flag.input_value}')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -135,13 +135,13 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'test command')
 
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
         orchestrator.start_polling(app)
 
         output = mock_stdout.getvalue()
@@ -156,17 +156,17 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'test command')
 
         @router.command(Command('more'))
-        def test1(response: Response):
+        def test1(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'more command')
 
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
         orchestrator.start_polling(app)
 
         output = mock_stdout.getvalue()
@@ -181,7 +181,7 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'test command')
 
         app = App(override_system_messages=True,
@@ -202,7 +202,7 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'test command')
 
         app = App(override_system_messages=True,
@@ -223,7 +223,7 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test', flags=PredefinedFlags.PORT))
-        def test(response: Response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print('test command')
 
         app = App(override_system_messages=True,
@@ -243,10 +243,10 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
-            undefined_flag = response.input_flags.get_flag('help')
-            if undefined_flag and undefined_flag.get_status() == ValidationStatus.UNDEFINED:
-                print(f'test command with undefined flag: {undefined_flag.get_string_entity()}')
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
+            undefined_flag = response.input_flags.get_flag_by_name('help')
+            if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
+                print(f'test command with undefined flag: {undefined_flag.string_entity}')
 
         app = App(override_system_messages=True,
                   print_func=print)

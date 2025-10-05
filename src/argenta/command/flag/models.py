@@ -108,7 +108,6 @@ class InputFlag:
         if isinstance(other, InputFlag):
             return (
                 self.name == other.name
-                and self.input_value == other.input_value
             )
         else:
             raise NotImplementedError

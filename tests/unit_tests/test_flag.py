@@ -7,34 +7,34 @@ import re
 
 class TestFlag(unittest.TestCase):
     def test_get_string_entity(self):
-        self.assertEqual(Flag(name='test').get_string_entity(),
+        self.assertEqual(Flag(name='test').string_entity,
                          '--test')
 
     def test_get_string_entity2(self):
         self.assertEqual(Flag(name='test',
-                              prefix='---').get_string_entity(),
+                              prefix='---').string_entity,
                          '---test')
 
     def test_get_flag_name(self):
-        self.assertEqual(Flag(name='test').get_name(),
+        self.assertEqual(Flag(name='test').name,
                          'test')
 
     def test_get_flag_prefix(self):
-        self.assertEqual(Flag(name='test').get_prefix(),
+        self.assertEqual(Flag(name='test').prefix,
                          '--')
 
     def test_get_flag_prefix2(self):
         self.assertEqual(Flag(name='test',
-                              prefix='--').get_prefix(),
+                              prefix='--').prefix,
                          '--')
 
     def test_get_flag_value_without_set(self):
-        self.assertEqual(InputFlag(name='test', input_value=None, status=None).get_value(),
+        self.assertEqual(InputFlag(name='test', input_value=None, status=None).input_value,
                          None)
 
     def test_get_flag_value_with_set(self):
         flag = InputFlag(name='test', input_value='example', status=None)
-        self.assertEqual(flag.get_value(), 'example')
+        self.assertEqual(flag.input_value, 'example')
 
     def test_validate_incorrect_flag_value_with_list_of_possible_flag_values(self):
         flag = Flag(name='test', possible_values=['1', '2', '3'])
@@ -71,19 +71,19 @@ class TestFlag(unittest.TestCase):
     def test_get_input_flag1(self):
         flag = InputFlag(name='test', input_value=None, status=None)
         input_flags = InputFlags([flag])
-        self.assertEqual(input_flags.get_flag('test'), flag)
+        self.assertEqual(input_flags.get_flag_by_name('test'), flag)
 
     def test_get_input_flag2(self):
         flag = InputFlag(name='test', input_value=None, status=None)
         flag2 = InputFlag(name='some', input_value=None, status=None)
         input_flags = InputFlags([flag, flag2])
-        self.assertEqual(input_flags.get_flag('some'), flag2)
+        self.assertEqual(input_flags.get_flag_by_name('some'), flag2)
 
     def test_get_undefined_input_flag(self):
         flag = InputFlag(name='test', input_value=None, status=None)
         flag2 = InputFlag(name='some', input_value=None, status=None)
         input_flags = InputFlags([flag, flag2])
-        self.assertEqual(input_flags.get_flag('case'), None)
+        self.assertEqual(input_flags.get_flag_by_name('case'), None)
 
     def test_get_flags(self):
         flags = Flags()
@@ -93,18 +93,18 @@ class TestFlag(unittest.TestCase):
             Flag('test3'),
         ]
         flags.add_flags(list_of_flags)
-        self.assertEqual(flags.get_flags(),
+        self.assertEqual(flags.all_flags,
                          list_of_flags)
 
     def test_add_flag(self):
         flags = Flags()
         flags.add_flag(Flag('test'))
-        self.assertEqual(len(flags.get_flags()), 1)
+        self.assertEqual(len(flags.all_flags), 1)
 
     def test_add_flags(self):
         flags = Flags()
         flags.add_flags([Flag('test'), Flag('test2')])
-        self.assertEqual(len(flags.get_flags()), 2)
+        self.assertEqual(len(flags.all_flags), 2)
 
 
 

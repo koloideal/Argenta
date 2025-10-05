@@ -236,7 +236,6 @@ class BaseApp:
 
         @system_router.command(self._exit_command)
         def _(response: Response) -> None:
-        def _(response: Response) -> None:
             self._exit_command_handler(response)
 
         if system_router not in self._registered_routers.get_registered_routers():

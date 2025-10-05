@@ -12,7 +12,7 @@ import re
 
 class TestInputCommand(unittest.TestCase):
     def test_parse_correct_raw_command(self):
-        self.assertEqual(InputCommand.parse('ssh --host 192.168.0.3').get_trigger(), 'ssh')
+        self.assertEqual(InputCommand.parse('ssh --host 192.168.0.3').trigger, 'ssh')
 
     def test_parse_raw_command_without_flag_name_with_value(self):
         with self.assertRaises(UnprocessedInputFlagException):
