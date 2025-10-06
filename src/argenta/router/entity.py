@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, TypeAlias
 from inspect import getfullargspec, get_annotations, getsourcefile, getsourcelines
 from rich.console import Console
 
@@ -16,6 +16,9 @@ from argenta.router.exceptions import (
     RequiredArgumentNotPassedException,
     TriggerContainSpacesException,
 )
+
+
+HandlerFunc: TypeAlias = Callable[[Response], None]
 
 
 class Router:
@@ -39,7 +42,7 @@ class Router:
         self.command_handlers: CommandHandlers = CommandHandlers()
         self.command_register_ignore: bool = False
 
-    def command(self, command: Command | str) -> Callable[[Callable[[Response], None]], Callable[[Response], None]]:
+    def command(self, command: Command | str) -> Callable[[HandlerFunc], HandlerFunc]:
         """
         Public. Registers handler
         :param command: Registered command
@@ -52,16 +55,13 @@ class Router:
 
         _validate_command(redefined_command)
 
-        def command_decorator(func: Callable[[Response], None]) -> Callable[[Response], None]:
+        def decorator(func: HandlerFunc) -> HandlerFunc:
             _validate_func_args(func)
             self.command_handlers.add_handler(CommandHandler(func, redefined_command))
 
-            def wrapper(response: Response) -> None:
-                return func(response)
+            return func
 
-            return wrapper
-
-        return command_decorator
+        return decorator
 
     def finds_appropriate_handler(self, input_command: InputCommand) -> None:
         """
@@ -89,15 +89,15 @@ class Router:
         :return: None
         """
         handle_command = command_handler.handled_command
-        if handle_command.registered_flags.all_flags:
-            if input_command_flags.all_flags:
+        if handle_command.registered_flags.flags:
+            if input_command_flags.flags:
                 response: Response = _structuring_input_flags(handle_command, input_command_flags)
                 command_handler.handling(response)
             else:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
                 command_handler.handling(response)
         else:
-            if input_command_flags.all_flags:
+            if input_command_flags.flags:
                 undefined_flags = InputFlags()
                 for input_flag in input_command_flags:
                     input_flag.status = ValidationStatus.UNDEFINED
@@ -184,12 +184,13 @@ def _validate_func_args(func: Callable[[Response], None]) -> None:
     transferred_arg: str = transferred_args[0]
     func_annotations: dict[str, None] = get_annotations(func)
 
-    if arg_annotation := func_annotations.get(transferred_arg):
+    arg_annotation = func_annotations.get(transferred_arg)
+
+    if arg_annotation is not None:
         if arg_annotation is not Response:
-            file_path: str | None = getsourcefile(func)
             source_line: int = getsourcelines(func)[1]
             Console().print(
-                f'\nFile "{file_path}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
+                f'\nFile "{getsourcefile(func)}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
                 f"of argument([green]{transferred_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue],"
                 f" [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]",
                 highlight=False,

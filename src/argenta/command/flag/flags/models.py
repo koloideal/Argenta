@@ -12,15 +12,7 @@ class BaseFlags(Generic[FlagType]):
         :param flags: the flags that will be registered
         :return: None
         """
-        self._flags: list[FlagType] = flags if flags else []
-
-    @property
-    def all_flags(self) -> list[FlagType]:
-        """
-        Public. Returns a list of flags
-        :return: list of flags as list[FlagType]
-        """
-        return self._flags
+        self.flags: list[FlagType] = flags if flags else []
 
     def add_flag(self, flag: FlagType) -> None:
         """
@@ -28,7 +20,7 @@ class BaseFlags(Generic[FlagType]):
         :param flag: flag to add
         :return: None
         """
-        self._flags.append(flag)
+        self.flags.append(flag)
 
     def add_flags(self, flags: list[FlagType]) -> None:
         """
@@ -36,19 +28,19 @@ class BaseFlags(Generic[FlagType]):
         :param flags: list of flags to add
         :return: None
         """
-        self._flags.extend(flags)
+        self.flags.extend(flags)
 
     def __iter__(self) -> Iterator[FlagType]:
-        return iter(self._flags)
+        return iter(self.flags)
 
     def __next__(self) -> FlagType:
         return next(iter(self))
 
-    def __getitem__(self, item: int) -> FlagType:
-        return self._flags[item]
+    def __getitem__(self, flag_index: int) -> FlagType:
+        return self.flags[flag_index]
 
     def __bool__(self) -> bool:
-        return bool(self._flags)
+        return bool(self.flags)
 
 
 class Flags(BaseFlags[Flag]):
@@ -58,27 +50,23 @@ class Flags(BaseFlags[Flag]):
         :param name: the name of the flag to get
         :return: entity of the flag or None
         """
-        if name in [flag.name for flag in self._flags]:
-            return list(filter(lambda flag: flag.name == name, self._flags))[0]
-        else:
-            return None
+        return next((flag for flag in self.flags if flag.name == name), None)
         
-    def __eq__(self, other: object) -> bool: 
-        if isinstance(other, Flags):
-            if len(self.all_flags) != len(other.all_flags):
-                return False
-            else:
-                for flag, other_flag in zip(self.all_flags, other.all_flags): 
-                    if not (flag == other_flag):
-                        return False
-            return True
-        else:
-            raise TypeError
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Flags):
+            return NotImplemented
+
+        if len(self.flags) != len(other.flags):
+            return False
+
+        flag_pairs: zip[tuple[Flag, Flag]] = zip(self.flags, other.flags)
+        return all(s_flag == o_flag for s_flag, o_flag in flag_pairs)
+
             
-    def __contains__(self, item: object) -> bool:
-        if isinstance(item, Flag):
-            for flag in self._flags:
-                if flag == item:
+    def __contains__(self, flag_to_check: object) -> bool:
+        if isinstance(flag_to_check, Flag):
+            for flag in self.flags:
+                if flag == flag_to_check:
                     return True
             return False
         else:
@@ -92,23 +80,22 @@ class InputFlags(BaseFlags[InputFlag]):
         :param name: the name of the flag to get
         :return: entity of the flag or None
         """
-        if name in [flag.name for flag in self._flags]:
-            return list(filter(lambda flag: flag.name == name, self._flags))[0]
-        else:
-            return None
+        return next((flag for flag in self.flags if flag.name == name), None)
         
     def __eq__(self, other: object) -> bool: 
         if not isinstance(other, InputFlags):
             raise NotImplementedError
 
-        if len(self.all_flags) != len(other.all_flags):
+        if len(self.flags) != len(other.flags):
             return False
 
-        return all(my_flag == other_flag for my_flag, other_flag in zip(self.all_flags, other.all_flags))
-        
+        paired_flags: zip[tuple[InputFlag, InputFlag]] = zip(self.flags, other.flags)
+
+        return all(my_flag == other_flag for my_flag, other_flag in paired_flags)
+
     def __contains__(self, ingressable_item: object) -> bool:
         if isinstance(ingressable_item, InputFlag):
-            for flag in self._flags:
+            for flag in self.flags:
                 if flag == ingressable_item:
                     return True
             return False

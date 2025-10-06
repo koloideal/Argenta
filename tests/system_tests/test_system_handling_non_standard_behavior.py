@@ -5,11 +5,10 @@ import io
 import re
 
 from argenta.app import App
-from argenta.command import Command
+from argenta.command import Command, PredefinedFlags
 from argenta.command.flag.models import ValidationStatus
 from argenta.router import Router
 from argenta.command.flag.flags.models import Flags
-from argenta.command.flag.defaults import PredefinedFlags
 from argenta.orchestrator import Orchestrator
 from argenta.response import Response
 

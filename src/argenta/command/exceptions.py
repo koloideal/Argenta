@@ -1,15 +1,18 @@
 from argenta.command.flag.models import Flag, InputFlag
+from abc import ABC, abstractmethod
 
 
-class BaseInputCommandException(Exception):
+class InputCommandException(ABC, Exception):
     """
     Private. Base exception class for all exceptions raised when parse input command
     """
 
-    pass
+    @abstractmethod
+    def __str__(self) -> str:
+        raise NotImplementedError
 
 
-class UnprocessedInputFlagException(BaseInputCommandException):
+class UnprocessedInputFlagException(InputCommandException):
     """
     Private. Raised when an unprocessed input flag is detected
     """
@@ -18,7 +21,7 @@ class UnprocessedInputFlagException(BaseInputCommandException):
         return "Unprocessed Input Flags"
 
 
-class RepeatedInputFlagsException(BaseInputCommandException):
+class RepeatedInputFlagsException(InputCommandException):
     """
     Private. Raised when repeated input flags are detected
     """
@@ -27,13 +30,14 @@ class RepeatedInputFlagsException(BaseInputCommandException):
         self.flag = flag
 
     def __str__(self) -> str:
+        string_entity: str = self.flag.string_entity
         return (
             "Repeated Input Flags\n"
-            f"Duplicate flag was detected in the input: '{self.flag.string_entity}'"
+            f"Duplicate flag was detected in the input: '{string_entity}'"
         )
 
 
-class EmptyInputCommandException(BaseInputCommandException):
+class EmptyInputCommandException(InputCommandException):
     """
     Private. Raised when an empty input command is detected
     """

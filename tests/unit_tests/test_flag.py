@@ -93,18 +93,18 @@ class TestFlag(unittest.TestCase):
             Flag('test3'),
         ]
         flags.add_flags(list_of_flags)
-        self.assertEqual(flags.all_flags,
+        self.assertEqual(flags.flags,
                          list_of_flags)
 
     def test_add_flag(self):
         flags = Flags()
         flags.add_flag(Flag('test'))
-        self.assertEqual(len(flags.all_flags), 1)
+        self.assertEqual(len(flags.flags), 1)
 
     def test_add_flags(self):
         flags = Flags()
         flags.add_flags([Flag('test'), Flag('test2')])
-        self.assertEqual(len(flags.all_flags), 2)
+        self.assertEqual(len(flags.flags), 2)
 
 
 

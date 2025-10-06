@@ -16,7 +16,7 @@ from argenta.command.exceptions import (
     UnprocessedInputFlagException,
     RepeatedInputFlagsException,
     EmptyInputCommandException,
-    BaseInputCommandException,
+    InputCommandException,
 )
 from argenta.app.registered_routers.entity import RegisteredRouters
 from argenta.response import Response
@@ -212,7 +212,7 @@ class BaseApp:
         return True
 
     def _error_handler(
-        self, error: BaseInputCommandException, raw_command: str
+        self, error: InputCommandException, raw_command: str
     ) -> None:
         """
         Private. Handles parsing errors of the entered command
@@ -393,7 +393,7 @@ class App(BaseApp):
 
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
-            except BaseInputCommandException as error:
+            except InputCommandException as error:
                 with redirect_stdout(io.StringIO()) as f:
                     self._error_handler(error, raw_command)
                     res: str = f.getvalue()
