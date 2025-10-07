@@ -1,9 +1,9 @@
 from typing import Protocol, TypeVar
 
-T = TypeVar('T', contravariant=True)
+T = TypeVar('T', contravariant=True) # noqa: WPS111
 
 
-class Handler(Protocol[T]):
+class NonStandardBehaviorHandler(Protocol[T]):
     def __call__(self, __param: T) -> None:
         raise NotImplementedError
     

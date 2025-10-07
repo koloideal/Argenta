@@ -1,4 +1,4 @@
-from typing import Never, Optional, TypeAlias
+from typing import Never, Optional, TypeAlias, Union
 from rich.console import Console
 from rich.markup import escape
 from art import text2art  # type: ignore
@@ -6,7 +6,7 @@ from contextlib import redirect_stdout
 import io
 import re
 
-from argenta.app.protocols import DescriptionMessageGenerator, EmptyCommandHandler, Printer, Handler
+from argenta.app.protocols import DescriptionMessageGenerator, EmptyCommandHandler, Printer, NonStandardBehaviorHandler
 from argenta.command.models import Command, InputCommand
 from argenta.router import Router
 from argenta.router.defaults import system_router
@@ -59,11 +59,11 @@ class BaseApp:
 
         self._current_matching_triggers_with_routers: dict[str, Router] = self._matching_lower_triggers_with_routers if self._ignore_command_register else self._matching_default_triggers_with_routers
 
-        self._incorrect_input_syntax_handler: Handler[str] = lambda _: print_func(f"Incorrect flag syntax: {_}")
-        self._repeated_input_flags_handler: Handler[str] = lambda _: print_func(f"Repeated input flags: {_}")
+        self._incorrect_input_syntax_handler: NonStandardBehaviorHandler[str] = lambda _: print_func(f"Incorrect flag syntax: {_}")
+        self._repeated_input_flags_handler: NonStandardBehaviorHandler[str] = lambda _: print_func(f"Repeated input flags: {_}")
         self._empty_input_command_handler: EmptyCommandHandler = lambda: print_func("Empty input command")
-        self._unknown_command_handler: Handler[InputCommand] = lambda _: print_func(f"Unknown command: {_.trigger}")
-        self._exit_command_handler: Handler[Response] = lambda _: print_func(self._farewell_message)
+        self._unknown_command_handler: NonStandardBehaviorHandler[InputCommand] = lambda _: print_func(f"Unknown command: {_.trigger}")
+        self._exit_command_handler: NonStandardBehaviorHandler[Response] = lambda _: print_func(self._farewell_message)
 
     def set_description_message_pattern(self, _: DescriptionMessageGenerator, /) -> None:
         """
@@ -73,7 +73,7 @@ class BaseApp:
         """
         self._description_message_gen = _
 
-    def set_incorrect_input_syntax_handler(self, _: Handler[str], /) -> None:
+    def set_incorrect_input_syntax_handler(self, _: NonStandardBehaviorHandler[str], /) -> None:
         """
         Public. Sets the handler for incorrect flags when entering a command
         :param _: handler for incorrect flags when entering a command
@@ -81,7 +81,7 @@ class BaseApp:
         """
         self._incorrect_input_syntax_handler = _
 
-    def set_repeated_input_flags_handler(self, _: Handler[str], /) -> None:
+    def set_repeated_input_flags_handler(self, _: NonStandardBehaviorHandler[str], /) -> None:
         """
         Public. Sets the handler for repeated flags when entering a command
         :param _: handler for repeated flags when entering a command
@@ -89,7 +89,7 @@ class BaseApp:
         """
         self._repeated_input_flags_handler = _
 
-    def set_unknown_command_handler(self, _: Handler[InputCommand], /) -> None:
+    def set_unknown_command_handler(self, _: NonStandardBehaviorHandler[InputCommand], /) -> None:
         """
         Public. Sets the handler for unknown commands when entering a command
         :param _: handler for unknown commands when entering a command
@@ -105,7 +105,7 @@ class BaseApp:
         """
         self._empty_input_command_handler = _
 
-    def set_exit_command_handler(self, _: Handler[Response], /) -> None:
+    def set_exit_command_handler(self, _: NonStandardBehaviorHandler[Response], /) -> None:
         """
         Public. Sets the handler for exit command when entering a command
         :param _: handler for exit command when entering a command
@@ -238,7 +238,7 @@ class BaseApp:
         def _(response: Response) -> None:
             self._exit_command_handler(response)
 
-        if system_router not in self._registered_routers.get_registered_routers():
+        if system_router not in self._registered_routers.registered_routers:
             system_router.command_register_ignore = self._ignore_command_register
             self._registered_routers.add_registered_router(system_router)
 
@@ -334,6 +334,12 @@ class BaseApp:
             self._print_command_group_description()
 
 
+AVAILABLE_DIVIDING_LINES: TypeAlias = Union[StaticDividingLine, DynamicDividingLine]
+DEFAULT_DIVIDING_LINE: StaticDividingLine = StaticDividingLine()
+
+DEFAULT_PRINT_FUNC: Printer = Console().print
+
+
 class App(BaseApp):
     def __init__(
         self, *,
@@ -343,11 +349,11 @@ class App(BaseApp):
         exit_command: Command = Command("Q", description="Exit command"),
         system_router_title: str | None = "System points:",
         ignore_command_register: bool = True,
-        dividing_line: StaticDividingLine | DynamicDividingLine = StaticDividingLine(),
+        dividing_line: AVAILABLE_DIVIDING_LINES = DEFAULT_DIVIDING_LINE,
         repeat_command_groups: bool = True,
         override_system_messages: bool = False,
         autocompleter: AutoCompleter = AutoCompleter(),
-        print_func: Printer = Console().print,
+        print_func: Printer = DEFAULT_PRINT_FUNC,
     ) -> None:
         """
         Public. The essence of the application itself.
@@ -394,10 +400,10 @@ class App(BaseApp):
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
             except InputCommandException as error:
-                with redirect_stdout(io.StringIO()) as f:
+                with redirect_stdout(io.StringIO()) as stdout:
                     self._error_handler(error, raw_command)
-                    res: str = f.getvalue()
-                self._print_framed_text(res)
+                    stdout_result: str = stdout.getvalue()
+                self._print_framed_text(stdout_result)
                 continue
 
             if self._is_exit_command(input_command):
@@ -406,10 +412,10 @@ class App(BaseApp):
                 return
 
             if self._is_unknown_command(input_command):
-                with redirect_stdout(io.StringIO()) as f:
+                with redirect_stdout(io.StringIO()) as stdout:
                     self._unknown_command_handler(input_command)
-                    res2: str = f.getvalue()
-                self._print_framed_text(res2)
+                    stdout_result: str = stdout.getvalue()
+                self._print_framed_text(stdout_result)
                 continue
 
             processing_router = self._current_matching_triggers_with_routers[input_command.trigger.lower()]
@@ -420,15 +426,16 @@ class App(BaseApp):
                     processing_router.finds_appropriate_handler(input_command)
                     self._print_func(self._dividing_line.get_full_static_line(is_override=self._override_system_messages))
                 else:
-                    self._print_func(StaticDividingLine(self._dividing_line.get_unit_part()).get_full_static_line(is_override=self._override_system_messages))
+                    dividing_line_unit_part: str = self._dividing_line.get_unit_part()
+                    self._print_func(StaticDividingLine(dividing_line_unit_part).get_full_static_line(is_override=self._override_system_messages))
                     processing_router.finds_appropriate_handler(input_command)
-                    self._print_func(StaticDividingLine(self._dividing_line.get_unit_part()).get_full_static_line(is_override=self._override_system_messages))
+                    self._print_func(StaticDividingLine(dividing_line_unit_part).get_full_static_line(is_override=self._override_system_messages))
             else:
-                with redirect_stdout(io.StringIO()) as f:
+                with redirect_stdout(io.StringIO()) as stdout:
                     processing_router.finds_appropriate_handler(input_command)
-                    res3: str = f.getvalue()
-                if res3:
-                    self._print_framed_text(res3)
+                    stdout_result: str = stdout.getvalue()
+                if stdout_result:
+                    self._print_framed_text(stdout_result)
 
     def include_router(self, router: Router) -> None:
         """

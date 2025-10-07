@@ -10,14 +10,7 @@ class RegisteredRouters:
         :param registered_routers: list of the registered routers
         :return: None
         """
-        self._registered_routers = registered_routers if registered_routers else []
-
-    def get_registered_routers(self) -> list[Router]:
-        """
-        Private. Returns the registered routers
-        :return: registered routers as list[Router]
-        """
-        return self._registered_routers
+        self.registered_routers: list[Router] = registered_routers if registered_routers else []
 
     def add_registered_router(self, router: Router, /) -> None:
         """
@@ -25,10 +18,10 @@ class RegisteredRouters:
         :param router: registered router
         :return: None
         """
-        self._registered_routers.append(router)
+        self.registered_routers.append(router)
 
     def __iter__(self) -> Iterator[Router]:
-        return iter(self._registered_routers)
+        return iter(self.registered_routers)
 
     def __next__(self) -> Router:
-        return next(iter(self._registered_routers))
+        return next(iter(self.registered_routers))
