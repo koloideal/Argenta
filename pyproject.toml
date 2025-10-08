@@ -9,7 +9,7 @@ license = { text = "MIT" }
 dependencies = [
     "rich (>=14.0.0,<15.0.0)",
     "art (>=6.4,<7.0)",
-    "pyreadline3>=3.5.4",
+    "pyreadline3>=3.5.4; sys_platform == 'win32'",
 ]
 
 [tool.ruff]
