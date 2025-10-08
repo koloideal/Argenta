@@ -36,8 +36,8 @@ class Router:
                which is ambiguous behavior and can lead to unexpected work
         :return: None
         """
-        self.title = title
-        self.disable_redirect_stdout = disable_redirect_stdout
+        self.title: str | None = title
+        self.disable_redirect_stdout: bool = disable_redirect_stdout
 
         self.command_handlers: CommandHandlers = CommandHandlers()
         self.command_register_ignore: bool = False
@@ -134,8 +134,8 @@ class Router:
 
 class CommandDecorator:
     def __init__(self, router_instance: Router, command: Command):
-        self.router = router_instance
-        self.command = command
+        self.router: Router = router_instance
+        self.command: Command = command
 
     def __call__(self, handler_func: Callable[[Response], None]) -> Callable[[Response], None]:
         _validate_func_args(handler_func)
@@ -161,8 +161,8 @@ def _structuring_input_flags(handled_command: Command,
         elif flag_status == ValidationStatus.UNDEFINED:
             undefined_flags = True
 
-    status = ResponseStatus.from_flags(has_invalid_value_flags = invalid_value_flags,
-                                       has_undefined_flags = undefined_flags)
+    status = ResponseStatus.from_flags(has_invalid_value_flags=invalid_value_flags,
+                                                       has_undefined_flags=undefined_flags)
 
     return Response(
         status=status,
@@ -190,8 +190,8 @@ def _validate_func_args(func: Callable[[Response], None]) -> None:
         if arg_annotation is not Response:
             source_line: int = getsourcelines(func)[1]
             Console().print(
-                f'\nFile "{getsourcefile(func)}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
-                f"of argument([green]{transferred_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue],"
+                f'\nFile "{getsourcefile(func)}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint ' +
+                f"of argument([green]{transferred_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue]," +
                 f" [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]",
                 highlight=False,
             )

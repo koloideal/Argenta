@@ -1,12 +1,13 @@
 from argenta.command.flag.models import InputFlag, Flag
-from typing import Generic, Iterator, Optional, TypeVar
+from typing import Generic, TypeVar, override
+from collections.abc import Iterator
 
 
 FlagType = TypeVar("FlagType")
 
 
 class BaseFlags(Generic[FlagType]):
-    def __init__(self, flags: Optional[list[FlagType]] = None) -> None:
+    def __init__(self, flags: list[FlagType] | None = None) -> None:
         """
         Public. A model that combines the registered flags
         :param flags: the flags that will be registered
@@ -51,7 +52,8 @@ class Flags(BaseFlags[Flag]):
         :return: entity of the flag or None
         """
         return next((flag for flag in self.flags if flag.name == name), None)
-        
+    
+    @override
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Flags):
             return NotImplemented
@@ -62,7 +64,6 @@ class Flags(BaseFlags[Flag]):
         flag_pairs: zip[tuple[Flag, Flag]] = zip(self.flags, other.flags)
         return all(s_flag == o_flag for s_flag, o_flag in flag_pairs)
 
-            
     def __contains__(self, flag_to_check: object) -> bool:
         if isinstance(flag_to_check, Flag):
             for flag in self.flags:
@@ -81,7 +82,8 @@ class InputFlags(BaseFlags[InputFlag]):
         :return: entity of the flag or None
         """
         return next((flag for flag in self.flags if flag.name == name), None)
-        
+    
+    @override
     def __eq__(self, other: object) -> bool: 
         if not isinstance(other, InputFlags):
             raise NotImplementedError

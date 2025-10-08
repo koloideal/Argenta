@@ -1,6 +1,6 @@
 from enum import Enum
-from typing import Literal, Pattern
-
+from re import Pattern
+from typing import Literal, override
 
 
 class PossibleValues(Enum):
@@ -27,9 +27,9 @@ class Flag:
         :param possible_values: The possible values of the flag, if False then the flag cannot have a value
         :return: None
         """
-        self.name = name
-        self.prefix = prefix
-        self.possible_values = possible_values
+        self.name: str = name
+        self.prefix: Literal["-", "--", "---"] = prefix
+        self.possible_values: list[str] | Pattern[str] | PossibleValues = possible_values
 
     def validate_input_flag_value(self, input_flag_value: str | None) -> bool:
         """
@@ -57,12 +57,15 @@ class Flag:
         string_entity: str = self.prefix + self.name
         return string_entity
     
+    @override
     def __str__(self) -> str:
         return self.string_entity
     
+    @override
     def __repr__(self) -> str:
         return f'Flag<name={self.name}, prefix={self.prefix}>'
         
+    @override
     def __eq__(self, other: object) -> bool: 
         if isinstance(other, Flag):
             return self.string_entity == other.string_entity
@@ -84,10 +87,10 @@ class InputFlag:
         :param value: the value of the input flag
         :return: None
         """
-        self.name = name
-        self.prefix = prefix
-        self.input_value = input_value
-        self.status = status
+        self.name: str = name
+        self.prefix: Literal['-', '--', '---'] = prefix
+        self.input_value: str | None = input_value
+        self.status: ValidationStatus | None = status
     
     @property
     def string_entity(self) -> str:
@@ -98,12 +101,15 @@ class InputFlag:
         string_entity: str = self.prefix + self.name
         return string_entity
 
+    @override
     def __str__(self) -> str:
         return f'{self.string_entity} {self.input_value}'
     
+    @override
     def __repr__(self) -> str:
         return f'InputFlag<name={self.name}, prefix={self.prefix}, value={self.input_value}, status={self.status}>'
 
+    @override
     def __eq__(self, other: object) -> bool: 
         if isinstance(other, InputFlag):
             return (

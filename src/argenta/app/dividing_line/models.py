@@ -8,7 +8,7 @@ class BaseDividingLine(ABC):
         :param unit_part: the single part of the dividing line
         :return: None
         """
-        self._unit_part = unit_part
+        self._unit_part: str = unit_part
 
     def get_unit_part(self) -> str:
         """
@@ -30,7 +30,7 @@ class StaticDividingLine(BaseDividingLine):
         :return: None
         """
         super().__init__(unit_part)
-        self.length = length
+        self.length: int = length
 
     def get_full_static_line(self, *, is_override: bool) -> str:
         """

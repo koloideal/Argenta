@@ -10,7 +10,7 @@ class ResponseStatus(Enum):
     @classmethod
     def from_flags(cls, *, has_invalid_value_flags: bool, has_undefined_flags: bool) -> 'ResponseStatus':
         key = (has_invalid_value_flags, has_undefined_flags)
-        status_map = {
+        status_map: dict[tuple[bool, bool], ResponseStatus] = {
             (True,  True):  cls.UNDEFINED_AND_INVALID_FLAGS,
             (True,  False): cls.INVALID_VALUE_FLAGS,
             (False, True):  cls.UNDEFINED_FLAGS,

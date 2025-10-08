@@ -22,9 +22,9 @@ class ArgParser:
         :param epilog: the epilog of the ArgParse instance
         :param processed_args: registered and processed arguments
         """
-        self._name = name
-        self._description = description
-        self._epilog = epilog
+        self._name: str = name
+        self._description: str = description
+        self._epilog: str = epilog
 
         self._entity: ArgumentParser = ArgumentParser(prog=name, description=description, epilog=epilog)
         self._args: list[PositionalArgument | OptionalArgument | BooleanArgument] = processed_args
@@ -46,11 +46,9 @@ class ArgParser:
         """
         for arg in self._args:
             if isinstance(arg, PositionalArgument) or isinstance(arg, OptionalArgument):
-                self._entity.add_argument(arg.get_string_entity())
-            elif isinstance(arg, BooleanArgument): # pyright: ignore[reportUnnecessaryIsInstance]
-                self._entity.add_argument(arg.get_string_entity(), action="store_true")
-            else:
-                raise NotImplementedError
+                _ = self._entity.add_argument(arg.string_entity)
+            else: 
+                _ = self._entity.add_argument(arg.string_entity, action="store_true")
 
     def parse_args(self) -> Namespace:
         return self._entity.parse_args()

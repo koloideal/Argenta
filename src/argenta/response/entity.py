@@ -1,3 +1,4 @@
+from typing import Literal
 from argenta.command.flag.flags.models import InputFlags
 from argenta.response.status import ResponseStatus
 
@@ -6,7 +7,7 @@ EMPTY_INPUT_FLAGS: InputFlags = InputFlags()
 
 
 class Response:
-    __slots__ = ("status", "input_flags")
+    __slots__: tuple[Literal['status', 'input_flags'], ...] = ("status", "input_flags")
 
     def __init__(
         self,
@@ -18,5 +19,5 @@ class Response:
         :param status: the status of the response
         :param input_flags: all input flags
         """
-        self.status = status
-        self.input_flags = input_flags
+        self.status: ResponseStatus = status
+        self.input_flags: InputFlags = input_flags

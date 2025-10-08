@@ -1,26 +1,31 @@
-from typing import Never, Optional, TypeAlias, Union
-from rich.console import Console
-from rich.markup import escape
-from art import text2art  # type: ignore
-from contextlib import redirect_stdout
 import io
 import re
+from contextlib import redirect_stdout
+from typing import Never, TypeAlias
 
-from argenta.app.protocols import DescriptionMessageGenerator, EmptyCommandHandler, Printer, NonStandardBehaviorHandler
-from argenta.command.models import Command, InputCommand
-from argenta.router import Router
-from argenta.router.defaults import system_router
+from art import text2art  # pyright: ignore[reportMissingTypeStubs, reportUnknownVariableType]
+from rich.console import Console
+from rich.markup import escape
+
 from argenta.app.autocompleter import AutoCompleter
-from argenta.app.dividing_line.models import StaticDividingLine, DynamicDividingLine
-from argenta.command.exceptions import (
-    UnprocessedInputFlagException,
-    RepeatedInputFlagsException,
-    EmptyInputCommandException,
-    InputCommandException,
+from argenta.app.dividing_line.models import DynamicDividingLine, StaticDividingLine
+from argenta.app.protocols import (
+    DescriptionMessageGenerator,
+    EmptyCommandHandler,
+    NonStandardBehaviorHandler,
+    Printer,
 )
 from argenta.app.registered_routers.entity import RegisteredRouters
+from argenta.command.exceptions import (
+    EmptyInputCommandException,
+    InputCommandException,
+    RepeatedInputFlagsException,
+    UnprocessedInputFlagException,
+)
+from argenta.command.models import Command, InputCommand
 from argenta.response import Response
-
+from argenta.router import Router
+from argenta.router.defaults import system_router
 
 Matches: TypeAlias = list[str] | list[Never]
 
@@ -30,25 +35,25 @@ class BaseApp:
                  initial_message: str,
                  farewell_message: str,
                  exit_command: Command,
-                 system_router_title: Optional[str],
+                 system_router_title: str | None,
                  ignore_command_register: bool,
                  dividing_line: StaticDividingLine | DynamicDividingLine,
                  repeat_command_groups: bool,
                  override_system_messages: bool,
                  autocompleter: AutoCompleter,
                  print_func: Printer) -> None:
-        self._prompt = prompt
-        self._print_func = print_func
-        self._exit_command = exit_command
-        self._system_router_title = system_router_title
-        self._dividing_line = dividing_line
-        self._ignore_command_register = ignore_command_register
-        self._repeat_command_groups_description = repeat_command_groups
-        self._override_system_messages = override_system_messages
-        self._autocompleter = autocompleter
+        self._prompt: str = prompt
+        self._print_func: Printer = print_func
+        self._exit_command: Command = exit_command
+        self._system_router_title: str | None = system_router_title
+        self._dividing_line: StaticDividingLine | DynamicDividingLine = dividing_line
+        self._ignore_command_register: bool = ignore_command_register
+        self._repeat_command_groups_description: bool = repeat_command_groups
+        self._override_system_messages: bool = override_system_messages
+        self._autocompleter: AutoCompleter = autocompleter
 
-        self._farewell_message = farewell_message
-        self._initial_message = initial_message
+        self._farewell_message: str = farewell_message
+        self._initial_message: str = initial_message
 
         self._description_message_gen: DescriptionMessageGenerator = lambda command, description: f"{command} *=*=* {description}"
         self._registered_routers: RegisteredRouters = RegisteredRouters()
@@ -334,10 +339,12 @@ class BaseApp:
             self._print_command_group_description()
 
 
-AVAILABLE_DIVIDING_LINES: TypeAlias = Union[StaticDividingLine, DynamicDividingLine]
+AVAILABLE_DIVIDING_LINES: TypeAlias = StaticDividingLine | DynamicDividingLine
 DEFAULT_DIVIDING_LINE: StaticDividingLine = StaticDividingLine()
 
 DEFAULT_PRINT_FUNC: Printer = Console().print
+DEFAULT_AUTOCOMPLETER: AutoCompleter = AutoCompleter()
+DEFAULT_EXIT_COMMAND: Command = Command("Q", description="Exit command")
 
 
 class App(BaseApp):
@@ -346,13 +353,13 @@ class App(BaseApp):
         prompt: str = "What do you want to do?\n\n",
         initial_message: str = "Argenta\n",
         farewell_message: str = "\nSee you\n",
-        exit_command: Command = Command("Q", description="Exit command"),
+        exit_command: Command = DEFAULT_EXIT_COMMAND,
         system_router_title: str | None = "System points:",
         ignore_command_register: bool = True,
         dividing_line: AVAILABLE_DIVIDING_LINES = DEFAULT_DIVIDING_LINE,
         repeat_command_groups: bool = True,
         override_system_messages: bool = False,
-        autocompleter: AutoCompleter = AutoCompleter(),
+        autocompleter: AutoCompleter = DEFAULT_AUTOCOMPLETER,
         print_func: Printer = DEFAULT_PRINT_FUNC,
     ) -> None:
         """
@@ -400,10 +407,10 @@ class App(BaseApp):
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
             except InputCommandException as error:
-                with redirect_stdout(io.StringIO()) as stdout:
+                with redirect_stdout(io.StringIO()) as stderr:
                     self._error_handler(error, raw_command)
-                    stdout_result: str = stdout.getvalue()
-                self._print_framed_text(stdout_result)
+                    stderr_result: str = stderr.getvalue()
+                self._print_framed_text(stderr_result)
                 continue
 
             if self._is_exit_command(input_command):
@@ -414,8 +421,8 @@ class App(BaseApp):
             if self._is_unknown_command(input_command):
                 with redirect_stdout(io.StringIO()) as stdout:
                     self._unknown_command_handler(input_command)
-                    stdout_result: str = stdout.getvalue()
-                self._print_framed_text(stdout_result)
+                    stdout_res: str = stdout.getvalue()
+                self._print_framed_text(stdout_res)
                 continue
 
             processing_router = self._current_matching_triggers_with_routers[input_command.trigger.lower()]

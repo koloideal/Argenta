@@ -1,4 +1,5 @@
-from typing import Callable, Iterator
+from collections.abc import Iterator
+from typing import Callable
 
 from argenta.command import Command
 from argenta.response import Response
@@ -11,8 +12,8 @@ class CommandHandler:
         :param handler: the handler being called
         :param handled_command: the command being processed
         """
-        self.handler_as_func = handler_as_func
-        self.handled_command = handled_command
+        self.handler_as_func: Callable[[Response], None] = handler_as_func
+        self.handled_command: Command = handled_command
 
     def handling(self, response: Response) -> None:
         """
@@ -29,7 +30,7 @@ class CommandHandlers:
         Private. The model that unites all CommandHandler of the routers
         :param command_handlers: list of CommandHandlers for register
         """
-        self.command_handlers = command_handlers if command_handlers else []
+        self.command_handlers: list[CommandHandler] = command_handlers if command_handlers else []
 
     def add_handler(self, command_handler: CommandHandler) -> None:
         """
