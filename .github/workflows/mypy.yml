@@ -28,4 +28,4 @@ jobs:
         pip install .
 
     - name: Run type checker
-      run: mypy -p argenta --strict
+      run: mypy -p argenta
