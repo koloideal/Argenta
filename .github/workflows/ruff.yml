@@ -2,9 +2,9 @@ name: ruff
 
 on:
   push:
-    branches: [ "kolo" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "kolo" ]
+    branches: [ "main" ]
 
 permissions:
   contents: read
