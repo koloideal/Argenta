@@ -1,9 +1,5 @@
-from argenta.command import InputCommand
+import argparse
 
-
-parsed = InputCommand.parse('prt ---port --host 22')
-
-
-print(f'trigger: {parsed.trigger}\n')
-for flag in parsed.input_flags:
-    print(f'flag: {flag}')
+parser = argparse.ArgumentParser(prog='myprogram')
+_ = parser.add_argument('--foo', help='foo of the %(prog)s program')
+parser.print_help()

@@ -27,24 +27,9 @@ class ArgParser:
         self._epilog: str = epilog
 
         self._entity: ArgumentParser = ArgumentParser(prog=name, description=description, epilog=epilog)
-        self._args: list[PositionalArgument | OptionalArgument | BooleanArgument] = processed_args
-
-    def add_args(
-        self, args: list[PositionalArgument | OptionalArgument | BooleanArgument]
-    ) -> None:
-        """
-        Public. Sets the arguments to be processed
-        :param args: processed arguments
-        :return: None
-        """
-        self._args.extend(args)
-
-    def register_args(self) -> None:
-        """
-        Private. Registers initialized command line arguments
-        :return: None
-        """
-        for arg in self._args:
+        self._processed_args: list[PositionalArgument | OptionalArgument | BooleanArgument] = processed_args
+        
+        for arg in processed_args:
             if isinstance(arg, PositionalArgument) or isinstance(arg, OptionalArgument):
                 _ = self._entity.add_argument(arg.string_entity)
             else: 

@@ -19,8 +19,6 @@ class Orchestrator:
         :param app: a running application
         :return: None
         """
-        if self._arg_parser:
-            self._arg_parser.register_args()
         app.run_polling()
 
     def get_input_args(self) -> Namespace | None:
