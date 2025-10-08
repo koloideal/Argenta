@@ -1,6 +1,6 @@
 [project]
 name = "argenta"
-version = "1.0.7"
+version = "1.1.1rc0"
 description = "Python library for building modular CLI applications"
 authors = [{ name = "kolo", email = "kolo.is.main@gmail.com" }]
 requires-python = ">=3.8"
@@ -28,6 +28,9 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "psutil>=7.0.0",
+    "mypy>=1.14.1",
+    "pytest>=8.3.2",
+    "ruff>=0.12.12",
+    "wemake-python-styleguide>=0.17.0",
 ]
 

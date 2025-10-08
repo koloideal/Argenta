@@ -1,29 +1,23 @@
-from argenta.response.status import Status
-from argenta.command.flag.flags import (
-    ValidInputFlags,
-    UndefinedInputFlags,
-    InvalidValueInputFlags,
-)
+from typing import Literal
+from argenta.command.flag.flags.models import InputFlags
+from argenta.response.status import ResponseStatus
+
+
+EMPTY_INPUT_FLAGS: InputFlags = InputFlags()
 
 
 class Response:
-    __slots__ = ("status", "valid_flags", "undefined_flags", "invalid_value_flags")
+    __slots__: tuple[Literal['status', 'input_flags'], ...] = ("status", "input_flags")
 
     def __init__(
         self,
-        status: Status | None = None,
-        valid_flags: ValidInputFlags = ValidInputFlags(),
-        undefined_flags: UndefinedInputFlags = UndefinedInputFlags(),
-        invalid_value_flags: InvalidValueInputFlags = InvalidValueInputFlags(),
+        status: ResponseStatus,
+        input_flags: InputFlags = EMPTY_INPUT_FLAGS,
     ):
         """
         Public. The entity of the user input sent to the handler
         :param status: the status of the response
-        :param valid_flags: valid input flags
-        :param undefined_flags: undefined input flags
-        :param invalid_value_flags: input flags with invalid values
+        :param input_flags: all input flags
         """
-        self.status = status
-        self.valid_flags = valid_flags
-        self.undefined_flags = undefined_flags
-        self.invalid_value_flags = invalid_value_flags
+        self.status: ResponseStatus = status
+        self.input_flags: InputFlags = input_flags

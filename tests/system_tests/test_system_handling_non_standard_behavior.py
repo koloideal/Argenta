@@ -5,10 +5,10 @@ import io
 import re
 
 from argenta.app import App
-from argenta.command import Command
+from argenta.command import Command, PredefinedFlags
+from argenta.command.flag.models import ValidationStatus
 from argenta.router import Router
 from argenta.command.flag.flags.models import Flags
-from argenta.command.flag.defaults import PredefinedFlags
 from argenta.orchestrator import Orchestrator
 from argenta.response import Response
 
@@ -22,13 +22,13 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print('test command')
 
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
         orchestrator.start_polling(app)
 
         output = mock_stdout.getvalue()
@@ -43,14 +43,14 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print('test command')
 
         app = App(ignore_command_register=False,
                   override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
         orchestrator.start_polling(app)
 
         output = mock_stdout.getvalue()
@@ -65,8 +65,10 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
-            print(f'test command with undefined flag: {response.undefined_flags.get_flag('help').get_string_entity()}')
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
+            undefined_flag = response.input_flags.get_flag_by_name('help')
+            if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
+                print(f'test command with undefined flag: {undefined_flag.string_entity}')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -85,9 +87,12 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
-            flag = response.undefined_flags.get_flag("port")
-            print(f'test command with undefined flag with value: {flag.get_string_entity()} {flag.get_value()}')
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
+            undefined_flag = response.input_flags.get_flag_by_name("port")
+            if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
+                print(f'test command with undefined flag with value: {undefined_flag.string_entity} {undefined_flag.input_value}')
+            else:
+                raise
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -104,12 +109,13 @@ class TestSystemHandlerNormalWork(TestCase):
     def test_input_correct_command_with_one_correct_flag_an_one_incorrect_flag(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
         orchestrator = Orchestrator()
-        flags = Flags(PredefinedFlags.HOST)
+        flags = Flags([PredefinedFlags.HOST])
 
         @router.command(Command('test', flags=flags))
-        def test(response: Response):
-            flag = response.undefined_flags.get_flag("port")
-            print(f'connecting to host with flag: {flag.get_string_entity()} {flag.get_value()}')
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
+            undefined_flag = response.input_flags.get_flag_by_name("port")
+            if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
+                print(f'connecting to host with flag: {undefined_flag.string_entity} {undefined_flag.input_value}')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -128,13 +134,13 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'test command')
 
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
         orchestrator.start_polling(app)
 
         output = mock_stdout.getvalue()
@@ -149,17 +155,17 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'test command')
 
         @router.command(Command('more'))
-        def test(response: Response):
+        def test1(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'more command')
 
         app = App(override_system_messages=True,
                   print_func=print)
         app.include_router(router)
-        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.get_trigger()}'))
+        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
         orchestrator.start_polling(app)
 
         output = mock_stdout.getvalue()
@@ -174,7 +180,7 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'test command')
 
         app = App(override_system_messages=True,
@@ -195,7 +201,7 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response: Response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'test command')
 
         app = App(override_system_messages=True,
@@ -216,7 +222,7 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test', flags=PredefinedFlags.PORT))
-        def test(response: Response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print('test command')
 
         app = App(override_system_messages=True,
@@ -227,4 +233,25 @@ class TestSystemHandlerNormalWork(TestCase):
 
         output = mock_stdout.getvalue()
 
-        self.assertIn("\nRepeated input flags: \"test --port 22 --port 33\"\n", output)
+        self.assertIn('Repeated input flags: "test --port 22 --port 33"', output)
+
+    @patch("builtins.input", side_effect=["test --help", "q"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_input_correct_command_with_unregistered_flag3(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
+        router = Router()
+        orchestrator = Orchestrator()
+
+        @router.command(Command('test'))
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
+            undefined_flag = response.input_flags.get_flag_by_name('help')
+            if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
+                print(f'test command with undefined flag: {undefined_flag.string_entity}')
+
+        app = App(override_system_messages=True,
+                  print_func=print)
+        app.include_router(router)
+        orchestrator.start_polling(app)
+
+        output = mock_stdout.getvalue()
+
+        self.assertIn('\ntest command with undefined flag: --help\n', output)

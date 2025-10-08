@@ -1,35 +1,28 @@
-from argenta.command.flag.models import Flag, InputFlag
+from argenta.command.flag.models import Flag, InputFlag, ValidationStatus
 from argenta.command.flag.flags.models import InputFlags, Flags
 from argenta.command.exceptions import (
     UnprocessedInputFlagException,
     RepeatedInputFlagsException,
     EmptyInputCommandException,
 )
-from typing import cast, Literal
+from typing import Never, Self, cast, Literal
 
 
-class BaseCommand:
-    def __init__(self, trigger: str) -> None:
-        """
-        Private. Base class for all commands
-        :param trigger: A string trigger, which, when entered by the user, indicates that the input corresponds to the command
-        """
-        self._trigger = trigger
+ParseFlagsResult = tuple[InputFlags, str | None, str | None]
+ParseResult = tuple[str, InputFlags]
 
-    def get_trigger(self) -> str:
-        """
-        Public. Returns the trigger of the command
-        :return: the trigger of the command as str
-        """
-        return self._trigger
+MIN_FLAG_PREFIX: str = "-"
+DEFAULT_WITHOUT_FLAGS: Flags = Flags()
+
+DEFAULT_WITHOUT_INPUT_FLAGS: InputFlags = InputFlags()
 
 
-class Command(BaseCommand):
+class Command:
     def __init__(
         self,
-        trigger: str,
+        trigger: str, *, 
         description: str | None = None,
-        flags: Flag | Flags | None = None,
+        flags: Flag | Flags = DEFAULT_WITHOUT_FLAGS,
         aliases: list[str] | None = None,
     ):
         """
@@ -39,157 +32,120 @@ class Command(BaseCommand):
         :param flags: processed commands
         :param aliases: string synonyms for the main trigger
         """
-        super().__init__(trigger)
-        self._registered_flags: Flags = (
-            flags
-            if isinstance(flags, Flags)
-            else Flags(flags)
-            if isinstance(flags, Flag)
-            else Flags()
-        )
-        self._description = "Very useful command" if not description else description
-        self._aliases = aliases if isinstance(aliases, list) else []
-
-    def get_registered_flags(self) -> Flags:
-        """
-        Private. Returns the registered flags
-        :return: the registered flags as Flags
-        """
-        return self._registered_flags
-
-    def get_aliases(self) -> list[str] | list:
-        """
-        Public. Returns the aliases of the command
-        :return: the aliases of the command as list[str] | list
-        """
-        return self._aliases
+        self.registered_flags: Flags = flags if isinstance(flags, Flags) else Flags([flags])
+        self.trigger: str = trigger
+        self.description: str = description if description else "Command without description"
+        self.aliases: list[str] = aliases if aliases else []
 
     def validate_input_flag(
         self, flag: InputFlag
-    ) -> Literal["Undefined", "Valid", "Invalid"]:
+    ) -> ValidationStatus:
         """
         Private. Validates the input flag
         :param flag: input flag for validation
         :return: is input flag valid as bool
         """
-        registered_flags: Flags | None = self.get_registered_flags()
-        if registered_flags:
-            if isinstance(registered_flags, Flag):
-                if registered_flags.get_string_entity() == flag.get_string_entity():
-                    is_valid = registered_flags.validate_input_flag_value(
-                        flag.get_value()
-                    )
-                    if is_valid:
-                        return "Valid"
-                    else:
-                        return "Invalid"
+        registered_flags: Flags = self.registered_flags
+        for registered_flag in registered_flags:
+            if registered_flag.string_entity == flag.string_entity:
+                is_valid = registered_flag.validate_input_flag_value(flag.input_value)
+                if is_valid:
+                    return ValidationStatus.VALID
                 else:
-                    return "Undefined"
-            else:
-                for registered_flag in registered_flags:
-                    if registered_flag.get_string_entity() == flag.get_string_entity():
-                        is_valid = registered_flag.validate_input_flag_value(
-                            flag.get_value()
-                        )
-
-                        if is_valid:
-                            return "Valid"
-                        else:
-                            return "Invalid"
-                return "Undefined"
-        return "Undefined"
-
-    def get_description(self) -> str:
-        """
-        Private. Returns the description of the command
-        :return: the description of the command as str
-        """
-        return self._description
+                    return ValidationStatus.INVALID
+        return ValidationStatus.UNDEFINED
 
 
-class InputCommand(BaseCommand):
-    def __init__(self, trigger: str, input_flags: InputFlag | InputFlags | None = None):
+class InputCommand:
+    def __init__(self, trigger: str, *, 
+                 input_flags: InputFlag | InputFlags = DEFAULT_WITHOUT_INPUT_FLAGS):
         """
         Private. The model of the input command, after parsing
         :param trigger:the trigger of the command
         :param input_flags: the input flags
         :return: None
         """
-        super().__init__(trigger)
-        self._input_flags: InputFlags = (
-            input_flags
-            if isinstance(input_flags, InputFlags)
-            else InputFlags(input_flags)
-            if isinstance(input_flags, InputFlag)
-            else InputFlags()
-        )
+        self.trigger: str = trigger
+        self.input_flags: InputFlags = input_flags if isinstance(input_flags, InputFlags) else InputFlags([input_flags])
 
-    def _set_input_flags(self, input_flags: InputFlags) -> None:
-        """
-        Private. Sets the input flags
-        :param input_flags: the input flags to set
-        :return: None
-        """
-        self._input_flags = input_flags
-
-    def get_input_flags(self) -> InputFlags:
-        """
-        Private. Returns the input flags
-        :return: the input flags as InputFlags
-        """
-        return self._input_flags
-
-    @staticmethod
-    def parse(raw_command: str) -> "InputCommand":
+    @classmethod
+    def parse(cls, raw_command: str) -> Self:
         """
         Private. Parse the raw input command
         :param raw_command: raw input command
         :return: model of the input command, after parsing as InputCommand
         """
-        if not raw_command:
+        trigger, input_flags = CommandParser(raw_command).parse_raw_command()
+
+        return cls(trigger=trigger, input_flags=input_flags)
+        
+
+class CommandParser:
+    def __init__(self, raw_command: str) -> None:
+        self.raw_command: str = raw_command
+        self._parsed_input_flags: InputFlags = InputFlags()
+
+    def parse_raw_command(self) -> ParseResult:
+        if not self.raw_command:
             raise EmptyInputCommandException()
 
-        list_of_tokens = raw_command.split()
-        command = list_of_tokens.pop(0)
+        input_flags, crnt_flag_name, crnt_flag_val = self._parse_flags(self.raw_command.split()[1:])
 
-        input_flags: InputFlags = InputFlags()
-        current_flag_name, current_flag_value = None, None
-
-        for k, _ in enumerate(list_of_tokens):
-            if _.startswith("-"):
-                if len(_) < 2 or len(_[: _.rfind("-")]) > 3:
-                    raise UnprocessedInputFlagException()
-                current_flag_name = _
-            else:
-                if not current_flag_name or current_flag_value:
-                    raise UnprocessedInputFlagException()
-                current_flag_value = _
-
-            if current_flag_name:
-                if not len(list_of_tokens) == k + 1:
-                    if not list_of_tokens[k + 1].startswith("-"):
-                        continue
-
-                input_flag = InputFlag(
-                    name=current_flag_name[current_flag_name.rfind("-") + 1 :],
-                    prefix=cast(
-                        Literal["-", "--", "---"],
-                        current_flag_name[: current_flag_name.rfind("-") + 1],
-                    ),
-                    value=current_flag_value,
-                )
-
-                all_flags = [
-                    flag.get_string_entity() for flag in input_flags.get_flags()
-                ]
-                if input_flag.get_string_entity() not in all_flags:
-                    input_flags.add_flag(input_flag)
-                else:
-                    raise RepeatedInputFlagsException(input_flag)
-
-                current_flag_name, current_flag_value = None, None
-
-        if any([current_flag_name, current_flag_value]):
+        if any([crnt_flag_name, crnt_flag_val]):
             raise UnprocessedInputFlagException()
         else:
-            return InputCommand(trigger=command, input_flags=input_flags)
+            return (self.raw_command.split()[0], input_flags)
+
+    def _parse_flags(self, _tokens: list[str] | list[Never]) -> ParseFlagsResult:
+        crnt_flg_name, crnt_flg_val = None, None
+        for index, token in enumerate(_tokens):
+            crnt_flg_name, crnt_flg_val = _parse_single_token(token, crnt_flg_name, crnt_flg_val)
+
+            if not crnt_flg_name or self._is_next_token_value(index, _tokens):
+                continue
+
+            input_flag = InputFlag(
+                name=crnt_flg_name[crnt_flg_name.rfind(MIN_FLAG_PREFIX) + 1:],
+                prefix=cast(
+                    Literal["-", "--", "---"],
+                    crnt_flg_name[:crnt_flg_name.rfind(MIN_FLAG_PREFIX) + 1],
+                ),
+                input_value=crnt_flg_val,
+                status=None
+            )
+            
+            if input_flag in self._parsed_input_flags:
+                raise RepeatedInputFlagsException(input_flag)
+            
+            self._parsed_input_flags.add_flag(input_flag)
+            crnt_flg_name, crnt_flg_val = None, None
+
+        return (self._parsed_input_flags, crnt_flg_name, crnt_flg_val)
+    
+    def _is_next_token_value(self, current_index: int,
+                                   _tokens: list[str] | list[Never]) -> bool:
+        next_index = current_index + 1
+        if next_index >= len(_tokens):
+            return False  
+        
+        next_token = _tokens[next_index]
+        return not next_token.startswith(MIN_FLAG_PREFIX)
+    
+def _parse_single_token(
+    token: str,
+    crnt_flag_name: str | None,
+    crnt_flag_val: str | None
+) -> tuple[str | None, str | None]:
+    if not token.startswith(MIN_FLAG_PREFIX):
+        if not crnt_flag_name or crnt_flag_val:
+            raise UnprocessedInputFlagException
+        return crnt_flag_name, token
+
+    prefix = token[:token.rfind(MIN_FLAG_PREFIX)]
+    if len(token) < 2 or len(prefix) > 2:
+        raise UnprocessedInputFlagException
+
+    new_flag_name = token
+    new_flag_value = None
+
+    return new_flag_name, new_flag_value

@@ -11,12 +11,9 @@ class Orchestrator:
         :param arg_parser: Cmd argument parser and configurator at startup
         :return: None
         """
-        self.arg_parser: ArgParser | None = arg_parser
-        if arg_parser:
-            self.arg_parser.register_args()
+        self._arg_parser: ArgParser | None = arg_parser
 
-    @staticmethod
-    def start_polling(app: App) -> None:
+    def start_polling(self, app: App) -> None:
         """
         Public. Starting the user input processing cycle
         :param app: a running application
@@ -29,7 +26,7 @@ class Orchestrator:
         Public. Returns the arguments parsed
         :return: None
         """
-        if self.arg_parser:
-            return self.arg_parser.entity.parse_args()
+        if self._arg_parser:
+            return self._arg_parser.parse_args()
         else:
             return None

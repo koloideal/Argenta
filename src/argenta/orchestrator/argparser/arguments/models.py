@@ -1,19 +1,19 @@
 from abc import ABC, abstractmethod
-from typing import Literal
+from typing import Literal, override
 
 
 class BaseArgument(ABC):
     """
     Private. Base class for all arguments
     """
-
+    @property
     @abstractmethod
-    def get_string_entity(self) -> str:
+    def string_entity(self) -> str:
         """
         Public. Returns the string representation of the argument
         :return: the string representation as a str
         """
-        pass
+        raise NotImplementedError
 
 
 class PositionalArgument(BaseArgument):
@@ -22,9 +22,11 @@ class PositionalArgument(BaseArgument):
         Public. Required argument at startup
         :param name: name of the argument, must not start with minus (-)
         """
-        self.name = name
+        self.name: str = name
 
-    def get_string_entity(self):
+    @property
+    @override
+    def string_entity(self) -> str:
         return self.name
 
 
@@ -35,10 +37,12 @@ class OptionalArgument(BaseArgument):
         :param name: name of the argument
         :param prefix: prefix of the argument
         """
-        self.name = name
-        self.prefix = prefix
+        self.name: str = name
+        self.prefix: Literal["-", "--", "---"] = prefix
 
-    def get_string_entity(self):
+    @property
+    @override
+    def string_entity(self) -> str:
         return self.prefix + self.name
 
 
@@ -49,8 +53,10 @@ class BooleanArgument(BaseArgument):
         :param name: name of the argument
         :param prefix: prefix of the argument
         """
-        self.name = name
-        self.prefix = prefix
+        self.name: str = name
+        self.prefix: Literal["-", "--", "---"] = prefix
 
-    def get_string_entity(self):
+    @property
+    @override
+    def string_entity(self) -> str:
         return self.prefix + self.name

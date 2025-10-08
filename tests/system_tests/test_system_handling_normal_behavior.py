@@ -5,13 +5,13 @@ import io
 import re
 
 from argenta.app import App
-from argenta.command import Command
+from argenta.command import Command, PredefinedFlags
+from argenta.command.flag.models import PossibleValues, ValidationStatus
 from argenta.response import Response
 from argenta.router import Router
 from argenta.orchestrator import Orchestrator
 from argenta.command.flag import Flag
 from argenta.command.flag.flags import Flags
-from argenta.command.flag.defaults import PredefinedFlags
 
 
 
@@ -23,7 +23,7 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print('test command')
 
         app = App(override_system_messages=True,
@@ -43,7 +43,7 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print('test command')
 
         app = App(ignore_command_register=True,
@@ -62,11 +62,13 @@ class TestSystemHandlerNormalWork(TestCase):
     def test_input_correct_command_with_custom_flag(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
         orchestrator = Orchestrator()
-        flag = Flag('help', '--', False)
+        flag = Flag('help', prefix='--', possible_values=PossibleValues.NEITHER)
 
         @router.command(Command('test', flags=flag))
-        def test(response: Response):
-            print(f'\nhelp for {response.valid_flags.get_flag('help').get_name()} flag\n')
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
+            valid_flag = response.input_flags.get_flag_by_name('help')
+            if valid_flag and valid_flag.status == ValidationStatus.VALID:
+                print(f'\nhelp for {valid_flag.name} flag\n')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -82,12 +84,13 @@ class TestSystemHandlerNormalWork(TestCase):
     def test_input_correct_command_with_custom_flag2(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
         orchestrator = Orchestrator()
-        flag = Flag('port', '--', re.compile(r'^\d{1,5}$'))
+        flag = Flag('port', prefix='--', possible_values=re.compile(r'^\d{1,5}$'))
 
         @router.command(Command('test', flags=flag))
-        def test(response: Response):
-            input_flag = response.valid_flags.get_flag('port')
-            print(f'flag value for {input_flag.get_name()} flag : {input_flag.get_value()}')
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
+            valid_flag = response.input_flags.get_flag_by_name('port')
+            if valid_flag and valid_flag.status == ValidationStatus.VALID:
+                print(f'flag value for {valid_flag.name} flag : {valid_flag.input_value}')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -107,8 +110,10 @@ class TestSystemHandlerNormalWork(TestCase):
         flag = PredefinedFlags.SHORT_HELP
 
         @router.command(Command('test', flags=flag))
-        def test(response: Response):
-            print(f'help for {response.valid_flags.get_flag('H').get_name()} flag')
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
+            valid_flag = response.input_flags.get_flag_by_name('H')
+            if valid_flag and valid_flag.status == ValidationStatus.VALID:
+                print(f'help for {valid_flag.name} flag')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -128,8 +133,9 @@ class TestSystemHandlerNormalWork(TestCase):
         flag = PredefinedFlags.INFO
 
         @router.command(Command('test', flags=flag))
-        def test(response: Response):
-            if response.valid_flags.get_flag('info'):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
+            valid_flag = response.input_flags.get_flag_by_name('info')
+            if valid_flag and valid_flag.status == ValidationStatus.VALID:
                 print('info about test command')
 
         app = App(override_system_messages=True,
@@ -150,8 +156,10 @@ class TestSystemHandlerNormalWork(TestCase):
         flag = PredefinedFlags.HOST
 
         @router.command(Command('test', flags=flag))
-        def test(response: Response):
-            print(f'connecting to host {response.valid_flags.get_flag('host').get_value()}')
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
+            valid_flag = response.input_flags.get_flag_by_name('host')
+            if valid_flag and valid_flag.status == ValidationStatus.VALID:
+                print(f'connecting to host {valid_flag.input_value}')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -168,12 +176,14 @@ class TestSystemHandlerNormalWork(TestCase):
     def test_input_correct_command_with_two_flags(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
         router = Router()
         orchestrator = Orchestrator()
-        flags = Flags(PredefinedFlags.HOST, PredefinedFlags.PORT)
+        flags = Flags([PredefinedFlags.HOST, PredefinedFlags.PORT])
 
         @router.command(Command('test', flags=flags))
-        def test(response: Response):
-            valid_flags = response.valid_flags
-            print(f'connecting to host {valid_flags.get_flag('host').get_value()} and port {valid_flags.get_flag('port').get_value()}')
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
+            host_flag = response.input_flags.get_flag_by_name('host')
+            port_flag = response.input_flags.get_flag_by_name('port')
+            if (host_flag and host_flag.status == ValidationStatus.VALID) and (port_flag and port_flag.status == ValidationStatus.VALID):
+                print(f'connecting to host {host_flag.input_value} and port {port_flag.input_value}')
 
         app = App(override_system_messages=True,
                   print_func=print)
@@ -192,11 +202,11 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'test command')
 
         @router.command(Command('some'))
-        def test2(response):
+        def test2(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'some command')
 
         app = App(override_system_messages=True,
@@ -216,15 +226,15 @@ class TestSystemHandlerNormalWork(TestCase):
         orchestrator = Orchestrator()
 
         @router.command(Command('test'))
-        def test(response):
+        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'test command')
 
         @router.command(Command('some'))
-        def test(response):
+        def test1(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'some command')
 
         @router.command(Command('more'))
-        def test(response):
+        def test2(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
             print(f'more command')
 
         app = App(override_system_messages=True,
