@@ -1,7 +1,6 @@
-from argparse import Namespace
-
 from argenta.app import App
 from argenta.orchestrator.argparser import ArgParser
+from argenta.orchestrator.argparser.entity import ArgSpace
 
 
 class Orchestrator:
@@ -19,14 +18,8 @@ class Orchestrator:
         :param app: a running application
         :return: None
         """
-        app.run_polling()
-
-    def get_input_args(self) -> Namespace | None:
-        """
-        Public. Returns the arguments parsed
-        :return: None
-        """
-        if self._arg_parser:
-            return self._arg_parser.parse_args()
+        if self._arg_parser is not None:
+            parsed_argspace: ArgSpace = self._arg_parser.parse_args()
+            app.run_polling(argspace=parsed_argspace)
         else:
-            return None
+            app.run_polling(argspace=None)
