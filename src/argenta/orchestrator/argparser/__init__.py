@@ -1,12 +1,12 @@
 __all__ = [
     "ArgParser",
-    "PositionalArgument",
-    "OptionalArgument",
+    "RequiredArgument",
+    "ValueArgument",
     "BooleanArgument"
 ]
 
 
 from argenta.orchestrator.argparser.entity import ArgParser
 from argenta.orchestrator.argparser.arguments import (BooleanArgument,
-                                                      PositionalArgument,
-                                                      OptionalArgument)
+                                                      RequiredArgument,
+                                                      ValueArgument)

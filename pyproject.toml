@@ -20,7 +20,10 @@ exclude = [
     "poetry.lock",
     ".__pycache__",
     "tests"
-    ]
+]
+
+[tool.pyright]
+typeCheckingMode = "strict"
 
 [build-system]
 requires = ["hatchling"]
