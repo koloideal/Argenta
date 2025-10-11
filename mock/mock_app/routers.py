@@ -12,8 +12,9 @@ flag = Flag('csdv', possible_values=PossibleValues.NEITHER)
     Command("get",
         description="Get Help",
         aliases=["help", "Get_help"],
-        flags=Flags([PredefinedFlags.PORT,
-                     PredefinedFlags.HOST])))
+        flags=Flags([PredefinedFlags.PORT, PredefinedFlags.HOST])
+    )
+)
 def command_help(response: Response):
     print(response.status)
     print(response.input_flags.flags)

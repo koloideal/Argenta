@@ -1,8 +1,8 @@
-__all__ = ["BooleanArgument", "RequiredArgument", "ValueArgument"]
+__all__ = ["BooleanArgument", "ValueArgument", "InputArgument"]
 
 
 from argenta.orchestrator.argparser.arguments.models import (
     BooleanArgument,
-    RequiredArgument,
     ValueArgument,
+    InputArgument
 )

@@ -1,10 +1,3 @@
-__all__ = [
-    'App',
-    'Orchestrator',
-    'Router',
-]
-
-
-from argenta.app import App
-from argenta.orchestrator import Orchestrator
-from argenta.router import Router
+from argenta.app.models import App as App
+from argenta.orchestrator.entity import Orchestrator as Orchestrator
+from argenta.router.entity import Router as Router
