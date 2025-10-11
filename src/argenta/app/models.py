@@ -3,6 +3,7 @@ import re
 from contextlib import redirect_stdout
 from typing import Never, TypeAlias
 
+from argenta.orchestrator.argparser.entity import ArgSpace
 from art import text2art  # pyright: ignore[reportMissingTypeStubs, reportUnknownVariableType]
 from rich.console import Console
 from rich.markup import escape
@@ -41,7 +42,8 @@ class BaseApp:
                  repeat_command_groups: bool,
                  override_system_messages: bool,
                  autocompleter: AutoCompleter,
-                 print_func: Printer) -> None:
+                 print_func: Printer,
+                 argspace: ArgSpace | None = None) -> None:
         self._prompt: str = prompt
         self._print_func: Printer = print_func
         self._exit_command: Command = exit_command
@@ -51,6 +53,7 @@ class BaseApp:
         self._repeat_command_groups_description: bool = repeat_command_groups
         self._override_system_messages: bool = override_system_messages
         self._autocompleter: AutoCompleter = autocompleter
+        self._argspace: ArgSpace | None = argspace
 
         self._farewell_message: str = farewell_message
         self._initial_message: str = initial_message
@@ -392,11 +395,12 @@ class App(BaseApp):
             print_func=print_func,
         )
 
-    def run_polling(self) -> None:
+    def run_polling(self, argspace: ArgSpace | None) -> None:
         """
         Private. Starts the user input processing cycle
         :return: None
         """
+        self._argspace = argspace
         self._pre_cycle_setup()
         while True:
             if self._repeat_command_groups_description:
