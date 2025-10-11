@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock
 from unittest import TestCase
 import io
 import re
+import sys
 
 from argenta.command import Command, PredefinedFlags
 from argenta.command.flag.models import PossibleValues, ValidationStatus
@@ -12,8 +13,15 @@ from argenta.command.flag import Flag
 from argenta.command.flag.flags import Flags
 
 
+class PatchedArgvTestCase(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.patcher = patch.object(sys, 'argv', ['program.py'])
+        self.mock_argv = self.patcher.start()
+        self.addCleanup(self.patcher.stop)
 
-class TestSystemHandlerNormalWork(TestCase):
+
+class TestSystemHandlerNormalWork(PatchedArgvTestCase):
     @patch("builtins.input", side_effect=["test", "q"])
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_input_correct_command(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):

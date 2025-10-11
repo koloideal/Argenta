@@ -1,4 +1,4 @@
-from argenta.app import App
+from argenta.app.models import App
 from argenta.orchestrator.argparser import ArgParser
 from argenta.orchestrator.argparser.entity import ArgSpace
 
