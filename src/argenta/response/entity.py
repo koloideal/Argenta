@@ -24,5 +24,5 @@ class Response:
         self.input_flags: InputFlags = input_flags
 
     @classmethod
-    def patch_by_container(cls, container: Container):
+    def patch_by_container(cls, container: Container) -> None:
         cls._dishka_container = container

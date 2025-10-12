@@ -1,5 +1,5 @@
 from argenta.orchestrator.argparser import ArgParser
-from dishka import Provider, provide, Scope  # type: ignore
+from dishka import Provider, provide, Scope
 
 from argenta.orchestrator.argparser.entity import ArgSpace
 

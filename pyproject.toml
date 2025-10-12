@@ -1,6 +1,6 @@
 [project]
 name = "argenta"
-version = "1.1.1"
+version = "1.1.2"
 description = "Python library for building modular CLI applications"
 authors = [{ name = "kolo", email = "kolo.is.main@gmail.com" }]
 requires-python = ">=3.11"
@@ -26,6 +26,9 @@ exclude = [
 [tool.pyright]
 typeCheckingMode = "strict"
 
+[tool.mypy]
+disable_error_code = "import-untyped"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -37,4 +40,3 @@ dev = [
     "ruff>=0.12.12",
     "wemake-python-styleguide>=0.17.0",
 ]
-

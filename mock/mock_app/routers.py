@@ -1,5 +1,4 @@
 from argenta.command import Command, PredefinedFlags, Flags, Flag, PossibleValues
-from argenta.orchestrator.argparser.entity import ArgSpace
 from argenta.response import Response
 from argenta import Router
 from argenta.di import FromDishka

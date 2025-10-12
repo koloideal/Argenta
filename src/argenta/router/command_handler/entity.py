@@ -1,6 +1,5 @@
 from collections.abc import Iterator
 from typing import Callable
-import inspect
 
 from argenta.command import Command
 from argenta.response import Response
