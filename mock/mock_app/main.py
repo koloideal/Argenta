@@ -4,15 +4,26 @@ from argenta import App, Orchestrator
 from argenta.app import PredefinedMessages, DynamicDividingLine, AutoCompleter
 from argenta.orchestrator import ArgParser
 from argenta.orchestrator.argparser import BooleanArgument, ValueArgument
+from dishka import Provider, provide, Scope  # type: ignore
 
 
-arg_parser: ArgParser = ArgParser(processed_args=[BooleanArgument(name="repeat", is_deprecated=True),
-                                                  ValueArgument(name="required", is_required=True)])
+class temProvider(Provider):
+    @provide(scope=Scope.APP)
+    def get_apace(self) -> int:
+        return 1234
+
+arg_parser: ArgParser = ArgParser(
+    processed_args=[
+        BooleanArgument(name="repeat", is_deprecated=True),
+        ValueArgument(name="required", is_required=True),
+    ]
+)
 app: App = App(
     dividing_line=DynamicDividingLine(),
     autocompleter=AutoCompleter(),
 )
-orchestrator: Orchestrator = Orchestrator()
+orchestrator: Orchestrator = Orchestrator(arg_parser, custom_providers=[temProvider()])
+
 
 def main():
     app.include_router(work_router)
@@ -20,7 +31,7 @@ def main():
     app.add_message_on_startup(PredefinedMessages.USAGE)
     app.add_message_on_startup(PredefinedMessages.AUTOCOMPLETE)
     app.add_message_on_startup(PredefinedMessages.HELP)
-    
+
     orchestrator.start_polling(app)
 
 

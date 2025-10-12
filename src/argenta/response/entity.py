@@ -1,4 +1,5 @@
-from typing import Literal
+from dishka import Container
+
 from argenta.command.flag.flags.models import InputFlags
 from argenta.response.status import ResponseStatus
 
@@ -7,7 +8,7 @@ EMPTY_INPUT_FLAGS: InputFlags = InputFlags()
 
 
 class Response:
-    __slots__: tuple[Literal['status', 'input_flags'], ...] = ("status", "input_flags")
+    _dishka_container: Container
 
     def __init__(
         self,
@@ -21,3 +22,7 @@ class Response:
         """
         self.status: ResponseStatus = status
         self.input_flags: InputFlags = input_flags
+
+    @classmethod
+    def patch_by_container(cls, container: Container):
+        cls._dishka_container = container

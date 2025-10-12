@@ -7,7 +7,6 @@ from argenta.command import Command
 from argenta.router.entity import _structuring_input_flags, _validate_command, _validate_func_args # pyright: ignore[reportPrivateUsage]
 from argenta.router.exceptions import (TriggerContainSpacesException,
                                        RepeatedFlagNameException,
-                                       TooManyTransferredArgsException,
                                        RequiredArgumentNotPassedException)
 
 import unittest
@@ -79,12 +78,6 @@ class TestRouter(unittest.TestCase):
         with self.assertRaises(RequiredArgumentNotPassedException):
             _validate_func_args(handler) # pyright: ignore[reportArgumentType]
 
-    def test_validate_incorrect_func_args2(self):
-        def handler(args, kwargs): # pyright: ignore[reportMissingParameterType, reportUnknownParameterType]
-            pass
-        with self.assertRaises(TooManyTransferredArgsException):
-            _validate_func_args(handler) # pyright: ignore[reportArgumentType]
-
     def test_get_router_aliases(self):
         router = Router()
         @router.command(Command('some', aliases=['test', 'case']))
@@ -108,12 +101,3 @@ class TestRouter(unittest.TestCase):
         def handler(response: Response): # pyright: ignore[reportUnusedFunction]
             pass
         self.assertListEqual(router.aliases, [])
-
-
-
-
-
-
-
-
-
