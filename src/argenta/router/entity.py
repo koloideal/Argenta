@@ -6,25 +6,23 @@ from argenta.command import Command, InputCommand
 from argenta.command.flag import ValidationStatus
 from argenta.response import Response, ResponseStatus
 from argenta.router.command_handler.entity import CommandHandlers, CommandHandler
-from argenta.command.flag.flags import (
-    Flags,
-    InputFlags
-)
+from argenta.command.flag.flags import Flags, InputFlags
 from argenta.router.exceptions import (
     RepeatedFlagNameException,
-    TooManyTransferredArgsException,
     RequiredArgumentNotPassedException,
     TriggerContainSpacesException,
 )
 
 
-HandlerFunc: TypeAlias = Callable[[Response], None]
+HandlerFunc: TypeAlias = Callable[..., None]
 
 
 class Router:
     def __init__(
-        self, *, title: str | None = "Default title",
-        disable_redirect_stdout: bool = False
+        self,
+        *,
+        title: str | None = "Default title",
+        disable_redirect_stdout: bool = False,
     ):
         """
         Public. Directly configures and manages handlers
@@ -58,7 +56,6 @@ class Router:
         def decorator(func: HandlerFunc) -> HandlerFunc:
             _validate_func_args(func)
             self.command_handlers.add_handler(CommandHandler(func, redefined_command))
-
             return func
 
         return decorator
@@ -91,7 +88,9 @@ class Router:
         handle_command = command_handler.handled_command
         if handle_command.registered_flags.flags:
             if input_command_flags.flags:
-                response: Response = _structuring_input_flags(handle_command, input_command_flags)
+                response: Response = _structuring_input_flags(
+                    handle_command, input_command_flags
+                )
                 command_handler.handling(response)
             else:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
@@ -102,7 +101,9 @@ class Router:
                 for input_flag in input_command_flags:
                     input_flag.status = ValidationStatus.UNDEFINED
                     undefined_flags.add_flag(input_flag)
-                response = Response(ResponseStatus.UNDEFINED_FLAGS, input_flags=undefined_flags)
+                response = Response(
+                    ResponseStatus.UNDEFINED_FLAGS, input_flags=undefined_flags
+                )
                 command_handler.handling(response)
             else:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
@@ -137,14 +138,17 @@ class CommandDecorator:
         self.router: Router = router_instance
         self.command: Command = command
 
-    def __call__(self, handler_func: Callable[[Response], None]) -> Callable[[Response], None]:
+    def __call__(self, handler_func: Callable[..., None]) -> Callable[..., None]:
         _validate_func_args(handler_func)
-        self.router.command_handlers.add_handler(CommandHandler(handler_func, self.command))
+        self.router.command_handlers.add_handler(
+            CommandHandler(handler_func, self.command)
+        )
         return handler_func
 
 
-def _structuring_input_flags(handled_command: Command, 
-                             input_flags: InputFlags) -> Response:
+def _structuring_input_flags(
+    handled_command: Command, input_flags: InputFlags
+) -> Response:
     """
     Private. Validates flags of input command
     :param handled_command: entity of the handled command
@@ -154,45 +158,42 @@ def _structuring_input_flags(handled_command: Command,
     invalid_value_flags, undefined_flags = False, False
 
     for flag in input_flags:
-        flag_status: ValidationStatus = (handled_command.validate_input_flag(flag))
+        flag_status: ValidationStatus = handled_command.validate_input_flag(flag)
         flag.status = flag_status
         if flag_status == ValidationStatus.INVALID:
             invalid_value_flags = True
         elif flag_status == ValidationStatus.UNDEFINED:
             undefined_flags = True
 
-    status = ResponseStatus.from_flags(has_invalid_value_flags=invalid_value_flags,
-                                                       has_undefined_flags=undefined_flags)
-
-    return Response(
-        status=status,
-        input_flags=input_flags
+    status = ResponseStatus.from_flags(
+        has_invalid_value_flags=invalid_value_flags, has_undefined_flags=undefined_flags
     )
 
-def _validate_func_args(func: Callable[[Response], None]) -> None:
+    return Response(status=status, input_flags=input_flags)
+
+
+def _validate_func_args(func: Callable[..., None]) -> None:
     """
     Private. Validates the arguments of the handler
     :param func: entity of the handler func
     :return: None if func is valid else raise exception
     """
     transferred_args = getfullargspec(func).args
-    if len(transferred_args) > 1:
-        raise TooManyTransferredArgsException()
-    elif len(transferred_args) == 0:
+    if len(transferred_args) == 0:
         raise RequiredArgumentNotPassedException()
 
-    transferred_arg: str = transferred_args[0]
+    response_arg: str = transferred_args[0]
     func_annotations: dict[str, None] = get_annotations(func)
 
-    arg_annotation = func_annotations.get(transferred_arg)
+    response_arg_annotation = func_annotations.get(response_arg)
 
-    if arg_annotation is not None:
-        if arg_annotation is not Response:
+    if response_arg_annotation is not None:
+        if response_arg_annotation is not Response:
             source_line: int = getsourcelines(func)[1]
             Console().print(
-                f'\nFile "{getsourcefile(func)}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint ' +
-                f"of argument([green]{transferred_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue]," +
-                f" [i]but[/i] [bold blue]{arg_annotation}[/bold blue] [i]is specified[/i]",
+                f'\nFile "{getsourcefile(func)}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
+                + f"of argument([green]{response_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue],"
+                + f" [i]but[/i] [bold blue]{response_arg_annotation}[/bold blue] [i]is specified[/i]",
                 highlight=False,
             )
 
