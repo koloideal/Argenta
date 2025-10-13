@@ -1,3 +1,9 @@
+__all__ = [
+    'BooleanArgument',
+    'ValueArgument',
+    'InputArgument'
+]
+
 from typing import Literal
 
 
@@ -20,7 +26,7 @@ class BaseArgument:
         self.help: str = help
         self.is_deprecated: bool = is_deprecated
         self.prefix: Literal["-", "--", "---"] = prefix
-        
+
     @property
     def string_entity(self) -> str:
         return self.prefix + self.name
@@ -29,7 +35,7 @@ class BaseArgument:
 class ValueArgument(BaseArgument):
     def __init__(self, name: str, *,
                 prefix: Literal["-", "--", "---"] = "--",
-                help: str = "Help message for the value argument", 
+                help: str = "Help message for the value argument",
                 possible_values: list[str] | None = None,
                 default: str | None = None,
                 is_required: bool = False,
@@ -74,9 +80,9 @@ class InputArgument:
         self.name: str = name
         self.value: str | None = value
         self.founder_class: type[BaseArgument] = founder_class
-    
+
     def __str__(self) -> str:
         return f"InputArgument({self.name}={self.value})"
-       
+
     def __repr__(self) -> str:
         return f"InputArgument<name={self.name}, value={self.value}, founder_class={self.founder_class.__name__}>"

@@ -1,3 +1,5 @@
+__all__ = ["App"]
+
 import io
 import re
 from contextlib import redirect_stdout

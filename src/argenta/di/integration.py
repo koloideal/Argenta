@@ -20,9 +20,10 @@ def inject(func: Callable[..., T]) -> Callable[..., T]:
     )
 
 
-def setup_dishka(app: App, *, auto_inject: bool = False) -> None:
+def setup_dishka(app: App, container: Container, *, auto_inject: bool = False) -> None:
     if auto_inject:
         _auto_inject_handlers(app)
+    Response.patch_by_container(container)
 
 
 def _get_container_from_response(
@@ -33,7 +34,6 @@ def _get_container_from_response(
             if hasattr(arg, "_dishka_container"):
                 return arg._dishka_container  # pyright: ignore[reportPrivateUsage]
             break
-
     raise RuntimeError("dishka container not found in Response")
 
 

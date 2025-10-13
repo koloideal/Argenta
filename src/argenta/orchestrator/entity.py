@@ -1,5 +1,6 @@
+__all__ = ["Orchestrator"]
+
 from argenta.app import App
-from argenta.response import Response
 
 from argenta.orchestrator.argparser import ArgParser
 from argenta.di.integration import setup_dishka
@@ -31,7 +32,6 @@ class Orchestrator:
         :return: None
         """
         container = make_container(SystemProvider(self._arg_parser), *self._custom_providers)
-        Response.patch_by_container(container)
-        setup_dishka(app, auto_inject=self._auto_inject_handlers)
+        setup_dishka(app, container, auto_inject=self._auto_inject_handlers)
 
         app.run_polling()

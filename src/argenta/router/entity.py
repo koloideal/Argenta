@@ -1,3 +1,5 @@
+__all__ = ["Router"]
+
 from typing import Callable, TypeAlias
 from inspect import getfullargspec, get_annotations, getsourcefile, getsourcelines
 from rich.console import Console

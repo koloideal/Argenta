@@ -1,3 +1,8 @@
+__all__ = [
+    "Command",
+    "InputCommand"
+]
+
 from argenta.command.flag.models import Flag, InputFlag, ValidationStatus
 from argenta.command.flag.flags.models import InputFlags, Flags
 from argenta.command.exceptions import (
@@ -20,7 +25,7 @@ DEFAULT_WITHOUT_INPUT_FLAGS: InputFlags = InputFlags()
 class Command:
     def __init__(
         self,
-        trigger: str, *, 
+        trigger: str, *,
         description: str | None = None,
         flags: Flag | Flags = DEFAULT_WITHOUT_FLAGS,
         aliases: list[str] | None = None,
@@ -57,7 +62,7 @@ class Command:
 
 
 class InputCommand:
-    def __init__(self, trigger: str, *, 
+    def __init__(self, trigger: str, *,
                  input_flags: InputFlag | InputFlags = DEFAULT_WITHOUT_INPUT_FLAGS):
         """
         Private. The model of the input command, after parsing
@@ -78,7 +83,7 @@ class InputCommand:
         trigger, input_flags = CommandParser(raw_command).parse_raw_command()
 
         return cls(trigger=trigger, input_flags=input_flags)
-        
+
 
 class CommandParser:
     def __init__(self, raw_command: str) -> None:
@@ -113,24 +118,24 @@ class CommandParser:
                 input_value=crnt_flg_val,
                 status=None
             )
-            
+
             if input_flag in self._parsed_input_flags:
                 raise RepeatedInputFlagsException(input_flag)
-            
+
             self._parsed_input_flags.add_flag(input_flag)
             crnt_flg_name, crnt_flg_val = None, None
 
         return (self._parsed_input_flags, crnt_flg_name, crnt_flg_val)
-    
+
     def _is_next_token_value(self, current_index: int,
                                    _tokens: list[str] | list[Never]) -> bool:
         next_index = current_index + 1
         if next_index >= len(_tokens):
-            return False  
-        
+            return False
+
         next_token = _tokens[next_index]
         return not next_token.startswith(MIN_FLAG_PREFIX)
-    
+
 def _parse_single_token(
     token: str,
     crnt_flag_name: str | None,

@@ -1,3 +1,5 @@
+__all__ = ["AutoCompleter"]
+
 import os
 import readline
 from typing import Never
@@ -38,7 +40,7 @@ class AutoCompleter:
                     i += 1
                 common_prefix = common_prefix[:i]
             if state == 0:
-                readline.insert_text(common_prefix[len(text) :]) 
+                readline.insert_text(common_prefix[len(text) :])
                 readline.redisplay()
             return None
         elif len(matches) == 1:
@@ -54,10 +56,10 @@ class AutoCompleter:
         """
         if self.history_filename:
             if os.path.exists(self.history_filename):
-                readline.read_history_file(self.history_filename) 
+                readline.read_history_file(self.history_filename)
             else:
                 for line in all_commands:
-                    readline.add_history(line) 
+                    readline.add_history(line)
 
         readline.set_completer(self._complete)
         readline.set_completer_delims(readline.get_completer_delims().replace(" ", ""))
@@ -69,7 +71,7 @@ class AutoCompleter:
         :return: None
         """
         if self.history_filename:
-            readline.write_history_file(self.history_filename) 
+            readline.write_history_file(self.history_filename)
             with open(self.history_filename, "r") as history_file:
                 raw_history = history_file.read()
             pretty_history: list[str] = []
@@ -86,5 +88,5 @@ def _get_history_items() -> list[str] | list[Never]:
     """
     return [
         readline.get_history_item(i)
-        for i in range(1, readline.get_current_history_length() + 1) 
+        for i in range(1, readline.get_current_history_length() + 1)
     ]

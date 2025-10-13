@@ -1,3 +1,7 @@
+__all__ = [
+    'SystemProvider',
+]
+
 from argenta.orchestrator.argparser import ArgParser
 from dishka import Provider, provide, Scope
 
