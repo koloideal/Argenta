@@ -5,9 +5,10 @@ __all__ = [
 	"EmptyInputCommandException",
 ]
 
-from argenta.command.flag.models import Flag, InputFlag
 from abc import ABC, abstractmethod
 from typing import override
+
+from argenta.command.flag.models import Flag, InputFlag
 
 
 class InputCommandException(ABC, Exception):

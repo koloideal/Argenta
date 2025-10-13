@@ -1,20 +1,20 @@
 __all__ = ["Router"]
 
+from inspect import (get_annotations, getfullargspec, getsourcefile,
+                     getsourcelines)
 from typing import Callable, TypeAlias
-from inspect import getfullargspec, get_annotations, getsourcefile, getsourcelines
+
 from rich.console import Console
 
 from argenta.command import Command, InputCommand
 from argenta.command.flag import ValidationStatus
-from argenta.response import Response, ResponseStatus
-from argenta.router.command_handler.entity import CommandHandlers, CommandHandler
 from argenta.command.flag.flags import Flags, InputFlags
-from argenta.router.exceptions import (
-    RepeatedFlagNameException,
-    RequiredArgumentNotPassedException,
-    TriggerContainSpacesException,
-)
-
+from argenta.response import Response, ResponseStatus
+from argenta.router.command_handler.entity import (CommandHandler,
+                                                   CommandHandlers)
+from argenta.router.exceptions import (RepeatedFlagNameException,
+                                       RequiredArgumentNotPassedException,
+                                       TriggerContainSpacesException)
 
 HandlerFunc: TypeAlias = Callable[..., None]
 

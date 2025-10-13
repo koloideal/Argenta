@@ -1,9 +1,9 @@
 __all__ = ["Flags", "InputFlags"]
 
-from argenta.command.flag.models import InputFlag, Flag
-from typing import Generic, TypeVar, override
 from collections.abc import Iterator
+from typing import Generic, TypeVar, override
 
+from argenta.command.flag.models import Flag, InputFlag
 
 FlagType = TypeVar("FlagType")
 

@@ -3,11 +3,10 @@ __all__ = ["inject", "setup_dishka", "FromDishka"]
 from typing import Any, Callable, TypeVar
 
 from dishka import Container, FromDishka
-from dishka.integrations.base import wrap_injection, is_dishka_injected
+from dishka.integrations.base import is_dishka_injected, wrap_injection
 
-from argenta.response import Response
 from argenta.app import App
-
+from argenta.response import Response
 
 T = TypeVar("T")
 

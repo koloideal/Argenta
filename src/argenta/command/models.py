@@ -3,15 +3,13 @@ __all__ = [
     "InputCommand"
 ]
 
-from argenta.command.flag.models import Flag, InputFlag, ValidationStatus
-from argenta.command.flag.flags.models import InputFlags, Flags
-from argenta.command.exceptions import (
-    UnprocessedInputFlagException,
-    RepeatedInputFlagsException,
-    EmptyInputCommandException,
-)
-from typing import Never, Self, cast, Literal
+from typing import Literal, Never, Self, cast
 
+from argenta.command.exceptions import (EmptyInputCommandException,
+                                        RepeatedInputFlagsException,
+                                        UnprocessedInputFlagException)
+from argenta.command.flag.flags.models import Flags, InputFlags
+from argenta.command.flag.models import Flag, InputFlag, ValidationStatus
 
 ParseFlagsResult = tuple[InputFlags, str | None, str | None]
 ParseResult = tuple[str, InputFlags]

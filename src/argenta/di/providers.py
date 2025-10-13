@@ -2,9 +2,9 @@ __all__ = [
     'SystemProvider',
 ]
 
-from argenta.orchestrator.argparser import ArgParser
-from dishka import Provider, provide, Scope
+from dishka import Provider, Scope, provide
 
+from argenta.orchestrator.argparser import ArgParser
 from argenta.orchestrator.argparser.entity import ArgSpace
 
 

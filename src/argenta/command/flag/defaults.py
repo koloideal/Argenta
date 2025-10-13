@@ -1,9 +1,9 @@
 __all__ = ["PredefinedFlags"]
 
-from typing import Literal
-from argenta.command.flag.models import Flag, PossibleValues
 import re
+from typing import Literal
 
+from argenta.command.flag.models import Flag, PossibleValues
 
 DEFAULT_PREFIX: Literal["-", "--", "---"] = "-"
 

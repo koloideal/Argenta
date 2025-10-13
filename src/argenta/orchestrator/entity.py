@@ -1,13 +1,11 @@
 __all__ = ["Orchestrator"]
 
-from argenta.app import App
-
-from argenta.orchestrator.argparser import ArgParser
-from argenta.di.integration import setup_dishka
-from argenta.di.providers import SystemProvider
-
 from dishka import Provider, make_container
 
+from argenta.app import App
+from argenta.di.integration import setup_dishka
+from argenta.di.providers import SystemProvider
+from argenta.orchestrator.argparser import ArgParser
 
 DEFAULT_ARGPARSER: ArgParser = ArgParser(processed_args=[])
 
