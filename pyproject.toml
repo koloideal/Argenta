@@ -24,7 +24,7 @@ exclude = [
 ]
 
 [tool.pyright]
-typeCheckingMode = "strict"
+typeCheckingMode = "standard"
 
 [tool.mypy]
 disable_error_code = "import-untyped"

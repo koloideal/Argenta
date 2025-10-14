@@ -3,12 +3,27 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Argenta documentation
-=====================
+Argenta
+=============================================
 
-First step to make Argenta docs
-
+Cute DI framework with scopes and agreeable API.
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+    :hidden:
+    :caption: Contents:
+
+    quickstart
+    api/index
+
+.. toctree::
+    :hidden:
+    :caption: For developers:
+
+    contributing
+
+.. toctree::
+    :hidden:
+    :caption: Project Links
+
+    GitHub <https://github.com/koloideal/argenta>
+    PyPI <https://pypi.org/project/argenta>
