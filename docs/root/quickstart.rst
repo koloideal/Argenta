@@ -22,6 +22,6 @@
 4. **Запуск приложения**, запускаем приложение как обычный процесс.
 
 
-.. image:: https://github.com/koloideal/Argenta/blob/docs/create_docs/imgs/mock_app_preview5.png?raw=true
+.. image:: https://github.com/koloideal/Argenta/blob/docs/create_docs/imgs/mock_app_preview6.png?raw=true
    :alt: Quickstart Example
    
