@@ -7,7 +7,7 @@ build:
     
   jobs:
     post_install:
-      - sphinx-intl build
+      - sphinx-intl build --locale-dir docs/locales
 
 sphinx:
   configuration: docs/conf.py 
