@@ -1,5 +1,4 @@
 sphinx
 shibuya
 sphinx-intl
-sphinx-build
 sphinx-autobuild
