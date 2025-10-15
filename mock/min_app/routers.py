@@ -1,9 +1,9 @@
 # routers.py
-from argenta import Router, Response
+from argenta import Router, Response, Command
 
-router = Router()
+router = Router(title="Quickstart Example")
 
-@router.command("hello")
+@router.command(Command("hello", description="Say hello"))
 def handler(response: Response):
     print("Hello, world!")
     
