@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-15 13:40+0300\n"
+"POT-Creation-Date: 2025-10-15 16:09+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -19,20 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: ../../contributing.rst:2
-msgid "Вклад в проект"
+#: ../../root/api/command/flags.rst:4
+msgid "Flags"
 msgstr ""
-
-#: ../../contributing.rst:4
-msgid ""
-"``argenta`` открытый проект и мы рады новым разработчикам в нашем "
-"сообществе."
-msgstr ""
-
-#: ../../contributing.rst:7
-msgid "Getting started"
-msgstr ""
-
-#~ msgid "Contributing"
-#~ msgstr ""
 

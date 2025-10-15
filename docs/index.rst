@@ -37,18 +37,18 @@ Argenta нужна для создания приложений, которым 
     :hidden:
     :caption: Контент:
 
-    quickstart
-    error_handling
-    dependency_injection
-    overriding_formatting
-    redirect_stdout
-    ../api/index
+    root/quickstart
+    root/error_handling
+    root/dependency_injection
+    root/overriding_formatting
+    root/redirect_stdout
+    root/api/index
 
 .. toctree::
     :hidden:
     :caption: Для разработчиков:
 
-    contributing
+    root/contributing
 
 .. toctree::
     :hidden:

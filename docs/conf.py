@@ -9,7 +9,7 @@
 project = "Argenta"
 copyright = "2025, kolo"
 author = "kolo"
-root_doc = "root/index"
+root_doc = "index"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

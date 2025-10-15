@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-15 11:06+0300\n"
+"POT-Creation-Date: 2025-10-15 16:09+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -19,11 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: ../../api/orchestrator/argparser.rst:4
-msgid "Argparser"
-msgstr ""
-
-#: ../../api/orchestrator/argparser.rst:6
-msgid "nu"
+#: ../../root/api/app/dividing_lines.rst:4
+msgid "DividingLines"
 msgstr ""
 
