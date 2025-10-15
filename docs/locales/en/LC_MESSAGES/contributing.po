@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-15 11:06+0300\n"
+"POT-Creation-Date: 2025-10-15 13:40+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../contributing.rst:2
-msgid "Contributing"
+msgid "Вклад в проект"
 msgstr ""
 
 #: ../../contributing.rst:4
@@ -32,4 +32,7 @@ msgstr ""
 #: ../../contributing.rst:7
 msgid "Getting started"
 msgstr ""
+
+#~ msgid "Contributing"
+#~ msgstr ""
 

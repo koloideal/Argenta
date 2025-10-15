@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-15 11:06+0300\n"
+"POT-Creation-Date: 2025-10-15 14:19+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -19,11 +19,37 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: ../../quickstart.rst:2
-msgid "Quickstart"
+#: ../../quickstart.rst:4
+msgid "Быстрый старт"
 msgstr ""
 
-#: ../../quickstart.rst:4
-msgid "**Install Argenta**"
+#: ../../quickstart.rst:6
+msgid "**Установка** ``Argenta``"
 msgstr ""
+
+#: ../../quickstart.rst:12
+msgid ""
+"**Определение роутера и хэндлеров**, за регистрацию функции как "
+"обработчика отвечает декоратор ``@router.command``, хэндлер всегда должен"
+" принимать аргумент с типом ``Response``, подробнее в :ref:`разделе "
+"<Response>`."
+msgstr ""
+
+#: ../../quickstart.rst:17
+msgid ""
+"**Определение приложения и оркестратора**, для запуска приложения "
+"необходимо вызвать ``.include_router()`` у созданного приложения и "
+"передать ему раннее созданный роутер, после этого необходимо вызвать "
+"``.start_polling()`` у созданного оркестратора и передать ему созданное "
+"приложение."
+msgstr ""
+
+#~ msgid "Quickstart"
+#~ msgstr ""
+
+#~ msgid "**Install Argenta**"
+#~ msgstr ""
+
+#~ msgid "**Установка**"
+#~ msgstr ""
 

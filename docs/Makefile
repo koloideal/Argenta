@@ -13,7 +13,7 @@ help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	
 live-ru:
-	sphinx-autobuild -b html . _build/html/ -D language=ru
+	sphinx-autobuild -b html . _build/html/ru -D language=ru
 	
 serve-all:
 	sphinx-build -b html . _build/html/ -D language=en
