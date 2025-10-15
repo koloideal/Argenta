@@ -1,6 +1,0 @@
-App
-****************
-
-.. toctree::
-   Autocompleter
-   DividingLines

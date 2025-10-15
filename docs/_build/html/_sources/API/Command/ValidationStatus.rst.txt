@@ -1,6 +1,0 @@
-.. _ValidationStatus:
-
-ValidationStatus
-****************
-
-case

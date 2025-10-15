@@ -2,6 +2,8 @@ Command
 ****************
 
 .. toctree::
-   Flags
-   PossibleValues
-   ValidationStatus
+    :hidden:
+    
+    flags
+    possible_values
+    validation_status

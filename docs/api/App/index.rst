@@ -2,5 +2,7 @@ App
 ****************
 
 .. toctree::
-   Autocompleter
-   DividingLines
+    :hidden:
+
+    autocompleter
+    dividing_lines

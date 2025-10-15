@@ -2,5 +2,7 @@ Orchestrator
 ****************
 
 .. toctree::
-   Argparser
-   Arguments
+    :hidden:
+    
+    argparser
+    arguments

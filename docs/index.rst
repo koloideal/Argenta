@@ -6,24 +6,26 @@
 Argenta
 =============================================
 
-Cute DI framework with scopes and agreeable API.
+Python библиотека для построения модульных CLI-приложений с простым и приятным API.
 
 .. toctree::
     :hidden:
-    :caption: Contents:
+    :caption: Контент:
 
     quickstart
+    error_handling
+    dependency_injection
     api/index
 
 .. toctree::
     :hidden:
-    :caption: For developers:
+    :caption: Для разработчиков:
 
     contributing
 
 .. toctree::
     :hidden:
-    :caption: Project Links
+    :caption: Ссылки проекта:
 
     GitHub <https://github.com/koloideal/argenta>
     PyPI <https://pypi.org/project/argenta>

@@ -9,12 +9,14 @@
 project = "Argenta"
 copyright = "2025, kolo"
 author = "kolo"
-release = "1.1.2"
+master_doc = "index"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = []
+locale_dirs = ['locales/']
+gettext_compact = False
+
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
@@ -23,5 +25,12 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "furo"
+html_theme = "shibuya"
 html_static_path = ["_static"]
+
+html_context = {
+    "languages": [
+        ("English", "/%s/", "en"),
+        ("Русский", "/ru/%s/", "ru"),
+    ]
+}

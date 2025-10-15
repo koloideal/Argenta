@@ -1,9 +1,11 @@
-Public API
+Публичный API
 ****************
 
 .. toctree::
-   App/index
-   Router
-   Orchestrator/index
-   Command/index
-   Response
+    :hidden:
+    
+    app/index
+    router
+    orchestrator/index
+    command/index
+    response

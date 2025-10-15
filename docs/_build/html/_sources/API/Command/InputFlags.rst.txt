@@ -1,4 +1,0 @@
-.. _PossibleValues:
-
-Input
-****************

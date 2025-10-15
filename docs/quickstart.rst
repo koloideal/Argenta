@@ -1,7 +1,7 @@
-Quickstart
+Быстрый старт
 ********************
 
-1. **Install Argenta**
+1. **Установка**
 
 .. code-block:: shell
 
