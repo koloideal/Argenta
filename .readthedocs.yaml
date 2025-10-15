@@ -4,6 +4,10 @@ build:
   os: ubuntu-22.04
   tools:
     python: "3.12"
+    
+  jobs:
+    post_install:
+      - sphinx-intl build
 
 sphinx:
   configuration: docs/conf.py 
