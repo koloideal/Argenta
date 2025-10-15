@@ -21,7 +21,7 @@ msgstr ""
 
 #: ../../root/quickstart.rst:4
 msgid "Быстрый старт"
-msgstr ""
+msgstr "Quick Start"
 
 #: ../../root/quickstart.rst:6
 msgid "**Установка** ``Argenta``"

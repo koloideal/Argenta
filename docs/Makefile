@@ -22,7 +22,7 @@ serve-all:
 	
 update-langs:
 	sphinx-build -b gettext . _build/gettext
-	sphinx-intl update -p _build/gettext -l en -l ru
+	sphinx-intl update -p _build/gettext -l en
 
 .PHONY: help Makefile serve-all
 
