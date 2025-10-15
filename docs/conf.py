@@ -10,6 +10,7 @@ project = "Argenta"
 copyright = "2025, kolo"
 author = "kolo"
 root_doc = "index"
+language = 'ru'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -30,7 +31,7 @@ html_static_path = ["_static"]
 
 html_context = {
     "languages": [
-        ("English", "/%s/", "en"),
+        ("English", "/en/%s/", "en"),
         ("Русский", "/ru/%s/", "ru"),
     ]
 }

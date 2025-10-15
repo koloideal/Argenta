@@ -7,6 +7,11 @@ SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = .
 BUILDDIR      = _build
+LANGUAGES = en ru
+
+build-all:
+	sphinx-build -b html -D language=ru $(SOURCEDIR) $(BUILDDIR)/html/ru
+	sphinx-build -b html -D language=en $(SOURCEDIR) $(BUILDDIR)/html/en
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -14,11 +19,6 @@ help:
 	
 live-ru:
 	sphinx-autobuild -b html . _build/html/ru -D language=ru
-	
-serve-all:
-	sphinx-build -b html . _build/html/ -D language=en
-	sphinx-build -b html . _build/html/ru -D language=ru
-	python -m http.server -d _build/html
 	
 update-langs:
 	sphinx-build -b gettext . _build/gettext
