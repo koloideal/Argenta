@@ -28,10 +28,3 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_theme = "shibuya"
 html_static_path = ["_static"]
-
-html_context = {
-    "languages": [
-        ("English", "/en/%s/", "en"),
-        ("Русский", "/ru/%s/", "ru"),
-    ]
-}
