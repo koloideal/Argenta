@@ -2,12 +2,15 @@
 ==========================================
 
 Конфигурация
-********************************
+------------
 
-``Argenta`` в рантайме вызывает исключения в пограничных случаях. Подробнее о типах исключений :ref:`ниже <possible_errors>`.
+``Argenta`` в рантайме вызывает исключения в пограничных случаях пользовательского ввода.
 Все исключения обрабатываются системными хэндлерами, но у вас есть возможность их переопределить. Переопределение осуществляется
 с помощью сеттеров инстанса ``App`` - ``.set_*_handler(_)``, где ``_`` - это протокол хэндлера нестандартного поведения, подробнее
 о каждом протоколе и соответствующем сеттере :ref:`ниже <possible_errors>`
+
+.. note::
+    Все исключения никогда не остаются необработанными, так как у них есть стандартные хэндлеры. Поэтому переопределение опционально.
 
 Краткий сэмпл кода, переопределяющего хэндлер ввода 
 пустой команды
@@ -17,147 +20,97 @@
 
 
 .. _possible_errors:
-Возможные исключения
-********************************
 
-UnprocessedInputFlagException: Необрабатываемый ввод от пользователя
---------------------------------------------------------------------
+Возможные исключения
+--------------------
+
+``UnprocessedInputFlagException``: Необрабатываемый ввод от пользователя
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Исключение вызывается, когда пользователь вводит команду с некорректным синтаксисом и парсер не может
-*распарсить* её. В большинстве случаев это означат, что проблема в синтаксисе введённых флагов команды, подробнее в
+*распарсить* её. В большинстве случаев это означат, что проблема в синтаксисе введённых флагов команды, подробнее о 
+флагах и их синтаксисе в :ref:`Flags <root_flags>`.
 
-.. code-block::
+Дефолтный хэндлер выводит в консоль
 
-    dishka.exceptions.CycleDependenciesError: Cycle dependencies detected.
-                ◈ Scope.APP, component='' ◈
-       ╭─>─╮ __main__.A   FirstProvider.get_a
-       │   ▼ __main__.B   FirstProvider.get_b
-       ╰─<─╯ __main__.C   AnotherProvider.get_c
+.. code-block::  shell
 
+    Incorrect flag syntax: <raw input command>
+    
+Для переопределения стандартного поведения используется сеттер ``.set_incorrect_input_syntax_handler(_: NonStandardBehaviorHandler[str])``, 
+протокол ``NonStandardBehaviorHandler[str]`` соответствует ``Callable[[str], None]``, то есть хэндлер должен быть вызываемым объектом, 
+к примеру функция или лямбда, которая принимает единственный аргумент - строку, которая представляет собой необработанную введённую команду, и ничего не возвращает.
 
-This error means that one of the objects cannot be created because some of
-its dependencies depend on itself.
-You can see the whole path in the error message with types and provider methods.
+Сэмпл кода, переопределяющего хэндлер ввода команды с некорректным синтаксисом:
 
-Possible actions:
+.. literalinclude:: ../code_snippets/error_handling_example_sample2.py
+   :language: python
 
-* **Remove cycle dependency.**
-  If the cycle was introduced as a result of typo you can fix it.
-  But in other cases this can lead to a refactoring of your object structure
+---------------
 
-* **Implement two-phase initialization.**
-  Instead of doing constructor injection using dishka you can do attribute injection later when both objects are available.
+``RepeatedInputFlagsException``: Повторяющийся флаг в введённой команде
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Исключение вызывается, когда пользователь вводит команду с повторяющимся флагом, флаг(:ref:`InputFlag <input_flag>`) считается повторяющимся, если 
+введён флаг с таким же именем, именно именем, без префикса. Подробнее о флагах и их синтаксисе в :ref:`Flags <root_flags>`.
 
-GraphMissingFactoryError: Cannot find factory for ...
--------------------------------------------------------
+Дефолтный хэндлер выводит в консоль
 
-.. code-block::
+.. code-block::  shell
 
-    dishka.exceptions.GraphMissingFactoryError: Cannot find factory for (C, component=''). It is missing or has invalid scope.
-       │     ◈ Scope.APP, component='' ◈
-       ▼   __main__.A   FirstProvider.get_a
-       ▼   __main__.B   FirstProvider.get_b
-       ╰─> __main__.C   ???
+    Repeated input flags: <raw input command>
+    
+Для переопределения стандартного поведения используется сеттер ``.set_repeated_input_flags_handler(_: NonStandardBehaviorHandler[str])``, 
+протокол ``NonStandardBehaviorHandler[str]`` соответствует ``Callable[[str], None]``, то есть хэндлер должен быть вызываемым объектом, 
+к примеру функция или лямбда, которая принимает единственный аргумент - строку, которая представляет собой необработанную введённую команду, и ничего не возвращает.
 
+Сэмпл кода, переопределяющего хэндлер ввода команды с повторяющимися флагами:
 
-There are multiple reasons for this error. If possible, dishka tries to predict possible fixes.
+.. literalinclude:: ../code_snippets/error_handling_example_sample3.py
+    :language: python
+    
+---------------
+    
+``EmptyInputCommandException``: Введена пустая команда
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* **Factory is simply missing.**
-  Check that you added all required providers and they contain appropriate ``provide``.
+Исключение вызывается, когда пользователь вводит команду в виде строки из пробельных символов - ``\n``, ``\t``, пробел и т.д.
 
-* **Context data is not marked with from_context**
-  Check that you added all required providers and they contain appropriate ``from_context``.
+Дефолтный хэндлер выводит в консоль
 
-* **Object has invalid scope**
-  Check the scope of provided type and the types dependent on it.
-  Note, that long-living objects cannot depend on short-living ones.
-  E.g. object with ``Scope.APP`` cannot depend on one with ``Scope.REQUEST``.
+.. code-block::  shell
 
-  You should review used scopes.
+    Empty input command
+    
+Для переопределения стандартного поведения используется сеттер ``.set_empty_command_handler(_: EmptyCommandHandler)``, 
+протокол ``EmptyCommandHandler`` соответствует ``Callable[[], None]``, то есть хэндлер должен быть вызываемым объектом, 
+к примеру функция или лямбда, которая не принимает аргументов и ничего не возвращает.
 
-* **Object is provided in another component**
-  Components are isolated and cannot implicitly share objects.
-  You should either use ``FromComponent`` to call another component directly or
-  create object separately for appropriate component using ``provide`` annotation
+Сэмпл кода, переопределяющего хэндлер ввода пустой команды:
 
-* **Dependency is parent class while provided child class (or vice versa)**
-  Use ``provides=`` argument to mark that source and provided types are different.
-  Use ``WithParents[X]`` to provide an object as its type with parent classes
+.. literalinclude:: ../code_snippets/error_handling_example_sample4.py
+    :language: python
+    
+--------------- 
+    
+``UnknownCommandException``: Введена неизвестная команда
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Исключение вызывается, когда пользователь вводит команду, которая не зарегистрирована ни в одном роутере и не является алиасом ни для 
+одной зарегистрированной команды.
 
-CannotUseProtocolError: Cannot use ... as a factory
--------------------------------------------------------
+Дефолтный хэндлер выводит в консоль
 
-.. code-block::
+.. code-block::  shell
 
-    dishka.provider.exceptions.CannotUseProtocolError: Cannot use <class '__main__.SomeProtocol'> as a factory.
-    Tip: seems that this is a Protocol. Please subclass it and provide the subclass.
+    Unknown command: <trigger of the input command>
+    
+Для переопределения стандартного поведения используется сеттер ``.set_unknown_command_handler(_: NonStandardBehaviorHandler[InputCommand])``, 
+протокол ``NonStandardBehaviorHandler[InputCommand]`` соответствует ``Callable[[InputCommand], None]``, то есть хэндлер должен быть вызываемым объектом, 
+к примеру функция или лямбда, которая принимает обязательный аргумент типа :ref:`InputCommand <input_command>` и ничего не возвращает.
 
-This error means that you used some protocol class as a source argument of ``provide`` function.
-Protocols cannot be instantiated.
-Check that you have an implementation for that protocol, and use it.
-You can try using the form ``provide(YourImpl, provides=YourProtocol)``.
+Сэмпл кода, переопределяющего хэндлер ввода неизвестной команды:
 
-
-NotAFactoryError: Cannot use ... as a factory.
--------------------------------------------------------
-
-.. code-block::
-
-    dishka.provider.exceptions.NotAFactoryError: Cannot use typing.Union[int, str] as a factory.
-
-
-Check what are you passing to ``provide`` function. Probably that object cannot be instantiated directly.
-
-Note, that you can provide some type by creating an instance of another one using the form ``provide(YourClass, provides=SomeTypeHint)``.
-
-
-ImplicitOverrideDetectedError: Detected multiple factories for ...
--------------------------------------------------------------------------
-
-.. code-block::
-
-    dishka.exceptions.ImplicitOverrideDetectedError: Detected multiple factories for (<class '__main__.A'>, component='') while `override` flag is not set.
-    Hint:
-    * Try specifying `override=True` for SecondProvider.get_a
-    * Try removing factory FirstProvider.get_a or SecondProvider.get_a
-
-This error can be seen only if you enabled ``implicit_override=True`` in validation settings.
-It means that you have 2 factories for the same type without specifying that the second one should replace the first one.
-
-* **You meant to have one of factories**. Just remove the second one.
-
-* **You want to override dependency for tests or other purposes**. Specify ``override=True`` when creating second factory.
-
-Error text will contain details on both option with names of providers.
-
-
-NothingOverriddenError: Overriding factory found for ..., but there is nothing to override.
----------------------------------------------------------------------------------------------------
-
-.. code-block::
-
-    dishka.exceptions.NothingOverriddenError: Overriding factory found for (<class '__main__.A'>, component=''), but there is nothing to override.
-    Hint:
-    * Try removing override=True from FirstProvider.get_a
-    * Check the order of providers
-
-This error can be seen only if you enabled ``nothing_overridden=True`` in validation settings.
-That means you set ``override=True``, but there is no second factory to be overriden or the order of providers is incorrect.
-
-Check, that you have specified all expected providers in correct order or remove the flag.
-
-
-IndependentDecoratorError: Decorator ... does not depend on provided type.
----------------------------------------------------------------------------------------------------
-
-.. code-block::
-
-    dishka.provider.exceptions.IndependentDecoratorError: Decorator __main__.FirstProvider.get_a does not depend on provided type.
-    Did you mean @provide instead of @decorate?
-
-Using ``decorate`` is a special case if you need to apply decorator patter or do modifications with an object created in another provider.
-Is requests an object of some type (additional dependencies are allowed) and returns the same type.
-
-If you are not going to use an object received from another factory, probably you meant to use simple ``provide`` instead?
+.. literalinclude:: ../code_snippets/error_handling_example_sample5.py
+    :language: python
+    

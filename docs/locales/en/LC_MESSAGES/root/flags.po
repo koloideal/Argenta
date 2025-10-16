@@ -19,11 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: ../../root/overriding_formatting.rst:4
-msgid "Переопределение форматирования"
-msgstr "Overriding formatting"
-
-#: ../../root/overriding_formatting.rst:6
-msgid "ндааааааааааааааа"
+#: ../../root/flags.rst:2
+msgid "Флаги"
 msgstr ""
 

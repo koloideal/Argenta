@@ -27,3 +27,16 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_theme = "shibuya"
 html_static_path = ["_static"]
+
+html_theme_options = {
+  "accent_color": "cyan",
+  "nav_links": [
+         {
+             "title": "Sponsor me",
+             "url": "https://github.com/sponsors/koloideal",
+             "external": True
+         },
+     ],
+    "github_url": "https://github.com/koloideal/Argenta",
+    "linkedin_url": "https://www.linkedin.com/in/dmitry-shevelev-31b9a6324"
+}

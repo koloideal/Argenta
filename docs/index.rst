@@ -38,8 +38,8 @@ Argenta нужна для создания приложений, которым 
     :caption: Контент:
 
     root/quickstart
-    root/flags
     root/error_handling
+    root/flags
     root/dependency_injection
     root/overriding_formatting
     root/redirect_stdout

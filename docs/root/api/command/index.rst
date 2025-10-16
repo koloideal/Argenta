@@ -1,5 +1,7 @@
+.. _command:
+
 Command
-****************
+=======
 
 .. toctree::
     :hidden:
@@ -7,3 +9,8 @@ Command
     flags
     possible_values
     validation_status
+    
+.. _input_command:
+
+InputCommand
+============

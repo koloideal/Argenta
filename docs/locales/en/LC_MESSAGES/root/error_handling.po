@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-15 16:09+0300\n"
+"POT-Creation-Date: 2025-10-16 17:03+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -28,6 +28,200 @@ msgid "Конфигурация"
 msgstr ""
 
 #: ../../root/error_handling.rst:7
-msgid "привет"
+msgid ""
+"``Argenta`` в рантайме вызывает исключения в пограничных случаях. "
+"Подробнее о типах исключений :ref:`ниже <possible_errors>`. Все "
+"исключения обрабатываются системными хэндлерами, но у вас есть "
+"возможность их переопределить. Переопределение осуществляется с помощью "
+"сеттеров инстанса ``App`` - ``.set_*_handler(_)``, где ``_`` - это "
+"протокол хэндлера нестандартного поведения, подробнее о каждом протоколе "
+"и соответствующем сеттере :ref:`ниже <possible_errors>`"
 msgstr ""
+
+#: ../../root/error_handling.rst:12
+msgid "Краткий сэмпл кода, переопределяющего хэндлер ввода пустой команды"
+msgstr ""
+
+#: ../../root/error_handling.rst:21
+msgid "Возможные исключения"
+msgstr ""
+
+#: ../../root/error_handling.rst:24
+msgid "UnprocessedInputFlagException: Необрабатываемый ввод от пользователя"
+msgstr ""
+
+#: ../../root/error_handling.rst:26
+msgid ""
+"Исключение вызывается, когда пользователь вводит команду с некорректным "
+"синтаксисом и парсер не может *распарсить* её. В большинстве случаев это "
+"означат, что проблема в синтаксисе введённых флагов команды, подробнее в"
+msgstr ""
+
+#: ../../root/error_handling.rst:38
+msgid ""
+"This error means that one of the objects cannot be created because some "
+"of its dependencies depend on itself. You can see the whole path in the "
+"error message with types and provider methods."
+msgstr ""
+
+#: ../../root/error_handling.rst:42
+msgid "Possible actions:"
+msgstr ""
+
+#: ../../root/error_handling.rst:44
+msgid ""
+"**Remove cycle dependency.** If the cycle was introduced as a result of "
+"typo you can fix it. But in other cases this can lead to a refactoring of"
+" your object structure"
+msgstr ""
+
+#: ../../root/error_handling.rst:48
+msgid ""
+"**Implement two-phase initialization.** Instead of doing constructor "
+"injection using dishka you can do attribute injection later when both "
+"objects are available."
+msgstr ""
+
+#: ../../root/error_handling.rst:53
+msgid "GraphMissingFactoryError: Cannot find factory for ..."
+msgstr ""
+
+#: ../../root/error_handling.rst:64
+msgid ""
+"There are multiple reasons for this error. If possible, dishka tries to "
+"predict possible fixes."
+msgstr ""
+
+#: ../../root/error_handling.rst:66
+msgid ""
+"**Factory is simply missing.** Check that you added all required "
+"providers and they contain appropriate ``provide``."
+msgstr ""
+
+#: ../../root/error_handling.rst:69
+msgid ""
+"**Context data is not marked with from_context** Check that you added all"
+" required providers and they contain appropriate ``from_context``."
+msgstr ""
+
+#: ../../root/error_handling.rst:72
+msgid ""
+"**Object has invalid scope** Check the scope of provided type and the "
+"types dependent on it. Note, that long-living objects cannot depend on "
+"short-living ones. E.g. object with ``Scope.APP`` cannot depend on one "
+"with ``Scope.REQUEST``."
+msgstr ""
+
+#: ../../root/error_handling.rst:77
+msgid "You should review used scopes."
+msgstr ""
+
+#: ../../root/error_handling.rst:79
+msgid ""
+"**Object is provided in another component** Components are isolated and "
+"cannot implicitly share objects. You should either use ``FromComponent`` "
+"to call another component directly or create object separately for "
+"appropriate component using ``provide`` annotation"
+msgstr ""
+
+#: ../../root/error_handling.rst:84
+msgid ""
+"**Dependency is parent class while provided child class (or vice versa)**"
+" Use ``provides=`` argument to mark that source and provided types are "
+"different. Use ``WithParents[X]`` to provide an object as its type with "
+"parent classes"
+msgstr ""
+
+#: ../../root/error_handling.rst:90
+msgid "CannotUseProtocolError: Cannot use ... as a factory"
+msgstr ""
+
+#: ../../root/error_handling.rst:97
+msgid ""
+"This error means that you used some protocol class as a source argument "
+"of ``provide`` function. Protocols cannot be instantiated. Check that you"
+" have an implementation for that protocol, and use it. You can try using "
+"the form ``provide(YourImpl, provides=YourProtocol)``."
+msgstr ""
+
+#: ../../root/error_handling.rst:104
+msgid "NotAFactoryError: Cannot use ... as a factory."
+msgstr ""
+
+#: ../../root/error_handling.rst:111
+msgid ""
+"Check what are you passing to ``provide`` function. Probably that object "
+"cannot be instantiated directly."
+msgstr ""
+
+#: ../../root/error_handling.rst:113
+msgid ""
+"Note, that you can provide some type by creating an instance of another "
+"one using the form ``provide(YourClass, provides=SomeTypeHint)``."
+msgstr ""
+
+#: ../../root/error_handling.rst:117
+msgid "ImplicitOverrideDetectedError: Detected multiple factories for ..."
+msgstr ""
+
+#: ../../root/error_handling.rst:126
+msgid ""
+"This error can be seen only if you enabled ``implicit_override=True`` in "
+"validation settings. It means that you have 2 factories for the same type"
+" without specifying that the second one should replace the first one."
+msgstr ""
+
+#: ../../root/error_handling.rst:129
+msgid "**You meant to have one of factories**. Just remove the second one."
+msgstr ""
+
+#: ../../root/error_handling.rst:131
+msgid ""
+"**You want to override dependency for tests or other purposes**. Specify "
+"``override=True`` when creating second factory."
+msgstr ""
+
+#: ../../root/error_handling.rst:133
+msgid "Error text will contain details on both option with names of providers."
+msgstr ""
+
+#: ../../root/error_handling.rst:137
+msgid ""
+"NothingOverriddenError: Overriding factory found for ..., but there is "
+"nothing to override."
+msgstr ""
+
+#: ../../root/error_handling.rst:146
+msgid ""
+"This error can be seen only if you enabled ``nothing_overridden=True`` in"
+" validation settings. That means you set ``override=True``, but there is "
+"no second factory to be overriden or the order of providers is incorrect."
+msgstr ""
+
+#: ../../root/error_handling.rst:149
+msgid ""
+"Check, that you have specified all expected providers in correct order or"
+" remove the flag."
+msgstr ""
+
+#: ../../root/error_handling.rst:153
+msgid "IndependentDecoratorError: Decorator ... does not depend on provided type."
+msgstr ""
+
+#: ../../root/error_handling.rst:160
+msgid ""
+"Using ``decorate`` is a special case if you need to apply decorator "
+"patter or do modifications with an object created in another provider. Is"
+" requests an object of some type (additional dependencies are allowed) "
+"and returns the same type."
+msgstr ""
+
+#: ../../root/error_handling.rst:163
+msgid ""
+"If you are not going to use an object received from another factory, "
+"probably you meant to use simple ``provide`` instead?"
+msgstr ""
+
+#~ msgid "привет"
+#~ msgstr ""
 
