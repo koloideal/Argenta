@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-16 17:03+0300\n"
+"POT-Creation-Date: 2025-10-16 23:51+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -29,199 +29,353 @@ msgstr ""
 
 #: ../../root/error_handling.rst:7
 msgid ""
-"``Argenta`` в рантайме вызывает исключения в пограничных случаях. "
-"Подробнее о типах исключений :ref:`ниже <possible_errors>`. Все "
-"исключения обрабатываются системными хэндлерами, но у вас есть "
-"возможность их переопределить. Переопределение осуществляется с помощью "
-"сеттеров инстанса ``App`` - ``.set_*_handler(_)``, где ``_`` - это "
-"протокол хэндлера нестандартного поведения, подробнее о каждом протоколе "
-"и соответствующем сеттере :ref:`ниже <possible_errors>`"
+"``Argenta`` в рантайме вызывает исключения в пограничных случаях "
+"пользовательского ввода. Все исключения обрабатываются системными "
+"хэндлерами, но у вас есть возможность их переопределить. Переопределение "
+"осуществляется с помощью сеттеров инстанса ``App`` - "
+"``.set_*_handler(_)``, где ``_`` - это протокол хэндлера нестандартного "
+"поведения, подробнее о каждом протоколе и соответствующем сеттере "
+":ref:`ниже <possible_errors>`"
 msgstr ""
 
-#: ../../root/error_handling.rst:12
+#: ../../root/error_handling.rst:13
+msgid ""
+"Все исключения никогда не остаются необработанными, так как у них есть "
+"стандартные хэндлеры. Поэтому переопределение опционально."
+msgstr ""
+
+#: ../../root/error_handling.rst:15
 msgid "Краткий сэмпл кода, переопределяющего хэндлер ввода пустой команды"
 msgstr ""
 
-#: ../../root/error_handling.rst:21
+#: ../../root/error_handling.rst:25
 msgid "Возможные исключения"
 msgstr ""
 
-#: ../../root/error_handling.rst:24
-msgid "UnprocessedInputFlagException: Необрабатываемый ввод от пользователя"
+#: ../../root/error_handling.rst:28
+msgid "``UnprocessedInputFlagException``: Необрабатываемый ввод от пользователя"
 msgstr ""
 
-#: ../../root/error_handling.rst:26
+#: ../../root/error_handling.rst:30
 msgid ""
 "Исключение вызывается, когда пользователь вводит команду с некорректным "
 "синтаксисом и парсер не может *распарсить* её. В большинстве случаев это "
-"означат, что проблема в синтаксисе введённых флагов команды, подробнее в"
+"означат, что проблема в синтаксисе введённых флагов команды, подробнее о "
+"флагах и их синтаксисе в :ref:`Flags <root_flags>`."
 msgstr ""
 
-#: ../../root/error_handling.rst:38
+#: ../../root/error_handling.rst:34 ../../root/error_handling.rst:57
+#: ../../root/error_handling.rst:79 ../../root/error_handling.rst:102
+msgid "Дефолтный хэндлер выводит в консоль"
+msgstr ""
+
+#: ../../root/error_handling.rst:40
 msgid ""
-"This error means that one of the objects cannot be created because some "
-"of its dependencies depend on itself. You can see the whole path in the "
-"error message with types and provider methods."
-msgstr ""
-
-#: ../../root/error_handling.rst:42
-msgid "Possible actions:"
+"Для переопределения стандартного поведения используется сеттер "
+"``.set_incorrect_input_syntax_handler(_: "
+"NonStandardBehaviorHandler[str])``, протокол "
+"``NonStandardBehaviorHandler[str]`` соответствует ``Callable[[str], "
+"None]``, то есть хэндлер должен быть вызываемым объектом, к примеру "
+"функция или лямбда, которая принимает единственный аргумент - строку, "
+"которая представляет собой необработанную введённую команду, и ничего не "
+"возвращает."
 msgstr ""
 
 #: ../../root/error_handling.rst:44
 msgid ""
-"**Remove cycle dependency.** If the cycle was introduced as a result of "
-"typo you can fix it. But in other cases this can lead to a refactoring of"
-" your object structure"
+"Сэмпл кода, переопределяющего хэндлер ввода команды с некорректным "
+"синтаксисом:"
 msgstr ""
 
-#: ../../root/error_handling.rst:48
+#: ../../root/error_handling.rst:52
+msgid "``RepeatedInputFlagsException``: Повторяющийся флаг в введённой команде"
+msgstr ""
+
+#: ../../root/error_handling.rst:54
 msgid ""
-"**Implement two-phase initialization.** Instead of doing constructor "
-"injection using dishka you can do attribute injection later when both "
-"objects are available."
+"Исключение вызывается, когда пользователь вводит команду с повторяющимся "
+"флагом, флаг(:ref:`InputFlag <input_flag>`) считается повторяющимся, если"
+" введён флаг с таким же именем, именно именем, без префикса. Подробнее о "
+"флагах и их синтаксисе в :ref:`Flags <root_flags>`."
 msgstr ""
 
-#: ../../root/error_handling.rst:53
-msgid "GraphMissingFactoryError: Cannot find factory for ..."
-msgstr ""
-
-#: ../../root/error_handling.rst:64
+#: ../../root/error_handling.rst:63
 msgid ""
-"There are multiple reasons for this error. If possible, dishka tries to "
-"predict possible fixes."
+"Для переопределения стандартного поведения используется сеттер "
+"``.set_repeated_input_flags_handler(_: "
+"NonStandardBehaviorHandler[str])``, протокол "
+"``NonStandardBehaviorHandler[str]`` соответствует ``Callable[[str], "
+"None]``, то есть хэндлер должен быть вызываемым объектом, к примеру "
+"функция или лямбда, которая принимает единственный аргумент - строку, "
+"которая представляет собой необработанную введённую команду, и ничего не "
+"возвращает."
 msgstr ""
 
-#: ../../root/error_handling.rst:66
+#: ../../root/error_handling.rst:67
 msgid ""
-"**Factory is simply missing.** Check that you added all required "
-"providers and they contain appropriate ``provide``."
+"Сэмпл кода, переопределяющего хэндлер ввода команды с повторяющимися "
+"флагами:"
 msgstr ""
 
-#: ../../root/error_handling.rst:69
-msgid ""
-"**Context data is not marked with from_context** Check that you added all"
-" required providers and they contain appropriate ``from_context``."
-msgstr ""
-
-#: ../../root/error_handling.rst:72
-msgid ""
-"**Object has invalid scope** Check the scope of provided type and the "
-"types dependent on it. Note, that long-living objects cannot depend on "
-"short-living ones. E.g. object with ``Scope.APP`` cannot depend on one "
-"with ``Scope.REQUEST``."
+#: ../../root/error_handling.rst:75
+msgid "``EmptyInputCommandException``: Введена пустая команда"
 msgstr ""
 
 #: ../../root/error_handling.rst:77
-msgid "You should review used scopes."
-msgstr ""
-
-#: ../../root/error_handling.rst:79
 msgid ""
-"**Object is provided in another component** Components are isolated and "
-"cannot implicitly share objects. You should either use ``FromComponent`` "
-"to call another component directly or create object separately for "
-"appropriate component using ``provide`` annotation"
+"Исключение вызывается, когда пользователь вводит команду в виде строки из"
+" пробельных символов - ``\\n``, ``\\t``, пробел и т.д."
 msgstr ""
 
-#: ../../root/error_handling.rst:84
+#: ../../root/error_handling.rst:85
 msgid ""
-"**Dependency is parent class while provided child class (or vice versa)**"
-" Use ``provides=`` argument to mark that source and provided types are "
-"different. Use ``WithParents[X]`` to provide an object as its type with "
-"parent classes"
+"Для переопределения стандартного поведения используется сеттер "
+"``.set_empty_command_handler(_: EmptyCommandHandler)``, протокол "
+"``EmptyCommandHandler`` соответствует ``Callable[[], None]``, то есть "
+"хэндлер должен быть вызываемым объектом, к примеру функция или лямбда, "
+"которая не принимает аргументов и ничего не возвращает."
 msgstr ""
 
-#: ../../root/error_handling.rst:90
-msgid "CannotUseProtocolError: Cannot use ... as a factory"
+#: ../../root/error_handling.rst:89
+msgid "Сэмпл кода, переопределяющего хэндлер ввода пустой команды:"
 msgstr ""
 
 #: ../../root/error_handling.rst:97
+msgid "``UnknownCommandException``: Введена неизвестная команда"
+msgstr ""
+
+#: ../../root/error_handling.rst:99
 msgid ""
-"This error means that you used some protocol class as a source argument "
-"of ``provide`` function. Protocols cannot be instantiated. Check that you"
-" have an implementation for that protocol, and use it. You can try using "
-"the form ``provide(YourImpl, provides=YourProtocol)``."
+"Исключение вызывается, когда пользователь вводит команду, которая не "
+"зарегистрирована ни в одном роутере и не является алиасом ни для одной "
+"зарегистрированной команды."
 msgstr ""
 
-#: ../../root/error_handling.rst:104
-msgid "NotAFactoryError: Cannot use ... as a factory."
-msgstr ""
-
-#: ../../root/error_handling.rst:111
+#: ../../root/error_handling.rst:108
 msgid ""
-"Check what are you passing to ``provide`` function. Probably that object "
-"cannot be instantiated directly."
+"Для переопределения стандартного поведения используется сеттер "
+"``.set_unknown_command_handler(_: "
+"NonStandardBehaviorHandler[InputCommand])``, протокол "
+"``NonStandardBehaviorHandler[InputCommand]`` соответствует "
+"``Callable[[InputCommand], None]``, то есть хэндлер должен быть "
+"вызываемым объектом, к примеру функция или лямбда, которая принимает "
+"обязательный аргумент типа :ref:`InputCommand <input_command>` и ничего "
+"не возвращает."
 msgstr ""
 
-#: ../../root/error_handling.rst:113
-msgid ""
-"Note, that you can provide some type by creating an instance of another "
-"one using the form ``provide(YourClass, provides=SomeTypeHint)``."
-msgstr ""
-
-#: ../../root/error_handling.rst:117
-msgid "ImplicitOverrideDetectedError: Detected multiple factories for ..."
-msgstr ""
-
-#: ../../root/error_handling.rst:126
-msgid ""
-"This error can be seen only if you enabled ``implicit_override=True`` in "
-"validation settings. It means that you have 2 factories for the same type"
-" without specifying that the second one should replace the first one."
-msgstr ""
-
-#: ../../root/error_handling.rst:129
-msgid "**You meant to have one of factories**. Just remove the second one."
-msgstr ""
-
-#: ../../root/error_handling.rst:131
-msgid ""
-"**You want to override dependency for tests or other purposes**. Specify "
-"``override=True`` when creating second factory."
-msgstr ""
-
-#: ../../root/error_handling.rst:133
-msgid "Error text will contain details on both option with names of providers."
-msgstr ""
-
-#: ../../root/error_handling.rst:137
-msgid ""
-"NothingOverriddenError: Overriding factory found for ..., but there is "
-"nothing to override."
-msgstr ""
-
-#: ../../root/error_handling.rst:146
-msgid ""
-"This error can be seen only if you enabled ``nothing_overridden=True`` in"
-" validation settings. That means you set ``override=True``, but there is "
-"no second factory to be overriden or the order of providers is incorrect."
-msgstr ""
-
-#: ../../root/error_handling.rst:149
-msgid ""
-"Check, that you have specified all expected providers in correct order or"
-" remove the flag."
-msgstr ""
-
-#: ../../root/error_handling.rst:153
-msgid "IndependentDecoratorError: Decorator ... does not depend on provided type."
-msgstr ""
-
-#: ../../root/error_handling.rst:160
-msgid ""
-"Using ``decorate`` is a special case if you need to apply decorator "
-"patter or do modifications with an object created in another provider. Is"
-" requests an object of some type (additional dependencies are allowed) "
-"and returns the same type."
-msgstr ""
-
-#: ../../root/error_handling.rst:163
-msgid ""
-"If you are not going to use an object received from another factory, "
-"probably you meant to use simple ``provide`` instead?"
+#: ../../root/error_handling.rst:112
+msgid "Сэмпл кода, переопределяющего хэндлер ввода неизвестной команды:"
 msgstr ""
 
 #~ msgid "привет"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "``Argenta`` в рантайме вызывает исключения "
+#~ "в пограничных случаях. Подробнее о типах"
+#~ " исключений :ref:`ниже <possible_errors>`. Все"
+#~ " исключения обрабатываются системными хэндлерами,"
+#~ " но у вас есть возможность их "
+#~ "переопределить. Переопределение осуществляется с "
+#~ "помощью сеттеров инстанса ``App`` - "
+#~ "``.set_*_handler(_)``, где ``_`` - это "
+#~ "протокол хэндлера нестандартного поведения, "
+#~ "подробнее о каждом протоколе и "
+#~ "соответствующем сеттере :ref:`ниже "
+#~ "<possible_errors>`"
+#~ msgstr ""
+
+#~ msgid "UnprocessedInputFlagException: Необрабатываемый ввод от пользователя"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Исключение вызывается, когда пользователь "
+#~ "вводит команду с некорректным синтаксисом "
+#~ "и парсер не может *распарсить* её. "
+#~ "В большинстве случаев это означат, что"
+#~ " проблема в синтаксисе введённых флагов "
+#~ "команды, подробнее в"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This error means that one of the"
+#~ " objects cannot be created because "
+#~ "some of its dependencies depend on "
+#~ "itself. You can see the whole path"
+#~ " in the error message with types "
+#~ "and provider methods."
+#~ msgstr ""
+
+#~ msgid "Possible actions:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**Remove cycle dependency.** If the "
+#~ "cycle was introduced as a result "
+#~ "of typo you can fix it. But "
+#~ "in other cases this can lead to"
+#~ " a refactoring of your object "
+#~ "structure"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**Implement two-phase initialization.** "
+#~ "Instead of doing constructor injection "
+#~ "using dishka you can do attribute "
+#~ "injection later when both objects are"
+#~ " available."
+#~ msgstr ""
+
+#~ msgid "GraphMissingFactoryError: Cannot find factory for ..."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "There are multiple reasons for this "
+#~ "error. If possible, dishka tries to "
+#~ "predict possible fixes."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**Factory is simply missing.** Check "
+#~ "that you added all required providers"
+#~ " and they contain appropriate ``provide``."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**Context data is not marked with "
+#~ "from_context** Check that you added all"
+#~ " required providers and they contain "
+#~ "appropriate ``from_context``."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**Object has invalid scope** Check the"
+#~ " scope of provided type and the "
+#~ "types dependent on it. Note, that "
+#~ "long-living objects cannot depend on "
+#~ "short-living ones. E.g. object with "
+#~ "``Scope.APP`` cannot depend on one with"
+#~ " ``Scope.REQUEST``."
+#~ msgstr ""
+
+#~ msgid "You should review used scopes."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**Object is provided in another "
+#~ "component** Components are isolated and "
+#~ "cannot implicitly share objects. You "
+#~ "should either use ``FromComponent`` to "
+#~ "call another component directly or "
+#~ "create object separately for appropriate "
+#~ "component using ``provide`` annotation"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**Dependency is parent class while "
+#~ "provided child class (or vice versa)**"
+#~ " Use ``provides=`` argument to mark "
+#~ "that source and provided types are "
+#~ "different. Use ``WithParents[X]`` to provide"
+#~ " an object as its type with "
+#~ "parent classes"
+#~ msgstr ""
+
+#~ msgid "CannotUseProtocolError: Cannot use ... as a factory"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This error means that you used "
+#~ "some protocol class as a source "
+#~ "argument of ``provide`` function. Protocols"
+#~ " cannot be instantiated. Check that "
+#~ "you have an implementation for that "
+#~ "protocol, and use it. You can try"
+#~ " using the form ``provide(YourImpl, "
+#~ "provides=YourProtocol)``."
+#~ msgstr ""
+
+#~ msgid "NotAFactoryError: Cannot use ... as a factory."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Check what are you passing to "
+#~ "``provide`` function. Probably that object "
+#~ "cannot be instantiated directly."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Note, that you can provide some "
+#~ "type by creating an instance of "
+#~ "another one using the form "
+#~ "``provide(YourClass, provides=SomeTypeHint)``."
+#~ msgstr ""
+
+#~ msgid "ImplicitOverrideDetectedError: Detected multiple factories for ..."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This error can be seen only if "
+#~ "you enabled ``implicit_override=True`` in "
+#~ "validation settings. It means that you"
+#~ " have 2 factories for the same "
+#~ "type without specifying that the second"
+#~ " one should replace the first one."
+#~ msgstr ""
+
+#~ msgid "**You meant to have one of factories**. Just remove the second one."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**You want to override dependency for"
+#~ " tests or other purposes**. Specify "
+#~ "``override=True`` when creating second "
+#~ "factory."
+#~ msgstr ""
+
+#~ msgid "Error text will contain details on both option with names of providers."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "NothingOverriddenError: Overriding factory found "
+#~ "for ..., but there is nothing to"
+#~ " override."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This error can be seen only if "
+#~ "you enabled ``nothing_overridden=True`` in "
+#~ "validation settings. That means you set"
+#~ " ``override=True``, but there is no "
+#~ "second factory to be overriden or "
+#~ "the order of providers is incorrect."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Check, that you have specified all "
+#~ "expected providers in correct order or"
+#~ " remove the flag."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "IndependentDecoratorError: Decorator ... does "
+#~ "not depend on provided type."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Using ``decorate`` is a special case "
+#~ "if you need to apply decorator "
+#~ "patter or do modifications with an "
+#~ "object created in another provider. Is"
+#~ " requests an object of some type "
+#~ "(additional dependencies are allowed) and "
+#~ "returns the same type."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "If you are not going to use "
+#~ "an object received from another factory,"
+#~ " probably you meant to use simple "
+#~ "``provide`` instead?"
 #~ msgstr ""
 
