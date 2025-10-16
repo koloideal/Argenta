@@ -21,7 +21,7 @@ msgstr ""
 
 #: ../../root/error_handling.rst:2
 msgid "Обработка ошибок"
-msgstr ""
+msgstr "Errors handling"
 
 #: ../../root/error_handling.rst:5
 msgid "Конфигурация"

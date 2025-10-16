@@ -21,5 +21,5 @@ msgstr ""
 
 #: ../../root/overriding_formatting.rst:4
 msgid "Переопределение форматирования"
-msgstr ""
+msgstr "Overriding formatting"
 

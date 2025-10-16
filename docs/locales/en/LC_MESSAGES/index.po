@@ -21,11 +21,11 @@ msgstr ""
 
 #: ../../index.rst:36
 msgid "Контент:"
-msgstr ""
+msgstr "Content:"
 
 #: ../../index.rst:47
 msgid "Для разработчиков:"
-msgstr ""
+msgstr "For developers:"
 
 #: ../../index.rst:53
 msgid "GitHub"
@@ -37,7 +37,7 @@ msgstr ""
 
 #: ../../index.rst:53
 msgid "Ссылки проекта:"
-msgstr ""
+msgstr "Project Links:"
 
 #: ../../index.rst:7
 msgid "Argenta"
@@ -47,7 +47,7 @@ msgstr ""
 msgid ""
 "**Библиотека для построения модульных CLI-приложений с простым и приятным"
 " API.**"
-msgstr ""
+msgstr "Python library for building modular CLI applications with simple and agreeable API."
 
 #: ../../index.rst:11
 msgid ""

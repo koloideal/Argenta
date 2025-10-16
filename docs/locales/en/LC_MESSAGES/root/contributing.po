@@ -21,7 +21,7 @@ msgstr ""
 
 #: ../../root/contributing.rst:4
 msgid "Вклад в проект"
-msgstr ""
+msgstr "Contributing"
 
 #: ../../root/contributing.rst:6
 msgid ""
