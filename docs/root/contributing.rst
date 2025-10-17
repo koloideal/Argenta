@@ -1,4 +1,4 @@
-.. _contributing:
+.. _root_contributing:
 
 Вклад в проект
 ***************************

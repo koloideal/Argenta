@@ -1,4 +1,4 @@
-.. _DividingLines:
+.. _root_api_app_dividing_lines:
 
 DividingLines
 ****************

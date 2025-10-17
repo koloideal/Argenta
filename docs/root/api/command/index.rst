@@ -1,4 +1,4 @@
-.. _command:
+.. _root_api_command_index:
 
 Command
 =======

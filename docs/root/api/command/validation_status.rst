@@ -1,4 +1,4 @@
-.. _ValidationStatus:
+.. _root_api_command_validation_status:
 
 ValidationStatus
 ****************

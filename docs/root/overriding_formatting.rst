@@ -1,4 +1,4 @@
-.. _overriding_formatting:
+.. _root_overriding_formatting:
 
 Переопределение форматирования
 *****************************************

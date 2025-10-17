@@ -1,3 +1,5 @@
+.. _root_api_app_index:
+
 App
 ****************
 

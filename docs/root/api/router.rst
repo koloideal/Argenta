@@ -1,4 +1,4 @@
-.. _Router:
+.. _root_api_router:
 
 Router
 ****************

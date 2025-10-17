@@ -1,4 +1,4 @@
-.. _PossibleValues:
+.. _root_api_command_possible_values:
 
 PossibleValues
 ****************

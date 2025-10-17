@@ -1,4 +1,4 @@
-.. _Response:
+.. _root_api_response:
 
 Response
 ****************

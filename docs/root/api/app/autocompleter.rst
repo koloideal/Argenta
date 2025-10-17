@@ -1,4 +1,4 @@
-.. _Autocompleter:
+.. _root_api_app_autocompleter:
 
 Autocompleter
 ****************

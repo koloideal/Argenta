@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-16 23:51+0300\n"
+"POT-Creation-Date: 2025-10-17 18:46+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -49,7 +49,7 @@ msgid "Краткий сэмпл кода, переопределяющего х
 msgstr ""
 
 #: ../../root/error_handling.rst:25
-msgid "Возможные исключения"
+msgid "Возможные исключения и нестандартное поведение"
 msgstr ""
 
 #: ../../root/error_handling.rst:28
@@ -141,12 +141,12 @@ msgid "Сэмпл кода, переопределяющего хэндлер в
 msgstr ""
 
 #: ../../root/error_handling.rst:97
-msgid "``UnknownCommandException``: Введена неизвестная команда"
+msgid "``Поведение обработки неизвестной команды``: Введена неизвестная команда"
 msgstr ""
 
 #: ../../root/error_handling.rst:99
 msgid ""
-"Исключение вызывается, когда пользователь вводит команду, которая не "
+"Поведение триггерится, когда пользователь вводит команду, которая не "
 "зарегистрирована ни в одном роутере и не является алиасом ни для одной "
 "зарегистрированной команды."
 msgstr ""
@@ -165,6 +165,34 @@ msgstr ""
 
 #: ../../root/error_handling.rst:112
 msgid "Сэмпл кода, переопределяющего хэндлер ввода неизвестной команды:"
+msgstr ""
+
+#: ../../root/error_handling.rst:120
+msgid "``Поведение выхода из приложения``: Введена команда выхода"
+msgstr ""
+
+#: ../../root/error_handling.rst:122
+msgid ""
+"Поведение триггерится, когда пользователь вводит команду, которая "
+"маркирована как команда завершения работы."
+msgstr ""
+
+#: ../../root/error_handling.rst:124
+msgid "Дефолтный хэндлер выводит в консоль текст и завершает работу приложения."
+msgstr ""
+
+#: ../../root/error_handling.rst:130
+msgid ""
+"Для переопределения стандартного поведения используется сеттер "
+"``.set_exit_command_handler(_: NonStandardBehaviorHandler[Response])``, "
+"протокол ``NonStandardBehaviorHandler[Response]`` соответствует "
+"``Callable[[Response], None]``, то есть хэндлер должен быть вызываемым "
+"объектом, к примеру функция или лямбда, которая принимает обязательный "
+"аргумент типа :ref:`Response <response>` и ничего не возвращает."
+msgstr ""
+
+#: ../../root/error_handling.rst:134
+msgid "Сэмпл кода, переопределяющего хэндлер ввода команды выхода:"
 msgstr ""
 
 #~ msgid "привет"
@@ -377,5 +405,19 @@ msgstr ""
 #~ "an object received from another factory,"
 #~ " probably you meant to use simple "
 #~ "``provide`` instead?"
+#~ msgstr ""
+
+#~ msgid "Возможные исключения"
+#~ msgstr ""
+
+#~ msgid "``UnknownCommandException``: Введена неизвестная команда"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Исключение вызывается, когда пользователь "
+#~ "вводит команду, которая не зарегистрирована"
+#~ " ни в одном роутере и не "
+#~ "является алиасом ни для одной "
+#~ "зарегистрированной команды."
 #~ msgstr ""
 

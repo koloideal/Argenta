@@ -1,4 +1,4 @@
-.. _DependencyInjection:
+.. _root_dependency_injection:
 
 Внедрение зависимостей
 ****************************
