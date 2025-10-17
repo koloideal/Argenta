@@ -9,7 +9,7 @@
 
     pip install argenta
 
-2. **Определение роутера и хэндлеров**. За регистрацию функции как обработчика отвечает декоратор ``@router.command``, хэндлер всегда должен принимать аргумент с типом ``Response``, подробнее в :ref:`разделе <Response>`.
+2. **Определение роутера и хэндлеров**. За регистрацию функции как обработчика отвечает декоратор ``@router.command``, хэндлер всегда должен принимать аргумент с типом ``Response``, подробнее в :ref:`разделе <root_api_response>`.
 
 .. literalinclude:: ../code_snippets/quickstart_example_routers.py
    :language: python
