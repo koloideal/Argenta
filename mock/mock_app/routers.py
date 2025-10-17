@@ -1,7 +1,6 @@
 from argenta.command import Command, PredefinedFlags, Flags, Flag, PossibleValues
 from argenta.response import Response
 from argenta import Router
-from argenta.di import FromDishka
 
 
 work_router: Router = Router(title="Work points:", disable_redirect_stdout=True)
@@ -18,10 +17,9 @@ flag = Flag("csdv", possible_values=PossibleValues.NEITHER)
     )
 )
 def command_help(response: Response):
-    print(response.status)
-    print(response.input_flags.flags)
+	response.update_data({"data": [_ for _ in range(9999999)]})
 
 
 @work_router.command("run")
-def command_start_solving(response: Response, argspace: FromDishka[int]):
-    print(argspace)
+def command_start_solving(response: Response):
+    print(response.get_data())
