@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Argenta
-*******
+=======
 
 **Библиотека для построения модульных CLI-приложений с простым и приятным API.**
 

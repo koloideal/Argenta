@@ -40,10 +40,10 @@ html_theme_options = {
   "nav_links": [
          {
              "title": "Sponsor me",
-             "url": "https://github.com/sponsors/koloideal",
-             "external": True
+             "url": "https://github.com/sponsors/koloideal"
          },
      ],
     "github_url": "https://github.com/koloideal/Argenta",
     "linkedin_url": "https://www.linkedin.com/in/dmitry-shevelev-31b9a6324"
 }
+

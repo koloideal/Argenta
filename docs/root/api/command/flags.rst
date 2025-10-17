@@ -4,7 +4,7 @@ Flags
 ****************
 
 
-.. _flag:
+.. _root_api_command_flag:
 
 Flag
 ****************
@@ -14,7 +14,7 @@ InputFlags
 ****************
 
 
-.. _input_flag:
+.. _root_api_command_input_flag:
 
 InputFlag
 ****************
