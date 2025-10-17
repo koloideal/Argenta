@@ -1,3 +1,5 @@
+__all__ = ["RegisteredRouters"]
+
 from typing import Iterator, Optional
 
 from argenta.router import Router

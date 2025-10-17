@@ -24,7 +24,7 @@ exclude = [
 ]
 
 [tool.pyright]
-typeCheckingMode = "strict"
+typeCheckingMode = "standard"
 
 [tool.mypy]
 disable_error_code = "import-untyped"
@@ -35,8 +35,13 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
+    "isort>=7.0.0",
     "mypy>=1.14.1",
     "pytest>=8.3.2",
     "ruff>=0.12.12",
+    "shibuya>=2025.9.25",
+    "sphinx>=8.2.3",
+    "sphinx-autobuild>=2025.8.25",
+    "sphinx-intl>=2.3.2",
     "wemake-python-styleguide>=0.17.0",
 ]

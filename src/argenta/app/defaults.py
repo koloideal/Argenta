@@ -1,3 +1,5 @@
+__all__ = ["PredefinedMessages"]
+
 from enum import StrEnum
 
 

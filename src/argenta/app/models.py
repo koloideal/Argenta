@@ -1,3 +1,5 @@
+__all__ = ["App"]
+
 import io
 import re
 from contextlib import redirect_stdout
@@ -8,20 +10,16 @@ from rich.console import Console
 from rich.markup import escape
 
 from argenta.app.autocompleter import AutoCompleter
-from argenta.app.dividing_line.models import DynamicDividingLine, StaticDividingLine
-from argenta.app.protocols import (
-    DescriptionMessageGenerator,
-    EmptyCommandHandler,
-    NonStandardBehaviorHandler,
-    Printer,
-)
+from argenta.app.dividing_line.models import (DynamicDividingLine,
+                                              StaticDividingLine)
+from argenta.app.protocols import (DescriptionMessageGenerator,
+                                   EmptyCommandHandler,
+                                   NonStandardBehaviorHandler, Printer)
 from argenta.app.registered_routers.entity import RegisteredRouters
-from argenta.command.exceptions import (
-    EmptyInputCommandException,
-    InputCommandException,
-    RepeatedInputFlagsException,
-    UnprocessedInputFlagException,
-)
+from argenta.command.exceptions import (EmptyInputCommandException,
+                                        InputCommandException,
+                                        RepeatedInputFlagsException,
+                                        UnprocessedInputFlagException)
 from argenta.command.models import Command, InputCommand
 from argenta.response import Response
 from argenta.router import Router

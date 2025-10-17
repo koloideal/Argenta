@@ -1,7 +1,9 @@
-from argenta.command.flag.models import InputFlag, Flag
-from typing import Generic, TypeVar, override
-from collections.abc import Iterator
+__all__ = ["Flags", "InputFlags"]
 
+from collections.abc import Iterator
+from typing import Generic, TypeVar, override
+
+from argenta.command.flag.models import Flag, InputFlag
 
 FlagType = TypeVar("FlagType")
 
@@ -52,7 +54,7 @@ class Flags(BaseFlags[Flag]):
         :return: entity of the flag or None
         """
         return next((flag for flag in self.flags if flag.name == name), None)
-    
+
     @override
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Flags):
@@ -82,9 +84,9 @@ class InputFlags(BaseFlags[InputFlag]):
         :return: entity of the flag or None
         """
         return next((flag for flag in self.flags if flag.name == name), None)
-    
+
     @override
-    def __eq__(self, other: object) -> bool: 
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, InputFlags):
             raise NotImplementedError
 
@@ -103,4 +105,3 @@ class InputFlags(BaseFlags[InputFlag]):
             return False
         else:
             raise TypeError
-

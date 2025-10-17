@@ -1,0 +1,4 @@
+sphinx
+shibuya
+sphinx-intl
+sphinx-autobuild
