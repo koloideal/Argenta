@@ -1,6 +1,5 @@
 import unittest
 from datetime import datetime, date
-from typing import Any
 
 from argenta.response.entity import Response, DataBridge, EMPTY_INPUT_FLAGS
 from argenta.response.status import ResponseStatus
