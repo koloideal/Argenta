@@ -28,4 +28,4 @@ jobs:
         uv sync --group dev
 
     - name: Run tests
-      run: uv run python -m unittest discover
+      run: uv run python -m pytest tests
