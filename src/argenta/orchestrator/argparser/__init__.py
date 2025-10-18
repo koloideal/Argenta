@@ -3,3 +3,4 @@ from argenta.orchestrator.argparser.arguments import \
 from argenta.orchestrator.argparser.arguments import \
     ValueArgument as ValueArgument
 from argenta.orchestrator.argparser.entity import ArgParser as ArgParser
+from argenta.orchestrator.argparser.entity import ArgSpace as ArgSpace
