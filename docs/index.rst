@@ -50,6 +50,7 @@ Argenta нужна для создания приложений, которым 
     :caption: Для разработчиков:
 
     root/contributing
+    root/code_of_conduct
 
 .. toctree::
     :hidden:
