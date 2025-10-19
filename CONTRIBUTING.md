@@ -29,11 +29,11 @@ All types of contributions are encouraged and valued. Please make sure to read t
 ## Code of Conduct
 
 This project and everyone participating in it is governed by the
-[Argenta Code of Conduct](https://github.com/koloideal/Argenta/blob//CODE_OF_CONDUCT.md).
+[Argenta Code of Conduct](https://github.com/koloideal/Argenta/blob/main/CODE_OF_CONDUCT.md).
 By participating, you are expected to uphold this code. Please report unacceptable behavior
 to .
 
----
+-----
 
 ## I Have a Question
 
@@ -64,7 +64,7 @@ Depending on how large the project is, you may want to outsource the questioning
 - Forum
 -->
 
----
+-----
 
 ## I Want To Contribute
 
@@ -110,6 +110,7 @@ Once it's filed:
 
 <!-- You might want to create an issue template for bugs and errors that can be used as a guide and that defines the structure of the information to be included. If you do so, reference it here in the description. -->
 
+-----
 
 ### Suggesting Enhancements
 
@@ -135,6 +136,8 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/koloid
 - **Explain why this enhancement would be useful** to most Argenta users. You may also want to point out the other projects that solved it better and which could serve as inspiration.
 
 <!-- You might want to create an issue template for enhancement suggestions that can be used as a guide and that defines the structure of the information to be included. If you do so, reference it here in the description. -->
+
+-----
 
 ### Your First Code Contribution
 
@@ -178,6 +181,8 @@ To get started with your first code contribution, please follow these steps to s
     git push origin your-new-branch-name
     ```
 9.  Open a Pull Request from your forked branch to the `main` branch of the official Argenta repository. Provide a clear description of the problem and your solution. Include the relevant issue number if applicable.
+
+-----
 
 ### Improving The Documentation
 
