@@ -33,6 +33,7 @@ This project and everyone participating in it is governed by the
 By participating, you are expected to uphold this code. Please report unacceptable behavior
 to .
 
+---
 
 ## I Have a Question
 
@@ -62,6 +63,8 @@ Depending on how large the project is, you may want to outsource the questioning
 - E-Mail List
 - Forum
 -->
+
+---
 
 ## I Want To Contribute
 
@@ -159,30 +162,28 @@ To get started with your first code contribution, please follow these steps to s
     ```bash
     pip install -e .[dev]
     ```
-5.  Set up the pre-commit hooks to automatically check your code for style and quality before you commit.
-    ```bash
-    pre-commit install
-    ```
-6.  Create a new branch for your feature or bug fix. Use a descriptive name, like `fix/login-bug` or `feat/new-widget`.
+5.  Create a new branch for your feature or bug fix. Use a descriptive name, like `fix/login-bug` or `feat/new-widget`.
     ```bash
     git checkout -b your-new-branch-name
     ```
-7.  Make your changes! Write your code, and don't forget to add or update tests for your changes.
-8.  Run the test suite to ensure everything is working correctly.
+6.  Make your changes! Write your code, and don't forget to add or update tests for your changes.
+7.  Run the test suite to ensure everything is working correctly.
     ```bash
-    pytest
+    python -m pytest tests
     ```
-9.  Commit your changes following our commit message styleguide and push them to your fork.
+8.  Commit your changes following our commit message styleguide and push them to your fork.
     ```bash
     git add .
     git commit -m "feat(widget): add the new super widget"
     git push origin your-new-branch-name
     ```
-10. Open a Pull Request from your forked branch to the `main` branch of the official Argenta repository. Provide a clear description of the problem and your solution. Include the relevant issue number if applicable.
+9.  Open a Pull Request from your forked branch to the `main` branch of the official Argenta repository. Provide a clear description of the problem and your solution. Include the relevant issue number if applicable.
 
 ### Improving The Documentation
 
 Good documentation is crucial for any project. We use Sphinx to generate our documentation from source files located in the `docs/` directory. We welcome any improvements, from fixing a simple typo to writing a whole new section.
+
+	We support documentation in two languages: Russian and English
 
 To improve the documentation, you can follow a similar workflow as for code contributions:
 
@@ -191,13 +192,22 @@ To improve the documentation, you can follow a similar workflow as for code cont
     ```bash
     cd docs
     ```
-3.  To build the documentation locally and see your changes, run:
+3. Make the necessary changes to the **Russian** version of the documentation - ``docs/index.rst`` and ``docs/root/*``
+4. To build the documentation locally and see your changes, run:
     ```bash
-    make html
+    make live-ru
     ```
-4.  Open `_build/html/index.html` in your web browser to preview the generated documentation.
-5.  Make your desired changes to the `.rst` or `.md` files in the `docs/source` directory.
-6.  Once you are happy with your changes, commit them and open a Pull Request. Use the `docs:` prefix in your commit message.
+5.  Open `127.0.0.1:8000` in your web browser to preview the generated documentation.
+6.  Make your desired changes to the `.rst` or `.md` files in the `docs/source` directory.
+7.  After completing the work on the Russian documentation, it is necessary to create an English translation:
+
+	```bash
+	make update-langs
+	```
+8.  After updating the translation template, update the necessary translation files located at ``docs/locales/en/LC_MESSAGES``
+8.  Once you are happy with your changes, commit them and open a Pull Request. Use the `docs:` prefix in your commit message.
+
+---
 
 ## Styleguides
 
@@ -229,17 +239,12 @@ The `<type>` must be one of the following:
 #### Examples
 
 A simple fix:
-fix: correct typo in user authentication flow
+``fix: correct typo in user authentication flow``
 
-A new feature with a scope:
-feat(api): add new endpoint for user profiles
+A new feature with a scope: 
+``feat(api): add new endpoint for user profiles``
 
-A more detailed commit with a body:
-docs: update installation guide for Windows
-
-The previous installation guide was missing a step for activating
-the virtual environment on Windows systems. This commit adds the
-correct command.
+---
 
 ## Join The Project Team
 

@@ -20,6 +20,9 @@ help:
 live-ru:
 	sphinx-autobuild -b html . _build/html/ru -D language=ru
 	
+live-en:
+	sphinx-autobuild -b html . _build/html/en -D language=en
+	
 update-langs:
 	sphinx-build -b gettext . _build/gettext
 	sphinx-intl update -p _build/gettext -l en
