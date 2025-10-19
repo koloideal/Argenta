@@ -134,26 +134,119 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/koloid
 <!-- You might want to create an issue template for enhancement suggestions that can be used as a guide and that defines the structure of the information to be included. If you do so, reference it here in the description. -->
 
 ### Your First Code Contribution
-<!-- TODO
-include Setup of env, IDE and typical getting started instructions?
 
--->
+Unsure where to begin contributing to Argenta? You can start by looking through `good first issue` and `help wanted` issues on our GitHub repository. These are issues that are well-suited for new contributors.
+
+To get started with your first code contribution, please follow these steps to set up your local development environment.
+
+1.  Fork the `Argenta` repository on GitHub.
+2.  Clone your forked repository to your local machine:
+    ```
+    git clone https://github.com/<YOUR_USERNAME>/Argenta.git
+    cd Argenta
+    ```
+3.  Create and activate a Python virtual environment.
+    ```
+    # For macOS/Linux
+    python3 -m venv .venv
+    source .venv/bin/activate
+
+    # For Windows
+    python -m venv .venv
+    .venv\Scripts\activate
+    ```
+4.  Install the project dependencies, including the development tools.
+    ```
+    pip install -e .[dev]
+    ```
+5.  Set up the pre-commit hooks to automatically check your code for style and quality before you commit.
+    ```
+    pre-commit install
+    ```
+6.  Create a new branch for your feature or bug fix. Use a descriptive name, like `fix/login-bug` or `feat/new-widget`.
+    ```
+    git checkout -b your-new-branch-name
+    ```
+7.  Make your changes! Write your code, and don't forget to add or update tests for your changes.
+8.  Run the test suite to ensure everything is working correctly.
+    ```
+    pytest
+    ```
+9.  Commit your changes following our commit message styleguide and push them to your fork.
+    ```
+    git add .
+    git commit -m "feat(widget): add the new super widget"
+    git push origin your-new-branch-name
+    ```
+10. Open a Pull Request from your forked branch to the `main` branch of the official Argenta repository. Provide a clear description of the problem and your solution. Include the relevant issue number if applicable.
 
 ### Improving The Documentation
-<!-- TODO
-Updating, improving and correcting the documentation
 
--->
+Good documentation is crucial for any project. We use Sphinx to generate our documentation from source files located in the `docs/` directory. We welcome any improvements, from fixing a simple typo to writing a whole new section.
+
+To improve the documentation, you can follow a similar workflow as for code contributions:
+
+1.  Ensure your development environment is set up as described in the "Your First Code Contribution" section.
+2.  Navigate to the documentation directory.
+    ```
+    cd docs
+    ```
+3.  To build the documentation locally and see your changes, run:
+    ```
+    make html
+    ```
+4.  Open `_build/html/index.html` in your web browser to preview the generated documentation.
+5.  Make your desired changes to the `.rst` or `.md` files in the `docs/source` directory.
+6.  Once you are happy with your changes, commit them and open a Pull Request. Use the `docs:` prefix in your commit message.
 
 ## Styleguides
-### Commit Messages
-<!-- TODO
 
--->
+### Commit Messages
+
+We follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification for our commit messages. This leads to more readable messages that are easy to follow when looking through the project history and allows for automated changelog generation.
+
+Each commit message consists of a **header**, a **body**, and a **footer**.
+
+<type>(<scope>): <subject>
+
+[optional body]
+
+[optional footer]
+
+The `<type>` must be one of the following:
+
+*   **feat**: A new feature for the user.
+*   **fix**: A bug fix for the user.
+*   **docs**: Documentation only changes.
+*   **style**: Changes that do not affect the meaning of the code (white-space, formatting, etc).
+*   **refactor**: A code change that neither fixes a bug nor adds a feature.
+*   **perf**: A code change that improves performance.
+*   **test**: Adding missing tests or correcting existing tests.
+*   **chore**: Changes to the build process or auxiliary tools and libraries.
+
+#### Examples
+
+A simple fix:
+fix: correct typo in user authentication flow
+
+A new feature with a scope:
+feat(api): add new endpoint for user profiles
+
+A more detailed commit with a body:
+docs: update installation guide for Windows
+
+The previous installation guide was missing a step for activating
+the virtual environment on Windows systems. This commit adds the
+correct command.
 
 ## Join The Project Team
-<!-- TODO -->
 
-<!-- omit in toc -->
-## Attribution
-This guide is based on the [contributing.md](https://contributing.md/generator)!
+We are always looking for enthusiastic and dedicated people to join our project team. If you are a regular contributor and have shown a deep understanding of the project's goals and architecture, you might be a good candidate to become a maintainer.
+
+Active members of the community can become team members. This typically involves:
+
+*   Consistently contributing high-quality code and documentation.
+*   Helping other users by answering questions and triaging issues.
+*   Reviewing Pull Requests from other contributors with constructive feedback.
+
+If you are interested in becoming a more permanent part of the team, the best way to start is by being an active and helpful member of the community. The existing maintainers will notice your efforts and may reach out with an invitation to join the team.
