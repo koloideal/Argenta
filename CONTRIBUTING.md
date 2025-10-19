@@ -207,11 +207,13 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0
 
 Each commit message consists of a **header**, a **body**, and a **footer**.
 
+```
 <type>(<scope>): <subject>
 
 [optional body]
 
 [optional footer]
+```
 
 The `<type>` must be one of the following:
 
