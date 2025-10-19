@@ -141,12 +141,12 @@ To get started with your first code contribution, please follow these steps to s
 
 1.  Fork the `Argenta` repository on GitHub.
 2.  Clone your forked repository to your local machine:
-    ```
+    ```bash
     git clone https://github.com/<YOUR_USERNAME>/Argenta.git
     cd Argenta
     ```
 3.  Create and activate a Python virtual environment.
-    ```
+    ```bash
     # For macOS/Linux
     python3 -m venv .venv
     source .venv/bin/activate
@@ -156,24 +156,24 @@ To get started with your first code contribution, please follow these steps to s
     .venv\Scripts\activate
     ```
 4.  Install the project dependencies, including the development tools.
-    ```
+    ```bash
     pip install -e .[dev]
     ```
 5.  Set up the pre-commit hooks to automatically check your code for style and quality before you commit.
-    ```
+    ```bash
     pre-commit install
     ```
 6.  Create a new branch for your feature or bug fix. Use a descriptive name, like `fix/login-bug` or `feat/new-widget`.
-    ```
+    ```bash
     git checkout -b your-new-branch-name
     ```
 7.  Make your changes! Write your code, and don't forget to add or update tests for your changes.
 8.  Run the test suite to ensure everything is working correctly.
-    ```
+    ```bash
     pytest
     ```
 9.  Commit your changes following our commit message styleguide and push them to your fork.
-    ```
+    ```bash
     git add .
     git commit -m "feat(widget): add the new super widget"
     git push origin your-new-branch-name
@@ -188,11 +188,11 @@ To improve the documentation, you can follow a similar workflow as for code cont
 
 1.  Ensure your development environment is set up as described in the "Your First Code Contribution" section.
 2.  Navigate to the documentation directory.
-    ```
+    ```bash
     cd docs
     ```
 3.  To build the documentation locally and see your changes, run:
-    ```
+    ```bash
     make html
     ```
 4.  Open `_build/html/index.html` in your web browser to preview the generated documentation.
