@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 18:46+0300\n"
+"POT-Creation-Date: 2025-10-20 14:52+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -19,15 +19,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: ../../root/error_handling.rst:2
-msgid "Обработка ошибок"
+#: ../../root/error_handling.rst:4
+#, fuzzy
+msgid "Стандартная обработка ошибок"
 msgstr "Errors handling"
 
-#: ../../root/error_handling.rst:5
-msgid "Конфигурация"
+#: ../../root/error_handling.rst:7
+msgid "О разделе"
 msgstr ""
 
-#: ../../root/error_handling.rst:7
+#: ../../root/error_handling.rst:9
 msgid ""
 "``Argenta`` в рантайме вызывает исключения в пограничных случаях "
 "пользовательского ввода. Все исключения обрабатываются системными "
@@ -38,38 +39,39 @@ msgid ""
 ":ref:`ниже <possible_errors>`"
 msgstr ""
 
-#: ../../root/error_handling.rst:13
+#: ../../root/error_handling.rst:15
 msgid ""
 "Все исключения никогда не остаются необработанными, так как у них есть "
 "стандартные хэндлеры. Поэтому переопределение опционально."
 msgstr ""
 
-#: ../../root/error_handling.rst:15
+#: ../../root/error_handling.rst:17
 msgid "Краткий сэмпл кода, переопределяющего хэндлер ввода пустой команды"
 msgstr ""
 
-#: ../../root/error_handling.rst:25
+#: ../../root/error_handling.rst:27
 msgid "Возможные исключения и нестандартное поведение"
 msgstr ""
 
-#: ../../root/error_handling.rst:28
+#: ../../root/error_handling.rst:30
 msgid "``UnprocessedInputFlagException``: Необрабатываемый ввод от пользователя"
 msgstr ""
 
-#: ../../root/error_handling.rst:30
+#: ../../root/error_handling.rst:32
 msgid ""
 "Исключение вызывается, когда пользователь вводит команду с некорректным "
-"синтаксисом и парсер не может *распарсить* её. В большинстве случаев это "
-"означат, что проблема в синтаксисе введённых флагов команды, подробнее о "
-"флагах и их синтаксисе в :ref:`Flags <root_flags>`."
+"синтаксисом и как следствие парсер не может *распарсить* её. В "
+"большинстве случаев это означат, что проблема в синтаксисе введённых "
+"флагов команды, подробнее о флагах и их синтаксисе в :ref:`Flags "
+"<root_flags>`."
 msgstr ""
 
-#: ../../root/error_handling.rst:34 ../../root/error_handling.rst:57
-#: ../../root/error_handling.rst:79 ../../root/error_handling.rst:102
+#: ../../root/error_handling.rst:36 ../../root/error_handling.rst:62
+#: ../../root/error_handling.rst:84 ../../root/error_handling.rst:107
 msgid "Дефолтный хэндлер выводит в консоль"
 msgstr ""
 
-#: ../../root/error_handling.rst:40
+#: ../../root/error_handling.rst:42
 msgid ""
 "Для переопределения стандартного поведения используется сеттер "
 "``.set_incorrect_input_syntax_handler(_: "
@@ -81,25 +83,31 @@ msgid ""
 "возвращает."
 msgstr ""
 
-#: ../../root/error_handling.rst:44
+#: ../../root/error_handling.rst:46
 msgid ""
 "Сэмпл кода, переопределяющего хэндлер ввода команды с некорректным "
 "синтаксисом:"
 msgstr ""
 
-#: ../../root/error_handling.rst:52
+#: ../../root/error_handling.rst:54
 msgid "``RepeatedInputFlagsException``: Повторяющийся флаг в введённой команде"
 msgstr ""
 
-#: ../../root/error_handling.rst:54
+#: ../../root/error_handling.rst:56
 msgid ""
 "Исключение вызывается, когда пользователь вводит команду с повторяющимся "
-"флагом, флаг(:ref:`InputFlag <input_flag>`) считается повторяющимся, если"
-" введён флаг с таким же именем, именно именем, без префикса. Подробнее о "
-"флагах и их синтаксисе в :ref:`Flags <root_flags>`."
+"флагом, пара введённых флагов(:ref:`InputFlag "
+"<root_api_command_input_flag>`) считается равной, если у них одинаковые "
+"имена. Подробнее о флагах и их синтаксисе в :ref:`Flags <root_flags>`."
 msgstr ""
 
-#: ../../root/error_handling.rst:63
+#: ../../root/error_handling.rst:60
+msgid ""
+"Сравнение на равенство у регистрируемых флагов(Flag) происходит иначе, "
+"подробнее в :ref:`Flag <root_flags>`."
+msgstr ""
+
+#: ../../root/error_handling.rst:68
 msgid ""
 "Для переопределения стандартного поведения используется сеттер "
 "``.set_repeated_input_flags_handler(_: "
@@ -111,23 +119,23 @@ msgid ""
 "возвращает."
 msgstr ""
 
-#: ../../root/error_handling.rst:67
+#: ../../root/error_handling.rst:72
 msgid ""
 "Сэмпл кода, переопределяющего хэндлер ввода команды с повторяющимися "
 "флагами:"
 msgstr ""
 
-#: ../../root/error_handling.rst:75
+#: ../../root/error_handling.rst:80
 msgid "``EmptyInputCommandException``: Введена пустая команда"
 msgstr ""
 
-#: ../../root/error_handling.rst:77
+#: ../../root/error_handling.rst:82
 msgid ""
 "Исключение вызывается, когда пользователь вводит команду в виде строки из"
 " пробельных символов - ``\\n``, ``\\t``, пробел и т.д."
 msgstr ""
 
-#: ../../root/error_handling.rst:85
+#: ../../root/error_handling.rst:90
 msgid ""
 "Для переопределения стандартного поведения используется сеттер "
 "``.set_empty_command_handler(_: EmptyCommandHandler)``, протокол "
@@ -136,22 +144,22 @@ msgid ""
 "которая не принимает аргументов и ничего не возвращает."
 msgstr ""
 
-#: ../../root/error_handling.rst:89
+#: ../../root/error_handling.rst:94
 msgid "Сэмпл кода, переопределяющего хэндлер ввода пустой команды:"
 msgstr ""
 
-#: ../../root/error_handling.rst:97
+#: ../../root/error_handling.rst:102
 msgid "``Поведение обработки неизвестной команды``: Введена неизвестная команда"
 msgstr ""
 
-#: ../../root/error_handling.rst:99
+#: ../../root/error_handling.rst:104
 msgid ""
 "Поведение триггерится, когда пользователь вводит команду, которая не "
 "зарегистрирована ни в одном роутере и не является алиасом ни для одной "
 "зарегистрированной команды."
 msgstr ""
 
-#: ../../root/error_handling.rst:108
+#: ../../root/error_handling.rst:113
 msgid ""
 "Для переопределения стандартного поведения используется сеттер "
 "``.set_unknown_command_handler(_: "
@@ -163,35 +171,35 @@ msgid ""
 "не возвращает."
 msgstr ""
 
-#: ../../root/error_handling.rst:112
+#: ../../root/error_handling.rst:117
 msgid "Сэмпл кода, переопределяющего хэндлер ввода неизвестной команды:"
 msgstr ""
 
-#: ../../root/error_handling.rst:120
+#: ../../root/error_handling.rst:125
 msgid "``Поведение выхода из приложения``: Введена команда выхода"
 msgstr ""
 
-#: ../../root/error_handling.rst:122
+#: ../../root/error_handling.rst:127
 msgid ""
 "Поведение триггерится, когда пользователь вводит команду, которая "
 "маркирована как команда завершения работы."
 msgstr ""
 
-#: ../../root/error_handling.rst:124
+#: ../../root/error_handling.rst:129
 msgid "Дефолтный хэндлер выводит в консоль текст и завершает работу приложения."
 msgstr ""
 
-#: ../../root/error_handling.rst:130
+#: ../../root/error_handling.rst:135
 msgid ""
 "Для переопределения стандартного поведения используется сеттер "
 "``.set_exit_command_handler(_: NonStandardBehaviorHandler[Response])``, "
 "протокол ``NonStandardBehaviorHandler[Response]`` соответствует "
 "``Callable[[Response], None]``, то есть хэндлер должен быть вызываемым "
 "объектом, к примеру функция или лямбда, которая принимает обязательный "
-"аргумент типа :ref:`Response <response>` и ничего не возвращает."
+"аргумент типа :ref:`Response <root_api_response>` и ничего не возвращает."
 msgstr ""
 
-#: ../../root/error_handling.rst:134
+#: ../../root/error_handling.rst:139
 msgid "Сэмпл кода, переопределяющего хэндлер ввода команды выхода:"
 msgstr ""
 
@@ -419,5 +427,41 @@ msgstr ""
 #~ " ни в одном роутере и не "
 #~ "является алиасом ни для одной "
 #~ "зарегистрированной команды."
+#~ msgstr ""
+
+#~ msgid "Конфигурация"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Исключение вызывается, когда пользователь "
+#~ "вводит команду с некорректным синтаксисом "
+#~ "и парсер не может *распарсить* её. "
+#~ "В большинстве случаев это означат, что"
+#~ " проблема в синтаксисе введённых флагов "
+#~ "команды, подробнее о флагах и их "
+#~ "синтаксисе в :ref:`Flags <root_flags>`."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Исключение вызывается, когда пользователь "
+#~ "вводит команду с повторяющимся флагом, "
+#~ "флаг(:ref:`InputFlag <input_flag>`) считается "
+#~ "повторяющимся, если введён флаг с таким"
+#~ " же именем, именно именем, без "
+#~ "префикса. Подробнее о флагах и их "
+#~ "синтаксисе в :ref:`Flags <root_flags>`."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Для переопределения стандартного поведения "
+#~ "используется сеттер ``.set_exit_command_handler(_: "
+#~ "NonStandardBehaviorHandler[Response])``, протокол "
+#~ "``NonStandardBehaviorHandler[Response]`` соответствует "
+#~ "``Callable[[Response], None]``, то есть "
+#~ "хэндлер должен быть вызываемым объектом, "
+#~ "к примеру функция или лямбда, которая"
+#~ " принимает обязательный аргумент типа "
+#~ ":ref:`Response <response>` и ничего не "
+#~ "возвращает."
 #~ msgstr ""
 

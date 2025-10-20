@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-16 17:03+0300\n"
+"POT-Creation-Date: 2025-10-20 14:52+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -24,6 +24,108 @@ msgid "Внедрение зависимостей"
 msgstr "Dependency Injection"
 
 #: ../../root/dependency_injection.rst:6
-msgid "мда мда мда"
+msgid ""
+"Внедрение зависимостей (Dependency Injection, DI) — это паттерн "
+"проектирования, который помогает писать слабосвязанный, легко тестируемый"
+" и расширяемый код. Вместо того чтобы хендлеры сами создавали нужные им "
+"объекты (зависимости) они лишь объявляют о необходимости в их получении, "
+"а ``Argenta`` \"внедряет\" их в хендлеры в момент вызова."
 msgstr ""
+
+#: ../../root/dependency_injection.rst:8
+msgid ""
+"``Argenta`` использует популярную библиотеку ``dishka`` для реализации "
+"DI, что позволяет вам декларативно объявлять зависимости прямо в "
+"сигнатурах ваших хендлеров. Более подробно про ``DI``, ``IoC``, ``API`` "
+"создания провайдеров и другое вы можете прочитать тут_."
+msgstr ""
+
+#: ../../root/dependency_injection.rst:14
+msgid "Основная идея"
+msgstr ""
+
+#: ../../root/dependency_injection.rst:16
+msgid ""
+"Представьте, что вашему хендлеру для работы нужен доступ к базе данных. "
+"Вместо того чтобы импортировать и инициализировать соединение внутри "
+"функции, вы просто объявляете его как аргумент с тайп-хинтом:"
+msgstr ""
+
+#: ../../root/dependency_injection.rst:19
+msgid ""
+"``argenta.di.FromDishka`` это алиас к ``dishka.FromDishka``, они "
+"полностью взаимозаменяемы."
+msgstr ""
+
+#: ../../root/dependency_injection.rst:24
+msgid ""
+"``Argenta`` -> ``dishka`` зарезолвит тайпхинты и внедрит зависимость с "
+"возвращаемым типом ``Connection``, прежде чем использовать зависимость её"
+" нужно создать, для этого нужно создать соответствующий провайдер."
+msgstr ""
+
+#: ../../root/dependency_injection.rst:29
+msgid "После создания провайдера, его нужно зарегистрировать в оркестраторе."
+msgstr ""
+
+#: ../../root/dependency_injection.rst:35
+msgid "Как это работает?"
+msgstr ""
+
+#: ../../root/dependency_injection.rst:37
+msgid "В основе DI в Argente лежат **провайдеры** и **контейнер**."
+msgstr ""
+
+#: ../../root/dependency_injection.rst:39
+msgid ""
+"**Провайдер (Provider)** — это \"рецепт\", который объясняет, как "
+"создавать и настраивать ту или иную зависимость (например, подключение к "
+"БД, API-клиент или любой другой сервис)."
+msgstr ""
+
+#: ../../root/dependency_injection.rst:40
+msgid ""
+"**Контейнер (IoC Container)** — это \"фабрика\", которая хранит все "
+"рецепты (провайдеры) и по запросу создаёт и выдаёт готовые зависимости."
+msgstr ""
+
+#: ../../root/dependency_injection.rst:43
+msgid "Встроенные провайдеры"
+msgstr ""
+
+#: ../../root/dependency_injection.rst:45
+msgid ""
+"``Argenta`` поставляется с предопределённым провайдером, который даёт "
+"доступ к важным системным зависимостям без какой-либо настройки. К "
+"примеру вы можете получить объект ``ArgSpace``, который представляет из "
+"себя распаршенные аргументы командной строки при запуске приложения."
+msgstr ""
+
+#: ../../root/dependency_injection.rst:47
+msgid ""
+"Краткий сэмпл кода, который получает объект ``ArgSpace`` и выводит в "
+"консоль аргумент с именем \"type\":"
+msgstr ""
+
+#: ../../root/dependency_injection.rst:53
+msgid "Обмен данными между хендлерами"
+msgstr ""
+
+#: ../../root/dependency_injection.rst:55
+msgid ""
+"Помимо DI, хендлеры могут общаться друг с другом в контексте приложения "
+"через **объект контекста** (в ``Argenta`` эту роль выполняет объект "
+"``Response``)."
+msgstr ""
+
+#: ../../root/dependency_injection.rst:57
+msgid "Каждый хендлер может записывать данные, читать, обновлять и удалять."
+msgstr ""
+
+#: ../../root/dependency_injection.rst:61
+msgid "Подробнее об этом можно прочитать в разделе :ref:`root_api_response`."
+msgstr ""
+
+#~ msgid "мда мда мда"
+#~ msgstr ""
 
