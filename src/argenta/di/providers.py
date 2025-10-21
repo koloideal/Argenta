@@ -15,4 +15,4 @@ class SystemProvider(Provider):
 
     @provide(scope=Scope.APP)
     def get_argspace(self) -> ArgSpace:
-        return self._arg_parser.parse_args()
+        return self._arg_parser.parsed_argspace

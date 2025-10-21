@@ -17,7 +17,7 @@
 Краткий сэмпл кода, переопределяющего хэндлер ввода
 пустой команды
 
-.. literalinclude:: ../code_snippets/error_handling_example_sample.py
+.. literalinclude:: ../code_snippets/error_handling_snippet.py
     :language: python
     :linenos:
 
@@ -46,7 +46,7 @@
 
 Сэмпл кода, переопределяющего хэндлер ввода команды с некорректным синтаксисом:
 
-.. literalinclude:: ../code_snippets/error_handling_example_sample2.py
+.. literalinclude:: ../code_snippets/error_handling_snippet2.py
    :language: python
    :linenos:
 
@@ -73,7 +73,7 @@
 
 Сэмпл кода, переопределяющего хэндлер ввода команды с повторяющимися флагами:
 
-.. literalinclude:: ../code_snippets/error_handling_example_sample3.py
+.. literalinclude:: ../code_snippets/error_handling_snippet3.py
    :language: python
    :linenos:
 
@@ -96,7 +96,7 @@
 
 Сэмпл кода, переопределяющего хэндлер ввода пустой команды:
 
-.. literalinclude:: ../code_snippets/error_handling_example_sample4.py
+.. literalinclude:: ../code_snippets/error_handling_snippet4.py
     :language: python
     :linenos:
 
@@ -120,7 +120,7 @@
 
 Сэмпл кода, переопределяющего хэндлер ввода неизвестной команды:
 
-.. literalinclude:: ../code_snippets/error_handling_example_sample5.py
+.. literalinclude:: ../code_snippets/error_handling_snippet5.py
     :language: python
     :linenos:
 
@@ -143,6 +143,6 @@
 
 Сэмпл кода, переопределяющего хэндлер ввода команды выхода:
 
-.. literalinclude:: ../code_snippets/error_handling_example_sample6.py
+.. literalinclude:: ../code_snippets/error_handling_snippet6.py
     :language: python
     :linenos:

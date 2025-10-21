@@ -13,6 +13,7 @@ Router
 -------------
 
 .. code-block:: python
+   :linenos:
 
       __init__(self, title: str | None = None, 
                disable_redirect_stdout: bool = False) -> None
@@ -38,6 +39,7 @@ Router
    **Пример использования:**
 
    .. literalinclude:: ../../code_snippets/router_snippet.py
+      :linenos:
       :language: python
       
 -----
@@ -62,7 +64,7 @@ Router
 
 .. py:exception:: TriggerContainSpacesException
 
-   Выбрасывается, если триггер команды, передаваемый в `Command`, содержит пробелы. Триггеры команд должны быть одним словом.
+   Выбрасывается, если триггер команды, передаваемый в ``Command``, содержит пробелы. Триггеры команд должны быть одним словом.
 
    **Неправильно:** ``Command("add user")``
    **Правильно:** ``Command("add-user")``
@@ -74,16 +76,14 @@ Router
    **Пример, вызывающий исключение:**
 
    .. code-block:: python
+      :linenos:
 
       Command("send", flags=[
-          Flag("message", short_name="m"),
-          Flag("recipient", short_name="m")  # Ошибка: short_name 'm' повторяется
+          Flag("recipient"),
+          Flag("recipient") 
       ])
 
 .. py:exception:: RequiredArgumentNotPassedException
 
-   Это исключение выбрасывается на этапе выполнения, а не регистрации. Оно возникает, если обработчик команды ожидает обязательный аргумент, который не был предоставлен при вызове.
-
-   .. note::
-      Это исключение, как правило, должно перехватываться и обрабатываться внутри `Orchestrator` для вывода пользователю сообщения об ошибке, а не приводить к падению всего приложения.
+   Это исключение возникает, если какой-либо обработчик команды не ожидает обязательный аргумент, которым является объект ответа(``Response``).
 

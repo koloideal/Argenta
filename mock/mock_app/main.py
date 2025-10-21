@@ -4,13 +4,7 @@ from argenta import App, Orchestrator
 from argenta.app import PredefinedMessages, DynamicDividingLine, AutoCompleter
 from argenta.orchestrator import ArgParser
 from argenta.orchestrator.argparser import BooleanArgument, ValueArgument
-from dishka import Provider, provide, Scope  # type: ignore
 
-
-class temProvider(Provider):
-    @provide(scope=Scope.APP)
-    def get_apace(self) -> int:
-        return 1234
 
 arg_parser: ArgParser = ArgParser(
     processed_args=[
@@ -22,7 +16,7 @@ app: App = App(
     dividing_line=DynamicDividingLine(),
     autocompleter=AutoCompleter(),
 )
-orchestrator: Orchestrator = Orchestrator(arg_parser, custom_providers=[temProvider()])
+orchestrator: Orchestrator = Orchestrator(arg_parser)
 
 
 def main():

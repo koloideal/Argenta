@@ -70,6 +70,6 @@ Dividing Lines
 Пример конфигурации
 --------------------
 
-.. literalinclude:: ../../../code_snippets/dividing_lines_example_sample.py
+.. literalinclude:: ../../../code_snippets/dividing_lines_snippet.py
     :language: python
     :linenos:

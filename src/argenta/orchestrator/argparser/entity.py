@@ -57,9 +57,17 @@ class ArgParser:
         self.description: str = description
         self.epilog: str = epilog
         self.processed_args: list[ValueArgument | BooleanArgument] = processed_args
+        
+        self.parsed_argspace: ArgSpace = ArgSpace([])
 
         self._core: ArgumentParser = ArgumentParser(prog=name, description=description, epilog=epilog)
+        self._register_args(processed_args)
 
+    def _parse_args(self) -> None:
+        self.parsed_argspace = ArgSpace.from_namespace(namespace=self._core.parse_args(),
+                                                   processed_args=self.processed_args)
+        
+    def _register_args(self, processed_args: list[ValueArgument | BooleanArgument]) -> None:
         for arg in processed_args:
             if isinstance(arg, BooleanArgument):
                 _ = self._core.add_argument(arg.string_entity,
@@ -74,7 +82,3 @@ class ArgParser:
                                             choices=arg.possible_values,
                                             required=arg.is_required,
                                             deprecated=arg.is_deprecated)
-
-    def parse_args(self) -> ArgSpace:
-        return ArgSpace.from_namespace(namespace=self._core.parse_args(),
-                                       processed_args=self.processed_args)
