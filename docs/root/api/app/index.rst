@@ -10,7 +10,8 @@ App
 Инициализация
 -------------
 
-.. code:: rust
+.. code-block:: rust
+   :linenos:
 
     AVAILABLE_DIVIDING_LINES: TypeAlias = StaticDividingLine | DynamicDividingLine
     DEFAULT_DIVIDING_LINE: StaticDividingLine = StaticDividingLine()
@@ -19,7 +20,8 @@ App
     DEFAULT_AUTOCOMPLETER: AutoCompleter = AutoCompleter()
     DEFAULT_EXIT_COMMAND: Command = Command("Q", description="Exit command")
 
-.. code:: python
+.. code-block:: python
+    :linenos:
     
     def __init__(self, *, prompt: str = "What do you want to do?\n\n", 
                 initial_message: str = "Argenta\n", 
@@ -33,7 +35,7 @@ App
                 autocompleter: AutoCompleter = DEFAULT_AUTOCOMPLETER, 
                 print_func: Printer = DEFAULT_PRINT_FUNC) -> None
 
-Создает и настраивает экземпляр приложения `Argenta`.
+Создает и настраивает экземпляр приложения ``Argenta``.
 
     * ``prompt``:  Строка-приглашение, которая отображается перед вводом каждой команды. По умолчанию: **"What do you want to do?\\n\\n"**.
     * ``initial_message``: Приветственное сообщение, которое выводится при запуске приложения.
@@ -47,55 +49,98 @@ App
     * ``autocompleter``: Объект, отвечающий за логику автодополнения команд.
     * ``print_func``: Функция, используемая для вывода всех системных сообщений. По умолчанию используется ``rich.console.Console().print``.
 
+-----
+    
 Основные методы
 ---------------
 
-.. py:method:: include_router(self, router: Router) -> None
+- .. py:method:: include_router(self, router: Router) -> None
 
-   Регистрирует один `Router` в приложении. Все команды, определенные в этом роутере, становятся доступными для вызова.
+    Регистрирует один ``Router`` в приложении. Все команды, определенные в этом роутере, становятся доступными для вызова.
+    
+    :param router: Объект роутера, который нужно зарегистрировать.
 
-   :param router: Объект роутера, который нужно зарегистрировать.
+- .. py:method:: include_routers(self, *routers: Router) -> None
 
-.. py:method:: include_routers(self, *routers: Router) -> None
+    Регистрирует несколько роутеров одновременно. Является удобной оберткой над ``include_router``.
+    
+    :param routers: Последовательность объектов ``Router`` для регистрации.
 
-   Регистрирует несколько роутеров одновременно. Является удобной оберткой над `include_router`.
-
-   :param routers: Последовательность объектов `Router` для регистрации.
-
-.. py:method:: add_message_on_startup(self, message: str) -> None
-
-   Добавляет дополнительное текстовое сообщение, которое будет выведено на экран при запуске приложения, сразу после `initial_message`.
-
-   :param message: Строка с сообщением.
+- .. py:method:: add_message_on_startup(self, message: str) -> None
+    
+    Добавляет дополнительное текстовое сообщение, которое будет выведено на экран при запуске приложения, сразу после `initial_message`.
+    
+    :param message: Строка с сообщением.
+    
+-----
 
 Методы установки обработчиков
 -------------------------------
 
-`App` позволяет гибко настраивать реакцию на различные события, такие как ошибки ввода или ввод неизвестной команды.
+``App`` позволяет гибко настраивать реакцию на различные события, такие как ошибки ввода или ввод неизвестной команды.
+
+.. hint::
+   Подробнее о исключениях и их обработке в соответствующем :ref:`разделе документации <root_error_handling>`.
+   
+-----
 
 .. py:method:: set_description_message_pattern(self, handler: DescriptionMessageGenerator) -> None
 
    Устанавливает пользовательский шаблон для форматирования строки, описывающей доступную команду (триггер + описание).
+   
+   ``DescriptionMessageGenerator`` -> ``Callable[[str, str], str]``
+   
+   Где первый аргумент - это триггер команды, а второй - ее описание, возвращает строку, которая является форматированной строкой.
+   
+------
 
 .. py:method:: set_incorrect_input_syntax_handler(self, handler: NonStandardBehaviorHandler[str]) -> None
 
    Устанавливает обработчик, который вызывается при некорректном синтаксисе флагов в введенной команде.
+   
+   ``NonStandardBehaviorHandler[str]`` -> ``Callable[[str], None]``
+   
+   Где первый и единственный аргумент - это необработанная строка пользовательского ввода.
+   
+------
 
 .. py:method:: set_repeated_input_flags_handler(self, handler: NonStandardBehaviorHandler[str]) -> None
 
    Устанавливает обработчик для ситуации, когда пользователь вводит один и тот же флаг несколько раз.
+   
+   ``NonStandardBehaviorHandler[str]`` -> ``Callable[[str], None]``
+   
+   Где первый и единственный аргумент - это необработанная строка пользовательского ввода.
+   
+------
 
 .. py:method:: set_unknown_command_handler(self, handler: NonStandardBehaviorHandler[InputCommand]) -> None
 
    Устанавливает обработчик, который срабатывает, если введенная команда не была найдена ни в одном из зарегистрированных роутеров.
+   
+   ``NonStandardBehaviorHandler[InputCommand]`` -> ``Callable[[InputCommand], None]``
+   
+   Где первый и единственный аргумент - это распаршенный в объект InputCommand ввод пользователя.
+   
+-----
 
 .. py:method:: set_empty_command_handler(self, handler: EmptyCommandHandler) -> None
 
    Устанавливает обработчик для случая, когда пользователь отправляет пустую строку вместо команды.
+   
+   ``EmptyCommandHandler`` -> ``Callable[[], None]``
+   
+   Не принимает и не возвращает ничего.
+   
+-----
 
 .. py:method:: set_exit_command_handler(self, handler: NonStandardBehaviorHandler[Response]) -> None
 
-   Позволяет переопределить стандартное поведение при вызове команды выхода. По умолчанию просто выводится `farewell_message`.
+   Позволяет переопределить стандартное поведение при вызове команды выхода. По умолчанию просто выводится ``farewell_message``.
+   
+   ``NonStandardBehaviorHandler[Response]`` -> ``Callable[[Response], None]``
+   
+   Где первый и единственный аргумент - это объект ответа, ``Response``.
 
 .. toctree::
     :hidden:

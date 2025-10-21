@@ -20,16 +20,19 @@
 
 .. literalinclude:: ../code_snippets/dependency_injection_example_sample.py
    :language: python
+   :linenos:
 
 ``Argenta`` -> ``dishka`` зарезолвит тайпхинты и внедрит зависимость с возвращаемым типом ``Connection``, прежде чем использовать зависимость её нужно создать, для этого нужно создать соответствующий провайдер.
 
 .. literalinclude:: ../code_snippets/dependency_injection_example_sample2.py
    :language: python
+   :linenos:
    
 После создания провайдера, его нужно зарегистрировать в оркестраторе.
 
 .. literalinclude:: ../code_snippets/dependency_injection_example_sample3.py
    :language: python
+   :linenos:
 
 Как это работает?
 -----------------
@@ -48,6 +51,7 @@
 
 .. literalinclude:: ../code_snippets/dependency_injection_example_sample4.py
    :language: python
+   :linenos:
 
 Обмен данными между хендлерами
 ------------------------------

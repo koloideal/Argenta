@@ -13,11 +13,13 @@
 
 .. literalinclude:: ../code_snippets/quickstart_example_routers.py
    :language: python
+   :linenos:
 
 3. **Определение приложения и оркестратора**. Для запуска приложения необходимо вызвать ``.include_router()`` у созданного приложения и передать ему раннее созданный роутер, после этого необходимо вызвать ``.start_polling()`` у созданного оркестратора и передать ему созданное приложение.
 
 .. literalinclude:: ../code_snippets/quickstart_example_main.py
    :language: python
+   :linenos:
 
 4. **Запуск приложения**. Запускаем приложение как обычный скрипт.
 

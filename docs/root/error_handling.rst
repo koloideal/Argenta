@@ -18,7 +18,8 @@
 пустой команды
 
 .. literalinclude:: ../code_snippets/error_handling_example_sample.py
-   :language: python
+    :language: python
+    :linenos:
 
 
 .. _possible_errors:
@@ -47,6 +48,7 @@
 
 .. literalinclude:: ../code_snippets/error_handling_example_sample2.py
    :language: python
+   :linenos:
 
 ---------------
 
@@ -72,7 +74,8 @@
 Сэмпл кода, переопределяющего хэндлер ввода команды с повторяющимися флагами:
 
 .. literalinclude:: ../code_snippets/error_handling_example_sample3.py
-    :language: python
+   :language: python
+   :linenos:
 
 ---------------
 
@@ -95,6 +98,7 @@
 
 .. literalinclude:: ../code_snippets/error_handling_example_sample4.py
     :language: python
+    :linenos:
 
 ---------------
 
@@ -118,6 +122,7 @@
 
 .. literalinclude:: ../code_snippets/error_handling_example_sample5.py
     :language: python
+    :linenos:
 
 ---------------
 
@@ -140,3 +145,4 @@
 
 .. literalinclude:: ../code_snippets/error_handling_example_sample6.py
     :language: python
+    :linenos:
