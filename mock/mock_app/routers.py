@@ -6,7 +6,7 @@ from argenta.router.defaults import system_router
 from dishka import FromDishka
 
 
-work_router: Router = Router(title="Work points:", disable_redirect_stdout=True)
+work_router: Router = Router(title="Work points:")
 
 flag = Flag("csdv", possible_values=PossibleValues.NEITHER)
 

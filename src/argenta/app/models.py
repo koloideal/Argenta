@@ -465,7 +465,8 @@ class App(BaseApp):
             if self._is_exit_command(input_command):
                 system_router.finds_appropriate_handler(input_command)
                 self._autocompleter.exit_setup(
-                    list(self._current_matching_triggers_with_routers.keys())
+                    list(self._current_matching_triggers_with_routers.keys()),
+                    self._ignore_command_register
                 )
                 return
 

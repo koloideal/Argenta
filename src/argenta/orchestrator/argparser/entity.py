@@ -65,7 +65,7 @@ class ArgParser:
 
     def _parse_args(self) -> None:
         self.parsed_argspace = ArgSpace.from_namespace(namespace=self._core.parse_args(),
-                                                   processed_args=self.processed_args)
+                                                       processed_args=self.processed_args)
         
     def _register_args(self, processed_args: list[ValueArgument | BooleanArgument]) -> None:
         for arg in processed_args:

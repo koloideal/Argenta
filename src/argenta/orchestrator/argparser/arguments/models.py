@@ -75,10 +75,10 @@ class BooleanArgument(BaseArgument):
 
 class InputArgument:
     def __init__(self, name: str,
-                       value: str | None,
+                       value: str | Literal[True],
                        founder_class: type[BaseArgument]) -> None:
         self.name: str = name
-        self.value: str | None = value
+        self.value: str | Literal[True] = value
         self.founder_class: type[BaseArgument] = founder_class
 
     def __str__(self) -> str:

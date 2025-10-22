@@ -14,7 +14,7 @@ arg_parser: ArgParser = ArgParser(
 )
 app: App = App(
     dividing_line=DynamicDividingLine(),
-    autocompleter=AutoCompleter(),
+    autocompleter=AutoCompleter(history_filename="history.txt")
 )
 orchestrator: Orchestrator = Orchestrator(arg_parser)
 
