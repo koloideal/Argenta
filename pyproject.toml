@@ -13,6 +13,26 @@ dependencies = [
     "dishka>=1.7.2",
 ]
 
+[dependency-groups]
+linters = [
+    "isort>=7.0.0",
+    "ruff>=0.12.12",
+    "wemake-python-styleguide>=0.17.0",
+]
+typecheckers = [
+    "mypy>=1.14.1",
+]
+docs = [
+    "shibuya>=2025.9.25",
+    "sphinx>=8.2.3",
+    "sphinx-autobuild>=2025.8.25",
+    "sphinx-intl>=2.3.2",
+]
+tests = [
+    "pyfakefs>=5.5.0",
+    "pytest>=8.3.2",
+]
+
 [tool.ruff]
 exclude = [
     ".idea",
@@ -32,16 +52,3 @@ disable_error_code = "import-untyped"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[dependency-groups]
-dev = [
-    "isort>=7.0.0",
-    "mypy>=1.14.1",
-    "pytest>=8.3.2",
-    "ruff>=0.12.12",
-    "shibuya>=2025.9.25",
-    "sphinx>=8.2.3",
-    "sphinx-autobuild>=2025.8.25",
-    "sphinx-intl>=2.3.2",
-    "wemake-python-styleguide>=0.17.0",
-]
