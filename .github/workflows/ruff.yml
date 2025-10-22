@@ -28,4 +28,4 @@ jobs:
         uv sync --group linters
 
     - name: Run linter
-      run: ruff check ./src
+      run: uv run python -m ruff check ./src

@@ -28,4 +28,4 @@ jobs:
         uv sync --group typecheckers
 
     - name: Run type checker
-      run: mypy -p argenta
+      run: uv run python -m mypy -p argenta
