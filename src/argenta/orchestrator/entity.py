@@ -22,7 +22,7 @@ class Orchestrator:
         self._arg_parser: ArgParser = arg_parser
         self._custom_providers: list[Provider] = custom_providers
         self._auto_inject_handlers: bool = auto_inject_handlers
-        
+
         self._arg_parser._parse_args()
 
     def start_polling(self, app: App) -> None:

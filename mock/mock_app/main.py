@@ -12,11 +12,14 @@ arg_parser: ArgParser = ArgParser(
         ValueArgument(name="required", is_required=True),
     ]
 )
+
+print(arg_parser.parsed_argspace.all_arguments)
 app: App = App(
     dividing_line=DynamicDividingLine(),
     autocompleter=AutoCompleter(history_filename="history.txt")
 )
 orchestrator: Orchestrator = Orchestrator(arg_parser)
+print(arg_parser.parsed_argspace.all_arguments)
 
 
 def main():
