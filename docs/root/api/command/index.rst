@@ -13,4 +13,4 @@ Command
 .. _input_command:
 
 InputCommand
-============
+~~~~~~~~~~~~

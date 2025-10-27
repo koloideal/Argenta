@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-15 16:09+0300\n"
+"POT-Creation-Date: 2025-10-27 11:56+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -19,7 +19,121 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: ../../root/api/orchestrator/index.rst:2
+#: ../../root/api/orchestrator/index.rst:4
 msgid "Orchestrator"
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:6
+msgid ""
+"Объект ``Orchestrator`` в ``Argenta`` представляет собой высокоуровневый "
+"компонент, который стоит над ``App`` и отвечает за \"оркестрацию\" всего "
+"приложения. Его главная задача — инициализация и конфигурация сложных "
+"систем, таких как внедрение зависимостей (``di``), парсинг аргументов "
+"командной строки при запуске, и запуск основного цикла приложения."
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:8
+msgid ""
+"В то время как ``App`` отвечает за интерактивную сессию (ввод команд, "
+"роутинг), ``Orchestrator`` подготавливает окружение, в котором ``App`` "
+"будет работать. Он является точкой входа для приложений."
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:13
+msgid "Инициализация"
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:28
+msgid "Создает и конфигурирует экземпляр ``Orchestrator``."
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:30
+msgid ""
+"``arg_parser``: Экземпляр "
+":class:`argenta.orchestrator.argparser.ArgParser`, который отвечает за "
+"парсинг аргументов, переданных скрипту при запуске из командной строки "
+"(не путать с командами, вводимыми в интерактивном режиме)."
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:31
+msgid ""
+"``custom_providers``: Список пользовательских провайдеров "
+"``dishka.Provider``. Это основной механизм для добавления ваших "
+"собственных сервисов (например, подключений к базе данных, клиентов API) "
+"в контейнер внедрения зависимостей."
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:32
+msgid ""
+"``auto_inject_handlers``: Если **True** (по умолчанию), ``dishka`` будет "
+"автоматически инспектировать сигнатуры обработчиков команд и внедрять в "
+"них требуемые зависимости из контейнера."
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:37
+msgid "Основные методы"
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:41
+msgid ""
+"Это главный метод, который запускает все приложение. Он выполняет "
+"следующие шаги:"
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:43
+msgid ""
+"**Настройка DI**: На основе системного провайдера (``SystemProvider``, "
+"который предоставляет ``ArgParser``) и списка ``custom_providers`` "
+"создается ``ioc`` - контейнер и настраивается внедрение зависимостей."
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:45
+msgid ""
+"**Запуск основного цикла**: Запускает бесконечный цикл ожидания и "
+"обработки пользовательского ввода."
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst
+msgid "Parameters"
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:47
+msgid "Экземпляр класса :class:`~argenta.app.models.App`, который будет запущен."
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:52
+msgid "Назначение и использование"
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:54
+msgid ""
+"``Orchestrator`` абстрагирует от вас всю сложность, связанную с "
+"настройкой внедрения зависимостей и парсингом стартовых аргументов. "
+"Типичный сценарий использования ``Argenta`` выглядит следующим образом:"
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:56
+msgid "Создать экземпляр ``App`` и настроить его (добавить роутеры)."
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:57
+msgid ""
+"Создать экземпляр ``Orchestrator``, передав в него необходимые "
+"DI-провайдеры и, возможно, парсер аргументов."
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:58
+msgid "Вызвать ``orchestrator.start_polling(app)``, чтобы запустить приложение."
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:60
+msgid ""
+"Такой подход позволяет сохранить код чистым и разделяет ответственность: "
+"``App`` отвечает за логику интерактивной сессии, а ``Orchestrator`` — за "
+"подготовку и запуск окружения."
+msgstr ""
+
+#: ../../root/api/orchestrator/index.rst:63
+msgid "Пример использования"
 msgstr ""
 

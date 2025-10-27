@@ -39,7 +39,7 @@ ArgParser
 
 -----
    
-Назначение и интеграция
+Лучшие практики
 ------------------------
 
 Использование атрибута ``parsed_argspace`` рекомендуется только на этапе настройки приложения, в хэндлерах лучшей практикой является получение ``ArgSpace`` через ``di``,  подробнее :ref:`тут <root_dependency_injection>`.
@@ -50,3 +50,36 @@ ArgParser
 .. literalinclude:: ../../../code_snippets/argparser_snippet.py
    :language: python
    :linenos:
+   
+Обработка ошибок
+----------------
+
+.. seealso:: 
+   Про типы аргументов подробнее в :ref:`Arguments <root_api_orchestrator_arguments>`
+
+При работе с аргументами командной строки стандартный ``ArgumentParser`` автоматически обрабатывает следующие ситуации:
+
+**Отсутствие обязательного аргумента:**
+
+.. code-block:: bash
+
+    $ python app.py
+    usage: MyApp [-h] --config CONFIG
+    MyApp: error: the following arguments are required: --config
+
+**Недопустимое значение из списка choices:**
+
+.. code-block:: bash
+
+    $ python app.py --config app.yaml --log-level TRACE
+    usage: MyApp [-h] --log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}
+    MyApp: error: argument --log-level: invalid choice: 'TRACE'
+
+**Использование устаревшего аргумента:**
+
+При использовании аргумента с ``is_deprecated=True`` выводится предупреждение, но выполнение продолжается:
+
+.. code-block:: bash
+
+    $ python app.py --old-param value
+    Warning: argument --old-param is deprecated

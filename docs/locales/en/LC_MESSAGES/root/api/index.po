@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-15 16:09+0300\n"
+"POT-Creation-Date: 2025-10-27 11:56+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -19,7 +19,53 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: ../../root/api/index.rst:2
-msgid "Публичный API"
+#: ../../root/api/index.rst:5
+msgid "Публичное API"
 msgstr ""
+
+#: ../../root/api/index.rst:8
+msgid "Описание раздела"
+msgstr ""
+
+#: ../../root/api/index.rst:10
+msgid ""
+"В данном разделе приводятся сведения о публичной части интерфейса "
+"библиотеки:"
+msgstr ""
+
+#: ../../root/api/index.rst:12
+msgid ""
+"Классы и функции, предназначенные для прямой интеграции в сторонние "
+"приложения."
+msgstr ""
+
+#: ../../root/api/index.rst:13
+msgid ""
+"Советы по совместимости, ограничения и поддерживаемые сценарии "
+"использования."
+msgstr ""
+
+#: ../../root/api/index.rst:14
+msgid ""
+"Примеры типовой интеграции, подробные сигнатуры методов и описание "
+"возвращаемых сущностей."
+msgstr ""
+
+#: ../../root/api/index.rst:15
+msgid ""
+"Гарантии стабильности API, поддержка и обратная совместимость между "
+"версиями."
+msgstr ""
+
+#: ../../root/api/index.rst:17
+msgid ""
+"Интерфейсы, не указанные в этом разделе, считаются внутренними и не "
+"подлежат использованию вне самой библиотеки. При разработке собственных "
+"решений рекомендуем обращаться именно к описанным здесь компонентам — это"
+" даст стабильность и гарантии на будущее развитие ваших продуктов с "
+"использованием ``Argenta``."
+msgstr ""
+
+#~ msgid "Публичный API"
+#~ msgstr ""
 

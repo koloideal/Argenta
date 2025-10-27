@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-15 16:09+0300\n"
+"POT-Creation-Date: 2025-10-27 11:56+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -20,10 +20,129 @@ msgstr ""
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../root/api/orchestrator/argparser.rst:4
-msgid "Argparser"
+msgid "ArgParser"
 msgstr ""
 
 #: ../../root/api/orchestrator/argparser.rst:6
-msgid "nu"
+msgid ""
+"Объект ``ArgParser`` в ``Argenta`` предназначен для разбора и обработки "
+"**аргументов командной строки**, которые передаются вашему приложению при"
+" его запуске. Важно не путать их с флагами команд, которые пользователь "
+"вводит в интерактивном режиме работы приложения. ``ArgParser`` позволяет "
+"вашему приложению получать внешнюю конфигурацию в момент старта, "
+"например, путь к файлу настроек, флаги для отладки или режим запуска."
 msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:11
+msgid "Инициализация"
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:21
+msgid "Создает экземпляр парсера аргументов командной строки."
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:23
+msgid ""
+"``processed_args``: Список аргументов, которые будут обрабатываться и "
+"парситься при запуске приложения, подробнее :ref:`тут "
+"<root_api_orchestrator_arguments>`."
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:24
+msgid "``name``: Имя приложения, которое будет отображаться в справке."
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:25
+msgid ""
+"``description``: Описание приложения, которое будет отображаться в "
+"справке."
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:26
+msgid ""
+"``epilog``: Дополнительная информация, которая будет отображаться в конце"
+" справки."
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:29
+msgid "Основные методы и атрибуты"
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:33
+msgid ""
+"Экземпляр класса ``ArgSpace``, который содержит все обработанные "
+"аргументы командной строки, подробнее :ref:`тут "
+"<root_api_orchestrator_argspace>`."
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:36
+msgid ""
+"До инициализации инстанса ``Orchestrator``, которому в конструктор был "
+"передан соответствующий экземпляр ``ArgParser``, атрибут "
+"``parsed_argspace`` будет равен пустому ``ArgSpace``."
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:38
+msgid ""
+"Парсинг и валидация аргументов командной строки происходит при "
+"инициализации ``Orchestrator``, соответственно использование атрибута "
+"``parsed_argspace`` **целесообразно только после инициализации** "
+"``Orchestrator``."
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:43
+msgid "Лучшие практики"
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:45
+msgid ""
+"Использование атрибута ``parsed_argspace`` рекомендуется только на этапе "
+"настройки приложения, в хэндлерах лучшей практикой является получение "
+"``ArgSpace`` через ``di``,  подробнее :ref:`тут "
+"<root_dependency_injection>`."
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:48
+msgid "Пример использования"
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:55
+msgid "Обработка ошибок"
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:58
+msgid ""
+"Про типы аргументов подробнее в :ref:`Arguments "
+"<root_api_orchestrator_arguments>`"
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:60
+msgid ""
+"При работе с аргументами командной строки стандартный ``ArgumentParser`` "
+"автоматически обрабатывает следующие ситуации:"
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:62
+msgid "**Отсутствие обязательного аргумента:**"
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:70
+msgid "**Недопустимое значение из списка choices:**"
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:78
+msgid "**Использование устаревшего аргумента:**"
+msgstr ""
+
+#: ../../root/api/orchestrator/argparser.rst:80
+msgid ""
+"При использовании аргумента с ``is_deprecated=True`` выводится "
+"предупреждение, но выполнение продолжается:"
+msgstr ""
+
+#~ msgid "Argparser"
+#~ msgstr ""
+
+#~ msgid "nu"
+#~ msgstr ""
 

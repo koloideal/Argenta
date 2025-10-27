@@ -1,0 +1,173 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-27 11:56+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/api/orchestrator/argspace.rst:4
+msgid "ArgSpace"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:6
+msgid ""
+"Объект ``ArgSpace`` является контейнером для хранения и управления "
+"распаршенными аргументами командной строки в приложении ``Argenta``. Его "
+"основная задача — предоставить удобный интерфейс для доступа к значениям "
+"аргументов, переданных при запуске приложения."
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:8
+msgid ""
+"``ArgSpace`` автоматически создается после парсинга аргументов через "
+"``ArgParser`` и содержит коллекцию объектов ``InputArgument``, "
+"представляющих собой финальные значения всех переданных параметров "
+"командной строки."
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:13
+msgid "Инициализация"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:20
+msgid "Создает новое пространство аргументов."
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:22
+msgid ""
+"``all_arguments`` : Список распаршенных аргументов в виде объектов "
+"``InputArgument``. Каждый элемент содержит имя, значение и тип исходного "
+"аргумента."
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:24
+msgid "**Атрибуты:**"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:28
+msgid ""
+"Список всех распаршенных аргументов типа ``InputArgument``. Содержит все "
+"аргументы, переданные при запуске приложения, включая значения по "
+"умолчанию для не указанных параметров."
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:33
+msgid "Методы"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:36
+msgid "get_by_name"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:43
+msgid "Возвращает аргумент по его имени."
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst
+msgid "param name"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:45
+msgid "Имя искомого аргумента"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst
+msgid "return"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:46
+msgid ""
+"Объект ``InputArgument`` с указанным именем или ``None``, если аргумент "
+"не найден"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:48
+msgid ""
+"Метод выполняет линейный поиск по списку ``all_arguments`` и возвращает "
+"аргумент с соответствующим именем. Если аргумент не найден, возвращается "
+"``None``."
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:50
+#: ../../root/api/orchestrator/argspace.rst:86
+msgid "**Пример использования:**"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:72
+msgid "get_by_type"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:79
+msgid "Получает все аргументы определенного типа."
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst
+msgid "param arg_type"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:81
+msgid "Тип аргумента (``BooleanArgument`` или ``ValueArgument``)"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:82
+msgid ""
+"Список аргументов указанного типа или пустой список, если аргументы не "
+"найдены"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:84
+msgid ""
+"Метод фильтрует ``all_arguments`` по атрибуту ``founder_class`` каждого "
+"``InputArgument`` и возвращает только те аргументы, которые были созданы "
+"из указанного типа."
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:109
+msgid "InputArgument"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:112
+msgid ""
+"Документация по ``InputArgument`` находится :ref:`тут "
+"<root_api_orchestrator_arguments_inputargument>`"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:117
+msgid "Примеры испольования"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:119
+msgid ""
+"``ArgSpace`` используется для доступа к значениям аргументов после "
+"запуска приложения. Типичный сценарий работы включает парсинг аргументов "
+"через ``ArgParser`` и последующее извлечение значений из ``ArgSpace``."
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:121
+msgid "**Полный пример:**"
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:126
+msgid ""
+"Доступ к аргументам из хэндлеров осуществляется с помощью ``di``, "
+"подробнее :ref:`тут <root_dependency_injection>`."
+msgstr ""
+
+#: ../../root/api/orchestrator/argspace.rst:131
+msgid "**Запуск приложения:**"
+msgstr ""
+

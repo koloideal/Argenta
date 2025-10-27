@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-15 16:09+0300\n"
+"POT-Creation-Date: 2025-10-27 11:56+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -20,6 +20,140 @@ msgstr ""
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../root/api/app/dividing_lines.rst:4
-msgid "DividingLines"
+msgid "Dividing Lines"
 msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:6
+msgid ""
+"Разделительные линии в ``Argenta`` играют важную роль в визуальном "
+"оформлении консольного интерфейса. Они используются для структурирования "
+"вывода, отделения блоков информации друг от друга (например, вывода "
+"команды от следующего приглашения к вводу). Библиотека предлагает два "
+"подхода к управлению разделительными линиями: статический и динамический,"
+" каждый из которых имеет свои преимущества и сценарии использования."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:12
+msgid "Класс ``StaticDividingLine``"
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:14
+msgid ""
+"``StaticDividingLine`` — это класс, который создает разделительную линию "
+"**фиксированной** длины. Длина и символ-заполнитель задаются при "
+"инициализации объекта. Этот тип линии полезен, когда вам нужен "
+"предсказуемый и унифицированный внешний вид интерфейса, независимо от "
+"содержимого вывода."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:22
+msgid "Создает экземпляр статической разделительной линии."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:24
+msgid ""
+"``unit_part``: Символ, который будет использоваться для построения линии."
+" Учитывается только первый символ строки. По умолчанию: ``-``."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:25
+msgid ""
+"``length``: Целое число, определяющее фиксированную длину линии в "
+"символах. Является keyword-only аргументом. По умолчанию: ``25``."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:30
+msgid "Класс ``DynamicDividingLine``"
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:32
+msgid ""
+"``DynamicDividingLine`` представляет собой более \"умный\" подход. Этот "
+"класс создает линию, длина которой **динамически** подстраивается под "
+"самую длинную строку, выведенную в консоль, в рамках выполнения одной "
+"команды. Это достигается за счет механизма перехвата `stdout`. В "
+"результате разделительные линии всегда идеально обрамляют выводимый "
+"контент, что выглядит очень аккуратно."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:39
+msgid "Создает экземпляр динамической разделительной линии."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:41
+msgid ""
+"``unit_part``: Символ, который будет использоваться для построения линии."
+" По умолчанию: ``-``."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:43
+msgid ""
+"Длина для этой линии не задается при инициализации, так как она "
+"вычисляется автоматически во время выполнения."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:46
+msgid ""
+"Обязательно почитайте про нюансы использования динамических линий и "
+"перехвата ``stdout`` в :ref:`этом разделе<root_redirect_stdout>`."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:51
+msgid "Назначение и использование"
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:53
+msgid ""
+"Выбор между статической и динамической линией зависит от ваших "
+"потребностей в конкретном приложении или даже для конкретного "
+"``Router``-а."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:55
+msgid "**StaticDividingLine** идеально подходит, если:"
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:57
+msgid "Вам нужен строгий, консистентный дизайн."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:58
+msgid ""
+"Вы используете роутеры с отключенным перехватом ``stdout`` "
+"(``disable_redirect_stdout=True``), так как в этом случае динамическое "
+"вычисление длины невозможно."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:60
+msgid ""
+"**DynamicDividingLine** (используется по умолчанию) является "
+"предпочтительным выбором, если:"
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:62
+msgid "Вы хотите, чтобы интерфейс выглядел аккуратно и адаптивно."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:63
+msgid ""
+"Вывод ваших команд имеет разную длину, и вы хотите, чтобы рамки всегда "
+"соответствовали контенту."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:64
+msgid "В ваших хэндлерах нет ожидающих ``io`` операций."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:66
+msgid ""
+"Тип разделительной линии для всего приложения задается при инициализации "
+"``App`` через параметр ``dividing_line``."
+msgstr ""
+
+#: ../../root/api/app/dividing_lines.rst:71
+msgid "Пример конфигурации"
+msgstr ""
+
+#~ msgid "DividingLines"
+#~ msgstr ""
 

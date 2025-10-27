@@ -3,6 +3,7 @@
 Flags
 ======
 
+.. _root_api_command_flag:
 
 Flag
 =====
