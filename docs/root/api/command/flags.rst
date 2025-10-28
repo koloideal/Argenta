@@ -63,20 +63,9 @@ add_flag
 
 **Пример использования:**
 
-.. code-block:: python
+.. literalinclude:: ../../../code_snippets/flags_snippet2.py
    :linenos:
-
-   from argenta import Flags, ValueFlag, BooleanFlag
-
-   # Создание коллекции
-   flags = Flags()
-
-   # Динамическое добавление флагов
-   flags.add_flag(ValueFlag("config", help="Config file path"))
-   flags.add_flag(BooleanFlag("debug", help="Debug mode"))
-   flags.add_flag(ValueFlag("log-level", possible_values=["INFO", "DEBUG", "ERROR"]))
-
-   print(len(flags.flags))  # 3
+   :language: python
 
 -----
 
@@ -97,28 +86,9 @@ add_flags
 
 **Пример использования:**
 
-.. code-block:: python
+.. literalinclude:: ../../../code_snippets/flags_snippet3.py
    :linenos:
-
-   from argenta import Flags, ValueFlag, BooleanFlag
-
-   # Начальная коллекция
-   flags = Flags([
-       ValueFlag("host", default="localhost")
-   ])
-
-   # Дополнительные флаги
-   additional_flags = [
-       ValueFlag("port", default="8080"),
-       ValueFlag("database", help="Database name"),
-       BooleanFlag("ssl", help="Use SSL"),
-       BooleanFlag("verbose", help="Verbose output")
-   ]
-
-   # Добавление списка флагов
-   flags.add_flags(additional_flags)
-
-   print(len(flags.flags))  # 5
+   :language: python
 
 -----
 
@@ -139,27 +109,9 @@ get_flag_by_name
 
 **Пример использования:**
 
-.. code-block:: python
+.. literalinclude:: ../../../code_snippets/flags_snippet4.py
    :linenos:
-
-   from argenta import Flags, ValueFlag, BooleanFlag
-
-   flags = Flags([
-       ValueFlag("host", default="localhost"),
-       ValueFlag("port", default="8080"),
-       BooleanFlag("verbose")
-   ])
-
-   # Получение флага по имени
-   host_flag = flags.get_flag_by_name("host")
-   if host_flag:
-       print(f"Found flag: {host_flag.name}")
-       print(f"Default value: {host_flag.default}")
-
-   # Поиск несуществующего флага
-   unknown_flag = flags.get_flag_by_name("nonexistent")
-   if unknown_flag is None:
-       print("Flag not found")
+   :language: python
 
 -----
 
@@ -180,24 +132,9 @@ __iter__
 
 **Пример использования:**
 
-.. code-block:: python
+.. literalinclude:: ../../../code_snippets/flags_snippet5.py
    :linenos:
-
-   from argenta import Flags, ValueFlag, BooleanFlag
-
-   flags = Flags([
-       ValueFlag("host", default="localhost"),
-       ValueFlag("port", default="8080"),
-       BooleanFlag("verbose")
-   ])
-
-   # Итерация по всем флагам
-   for flag in flags:
-       print(f"Flag: {flag.name} (type: {type(flag).__name__})")
-
-   # Использование в list comprehension
-   flag_names = [flag.name for flag in flags]
-   print(f"All flags: {flag_names}")
+   :language: python
 
 -----
 
@@ -216,12 +153,6 @@ __getitem__
 
 **Пример использования:**
 
-.. code-block:: python
+.. literalinclude:: ../../../code_snippets/flags_snippet6.py
    :linenos:
-
-   from argenta import Flags, ValueFlag
-
-   flags = Flags([
-       ValueFlag("first"),
-       ValueFlag("second"),
-       ValueFlag("third")
+   :language: python
