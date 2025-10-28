@@ -116,7 +116,7 @@
 
 Для переопределения стандартного поведения используется сеттер ``.set_unknown_command_handler(_: NonStandardBehaviorHandler[InputCommand])``,
 протокол ``NonStandardBehaviorHandler[InputCommand]`` соответствует ``Callable[[InputCommand], None]``, то есть хэндлер должен быть вызываемым объектом,
-к примеру функция или лямбда, которая принимает обязательный аргумент типа :ref:`InputCommand <input_command>` и ничего не возвращает.
+к примеру функция или лямбда, которая принимает обязательный аргумент типа :ref:`InputCommand <root_api_command_input_command>` и ничего не возвращает.
 
 Сэмпл кода, переопределяющего хэндлер ввода неизвестной команды:
 

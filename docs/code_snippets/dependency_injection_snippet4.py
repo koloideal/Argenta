@@ -1,7 +1,6 @@
 from argenta import Response, Router
-from argenta.orchestrator.argparser import ArgSpace
 from argenta.di import FromDishka
-
+from argenta.orchestrator.argparser import ArgSpace
 
 router = Router()
 

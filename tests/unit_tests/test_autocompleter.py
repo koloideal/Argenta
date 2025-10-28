@@ -1,5 +1,5 @@
 import os
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 
@@ -46,7 +46,9 @@ def mock_readline():
 
 # We import the class under test after setting up the patch context if needed,
 # or ensure patches target the correct import location.
-from argenta.app.autocompleter.entity import AutoCompleter, _get_history_items, _is_command_exist
+from argenta.app.autocompleter.entity import (AutoCompleter,
+                                              _get_history_items,
+                                              _is_command_exist)
 
 
 class TestAutoCompleter:

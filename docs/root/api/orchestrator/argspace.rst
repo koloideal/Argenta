@@ -85,23 +85,8 @@ get_by_type
 
 **Пример использования:**
 
-.. code-block:: python
+.. literalinclude:: ../../../code_snippets/argspace_snippet3.py
    :linenos:
-
-   from argenta import BooleanArgument, ValueArgument
-
-   # Получение всех булевых флагов
-   boolean_flags = argspace.get_by_type(BooleanArgument)
-   print(f"Active flags: {[arg.name for arg in boolean_flags if arg.value]}")
-   
-   # Получение всех аргументов со значениями
-   value_args = argspace.get_by_type(ValueArgument)
-   for arg in value_args:
-       print(f"{arg.name} = {arg.value}")
-   
-   # Подсчет количества аргументов каждого типа
-   print(f"Boolean arguments: {len(argspace.get_by_type(BooleanArgument))}")
-   print(f"Value arguments: {len(argspace.get_by_type(ValueArgument))}")
 
 -----
 

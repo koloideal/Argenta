@@ -1,10 +1,10 @@
 import unittest
-from datetime import datetime, date
+from datetime import date, datetime
 
-from argenta.response.entity import Response, DataBridge, EMPTY_INPUT_FLAGS
-from argenta.response.status import ResponseStatus
-from argenta.command.flag.flags.models import InputFlags
 from argenta.command.flag import InputFlag
+from argenta.command.flag.flags.models import InputFlags
+from argenta.response.entity import EMPTY_INPUT_FLAGS, DataBridge, Response
+from argenta.response.status import ResponseStatus
 
 
 class TestDataBridge(unittest.TestCase):

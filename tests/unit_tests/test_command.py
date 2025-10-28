@@ -1,13 +1,13 @@
+import re
+import unittest
+
+from argenta.command.exceptions import (EmptyInputCommandException,
+                                        RepeatedInputFlagsException,
+                                        UnprocessedInputFlagException)
 from argenta.command.flag import Flag, InputFlag
 from argenta.command.flag.flags import Flags
 from argenta.command.flag.models import PossibleValues
-from argenta.command.models import InputCommand, Command, ValidationStatus
-from argenta.command.exceptions import (UnprocessedInputFlagException,
-                                        RepeatedInputFlagsException,
-                                        EmptyInputCommandException)
-
-import unittest
-import re
+from argenta.command.models import Command, InputCommand, ValidationStatus
 
 
 class TestInputCommand(unittest.TestCase):

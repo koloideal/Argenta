@@ -1,5 +1,5 @@
-from argenta import Orchestrator, App
-from argenta.orchestrator.argparser import BooleanArgument, ArgParser
+from argenta import App, Orchestrator
+from argenta.orchestrator.argparser import ArgParser, BooleanArgument
 
 arg_parser = ArgParser(processed_args=[BooleanArgument('config')])
 orchestrator = Orchestrator(

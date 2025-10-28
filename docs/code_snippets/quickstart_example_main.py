@@ -1,6 +1,7 @@
 # main.py
-from argenta import App, Orchestrator
 from routers import router
+
+from argenta import App, Orchestrator
 
 app: App = App()
 orchestrator: Orchestrator = Orchestrator()

@@ -1,5 +1,5 @@
-from argenta.router import Router
 from argenta.command import Command
+from argenta.router import Router
 
 user_router = Router(title="User Management")
 

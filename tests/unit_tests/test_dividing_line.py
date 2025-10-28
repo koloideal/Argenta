@@ -1,6 +1,6 @@
-from argenta.app.dividing_line import DynamicDividingLine, StaticDividingLine
-
 import unittest
+
+from argenta.app.dividing_line import DynamicDividingLine, StaticDividingLine
 
 
 class TestDividingLine(unittest.TestCase):

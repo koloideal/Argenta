@@ -5,7 +5,8 @@ import re
 from contextlib import redirect_stdout
 from typing import Never, TypeAlias
 
-from art import text2art  # pyright: ignore[reportMissingTypeStubs, reportUnknownVariableType]
+from art import \
+    text2art  # pyright: ignore[reportMissingTypeStubs, reportUnknownVariableType]
 from rich.console import Console
 from rich.markup import escape
 

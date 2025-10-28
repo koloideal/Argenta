@@ -1,5 +1,5 @@
 # routers.py
-from argenta import Router, Response, Command
+from argenta import Command, Response, Router
 
 router = Router(title="Quickstart Example")
 

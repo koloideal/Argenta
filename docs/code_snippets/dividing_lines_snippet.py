@@ -1,5 +1,5 @@
 from argenta import App
-from argenta.app import StaticDividingLine, DynamicDividingLine
+from argenta.app import DynamicDividingLine, StaticDividingLine
 
 # Создание статической линии из символов "=" длиной 40
 static_line = StaticDividingLine(unit_part="=", length=40)

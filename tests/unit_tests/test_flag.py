@@ -1,8 +1,8 @@
-from argenta.command.flag import Flag, InputFlag, PossibleValues
-from argenta.command.flag.flags import InputFlags, Flags
-
-import unittest
 import re
+import unittest
+
+from argenta.command.flag import Flag, InputFlag, PossibleValues
+from argenta.command.flag.flags import Flags, InputFlags
 
 
 class TestFlag(unittest.TestCase):

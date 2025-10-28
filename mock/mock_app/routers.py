@@ -1,10 +1,10 @@
+from dishka import FromDishka
+
+from argenta import Router
 from argenta.command import Flag, PossibleValues
 from argenta.orchestrator.argparser import ArgSpace
 from argenta.response import Response
-from argenta import Router
 from argenta.router.defaults import system_router
-from dishka import FromDishka
-
 
 work_router: Router = Router(title="Work points:")
 

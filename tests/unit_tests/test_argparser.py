@@ -1,14 +1,13 @@
-import pytest
 from argparse import Namespace
 from unittest.mock import MagicMock, call
 
+import pytest
+
+from argenta.orchestrator.argparser.arguments.models import (BaseArgument,
+                                                             BooleanArgument,
+                                                             InputArgument,
+                                                             ValueArgument)
 from argenta.orchestrator.argparser.entity import ArgParser, ArgSpace
-from argenta.orchestrator.argparser.arguments.models import (
-    ValueArgument,
-    BooleanArgument,
-    InputArgument,
-    BaseArgument,
-)
 
 
 class TestArgumentCreation:

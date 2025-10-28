@@ -1,6 +1,5 @@
-from argenta import Orchestrator, App
+from argenta import App, Orchestrator
 from argenta.orchestrator.argparser import ArgParser, ValueArgument
-
 
 # Определение аргументов приложения
 arguments = [

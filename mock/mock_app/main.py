@@ -1,10 +1,8 @@
-from mock.mock_app.routers import work_router
-
 from argenta import App, Orchestrator
-from argenta.app import PredefinedMessages, DynamicDividingLine, AutoCompleter
+from argenta.app import AutoCompleter, DynamicDividingLine, PredefinedMessages
 from argenta.orchestrator import ArgParser
 from argenta.orchestrator.argparser import BooleanArgument, ValueArgument
-
+from mock.mock_app.routers import work_router
 
 arg_parser: ArgParser = ArgParser(
     processed_args=[

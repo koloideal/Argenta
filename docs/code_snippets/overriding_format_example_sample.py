@@ -1,5 +1,6 @@
 from argenta import App
 
+
 def custom_print_function(text: str) -> None:
     """Простая пользовательская функция вывода с префиксом."""
     print(f"Префикс: {text}")
