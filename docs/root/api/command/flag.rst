@@ -153,6 +153,8 @@ __eq__
 
 -----
 
+.. _root_api_command_flag_predefined_flags:
+
 PredefinedFlags
 ---------------
 
