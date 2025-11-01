@@ -47,5 +47,5 @@
 
 Теперь вы можете запустить `main.py` и взаимодействовать с вашим новым CLI-приложением.
 
-.. image:: https://github.com/koloideal/Argenta/blob/main/imgs/mock_app_preview4.png?raw=True
+.. image:: https://i.ibb.co/hxNdbyKB/2025-11-02-005919.png
    :alt: Task Manager Example

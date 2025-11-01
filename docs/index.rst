@@ -26,6 +26,66 @@ Argenta предназначена для создания приложений,
 *   **Автоматическая валидация и парсинг**. Библиотека берёт на себя обработку флагов и аргументов командной строки, включая их парсинг, валидацию и преобразование типов.
 *   **Гибкая настройка**. Вы можете легко кастомизировать системные сообщения, форматирование вывода и даже перенаправлять стандартный вывод (stdout) в свои обработчики.
 
+Архитектура и жизненный цикл
+-----------------------------
+
+Следующая диаграмма иллюстрирует, как компоненты Argenta взаимодействуют друг с другом, обрабатывая ввод пользователя.
+
+.. graphviz::
+
+   digraph "Request Lifecycle" {
+      rankdir=LR;
+      node [shape=box, style=rounded, fontname="sans-serif"];
+      edge [fontname="sans-serif"];
+
+      subgraph cluster_input {
+          label = "Пользовательский ввод";
+          style=filled;
+          color=lightgrey;
+          node [style=filled,color=white];
+          "User Input" [label="Ввод команды"];
+      }
+
+      subgraph cluster_core {
+          label = "Ядро Argenta";
+          style=filled;
+          color=lightblue;
+          node [style=filled,color=white];
+          "Orchestrator";
+          "App";
+          "Router";
+          "Command Handler" [label="Обработчик команды"];
+      }
+
+      subgraph cluster_di {
+          label = "Внедрение зависимостей";
+          style=filled;
+          color=lightgreen;
+          node [style=filled,color=white];
+          "DI Container (dishka)" [label="DI-контейнер (dishka)"];
+          "Dependencies" [label="Зависимости (напр., Repository)"];
+      }
+
+      subgraph cluster_output {
+          label = "Вывод";
+          style=filled;
+          color=lightgrey;
+          node [style=filled,color=white];
+          "User Output" [label="Вывод результата"];
+      }
+
+      "User Input" -> "Orchestrator" [label="1. Запуск и парсинг"];
+      "Orchestrator" -> "App" [label="2. Передача управления"];
+      "App" -> "Router" [label="3. Поиск нужного роутера"];
+      "Router" -> "Command Handler" [label="4. Вызов обработчика"];
+      "Command Handler" -> "DI Container (dishka)" [label="5. Запрос зависимостей"];
+      "DI Container (dishka)" -> "Dependencies" [label="6. Создание и предоставление"];
+      "Dependencies" -> "Command Handler" [label="7. Внедрение"];
+      "Command Handler" -> "App" [label="8. Формирование ответа"];
+      "App" -> "User Output" [label="9. Отображение результата"];
+   }
+
+
 .. toctree::
     :hidden:
     :caption: Контент:
