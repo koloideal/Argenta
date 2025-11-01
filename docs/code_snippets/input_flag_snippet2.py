@@ -1,4 +1,4 @@
-from argenta import InputFlag, ValidationStatus
+from argenta.command.flag import InputFlag, ValidationStatus
 
 flag = InputFlag(
     name="verbose",
