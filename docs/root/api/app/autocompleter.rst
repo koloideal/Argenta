@@ -46,6 +46,6 @@ AutoCompleter
 
 ``AutoCompleter`` передается как аргумент при инициализации `App`.
 
-.. literalinclude:: ../../../code_snippets/autocompleter_snippet.py
+.. literalinclude:: ../../../code_snippets/autocompleter/snippet.py
     :language: python
     :linenos:

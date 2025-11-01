@@ -54,7 +54,7 @@ Flag
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/flag_snippet.py
+.. literalinclude:: ../../../code_snippets/flag/snippet.py
    :linenos:
    :language: python
 
@@ -80,7 +80,7 @@ string_entity
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/flag_snippet3.py
+.. literalinclude:: ../../../code_snippets/flag/snippet3.py
    :linenos:
    :language: python
 
@@ -103,7 +103,7 @@ __str__
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/flag_snippet4.py
+.. literalinclude:: ../../../code_snippets/flag/snippet4.py
    :linenos:
    :language: python
 
@@ -123,7 +123,7 @@ __repr__
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/flag_snippet5.py
+.. literalinclude:: ../../../code_snippets/flag/snippet5.py
    :linenos:
    :language: python
 
@@ -147,7 +147,7 @@ __eq__
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/flag_snippet6.py
+.. literalinclude:: ../../../code_snippets/flag/snippet6.py
    :linenos:
    :language: python
 
@@ -266,6 +266,6 @@ PredefinedFlags
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/predefined_flags_snippet.py
+.. literalinclude:: ../../../code_snippets/flag/predefined_flags.py
    :linenos:
    :language: python

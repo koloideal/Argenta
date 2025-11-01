@@ -45,7 +45,7 @@ NEITHER
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/possible_values_neither_snippet.py
+.. literalinclude:: ../../../code_snippets/possible_values/neither.py
    :linenos:
    :language: python
 
@@ -72,7 +72,7 @@ ALL
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/possible_values_all_snippet.py
+.. literalinclude:: ../../../code_snippets/possible_values/all.py
    :linenos:
    :language: python
 
@@ -95,7 +95,7 @@ ALL
 
 **Пример комбинированного использования:**
 
-.. literalinclude:: ../../../code_snippets/possible_values_combined_snippet.py
+.. literalinclude:: ../../../code_snippets/possible_values/combined.py
    :linenos:
    :language: python
 
@@ -106,7 +106,7 @@ ALL
 
 Многие предопределенные флаги используют ``PossibleValues.NEITHER``:
 
-.. literalinclude:: ../../../code_snippets/possible_values_predefined_snippet.py
+.. literalinclude:: ../../../code_snippets/possible_values/predefined.py
    :linenos:
    :language: python
 

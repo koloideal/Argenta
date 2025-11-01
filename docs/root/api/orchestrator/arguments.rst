@@ -169,6 +169,7 @@ InputArgument
 **Атрибуты:**
 
 .. py:attribute:: name
+   :no-index:
 
    Имя аргумента в виде строки. Соответствует имени, указанному при создании ``ValueArgument`` или ``BooleanArgument``.
 

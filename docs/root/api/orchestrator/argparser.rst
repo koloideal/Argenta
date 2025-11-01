@@ -47,7 +47,7 @@ ArgParser
 Пример использования
 --------------------
 
-.. literalinclude:: ../../../code_snippets/argparser_snippet.py
+.. literalinclude:: ../../../code_snippets/argparser/snippet.py
    :language: python
    :linenos:
    

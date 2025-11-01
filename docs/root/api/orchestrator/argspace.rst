@@ -85,7 +85,7 @@ get_by_type
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/argspace_snippet3.py
+.. literalinclude:: ../../../code_snippets/argspace/snippet3.py
    :linenos:
 
 -----
@@ -105,12 +105,12 @@ InputArgument
 
 **Полный пример:**
 
-.. literalinclude:: ../../../code_snippets/argspace_snippet.py
+.. literalinclude:: ../../../code_snippets/argspace/snippet.py
    :linenos:
    
 Доступ к аргументам из хэндлеров осуществляется с помощью ``di``, подробнее :ref:`тут <root_dependency_injection>`.
 
-.. literalinclude:: ../../../code_snippets/argspace_snippet2.py
+.. literalinclude:: ../../../code_snippets/argspace/snippet2.py
    :linenos:
 
 **Запуск приложения:**

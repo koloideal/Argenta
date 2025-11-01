@@ -45,7 +45,7 @@ VALID
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/validation_status_valid_snippet1.py
+.. literalinclude:: ../../../code_snippets/validation_status/valid.py
    :linenos:
    :language: python
 
@@ -72,7 +72,7 @@ INVALID
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/validation_status_invalid_snippet2.py
+.. literalinclude:: ../../../code_snippets/validation_status/invalid.py
    :linenos:
    :language: python
 
@@ -103,7 +103,7 @@ UNDEFINED
 
 Пример демонстрирует использование всех статусов в реальном сценарии:
 
-.. literalinclude:: ../../../code_snippets/validation_status_comprehensive_snippet6.py
+.. literalinclude:: ../../../code_snippets/validation_status/comprehensive.py
    :linenos:
    :language: python
 

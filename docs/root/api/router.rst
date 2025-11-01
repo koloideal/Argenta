@@ -38,7 +38,7 @@ Router
 
    **Пример использования:**
 
-   .. literalinclude:: ../../code_snippets/router_snippet.py
+   .. literalinclude:: ../../code_snippets/router/snippet.py
       :linenos:
       :language: python
       

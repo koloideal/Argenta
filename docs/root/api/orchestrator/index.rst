@@ -62,7 +62,7 @@ Orchestrator
 Пример использования
 --------------------
 
-.. literalinclude:: ../../../code_snippets/orchestrator_snippet.py
+.. literalinclude:: ../../../code_snippets/orchestrator/snippet.py
    :language: python
 
 .. toctree::

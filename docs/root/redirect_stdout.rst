@@ -43,7 +43,7 @@
 
 Если при создании роутера установить ``disable_redirect_stdout=True``, то для всех команд этого роутера механизм перехвата ``stdout`` будет отключен.
 
-.. literalinclude:: ../code_snippets/redirect_stdout_example_sample.py
+.. literalinclude:: ../code_snippets/redirect_stdout/sample.py
    :language: python
    :linenos:
 
@@ -69,7 +69,7 @@
 
 Вы можете глобально задать тип разделительной линии для всего приложения через аргумент ``dividing_line`` в конструкторе ``App``.
 
-.. literalinclude:: ../code_snippets/redirect_stdout_example_sample2.py
+.. literalinclude:: ../code_snippets/redirect_stdout/sample2.py
    :language: python
    :linenos:
 

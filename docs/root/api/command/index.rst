@@ -50,7 +50,7 @@ Command
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/command_snippet.py
+.. literalinclude:: ../../../code_snippets/command/snippet.py
    :linenos:
    
 .. seealso ::
@@ -65,12 +65,12 @@ Command
 
 **Базовый пример:**
 
-.. literalinclude:: ../../../code_snippets/command_snippet2.py
+.. literalinclude:: ../../../code_snippets/command/snippet2.py
    :linenos:
 
 **Команды с флагами:**
 
-.. literalinclude:: ../../../code_snippets/command_snippet3.py
+.. literalinclude:: ../../../code_snippets/command/snippet3.py
    :linenos:
 
 -----

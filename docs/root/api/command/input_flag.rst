@@ -39,10 +39,12 @@ InputFlag
 **Атрибуты:**
 
 .. py:attribute:: name
+   :no-index:
 
    Имя введённого флага в виде строки.
 
 .. py:attribute:: prefix
+   :no-index:
 
    Префикс флага. Один из: ``"-"``, ``"--"``, ``"---"``.
 
@@ -56,7 +58,7 @@ InputFlag
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/input_flag_snippet1.py
+.. literalinclude:: ../../../code_snippets/input_flag/snippet1.py
    :linenos:
    :language: python
 
@@ -82,7 +84,7 @@ string_entity
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/input_flag_snippet2.py
+.. literalinclude:: ../../../code_snippets/input_flag/snippet2.py
    :linenos:
    :language: python
 
@@ -105,7 +107,7 @@ __str__
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/input_flag_snippet3.py
+.. literalinclude:: ../../../code_snippets/input_flag/snippet3.py
    :linenos:
    :language: python
 
@@ -125,7 +127,7 @@ __repr__
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/input_flag_snippet4.py
+.. literalinclude:: ../../../code_snippets/input_flag/snippet4.py
    :linenos:
    :language: python
 
@@ -149,6 +151,6 @@ __eq__
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/input_flag_snippet5.py
+.. literalinclude:: ../../../code_snippets/input_flag/snippet5.py
    :linenos:
    :language: python

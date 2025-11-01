@@ -39,6 +39,6 @@
 Пример использования
 --------------------
 
-.. literalinclude:: ../code_snippets/overriding_format_example_sample.py
+.. literalinclude:: ../code_snippets/overriding_formatting/sample.py
    :language: python
    :linenos:

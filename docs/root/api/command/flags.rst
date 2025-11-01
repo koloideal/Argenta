@@ -37,7 +37,7 @@ Flags
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/flags_snippet.py
+.. literalinclude:: ../../../code_snippets/flags/snippet.py
    :linenos:
    :language: python
 
@@ -63,7 +63,7 @@ add_flag
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/flags_snippet2.py
+.. literalinclude:: ../../../code_snippets/flags/snippet2.py
    :linenos:
    :language: python
 
@@ -86,7 +86,7 @@ add_flags
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/flags_snippet3.py
+.. literalinclude:: ../../../code_snippets/flags/snippet3.py
    :linenos:
    :language: python
 
@@ -109,7 +109,7 @@ get_flag_by_name
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/flags_snippet4.py
+.. literalinclude:: ../../../code_snippets/flags/snippet4.py
    :linenos:
    :language: python
 
@@ -132,7 +132,7 @@ __iter__
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/flags_snippet5.py
+.. literalinclude:: ../../../code_snippets/flags/snippet5.py
    :linenos:
    :language: python
 
@@ -153,6 +153,6 @@ __getitem__
 
 **Пример использования:**
 
-.. literalinclude:: ../../../code_snippets/flags_snippet6.py
+.. literalinclude:: ../../../code_snippets/flags/snippet6.py
    :linenos:
    :language: python

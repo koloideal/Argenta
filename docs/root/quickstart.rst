@@ -11,13 +11,13 @@
 
 2. **Определение роутера и хэндлеров**. За регистрацию функции как обработчика отвечает декоратор ``@router.command``, хэндлер всегда должен принимать аргумент с типом ``Response``, подробнее в :ref:`разделе <root_api_response>`.
 
-.. literalinclude:: ../code_snippets/quickstart_example_routers.py
+.. literalinclude:: ../code_snippets/quickstart/routers.py
    :language: python
    :linenos:
 
 3. **Определение приложения и оркестратора**. Для запуска приложения необходимо вызвать ``.include_router()`` у созданного приложения и передать ему раннее созданный роутер, после этого необходимо вызвать ``.start_polling()`` у созданного оркестратора и передать ему созданное приложение.
 
-.. literalinclude:: ../code_snippets/quickstart_example_main.py
+.. literalinclude:: ../code_snippets/quickstart/main.py
    :language: python
    :linenos:
 

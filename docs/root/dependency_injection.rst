@@ -18,19 +18,19 @@
 .. note::
    ``argenta.di.FromDishka`` это алиас к ``dishka.FromDishka``, они полностью взаимозаменяемы.
 
-.. literalinclude:: ../code_snippets/dependency_injection_snippet.py
+.. literalinclude:: ../code_snippets/dependency_injection/snippet.py
    :language: python
    :linenos:
 
 ``Argenta`` -> ``dishka`` зарезолвит тайпхинты и внедрит зависимость с возвращаемым типом ``Connection``, прежде чем использовать зависимость её нужно создать, для этого нужно создать соответствующий провайдер.
 
-.. literalinclude:: ../code_snippets/dependency_injection_snippet2.py
+.. literalinclude:: ../code_snippets/dependency_injection/snippet2.py
    :language: python
    :linenos:
    
 После создания провайдера, его нужно зарегистрировать в оркестраторе.
 
-.. literalinclude:: ../code_snippets/dependency_injection_snippet3.py
+.. literalinclude:: ../code_snippets/dependency_injection/snippet3.py
    :language: python
    :linenos:
 
@@ -49,7 +49,7 @@
 
 Краткий сэмпл кода, который получает объект ``ArgSpace`` и выводит в консоль аргумент с именем "type":
 
-.. literalinclude:: ../code_snippets/dependency_injection_snippet4.py
+.. literalinclude:: ../code_snippets/dependency_injection/snippet4.py
    :language: python
    :linenos:
 
