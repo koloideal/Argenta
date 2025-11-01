@@ -1,5 +1,6 @@
 from argenta import InputFlag, ValidationStatus
 
+
 def process_input_flag(input_flag: InputFlag) -> None:
     """Обрабатывает входной флаг в зависимости от его статуса валидации"""
     

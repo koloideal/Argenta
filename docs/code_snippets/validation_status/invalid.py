@@ -1,4 +1,5 @@
-from argenta.command.flag import Flag, InputFlag, ValidationStatus, PossibleValues
+from argenta.command.flag import (Flag, InputFlag, PossibleValues,
+                                  ValidationStatus)
 
 # Создание флага без значения
 help_flag = Flag("help", possible_values=PossibleValues.NEITHER)

@@ -1,5 +1,6 @@
-from argenta.command import Flag, PossibleValues
 import re
+
+from argenta.command import Flag, PossibleValues
 
 # Простой флаг с любыми значениями
 verbose_flag = Flag(name="verbose")

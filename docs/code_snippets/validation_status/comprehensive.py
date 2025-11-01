@@ -1,5 +1,7 @@
-from argenta.command.flag import Flag, InputFlag, ValidationStatus, PossibleValues
 import re
+
+from argenta.command.flag import (Flag, InputFlag, PossibleValues,
+                                  ValidationStatus)
 
 # Создаём различные типы флагов
 verbose_flag = Flag("verbose", possible_values=PossibleValues.NEITHER)

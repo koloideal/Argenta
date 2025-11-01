@@ -1,7 +1,7 @@
-from argenta.command import Flags, Flag
-from argenta import Command
 import re
 
+from argenta import Command
+from argenta.command import Flag, Flags
 
 # Создание коллекции с флагами
 flags = Flags([

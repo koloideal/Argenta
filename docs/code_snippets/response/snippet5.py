@@ -1,4 +1,4 @@
-from argenta import Router, Command, Response
+from argenta import Command, Response, Router
 
 router = Router(title="Delete Data Example")
 

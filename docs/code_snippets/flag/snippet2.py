@@ -1,5 +1,6 @@
-from argenta.command.flag.models import Flag, PossibleValues
 import re
+
+from argenta.command.flag.models import Flag, PossibleValues
 
 # Флаг со списком допустимых значений
 format_flag = Flag(name="format", possible_values=["json", "xml", "csv"])

@@ -1,4 +1,4 @@
-from argenta.command import Flags, Flag
+from argenta.command import Flag, Flags
 from argenta.command.flag.defaults import PredefinedFlags
 
 # Начальная коллекция

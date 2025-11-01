@@ -1,4 +1,4 @@
-from argenta.command.flag import InputFlag, ValidationStatus, InputFlags
+from argenta.command.flag import InputFlag, InputFlags, ValidationStatus
 
 # Создаём коллекцию InputFlags
 flags = InputFlags()

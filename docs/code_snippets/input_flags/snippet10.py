@@ -1,4 +1,4 @@
-from argenta import Router, Command, Response
+from argenta import Command, Response, Router
 from argenta.command import Flag, Flags
 from argenta.command.flag import ValidationStatus
 
@@ -35,7 +35,7 @@ def validate_handler(response: Response):
             print(f"  ? {flag.string_entity}: {flag.input_value} (UNDEFINED)")
     
     # Выводим сводку
-    print(f"\nSummary:")
+    print("\nSummary:")
     print(f"  Valid flags: {len(valid_flags)}")
     print(f"  Invalid flags: {len(invalid_flags)}")
     print(f"  Undefined flags: {len(undefined_flags)}")

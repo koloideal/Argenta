@@ -1,4 +1,4 @@
-from argenta.command import Flags, Flag
+from argenta.command import Flag, Flags
 
 flags = Flags([
     Flag("first"),

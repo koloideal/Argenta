@@ -3,26 +3,49 @@
 Быстрый старт
 ********************
 
-1. **Установка** ``Argenta``
+В этом руководстве мы создадим простое, но полнофункциональное CLI-приложение «Менеджер задач», которое продемонстрирует ключевые возможности Argenta.
+
+1. **Установка**
 
 .. code-block:: shell
 
     pip install argenta
 
-2. **Создание обработчиков**. Чтобы зарегистрировать функцию как обработчик команды, используйте декоратор ``@router.command``. Обработчик всегда должен принимать первым аргументом объект ``Response`` (подробнее в :ref:`документации <root_api_response>`).
+2. **Определение моделей данных и репозитория**
 
-.. literalinclude:: ../code_snippets/quickstart/routers.py
+Сначала определим модели данных для задачи и репозиторий для их хранения. Это будет наша "бизнес-логика".
+
+.. literalinclude:: ../code_snippets/quickstart/task_manager/repository.py
    :language: python
    :linenos:
 
-3. **Настройка и запуск**. Чтобы подключить обработчики, вызовите метод ``.include_router()`` у экземпляра приложения и передайте в него ваш роутер. Затем создайте оркестратор и вызовите его метод ``.start_polling()``, передав ему приложение.
+3. **Создание провайдера для DI**
 
-.. literalinclude:: ../code_snippets/quickstart/main.py
+Чтобы Argenta могла внедрять `TaskRepository` в наши обработчики, мы создадим провайдер для `dishka`.
+
+.. literalinclude:: ../code_snippets/quickstart/task_manager/provider.py
    :language: python
    :linenos:
 
-4. **Запуск**. Теперь приложение можно запустить как обычный Python-скрипт.
+4. **Создание обработчиков команд**
 
+Теперь создадим обработчики для команд `add-task` и `list-tasks`. Обратите внимание, как мы используем флаги и внедряем `TaskRepository`.
 
-.. image:: https://github.com/koloideal/Argenta/blob/docs/create_docs/imgs/mock_app_preview6.png?raw=true
-   :alt: Quickstart Example
+.. literalinclude:: ../code_snippets/quickstart/task_manager/handlers.py
+   :language: python
+   :linenos:
+
+5. **Сборка и запуск приложения**
+
+Наконец, соберем все вместе: создадим экземпляр `App`, подключим роутер и провайдер, а затем запустим приложение.
+
+.. literalinclude:: ../code_snippets/quickstart/task_manager/main.py
+   :language: python
+   :linenos:
+
+6. **Результат**
+
+Теперь вы можете запустить `main.py` и взаимодействовать с вашим новым CLI-приложением.
+
+.. image:: https://github.com/koloideal/Argenta/blob/main/imgs/mock_app_preview4.png?raw=True
+   :alt: Task Manager Example
