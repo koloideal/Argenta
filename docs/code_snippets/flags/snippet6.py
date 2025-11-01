@@ -1,10 +1,6 @@
 from argenta.command import Flag, Flags
 
-flags = Flags([
-    Flag("first"),
-    Flag("second"),
-    Flag("third")
-])
+flags = Flags([Flag("first"), Flag("second"), Flag("third")])
 
 print(flags[0].name)
 # first

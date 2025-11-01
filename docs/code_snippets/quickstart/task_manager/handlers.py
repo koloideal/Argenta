@@ -9,14 +9,17 @@ from .repository import Priority, Task, TaskRepository
 
 router = Router(title="Task Manager")
 
+
 @router.command(
     Command(
         "add-task",
         description="Add a new task",
-        flags=Flags([
-            Flag("description"),
-            Flag("priority", possible_values=["low", "medium", "high"]),
-        ])
+        flags=Flags(
+            [
+                Flag("description"),
+                Flag("priority", possible_values=["low", "medium", "high"]),
+            ]
+        ),
     )
 )
 def add_task(response: Response, repo: FromDishka[TaskRepository]):
@@ -39,6 +42,7 @@ def add_task(response: Response, repo: FromDishka[TaskRepository]):
     task = Task(description=task_description, priority=priority)
     repo.add_task(task)
     print(f"Added task: '{task.description}' with priority '{task.priority}'")
+
 
 @router.command(Command("list-tasks", description="List all tasks"))
 def list_tasks(response: Response, repo: FromDishka[TaskRepository]):

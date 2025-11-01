@@ -14,6 +14,7 @@ class ConnectionProvider(Provider):
         yield conn
         conn.close()
 
+
 # 2. Создаем и настраиваем App
 app = App()
 # ... здесь можно добавить роутеры ...

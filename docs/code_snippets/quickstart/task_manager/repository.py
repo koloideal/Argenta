@@ -3,10 +3,12 @@ from typing import Literal
 
 Priority = Literal["low", "medium", "high"]
 
+
 @dataclass
 class Task:
     description: str
     priority: Priority = "medium"
+
 
 class TaskRepository:
     def __init__(self):

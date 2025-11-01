@@ -1,11 +1,7 @@
 from argenta.command import Flag, Flags
 from argenta.command.flag.defaults import PredefinedFlags
 
-flags = Flags([
-    PredefinedFlags.HOST,
-    PredefinedFlags.PORT,
-    Flag("verbose")
-])
+flags = Flags([PredefinedFlags.HOST, PredefinedFlags.PORT, Flag("verbose")])
 
 # Получение флага по имени
 host_flag = flags.get_flag_by_name("host")

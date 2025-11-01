@@ -1,13 +1,12 @@
 import re
 
-from argenta.command.flag import (Flag, InputFlag, PossibleValues,
-                                  ValidationStatus)
+from argenta.command.flag import Flag, InputFlag, PossibleValues, ValidationStatus
 
 # Создаём различные типы флагов
 verbose_flag = Flag("verbose", possible_values=PossibleValues.NEITHER)
 output_flag = Flag("output", possible_values=PossibleValues.ALL)
 level_flag = Flag("level", possible_values=["1", "2", "3"])
-pattern_flag = Flag("pattern", possible_values=re.compile(r'^[a-zA-Z]+$'))
+pattern_flag = Flag("pattern", possible_values=re.compile(r"^[a-zA-Z]+$"))
 
 # Создаём входные флаги с различными статусами
 input_flags = [
@@ -16,12 +15,10 @@ input_flags = [
     InputFlag("output", input_value="result.txt", status=ValidationStatus.VALID),
     InputFlag("level", input_value="2", status=ValidationStatus.VALID),
     InputFlag("pattern", input_value="onlyletters", status=ValidationStatus.VALID),
-    
     # Невалидные флаги
     InputFlag("verbose", input_value="true", status=ValidationStatus.INVALID),
     InputFlag("level", input_value="4", status=ValidationStatus.INVALID),
     InputFlag("pattern", input_value="123", status=ValidationStatus.INVALID),
-    
     # Неопределённые флаги
     InputFlag("unknown", input_value="value", status=ValidationStatus.UNDEFINED),
 ]

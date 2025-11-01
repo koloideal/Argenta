@@ -4,7 +4,7 @@ flag = InputFlag(
     name="config",
     prefix="--",
     input_value="settings.json",
-    status=ValidationStatus.VALID
+    status=ValidationStatus.VALID,
 )
 
 # Отладочное представление объекта

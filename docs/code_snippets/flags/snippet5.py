@@ -1,11 +1,7 @@
 from argenta.command import Flag, Flags
 from argenta.command.flag.defaults import PredefinedFlags
 
-flags = Flags([
-    PredefinedFlags.HOST,
-    PredefinedFlags.PORT,
-    Flag("verbose")
-])
+flags = Flags([PredefinedFlags.HOST, PredefinedFlags.PORT, Flag("verbose")])
 
 # Итерация по всем флагам
 for flag in flags:
