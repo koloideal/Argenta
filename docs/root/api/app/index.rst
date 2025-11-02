@@ -67,10 +67,13 @@ App
     :param routers: Последовательность экземпляров ``Router`` для регистрации.
 
 - .. py:method:: add_message_on_startup(self, message: str) -> None
-    
+
     Добавляет текстовое сообщение, которое выводится при запуске приложения после `initial_message`.
-    
+
     :param message: Строка с сообщением.
+
+    .. seealso::
+       Для вывода стандартных сообщений можно использовать готовые шаблоны из :ref:`PredefinedMessages <root_api_predefined_messages>`.
     
 -----
 
@@ -135,3 +138,42 @@ App
 
     autocompleter
     dividing_lines
+
+-----
+
+.. _root_api_predefined_messages:
+
+PredefinedMessages
+------------------
+
+`PredefinedMessages` — это перечисление (Enum), содержащее набор готовых к использованию строковых сообщений. Они отформатированы с использованием синтаксиса `rich` и предназначены для вывода стандартной информации, такой как подсказки по использованию.
+
+Вы можете импортировать и использовать их напрямую в своих обработчиках.
+
+.. code-block:: python
+   :linenos:
+
+   from argenta.app import PredefinedMessages
+
+   def my_handler(response):
+       print(PredefinedMessages.USAGE)
+
+.. py:class:: PredefinedMessages
+
+   .. py:attribute:: USAGE
+
+      Строка: ``[b dim]Usage[/b dim]: [i]<command> <[green]flags[/green]>[/i]``
+
+      Отображается как: ``Usage: <command> <flags>``
+
+   .. py:attribute:: HELP
+
+      Строка: ``[b dim]Help[/b dim]: [i]<command>[/i] [b red]--help[/b red]``
+
+      Отображается как: ``Help: <command> --help``
+
+   .. py:attribute:: AUTOCOMPLETE
+
+      Строка: ``[b dim]Autocomplete[/b dim]: [i]<part>[/i] [bold]<tab>``
+
+      Отображается как: ``Autocomplete: <part> <tab>``

@@ -17,10 +17,6 @@ root_doc = "index"
 locale_dirs = ['locales/']
 gettext_compact = False
 
-extensions = [
-    "sphinx.ext.graphviz"
-]
-
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 

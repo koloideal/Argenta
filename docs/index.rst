@@ -32,7 +32,8 @@ Argenta предназначена для создания приложений,
 Следующая диаграмма иллюстрирует, как компоненты Argenta взаимодействуют друг с другом, обрабатывая ввод пользователя.
 
 .. image:: https://i.ibb.co/hF3FdFr1/argenta-intro-drawio-2.png
-    :alt: Архитектура Argenta
+   :alt: Request Lifecycle Diagram
+   :align: center
 
 .. toctree::
     :hidden:
