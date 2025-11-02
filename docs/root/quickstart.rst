@@ -47,5 +47,5 @@
 
 Теперь вы можете запустить `main.py` и взаимодействовать с вашим новым CLI-приложением.
 
-.. image:: https://i.ibb.co/hxNdbyKB/2025-11-02-005919.png
+.. image:: https://i.ibb.co/bgsCLZhP/image.png
    :alt: Task Manager Example

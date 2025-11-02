@@ -158,7 +158,7 @@ __eq__
 PredefinedFlags
 ---------------
 
-``argenta.command.flag.defaults.PredefinedFlags``
+``argenta.command.PredefinedFlags``
 
 Класс `PredefinedFlags` предоставляет набор готовых флагов для использования в приложениях без их ручного создания. Эти флаги покрывают наиболее распространённые сценарии и следуют общепринятым соглашениям.
 
