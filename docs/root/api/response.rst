@@ -5,7 +5,6 @@ Response
 
 `Response` — это объект, который передаётся в обработчик команды. Он создаётся автоматически при обработке пользовательского ввода и содержит статус валидации, введённые флаги, а также предоставляет механизм для обмена данными между обработчиками.
 
-`Response` наследует от `DataBridge` методы для работы с глобальным хранилищем, что позволяет обмениваться данными между обработчиками в рамках одной сессии.
 
 .. seealso::
 
@@ -52,99 +51,6 @@ Response
 **Пример использования:**
 
 .. literalinclude:: ../../code_snippets/response/snippet1.py
-   :linenos:
-   :language: python
-
------
-
-Методы DataBridge
-
-`Response` наследует от `DataBridge` методы для работы с глобальным хранилищем, которое позволяет обмениваться данными между обработчиками в рамках одной сессии.
-
-update_data
-~~~~~~~~~~~
-
-.. code-block:: python
-   :linenos:
-
-   @classmethod
-   update_data(cls, data: dict[str, Any]) -> None
-
-Обновляет глобальное хранилище, добавляя или изменяя значения из переданного словаря.
-
-:param data: Словарь с данными для обновления хранилища
-:return: None
-
-Метод объединяет переданный словарь с данными в хранилище. Если ключ уже существует, его значение обновляется.
-
-**Пример использования:**
-
-.. literalinclude:: ../../code_snippets/response/snippet2.py
-   :linenos:
-   :language: python
-
------
-
-get_data
-~~~~~~~~
-
-.. code-block:: python
-   :linenos:
-
-   @classmethod
-   get_data(cls) -> dict[str, Any]
-
-Возвращает все данные из глобального хранилища.
-
-:return: Словарь со всеми данными из хранилища
-
-**Пример использования:**
-
-.. literalinclude:: ../../code_snippets/response/snippet3.py
-   :linenos:
-   :language: python
-
------
-
-clear_data
-~~~~~~~~~~
-
-.. code-block:: python
-   :linenos:
-
-   @classmethod
-   clear_data(cls) -> None
-
-Очищает глобальное хранилище.
-
-:return: None
-
-**Пример использования:**
-
-.. literalinclude:: ../../code_snippets/response/snippet4.py
-   :linenos:
-   :language: python
-
------
-
-delete_from_data
-~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-   :linenos:
-
-   @classmethod
-   delete_from_data(cls, key: str) -> None
-
-Удаляет ключ и его значение из глобального хранилища.
-
-:param key: Ключ, который необходимо удалить из хранилища
-:return: None
-:raises KeyError: Если ключ не найден в хранилище.
-
-**Пример использования:**
-
-.. literalinclude:: ../../code_snippets/response/snippet5.py
    :linenos:
    :language: python
 
