@@ -1,116 +1,47 @@
 Тестирование
 ============
 
-В этом разделе описаны рекомендации и лучшие практики по тестированию приложений, построенных с использованием Argenta.
+В этом разделе описаны практики тестирования приложений на основе ``Argenta``. Примеры основаны на фактическом публичном API: ``App``, ``Router``, ``Command``, ``Orchestrator``, DI через ``dishka`` и интеграцию в ``argenta.di.integration``.
 
-Модульное тестирование
-----------------------
+Модульное тестирование хендлеров
+--------------------------------
 
-Для модульного тестирования команд рекомендуется использовать стандартный модуль ``unittest`` или любой другой предпочитаемый фреймворк (например, ``pytest``).
+Обработчики в Argenta — обычные функции. Их удобно тестировать как чистые функции, не поднимая весь цикл приложения. Рекомендуются ``unittest`` или ``pytest``.
 
-Пример теста для простой команды:
+Пример с ``unittest`` для простого хендлера без DI:
 
-.. code-block:: python
+.. literalinclude:: ../code_snippets/testing/simple_handler_unittest.py
+   :language: python
+   :linenos:
 
-    import unittest
-    from unittest.mock import MagicMock
-    from your_app import app, your_command_handler
+Тестирование с внедрением зависимостей (DI)
+-------------------------------------------
 
-    class TestYourCommand(unittest.TestCase):
-        def test_your_command_handler(self):
-            # Подготовка тестовых данных
-            mock_scope = MagicMock()
-            test_args = {"arg1": "test_value"}
-            
-            # Вызов обработчика
-            result = your_command_handler(scope=mock_scope, **test_args)
-            
-            # Проверка результата
-            self.assertEqual(result, "expected_result")
-            mock_scope.some_dependency.assert_called_once_with("test_value")
+Если хендлеру нужны зависимости, используйте ``dishka`` и интеграцию Argenta:
 
+.. literalinclude:: ../code_snippets/testing/di_handler_unittest.py
+   :language: python
+   :linenos:
 
-Тестирование с зависимостями
-----------------------------
+Интеграционное тестирование приложения
+--------------------------------------
 
-При использовании внедрения зависимостей через Dishka, вы можете использовать моки для тестирования:
+Для более высокого уровня тестов собирайте ``App`` и ``Router`` и вызывайте хендлеры через парсинг команд, обходя бесконечный цикл ввода. Это даёт близкое к реальности поведение без необходимости симулировать ``stdin``.
 
-.. code-block:: python
+.. literalinclude:: ../code_snippets/testing/app_integration_unittest.py
+   :language: python
+   :linenos:
 
-    from dishka import make_async_container
-    from dishka.integrations.base import wrap_injection
-    from unittest.mock import AsyncMock
+E2E-тестирование цикла (опционально)
+------------------------------------
 
-    class TestWithDependencies(unittest.IsolatedAsyncioTestCase):
-        async def test_handler_with_dependencies(self):
-            # Создаем мок-контейнер
-            mock_dependency = AsyncMock()
-            mock_dependency.some_method.return_value = "mocked_result"
-            
-            # Настраиваем контейнер
-            container = MagicMock()
-            container.get.return_value = mock_dependency
-            
-            # Оборачиваем обработчик для тестирования
-            handler = wrap_injection(
-                your_handler,
-                container=container,
-            )
-            
-            # Вызываем обработчик
-            result = await handler(arg1="test")
-            
-            # Проверяем результаты
-            self.assertEqual(result, "expected_result")
-            mock_dependency.some_method.assert_called_once()
-
-
-Интеграционное тестирование
----------------------------
-
-Для тестирования всего приложения целиком можно использовать клиент тестирования:
-
-.. code-block:: python
-
-    from argenta import Application
-    from io import StringIO
-    import unittest
-
-    class TestAppIntegration(unittest.TestCase):
-        def setUp(self):
-            self.app = Application()
-            self.app.setup()  # Инициализация приложения
-            self.output = StringIO()
-            self.app.stdout = self.output
-
-        def test_help_command(self):
-            self.app.process_input("help")
-            output = self.output.getvalue()
-            self.assertIn("Доступные команды:", output)
-
+Полный запуск цикла ``start_polling`` можно покрывать через подпроцесс с передачей строк во ``stdin``. Это тяжелее и обычно не требуется. Если всё же необходимо — вынесите конфигурацию в функцию ``main()`` и запускайте модуль в подпроцессе с подготовленным вводом/выводом.
 
 Советы по тестированию
 ----------------------
 
 1. **Изолируйте тесты**: Каждый тест должен быть независимым от других.
-2. **Используйте моки**: Заменяйте внешние зависимости моками для изоляции тестируемого кода.
-3. **Проверяйте граничные случаи**: Уделяйте внимание краевым случаям и ошибочным сценариям.
-4. **Тестируйте обработку ошибок**: Убедитесь, что ваше приложение корректно обрабатывает ошибки.
-5. **Измеряйте покрытие**: Используйте инструменты вроде ``coverage.py`` для анализа покрытия кода тестами.
-
-Пример настройки ``pytest`` с покрытием кода:
-
-.. code-block:: ini
-
-    # setup.cfg
-    [tool:pytest]
-    testpaths = tests
-    python_files = test_*.py
-    addopts = -v --cov=your_package --cov-report=term-missing
-
-Для запуска тестов с покрытием:
-
-.. code-block:: bash
-
-    pip install pytest-cov
-    pytest
+2. **Моки для внешних интеграций**: БД, HTTP-клиенты и т.п. подменяйте заглушками и провайдерами ``dishka``.
+3. **Покрывайте ошибочные сценарии**: Некорректные флаги, неизвестные команды, пустой ввод.
+4. **Минимизируйте зависимость от форматирования**: Сравнивайте ключевые фрагменты вывода, а не весь блок целиком.
+5. **Измеряйте покрытие**: Используйте ``pytest-cov``.

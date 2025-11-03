@@ -42,10 +42,16 @@ Argenta предназначена для создания приложений,
     root/quickstart
     root/error_handling
     root/flags
-    root/dependency_injection
     root/overriding_formatting
-    root/redirect_stdout
     root/api/index
+
+.. toctree::
+    :hidden:
+    :caption: Продвинутое использование:
+
+    root/redirect_stdout
+    root/dependency_injection
+    root/testing
 
 .. toctree::
     :hidden:
