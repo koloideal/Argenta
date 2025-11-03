@@ -1,0 +1,191 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-03 19:01+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/api/command/input_flag.rst:4
+msgid "InputFlag"
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:6
+msgid ""
+"Объект `InputFlag` представляет собой флаг, введённый пользователем. Он "
+"создаётся в результате обработки пользовательского ввода и содержит "
+"информацию о распознанном флаге: его имя, префикс, значение и статус "
+"валидации."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:10
+msgid ""
+"Документация по :ref:`Flag <root_api_command_flag>` — класс для "
+"регистрации флага."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:12
+msgid ""
+"Документация по :ref:`ValidationStatus "
+"<root_api_command_validation_status>` — статусы валидации флагов."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:17
+msgid "Инициализация"
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:29
+msgid "Создаёт новый объект введённого флага."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:31
+msgid "``name``: Имя введённого флага."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:32
+msgid "``prefix``: Префикс флага (``-``, ``--``, ``---``). По умолчанию ``--``."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:33
+msgid "``input_value``: Значение, переданное с флагом. Может быть `None`."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:34
+msgid "``status``: Статус валидации из перечисления `ValidationStatus`."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:37
+msgid ""
+"Экземпляры этого класса не предназначены для прямого создания. Они "
+"содержатся в объекте :ref:`Response <root_api_response>`."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:39
+msgid "**Атрибуты:**"
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:44
+msgid "Имя введённого флага."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:49
+msgid "Префикс флага: ``-``, ``--`` или ``---``."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:53
+msgid "Значение, переданное с флагом. Может быть `None` для флагов без значений."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:58
+msgid ""
+"Статус валидации флага: `ValidationStatus.VALID`, "
+"`ValidationStatus.INVALID` или `ValidationStatus.UNDEFINED`."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:60
+#: ../../root/api/command/input_flag.rst:86
+#: ../../root/api/command/input_flag.rst:109
+#: ../../root/api/command/input_flag.rst:129
+#: ../../root/api/command/input_flag.rst:153
+msgid "**Пример использования:**"
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:69
+msgid "Свойства"
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:72
+msgid "string_entity"
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:80
+msgid "Возвращает строковое представление флага в формате `prefix + name`."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst
+msgid "return"
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:82
+msgid "Строковое представление флага"
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:84
+msgid ""
+"Это свойство объединяет префикс и имя в строку, представляющую флаг так, "
+"как он был введён в командной строке."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:95
+msgid "Магические методы"
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:98
+msgid "__str__"
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:105
+msgid "Возвращает строковое представление флага вместе с его значением."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:107
+msgid "Строка в формате `флаг значение`."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:118
+msgid "__repr__"
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:125
+msgid "Возвращает отладочное представление объекта."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:127
+msgid "Строка в формате `InputFlag<prefix=..., name=..., value=..., status=...>`."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:138
+msgid "__eq__"
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:145
+msgid "Сравнивает два введённых флага на равенство по имени."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst
+msgid "param other"
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:147
+msgid "Объект для сравнения."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:148
+msgid "`True`, если имена флагов совпадают, иначе `False`."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst
+msgid "raises NotImplementedError"
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:149
+msgid "Если `other` не является экземпляром `InputFlag`."
+msgstr ""
+
+#: ../../root/api/command/input_flag.rst:151
+msgid "Два введённых флага считаются равными, если их имена совпадают."
+msgstr ""
+

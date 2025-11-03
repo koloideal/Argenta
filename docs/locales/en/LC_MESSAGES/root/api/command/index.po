@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-16 23:51+0300\n"
+"POT-Creation-Date: 2025-11-03 19:01+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -23,7 +23,171 @@ msgstr ""
 msgid "Command"
 msgstr ""
 
-#: ../../root/api/command/index.rst:16
+#: ../../root/api/command/index.rst:6
+msgid ""
+"``Command`` — это основная единица функциональности в приложении. Каждая "
+"команда определяет действие, которое пользователь может выполнить, введя "
+"соответствующий триггер. Команды регистрируются в роутерах и формируют "
+"интерфейс взаимодействия с приложением."
+msgstr ""
+
+#: ../../root/api/command/index.rst:8
+msgid ""
+"``Command`` инкапсулирует всю информацию о команде: её триггер (ключевое "
+"слово для вызова), описание, набор флагов и список псевдонимов."
+msgstr ""
+
+#: ../../root/api/command/index.rst:13
+msgid "Инициализация"
+msgstr ""
+
+#: ../../root/api/command/index.rst:23
+msgid "Создаёт новую команду для регистрации в роутере."
+msgstr ""
+
+#: ../../root/api/command/index.rst:25
+msgid ""
+"``trigger``: Строковый триггер, который пользователь вводит для вызова "
+"команды. Является основным идентификатором."
+msgstr ""
+
+#: ../../root/api/command/index.rst:26
+msgid ""
+"``description``: Необязательное описание, объясняющее назначение команды."
+" Отображается в справке."
+msgstr ""
+
+#: ../../root/api/command/index.rst:27
+msgid ""
+"``flags``: Набор флагов для настройки поведения. Может быть одиночным "
+"объектом `Flag` или коллекцией `Flags`."
+msgstr ""
+
+#: ../../root/api/command/index.rst:28
+msgid "``aliases``: Список строковых псевдонимов для основного триггера."
+msgstr ""
+
+#: ../../root/api/command/index.rst:30 ../../root/api/command/index.rst:125
+msgid "**Атрибуты:**"
+msgstr ""
+
+#: ../../root/api/command/index.rst:34
+msgid ""
+"Основной триггер команды. Используется для её идентификации при обработке"
+" пользовательского ввода."
+msgstr ""
+
+#: ../../root/api/command/index.rst:38
+msgid ""
+"Текстовое описание команды. Если не передано, используется значение по "
+"умолчанию."
+msgstr ""
+
+#: ../../root/api/command/index.rst:42
+msgid ""
+"Объект `Flags`, содержащий все зарегистрированные флаги. Автоматически "
+"конвертируется из одиночного `Flag` в коллекцию при инициализации."
+msgstr ""
+
+#: ../../root/api/command/index.rst:46
+msgid "Список строковых псевдонимов. Пуст, если псевдонимы не заданы."
+msgstr ""
+
+#: ../../root/api/command/index.rst:48
+msgid "**Пример использования:**"
+msgstr ""
+
+#: ../../root/api/command/index.rst:54
+msgid ""
+"Подробнее про флаги: :ref:`Flags <root_api_command_flags>` и :ref:`Флаги "
+"вводимых команд <root_flags>`."
+msgstr ""
+
+#: ../../root/api/command/index.rst:59
+msgid "Регистрация команд"
+msgstr ""
+
+#: ../../root/api/command/index.rst:61
+msgid ""
+"Команды регистрируются в роутерах с помощью декоратора "
+"``@router.command()``, после чего становятся доступными для вызова."
+msgstr ""
+
+#: ../../root/api/command/index.rst:63
+msgid "**Базовый пример:**"
+msgstr ""
+
+#: ../../root/api/command/index.rst:68
+msgid "**Команды с флагами:**"
+msgstr ""
+
+#: ../../root/api/command/index.rst:76
+msgid "Работа с псевдонимами"
+msgstr ""
+
+#: ../../root/api/command/index.rst:78
+msgid ""
+"Псевдонимы позволяют вызывать один и тот же обработчик разными "
+"триггерами, сохраняя флаги и описание команды."
+msgstr ""
+
+#: ../../root/api/command/index.rst:80
+msgid "**Пример с псевдонимами:**"
+msgstr ""
+
+#: ../../root/api/command/index.rst:97
+msgid "Теперь пользователь может вызвать команду любым из способов:"
+msgstr ""
+
+#: ../../root/api/command/index.rst:106
+msgid "Все эти варианты выполнят одну и ту же функцию ``handle_shutdown``."
+msgstr ""
+
+#: ../../root/api/command/index.rst:113
 msgid "InputCommand"
+msgstr ""
+
+#: ../../root/api/command/index.rst:115
+msgid ""
+"``InputCommand`` представляет собой обработанную команду, введённую "
+"пользователем. Этот внутренний класс создаётся автоматически при "
+"обработке пользовательского ввода. Прямая работа с ним возможна при "
+"создании пользовательского обработчика для неизвестных команд."
+msgstr ""
+
+#: ../../root/api/command/index.rst:118
+msgid ""
+"Подробнее о пользовательских обработчиках исключений см. :ref:`здесь "
+"<root_error_handling>`."
+msgstr ""
+
+#: ../../root/api/command/index.rst:120
+msgid "Создаёт экземпляр обработанной команды."
+msgstr ""
+
+#: ../../root/api/command/index.rst
+msgid "param trigger"
+msgstr ""
+
+#: ../../root/api/command/index.rst:122
+msgid "Триггер команды, извлечённый из пользовательского ввода."
+msgstr ""
+
+#: ../../root/api/command/index.rst
+msgid "param input_flags"
+msgstr ""
+
+#: ../../root/api/command/index.rst:123
+msgid "Флаги, переданные пользователем."
+msgstr ""
+
+#: ../../root/api/command/index.rst:130
+msgid "Строковый триггер, введённый пользователем."
+msgstr ""
+
+#: ../../root/api/command/index.rst:135
+msgid ""
+"Объект `InputFlags`, содержащий все переданные с командой флаги. "
+"Автоматически конвертируется из одиночного `InputFlag` в коллекцию."
 msgstr ""
 

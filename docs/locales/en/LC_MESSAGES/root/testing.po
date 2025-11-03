@@ -1,0 +1,112 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-03 19:01+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/testing.rst:2
+msgid "Тестирование"
+msgstr ""
+
+#: ../../root/testing.rst:4
+msgid ""
+"В этом разделе описаны практики тестирования приложений на основе "
+"``Argenta``. Примеры основаны на фактическом публичном API: ``App``, "
+"``Router``, ``Command``, ``Orchestrator``, DI через ``dishka`` и "
+"интеграцию в ``argenta.di.integration``."
+msgstr ""
+
+#: ../../root/testing.rst:7
+msgid "Модульное тестирование хендлеров"
+msgstr ""
+
+#: ../../root/testing.rst:9
+msgid ""
+"Обработчики в Argenta — обычные функции. Их удобно тестировать как чистые"
+" функции, не поднимая весь цикл приложения. Рекомендуются ``unittest`` "
+"или ``pytest``."
+msgstr ""
+
+#: ../../root/testing.rst:11
+msgid "Пример с ``unittest`` для простого хендлера без DI:"
+msgstr ""
+
+#: ../../root/testing.rst:18
+msgid "Тестирование с внедрением зависимостей (DI)"
+msgstr ""
+
+#: ../../root/testing.rst:20
+msgid ""
+"Если хендлеру нужны зависимости, используйте ``dishka`` и интеграцию "
+"Argenta:"
+msgstr ""
+
+#: ../../root/testing.rst:27
+msgid "Интеграционное тестирование приложения"
+msgstr ""
+
+#: ../../root/testing.rst:29
+msgid ""
+"Для более высокого уровня тестов собирайте ``App`` и ``Router`` и "
+"вызывайте хендлеры через парсинг команд, обходя бесконечный цикл ввода. "
+"Это даёт близкое к реальности поведение без необходимости симулировать "
+"``stdin``."
+msgstr ""
+
+#: ../../root/testing.rst:36
+msgid "E2E-тестирование цикла (опционально)"
+msgstr ""
+
+#: ../../root/testing.rst:38
+msgid ""
+"Полный запуск цикла ``start_polling`` можно покрывать через подпроцесс с "
+"передачей строк во ``stdin``. Это тяжелее и обычно не требуется. Если всё"
+" же необходимо — вынесите конфигурацию в функцию ``main()`` и запускайте "
+"модуль в подпроцессе с подготовленным вводом/выводом."
+msgstr ""
+
+#: ../../root/testing.rst:41
+msgid "Советы по тестированию"
+msgstr ""
+
+#: ../../root/testing.rst:43
+msgid "**Изолируйте тесты**: Каждый тест должен быть независимым от других."
+msgstr ""
+
+#: ../../root/testing.rst:44
+msgid ""
+"**Моки для внешних интеграций**: БД, HTTP-клиенты и т.п. подменяйте "
+"заглушками и провайдерами ``dishka``."
+msgstr ""
+
+#: ../../root/testing.rst:45
+msgid ""
+"**Покрывайте ошибочные сценарии**: Некорректные флаги, неизвестные "
+"команды, пустой ввод."
+msgstr ""
+
+#: ../../root/testing.rst:46
+msgid ""
+"**Минимизируйте зависимость от форматирования**: Сравнивайте ключевые "
+"фрагменты вывода, а не весь блок целиком."
+msgstr ""
+
+#: ../../root/testing.rst:47
+msgid "**Измеряйте покрытие**: Используйте ``pytest-cov``."
+msgstr ""
+

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-27 11:56+0300\n"
+"POT-Creation-Date: 2025-11-03 19:01+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -28,44 +28,193 @@ msgid "Описание раздела"
 msgstr ""
 
 #: ../../root/api/index.rst:10
-msgid ""
-"В данном разделе приводятся сведения о публичной части интерфейса "
-"библиотеки:"
+msgid "В этом разделе описан публичный API библиотеки. Он включает:"
 msgstr ""
 
 #: ../../root/api/index.rst:12
-msgid ""
-"Классы и функции, предназначенные для прямой интеграции в сторонние "
-"приложения."
+msgid "Классы и функции для интеграции в ваши приложения."
 msgstr ""
 
 #: ../../root/api/index.rst:13
-msgid ""
-"Советы по совместимости, ограничения и поддерживаемые сценарии "
-"использования."
+msgid "Рекомендации по использованию и поддерживаемые сценарии."
 msgstr ""
 
 #: ../../root/api/index.rst:14
-msgid ""
-"Примеры типовой интеграции, подробные сигнатуры методов и описание "
-"возвращаемых сущностей."
+msgid "Примеры кода, подробные сигнатуры и описание возвращаемых значений."
 msgstr ""
 
 #: ../../root/api/index.rst:15
-msgid ""
-"Гарантии стабильности API, поддержка и обратная совместимость между "
-"версиями."
+msgid "Гарантии стабильности и обратной совместимости."
 msgstr ""
 
 #: ../../root/api/index.rst:17
 msgid ""
-"Интерфейсы, не указанные в этом разделе, считаются внутренними и не "
-"подлежат использованию вне самой библиотеки. При разработке собственных "
-"решений рекомендуем обращаться именно к описанным здесь компонентам — это"
-" даст стабильность и гарантии на будущее развитие ваших продуктов с "
-"использованием ``Argenta``."
+"Интерфейсы, не описанные в этом разделе, считаются внутренними. Их "
+"использование может привести к ошибкам при обновлении библиотеки. При "
+"разработке собственных решений используйте только компоненты, описанные "
+"здесь. Это обеспечит стабильность и совместимость ваших продуктов с "
+"будущими версиями ``Argenta``."
+msgstr ""
+
+#: ../../root/api/index.rst:22
+msgid "Публичные импорты"
+msgstr ""
+
+#: ../../root/api/index.rst:24
+msgid ""
+"Все основные компоненты библиотеки доступны для прямого импорта из "
+"корневого пакета ``argenta`` или его подмодулей."
+msgstr ""
+
+#: ../../root/api/index.rst:27
+msgid "Основные компоненты"
+msgstr ""
+
+#: ../../root/api/index.rst:34
+msgid ":ref:`App <root_api_app_index>` — Основной класс приложения."
+msgstr ""
+
+#: ../../root/api/index.rst:35
+msgid ""
+":ref:`Orchestrator <root_api_orchestrator_index>` — Класс для управления "
+"жизненным циклом."
+msgstr ""
+
+#: ../../root/api/index.rst:36
+msgid ""
+":ref:`Router <root_api_router>` — Класс для группировки и регистрации "
+"команд."
+msgstr ""
+
+#: ../../root/api/index.rst:37
+msgid ":ref:`Command <root_api_command_index>` — Класс для создания команд."
+msgstr ""
+
+#: ../../root/api/index.rst:38
+msgid ""
+":ref:`Response <root_api_response>` — Объект ответа, передаваемый в "
+"обработчики."
+msgstr ""
+
+#: ../../root/api/index.rst:41
+msgid "Команды и флаги"
+msgstr ""
+
+#: ../../root/api/index.rst:54
+msgid ":ref:`Flag <root_api_command_flag>` — Класс для описания флага."
+msgstr ""
+
+#: ../../root/api/index.rst:55
+msgid ":ref:`Flags <root_api_command_flags>` — Коллекция для регистрации флагов."
+msgstr ""
+
+#: ../../root/api/index.rst:56
+msgid ""
+":ref:`InputFlag <root_api_command_input_flag>` — Класс для введённого "
+"пользователем флага."
+msgstr ""
+
+#: ../../root/api/index.rst:57
+msgid ""
+":ref:`InputFlags <root_api_command_input_flags>` — Коллекция введённых "
+"флагов."
+msgstr ""
+
+#: ../../root/api/index.rst:58
+msgid ""
+":ref:`PossibleValues <root_api_command_possible_values>` — Правила "
+"валидации значений флагов."
+msgstr ""
+
+#: ../../root/api/index.rst:59
+msgid ""
+":ref:`ValidationStatus <root_api_command_validation_status>` — Статусы "
+"валидации флагов."
+msgstr ""
+
+#: ../../root/api/index.rst:60
+msgid "``PredefinedFlags`` — Готовые наборы флагов (например, ``--help``)."
+msgstr ""
+
+#: ../../root/api/index.rst:63
+msgid "Настройка приложения"
+msgstr ""
+
+#: ../../root/api/index.rst:73
+msgid ""
+":ref:`AutoCompleter <root_api_app_autocompleter>` — Базовый класс для "
+"автодополнения."
+msgstr ""
+
+#: ../../root/api/index.rst:74
+msgid ""
+":ref:`StaticDividingLine <root_api_app_dividing_lines>` — Статическая "
+"разделительная линия."
+msgstr ""
+
+#: ../../root/api/index.rst:75
+msgid ""
+":ref:`DynamicDividingLine <root_api_app_dividing_lines>` — Динамическая "
+"разделительная линия."
+msgstr ""
+
+#: ../../root/api/index.rst:76
+msgid "``PredefinedMessages`` — Готовые системные сообщения."
+msgstr ""
+
+#: ../../root/api/index.rst:79
+msgid "Внедрение зависимостей"
+msgstr ""
+
+#: ../../root/api/index.rst:87
+msgid ""
+":ref:`FromDishka <root_dependency_injection>` — Маркер для внедрения "
+"зависимостей."
+msgstr ""
+
+#: ../../root/api/index.rst:88
+msgid ""
+":ref:`inject <root_dependency_injection>` — Декоратор для асинхронного "
+"внедрения."
 msgstr ""
 
 #~ msgid "Публичный API"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "В данном разделе приводятся сведения о"
+#~ " публичной части интерфейса библиотеки:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Классы и функции, предназначенные для "
+#~ "прямой интеграции в сторонние приложения."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Советы по совместимости, ограничения и "
+#~ "поддерживаемые сценарии использования."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Примеры типовой интеграции, подробные "
+#~ "сигнатуры методов и описание возвращаемых "
+#~ "сущностей."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Гарантии стабильности API, поддержка и "
+#~ "обратная совместимость между версиями."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Интерфейсы, не указанные в этом разделе,"
+#~ " считаются внутренними и не подлежат "
+#~ "использованию вне самой библиотеки. При "
+#~ "разработке собственных решений рекомендуем "
+#~ "обращаться именно к описанным здесь "
+#~ "компонентам — это даст стабильность и"
+#~ " гарантии на будущее развитие ваших "
+#~ "продуктов с использованием ``Argenta``."
 #~ msgstr ""
 

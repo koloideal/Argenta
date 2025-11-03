@@ -1,0 +1,342 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-03 19:01+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/api/command/flag.rst:4
+msgid "Flag"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:6
+msgid ""
+"``Flag`` — это сущность, описывающая флаг команды. Её основная задача — "
+"определить параметры флага, включая его имя, префикс и правила валидации."
+" `Flag` используется при создании команд и предоставляет механизм для "
+"проверки значений, введённых пользователем."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:10
+msgid ""
+"Документация по :ref:`PossibleValues <root_api_command_possible_values>` "
+"— перечисление, определяющее типы допустимых значений."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:12
+msgid ""
+"Документация по :ref:`InputFlag <root_api_command_input_flag>` — объект "
+"обработанного флага, введённого пользователем."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:14
+msgid ""
+":ref:`Общая информация <root_flags>` о флагах и их использовании в "
+"приложении ``Argenta``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:19
+msgid "Инициализация"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:30
+msgid "Создаёт новый флаг для регистрации в команде."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:32
+msgid "``name``: Имя флага (обязательный параметр)."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:33
+msgid "``prefix``: Префикс флага (``-``, ``--``, ``---``). По умолчанию ``--``."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:34
+msgid ""
+"``possible_values``: Правила валидации значения. Может быть списком "
+"строк, регулярным выражением или значением из `PossibleValues`. По "
+"умолчанию `PossibleValues.ALL`."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:36
+msgid "**Атрибуты:**"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:40
+msgid "Имя флага в виде строки."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:44
+msgid "Префикс флага. Один из: ``\"-\"``, ``\"--\"``, ``\"---\"``."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:48
+msgid "Определяет допустимые значения для флага:"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:50
+msgid "Список строк: флаг принимает только значения из этого списка."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:51
+msgid ""
+"Регулярное выражение (`Pattern[str]`): значение проверяется на "
+"соответствие паттерну."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:52
+msgid "`PossibleValues.ALL`: флаг принимает любое значение."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:53
+msgid "`PossibleValues.NEITHER`: флаг не должен иметь значения."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:55 ../../root/api/command/flag.rst:81
+#: ../../root/api/command/flag.rst:104 ../../root/api/command/flag.rst:124
+#: ../../root/api/command/flag.rst:148 ../../root/api/command/flag.rst:265
+msgid "**Пример использования:**"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:64
+msgid "Свойства"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:67
+msgid "string_entity"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:75
+msgid "Возвращает строковое представление флага в формате `prefix + name`."
+msgstr ""
+
+#: ../../root/api/command/flag.rst
+msgid "return"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:77 ../../root/api/command/flag.rst:102
+msgid "Строковое представление флага"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:79
+msgid ""
+"Это свойство объединяет префикс и имя в единую строку, которая "
+"представляет флаг так, как он выглядел бы в командной строке."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:90
+msgid "Магические методы"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:93
+msgid "__str__"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:100
+msgid "Возвращает строковое представление флага (аналогично `string_entity`)."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:113
+msgid "__repr__"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:120
+msgid "Возвращает отладочное представление объекта."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:122
+msgid "Строка в формате `Flag<prefix=..., name=...>`."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:133
+msgid "__eq__"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:140
+msgid ""
+"Сравнивает два флага на равенство по их строковому представлению "
+"(`string_entity`)."
+msgstr ""
+
+#: ../../root/api/command/flag.rst
+msgid "param other"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:142
+msgid "Объект для сравнения"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:143
+msgid "``True``, если флаги равны, иначе ``False``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst
+msgid "raises NotImplementedError"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:144
+msgid "Если `other` не является экземпляром `Flag`."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:146
+msgid "Два флага считаются равными, если их `string_entity` идентичны."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:159
+msgid "PredefinedFlags"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:161
+msgid "``argenta.command.PredefinedFlags``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:163
+msgid ""
+"Класс `PredefinedFlags` предоставляет набор готовых флагов для "
+"использования в приложениях без их ручного создания. Эти флаги покрывают "
+"наиболее распространённые сценарии и следуют общепринятым соглашениям."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:165
+msgid ""
+"Все предопределённые флаги являются атрибутами класса и представляют "
+"собой готовые экземпляры `Flag`."
+msgstr ""
+
+#: ../../root/api/command/flag.rst:170
+msgid "Информационные флаги"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:175
+msgid "Флаг для отображения справки: ``--help``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:177
+msgid "``name``: ``\"help\"``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:178 ../../root/api/command/flag.rst:194
+#: ../../root/api/command/flag.rst:236 ../../root/api/command/flag.rst:252
+msgid "``prefix``: ``\"--\"`` (по умолчанию)"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:179 ../../root/api/command/flag.rst:187
+#: ../../root/api/command/flag.rst:195 ../../root/api/command/flag.rst:203
+#: ../../root/api/command/flag.rst:216 ../../root/api/command/flag.rst:224
+msgid "``possible_values``: ``PossibleValues.NEITHER``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:183
+msgid "Короткая версия флага справки: ``-H``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:185 ../../root/api/command/flag.rst:243
+msgid "``name``: ``\"H\"``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:186 ../../root/api/command/flag.rst:202
+#: ../../root/api/command/flag.rst:223 ../../root/api/command/flag.rst:244
+#: ../../root/api/command/flag.rst:260
+msgid "``prefix``: ``\"-\"``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:191
+msgid "Флаг для отображения информации: ``--info``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:193
+msgid "``name``: ``\"info\"``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:199
+msgid "Короткая версия флага информации: ``-I``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:201
+msgid "``name``: ``\"I\"``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:208
+msgid "Флаги выбора"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:212
+msgid "Флаг для выбора всех элементов: ``--all``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:214
+msgid "``name``: ``\"all\"``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:215
+msgid "``prefix``: ``\"--\"``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:220
+msgid "Короткая версия флага выбора всех элементов: ``-A``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:222
+msgid "``name``: ``\"A\"``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:229
+msgid "Сетевые флаги"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:233
+msgid "Флаг для указания IP-адреса хоста: ``--host``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:235
+msgid "``name``: ``\"host\"``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:237 ../../root/api/command/flag.rst:245
+#, python-brace-format
+msgid ""
+"``possible_values``: Регулярное выражение для валидации IPv4: "
+"``r\"^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$\"``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:241
+msgid "Короткая версия флага хоста: ``-H``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:249
+msgid "Флаг для указания порта: ``--port``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:251
+msgid "``name``: ``\"port\"``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:253 ../../root/api/command/flag.rst:261
+#, python-brace-format
+msgid ""
+"``possible_values``: Регулярное выражение для валидации порта: "
+"``r\"^\\d{1,5}$\"``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:257
+msgid "Короткая версия флага порта: ``-P``"
+msgstr ""
+
+#: ../../root/api/command/flag.rst:259
+msgid "``name``: ``\"P\"``"
+msgstr ""
+

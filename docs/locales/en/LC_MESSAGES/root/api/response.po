@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-15 16:09+0300\n"
+"POT-Creation-Date: 2025-11-03 19:01+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -21,5 +21,147 @@ msgstr ""
 
 #: ../../root/api/response.rst:4
 msgid "Response"
+msgstr ""
+
+#: ../../root/api/response.rst:6
+msgid ""
+"`Response` — это объект, который передаётся в обработчик команды. Он "
+"создаётся автоматически при обработке пользовательского ввода и содержит "
+"статус валидации, введённые флаги."
+msgstr ""
+
+#: ../../root/api/response.rst:11
+msgid ""
+"Документация по :ref:`InputFlags <root_api_command_input_flags>` — "
+"коллекция введённых флагов команды."
+msgstr ""
+
+#: ../../root/api/response.rst:13
+msgid ""
+"Документация по :ref:`ResponseStatus <root_api_response_status>` — "
+"статусы валидации флагов команды."
+msgstr ""
+
+#: ../../root/api/response.rst:15
+msgid ""
+"Документация по :ref:`InputFlag <root_api_command_input_flag>` — "
+"отдельный введённый флаг."
+msgstr ""
+
+#: ../../root/api/response.rst:20
+msgid "Инициализация"
+msgstr ""
+
+#: ../../root/api/response.rst:31
+msgid "Создаёт новый объект ответа."
+msgstr ""
+
+#: ../../root/api/response.rst:33
+msgid ""
+"``status``: Общий статус валидации флагов из перечисления "
+"`ResponseStatus`."
+msgstr ""
+
+#: ../../root/api/response.rst:34
+msgid ""
+"``input_flags``: Коллекция введённых флагов (`InputFlags`). По умолчанию "
+"— пустая."
+msgstr ""
+
+#: ../../root/api/response.rst:37
+msgid ""
+"Экземпляры этого класса не предназначены для прямого создания. Они "
+"автоматически формируются системой и передаются в обработчик команды в "
+"качестве первого обязательного аргумента."
+msgstr ""
+
+#: ../../root/api/response.rst:39
+msgid "**Атрибуты:**"
+msgstr ""
+
+#: ../../root/api/response.rst:44
+msgid ""
+"Общий статус валидации всех флагов команды (`ResponseStatus`). Указывает,"
+" были ли среди введённых флагов некорректные или незарегистрированные."
+msgstr ""
+
+#: ../../root/api/response.rst:49
+msgid ""
+"Коллекция всех флагов, переданных с командой (`InputFlags`). Содержит все"
+" обработанные флаги с их значениями и статусами валидации."
+msgstr ""
+
+#: ../../root/api/response.rst:51
+msgid "**Пример использования:**"
+msgstr ""
+
+#: ../../root/api/response.rst:60
+msgid "Работа с флагами"
+msgstr ""
+
+#: ../../root/api/response.rst:62
+msgid ""
+"`Response` предоставляет доступ к введённым флагам через атрибут "
+"`input_flags`. Вы можете проверять их наличие, получать значения и "
+"статусы валидации."
+msgstr ""
+
+#: ../../root/api/response.rst:64
+msgid "**Пример работы с флагами:**"
+msgstr ""
+
+#: ../../root/api/response.rst:75
+msgid "ResponseStatus"
+msgstr ""
+
+#: ../../root/api/response.rst:77
+msgid ""
+"`ResponseStatus` — это перечисление (`Enum`), которое определяет общий "
+"статус валидации всех флагов команды. Используется в атрибуте `status` "
+"объекта `Response`."
+msgstr ""
+
+#: ../../root/api/response.rst:80
+msgid "Значения enum"
+msgstr ""
+
+#: ../../root/api/response.rst:83
+msgid "ALL_FLAGS_VALID"
+msgstr ""
+
+#: ../../root/api/response.rst:90
+msgid ""
+"Все введённые флаги прошли валидацию. Нет ни некорректных, ни "
+"незарегистрированных флагов."
+msgstr ""
+
+#: ../../root/api/response.rst:93
+msgid "UNDEFINED_FLAGS"
+msgstr ""
+
+#: ../../root/api/response.rst:100
+msgid ""
+"Среди введённых флагов есть незарегистрированные, но нет флагов с "
+"некорректными значениями."
+msgstr ""
+
+#: ../../root/api/response.rst:103
+msgid "INVALID_VALUE_FLAGS"
+msgstr ""
+
+#: ../../root/api/response.rst:110
+msgid ""
+"Среди введённых флагов есть флаги с некорректными значениями, но нет "
+"незарегистрированных."
+msgstr ""
+
+#: ../../root/api/response.rst:113
+msgid "UNDEFINED_AND_INVALID_FLAGS"
+msgstr ""
+
+#: ../../root/api/response.rst:120
+msgid ""
+"Среди введённых флагов есть как незарегистрированные, так и флаги с "
+"некорректными значениями."
 msgstr ""
 

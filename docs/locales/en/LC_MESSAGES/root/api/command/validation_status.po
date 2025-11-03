@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-15 16:09+0300\n"
+"POT-Creation-Date: 2025-11-03 19:01+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -24,6 +24,151 @@ msgid "ValidationStatus"
 msgstr ""
 
 #: ../../root/api/command/validation_status.rst:6
-msgid "case"
+msgid ""
+"`ValidationStatus` — это перечисление (`Enum`), которое определяет "
+"состояние валидации флага. Его задача — предоставить стандартные "
+"константы для отображения результата проверки. `ValidationStatus` "
+"используется в атрибуте `status` класса `InputFlag`, чтобы сообщить, "
+"прошла ли валидация успешно."
 msgstr ""
+
+#: ../../root/api/command/validation_status.rst:8
+msgid ""
+"`ValidationStatus` наследуется от `Enum` и содержит три значения: `VALID`"
+" (корректный флаг), `INVALID` (некорректный) и `UNDEFINED` "
+"(незарегистрированный)."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:12
+msgid ""
+"Статус валидации устанавливается автоматически при создании экземпляра "
+"`InputFlag` на основе правил, заданных в соответствующем `Flag`."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:16
+msgid ""
+"Документация по :ref:`InputFlag <root_api_command_input_flag>` — класс "
+"введённого флага, использующий `ValidationStatus`."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:18
+msgid ""
+"Документация по :ref:`Flag <root_api_command_flag>` — класс флага с "
+"правилами валидации."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:20
+msgid ""
+"Документация по :ref:`PossibleValues <root_api_command_possible_values>` "
+"— типы допустимых значений."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:25
+msgid "Значения enum"
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:28
+msgid "VALID"
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:35
+msgid "Указывает, что флаг и его значение **прошли** валидацию."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:37
+msgid ""
+"Флаги с этим статусом соответствуют правилам, заданным в "
+"`possible_values` соответствующего `Flag`. Их можно безопасно "
+"использовать в логике приложения без дополнительных проверок."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:39
+msgid "**Условия получения статуса** ``VALID``:"
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:41
+msgid "Флаг с `PossibleValues.NEITHER` передан без значения."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:42
+msgid "Флаг с `PossibleValues.ALL` передан с любым значением или без него."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:43
+msgid "Значение флага входит в список разрешённых."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:44
+msgid "Значение флага соответствует регулярному выражению."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:46
+#: ../../root/api/command/validation_status.rst:73
+msgid "**Пример использования:**"
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:55
+msgid "INVALID"
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:62
+msgid "Указывает, что флаг или его значение **не прошли** валидацию."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:64
+msgid ""
+"Флаги с этим статусом нарушают правила, заданные в `possible_values` "
+"соответствующего `Flag`. Их следует обрабатывать как ошибочные."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:66
+msgid "**Условия получения статуса** ``INVALID``:"
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:68
+msgid "Флаг с `PossibleValues.NEITHER` передан со значением."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:69
+msgid "Значение флага не входит в список разрешённых."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:70
+msgid "Значение флага не соответствует регулярному выражению."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:71
+msgid "Флаг требует значение, но передан без него."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:82
+msgid "UNDEFINED"
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:89
+msgid "Указывает, что введённый флаг не был зарегистрирован в команде."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:91
+msgid "**Условия получения статуса** ``UNDEFINED``:"
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:93
+msgid "Введённый флаг не найден среди зарегистрированных для данной команды."
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:99
+msgid "Практические примеры"
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:102
+msgid "Комплексный пример валидации"
+msgstr ""
+
+#: ../../root/api/command/validation_status.rst:104
+msgid "Пример демонстрирует использование всех статусов в реальном сценарии."
+msgstr ""
+
+#~ msgid "case"
+#~ msgstr ""
 
