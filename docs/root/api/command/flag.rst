@@ -166,10 +166,8 @@ PredefinedFlags
 
 -----
 
-Доступные флаги
-~~~~~~~~~~~~~~~
-
 Информационные флаги
+~~~~~~~~~~~~~~~~~~~~
 
 
 .. py:attribute:: PredefinedFlags.HELP

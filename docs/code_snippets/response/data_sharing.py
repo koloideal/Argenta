@@ -1,6 +1,5 @@
-from argenta import Router, Response, Command
+from argenta import Router, Response, Command, DataBridge
 from argenta.command import Flag
-from argenta.data_bridge import DataBridge
 from argenta.di import FromDishka
 
 # 1. Создаём роутер

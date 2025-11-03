@@ -148,15 +148,27 @@ PredefinedMessages
 
 `PredefinedMessages` — это перечисление (Enum), содержащее набор готовых к использованию строковых сообщений. Они отформатированы с использованием синтаксиса `rich` и предназначены для вывода стандартной информации, такой как подсказки по использованию.
 
-Вы можете импортировать и использовать их напрямую в своих обработчиках.
+Реккомендуется использовать их при старте приложения.
 
 .. code-block:: python
    :linenos:
 
+   from argenta import App, Orchestrator
    from argenta.app import PredefinedMessages
 
-   def my_handler(response):
-       print(PredefinedMessages.USAGE)
+   app: App = App()
+   orchestrator: Orchestrator = Orchestrator()
+
+   def main():
+      app.add_message_on_startup(PredefinedMessages.USAGE)
+      app.add_message_on_startup(PredefinedMessages.AUTOCOMPLETE)
+      app.add_message_on_startup(PredefinedMessages.HELP)
+
+      orchestrator.start_polling(app)
+
+   if __name__ == "__main__":
+      main()
+    
 
 .. py:class:: PredefinedMessages
 

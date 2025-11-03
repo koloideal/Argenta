@@ -10,10 +10,10 @@ DataBridge
 .. code-block:: python
    :linenos:
 
-   from dishka.integrations.fastapi import FromDishka
-   from argenta.bridge import DataBridge
+   from argenta.di import FromDishka
+   from argenta import DataBridge, Response
 
-   def my_handler(data_bridge: FromDishka[DataBridge]):
+   def my_handler(response: Response, data_bridge: FromDishka[DataBridge]):
        # ... ваш код
 
 **Практический пример: Аутентификация**

@@ -1,5 +1,4 @@
-from argenta.command import Flags
-from argenta.command.flag.defaults import PredefinedFlags
+from argenta.command import Flags, PredefinedFlags
 
 # Использование предопределенных флагов при создании команды
 command_flags = Flags(
