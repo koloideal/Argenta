@@ -1,23 +1,12 @@
 from argenta import App, Orchestrator
-from argenta.app import AutoCompleter, DynamicDividingLine, PredefinedMessages
-from argenta.orchestrator import ArgParser
-from argenta.orchestrator.argparser import BooleanArgument, ValueArgument
+from argenta.app import PredefinedMessages, StaticDividingLine
 from mock.mock_app.routers import work_router
 
-arg_parser: ArgParser = ArgParser(
-    processed_args=[
-        BooleanArgument(name="repeat", is_deprecated=True),
-        ValueArgument(name="required", is_required=True),
-    ]
-)
 
-print(arg_parser.parsed_argspace.all_arguments)
 app: App = App(
-    dividing_line=DynamicDividingLine(),
-    autocompleter=AutoCompleter(history_filename="history.txt")
+    dividing_line=StaticDividingLine(),
 )
-orchestrator: Orchestrator = Orchestrator(arg_parser)
-print(arg_parser.parsed_argspace.all_arguments)
+orchestrator: Orchestrator = Orchestrator()
 
 
 def main():

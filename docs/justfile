@@ -14,7 +14,7 @@ default:
 # Build all language versions
 build-all:
     {{sphinxbuild}} -b html -D language=ru {{sourcedir}} {{builddir}}/html/ru
-    {{sphinxbuild}} -b html -D language=en {{sourcedir}} {{builddir}}/html/en
+    {{sphinxbuild}} -b html -D language =en {{sourcedir}} {{builddir}}/html/en
 
 # Live preview for Russian version
 live-ru:
