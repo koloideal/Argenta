@@ -20,5 +20,3 @@ class TestSimpleHandler(unittest.TestCase):
         with redirect_stdout(io.StringIO()) as stdout:
             router.finds_appropriate_handler(InputCommand.parse("PING"))
         self.assertIn("PONG", stdout.getvalue())
-
-

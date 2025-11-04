@@ -14,6 +14,7 @@ class TestAppIntegration(unittest.TestCase):
         @self.router.command(Command("HELP", description="Show help"))
         def help_cmd(response: Response):
             print("Available commands: HELP")
+
         _ = help_cmd  # appease linter: function is registered via decorator
 
         self.app.include_router(self.router)
@@ -22,5 +23,3 @@ class TestAppIntegration(unittest.TestCase):
         with redirect_stdout(io.StringIO()) as stdout:
             self.router.finds_appropriate_handler(InputCommand.parse("HELP"))
         self.assertIn("Available commands:", stdout.getvalue())
-
-

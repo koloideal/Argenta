@@ -15,6 +15,7 @@ class Service:
     def hello(self) -> str:
         return "world"
 
+
 router = Router(title="DI")
 
 
@@ -56,5 +57,3 @@ class TestDIHandler(unittest.TestCase):
 class _FakeApp:
     # Minimal stub for setup_dishka; app object is not used in unit tests
     registered_routers = []
-
-
