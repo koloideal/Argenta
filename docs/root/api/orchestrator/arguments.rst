@@ -137,7 +137,7 @@ BooleanArgument
 
    python app.py --verbose
    python app.py --debug --no-cache
-   python app.py  # без флагов
+   python app.py  # без аргументов
 
 -----
 
@@ -163,7 +163,7 @@ InputArgument
 Создаёт экземпляр обработанного входного аргумента.
 
 :param name: Имя аргумента
-:param value: Значение аргумента. Для `BooleanArgument` — `True`, если флаг передан; для `ValueArgument` — строка со значением
+:param value: Значение аргумента. Для `BooleanArgument` — `True`, если аргумент передан; для `ValueArgument` — строка со значением
 :param founder_class: Класс-родитель, из которого был создан аргумент (`BooleanArgument` или `ValueArgument`)
 
 **Атрибуты:**
@@ -177,7 +177,7 @@ InputArgument
 
    Значение аргумента. Тип зависит от исходного класса:
 
-* Для `BooleanArgument`: `True`, если флаг был передан.
+* Для `BooleanArgument`: `True`, если аргумент был передан.
 * Для `ValueArgument`: строка с переданным значением или значением по умолчанию
 
 .. py:attribute:: founder_class
