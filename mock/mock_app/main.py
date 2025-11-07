@@ -1,16 +1,10 @@
 from argenta import App, Orchestrator
-from argenta.app import PredefinedMessages, StaticDividingLine
+from argenta.app import PredefinedMessages
+from argenta.app.dividing_line.models import StaticDividingLine, DynamicDividingLine
 from mock.mock_app.routers import work_router
 
-def print_hello(entity: str):
-    with open('hello.txt', 'a') as file:
-        file.write(f'printer called: {entity}\n')
-    print(entity)
-
 app: App = App(
-    dividing_line=StaticDividingLine(),
-    override_system_messages=True,
-    print_func=print_hello
+    dividing_line=DynamicDividingLine('^'),
 )
 orchestrator: Orchestrator = Orchestrator()
 

@@ -483,35 +483,22 @@ class App(BaseApp):
             ]
 
             if processing_router.disable_redirect_stdout:
-                if isinstance(self._dividing_line, StaticDividingLine):
-                    self._print_func(
-                        self._dividing_line.get_full_static_line(
-                            is_override=self._override_system_messages
-                        )
+                dividing_line_unit_part: str = self._dividing_line.get_unit_part()
+                self._print_func(
+                    StaticDividingLine(
+                        dividing_line_unit_part
+                    ).get_full_static_line(
+                        is_override=self._override_system_messages
                     )
-                    processing_router.finds_appropriate_handler(input_command)
-                    self._print_func(
-                        self._dividing_line.get_full_static_line(
-                            is_override=self._override_system_messages
-                        )
+                )
+                processing_router.finds_appropriate_handler(input_command)
+                self._print_func(
+                    StaticDividingLine(
+                        dividing_line_unit_part
+                    ).get_full_static_line(
+                        is_override=self._override_system_messages
                     )
-                else:
-                    dividing_line_unit_part: str = self._dividing_line.get_unit_part()
-                    self._print_func(
-                        StaticDividingLine(
-                            dividing_line_unit_part
-                        ).get_full_static_line(
-                            is_override=self._override_system_messages
-                        )
-                    )
-                    processing_router.finds_appropriate_handler(input_command)
-                    self._print_func(
-                        StaticDividingLine(
-                            dividing_line_unit_part
-                        ).get_full_static_line(
-                            is_override=self._override_system_messages
-                        )
-                    )
+                )
             else:
                 with redirect_stdout(io.StringIO()) as stdout:
                     processing_router.finds_appropriate_handler(input_command)
