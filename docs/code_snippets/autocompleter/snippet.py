@@ -1,10 +1,10 @@
 from argenta import App
-from argenta.app.autocompleter import AutoCompleter
+from argenta.app import AutoCompleter
 
-# Настройка автодополнения с сохранением истории в файл
+# Setting up autocompletion with saving history to a file
 my_autocompleter = AutoCompleter(history_filename="argenta_history.txt")
 
-# Передача настроенного автокомплитера в приложение
+# Passing the configured autocompleter to the application
 app = App(autocompleter=my_autocompleter)
 
-# ... остальная логика приложения
+# ... the rest of the application logic
