@@ -1,5 +1,5 @@
 __all__ = [
-    'get_time_of_pre_cycle_setup',
+    "get_time_of_pre_cycle_setup",
 ]
 
 import io
@@ -17,6 +17,6 @@ def get_time_of_pre_cycle_setup(app: App) -> float:
     """
     start = time()
     with redirect_stdout(io.StringIO()):
-        app._pre_cycle_setup() # pyright: ignore[reportPrivateUsage]
+        app._pre_cycle_setup()  # pyright: ignore[reportPrivateUsage]
     end = time()
     return end - start

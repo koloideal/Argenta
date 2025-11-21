@@ -11,9 +11,12 @@ DEFAULT_ARGPARSER: ArgParser = ArgParser(processed_args=[])
 
 
 class Orchestrator:
-    def __init__(self, arg_parser: ArgParser = DEFAULT_ARGPARSER,
-                 custom_providers: list[Provider] = [],
-                 auto_inject_handlers: bool = True):
+    def __init__(
+        self,
+        arg_parser: ArgParser = DEFAULT_ARGPARSER,
+        custom_providers: list[Provider] = [],
+        auto_inject_handlers: bool = True,
+    ):
         """
         Public. An orchestrator and configurator that defines the behavior of an integrated system, one level higher than the App
         :param arg_parser: Cmd argument parser and configurator at startup
@@ -31,7 +34,9 @@ class Orchestrator:
         :param app: a running application
         :return: None
         """
-        container = make_container(SystemProvider(self._arg_parser), *self._custom_providers)
+        container = make_container(
+            SystemProvider(), *self._custom_providers, context={ArgParser: self._arg_parser}
+        )
         setup_dishka(app, container, auto_inject=self._auto_inject_handlers)
 
         app.run_polling()

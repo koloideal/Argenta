@@ -2,12 +2,13 @@ __all__ = ["NonStandardBehaviorHandler", "EmptyCommandHandler", "Printer", "Desc
 
 from typing import Protocol, TypeVar
 
-T = TypeVar('T', contravariant=True) # noqa: WPS111
+T = TypeVar("T", contravariant=True)  # noqa: WPS111
 
 
 class NonStandardBehaviorHandler(Protocol[T]):
     def __call__(self, __param: T) -> None:
         raise NotImplementedError
+
 
 class EmptyCommandHandler(Protocol):
     def __call__(self) -> None:

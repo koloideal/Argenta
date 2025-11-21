@@ -5,8 +5,8 @@ from typing import Any, Callable, TypeVar
 from dishka import Container, FromDishka
 from dishka.integrations.base import is_dishka_injected, wrap_injection
 
-from argenta.app import App
-from argenta.response import Response
+from argenta.app.models import App
+from argenta.response.entity import Response
 
 T = TypeVar("T")
 
@@ -25,9 +25,7 @@ def setup_dishka(app: App, container: Container, *, auto_inject: bool = False) -
     Response.patch_by_container(container)
 
 
-def _get_container_from_response(
-    args: tuple[Any, ...], kwargs: dict[str, Any]
-) -> Container:
+def _get_container_from_response(args: tuple[Any, ...], kwargs: dict[str, Any]) -> Container:
     for arg in args:
         if isinstance(arg, Response):
             if hasattr(arg, "_dishka_container"):

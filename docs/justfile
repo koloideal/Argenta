@@ -12,7 +12,7 @@ default:
     @{{sphinxbuild}} -M help "{{sourcedir}}" "{{builddir}}" {{sphinxopts}}
 
 # Build all language versions
-build-all:
+build:
     {{sphinxbuild}} -b html -D language=ru {{sourcedir}} {{builddir}}/html/ru
     {{sphinxbuild}} -b html -D language =en {{sourcedir}} {{builddir}}/html/en
 
@@ -28,7 +28,3 @@ live-en:
 update-langs:
     {{sphinxbuild}} -b gettext . _build/gettext
     sphinx-intl update -p _build/gettext -l en
-
-# Generic build target (html, latex, etc.)
-build target:
-    {{sphinxbuild}} -M {{target}} "{{sourcedir}}" "{{builddir}}" {{sphinxopts}}

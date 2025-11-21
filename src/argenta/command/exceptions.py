@@ -1,8 +1,8 @@
 __all__ = [
-	"InputCommandException",
-	"UnprocessedInputFlagException",
-	"RepeatedInputFlagsException",
-	"EmptyInputCommandException",
+    "InputCommandException",
+    "UnprocessedInputFlagException",
+    "RepeatedInputFlagsException",
+    "EmptyInputCommandException",
 ]
 
 from abc import ABC, abstractmethod
@@ -15,6 +15,7 @@ class InputCommandException(ABC, Exception):
     """
     Private. Base exception class for all exceptions raised when parse input command
     """
+
     @override
     @abstractmethod
     def __str__(self) -> str:
@@ -25,6 +26,7 @@ class UnprocessedInputFlagException(InputCommandException):
     """
     Private. Raised when an unprocessed input flag is detected
     """
+
     @override
     def __str__(self) -> str:
         return "Unprocessed Input Flags"
@@ -42,16 +44,14 @@ class RepeatedInputFlagsException(InputCommandException):
     @override
     def __str__(self) -> str:
         string_entity: str = self.flag.string_entity
-        return (
-            "Repeated Input Flags\n"
-            f"Duplicate flag was detected in the input: '{string_entity}'"
-        )
+        return f"Repeated Input Flags\nDuplicate flag was detected in the input: '{string_entity}'"
 
 
 class EmptyInputCommandException(InputCommandException):
     """
     Private. Raised when an empty input command is detected
     """
+
     @override
     def __str__(self) -> str:
         return "Input Command is empty"

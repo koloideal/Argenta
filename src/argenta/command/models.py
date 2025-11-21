@@ -1,13 +1,12 @@
-__all__ = [
-    "Command",
-    "InputCommand"
-]
+__all__ = ["Command", "InputCommand"]
 
 from typing import Literal, Never, Self, cast
 
-from argenta.command.exceptions import (EmptyInputCommandException,
-                                        RepeatedInputFlagsException,
-                                        UnprocessedInputFlagException)
+from argenta.command.exceptions import (
+    EmptyInputCommandException,
+    RepeatedInputFlagsException,
+    UnprocessedInputFlagException,
+)
 from argenta.command.flag.flags.models import Flags, InputFlags
 from argenta.command.flag.models import Flag, InputFlag, ValidationStatus
 
@@ -23,7 +22,8 @@ DEFAULT_WITHOUT_INPUT_FLAGS: InputFlags = InputFlags()
 class Command:
     def __init__(
         self,
-        trigger: str, *,
+        trigger: str,
+        *,
         description: str | None = None,
         flags: Flag | Flags = DEFAULT_WITHOUT_FLAGS,
         aliases: list[str] | None = None,
@@ -40,9 +40,7 @@ class Command:
         self.description: str = description if description else "Command without description"
         self.aliases: list[str] = aliases if aliases else []
 
-    def validate_input_flag(
-        self, flag: InputFlag
-    ) -> ValidationStatus:
+    def validate_input_flag(self, flag: InputFlag) -> ValidationStatus:
         """
         Private. Validates the input flag
         :param flag: input flag for validation
@@ -60,8 +58,7 @@ class Command:
 
 
 class InputCommand:
-    def __init__(self, trigger: str, *,
-                 input_flags: InputFlag | InputFlags = DEFAULT_WITHOUT_INPUT_FLAGS):
+    def __init__(self, trigger: str, *, input_flags: InputFlag | InputFlags = DEFAULT_WITHOUT_INPUT_FLAGS):
         """
         Private. The model of the input command, after parsing
         :param trigger:the trigger of the command
@@ -69,7 +66,9 @@ class InputCommand:
         :return: None
         """
         self.trigger: str = trigger
-        self.input_flags: InputFlags = input_flags if isinstance(input_flags, InputFlags) else InputFlags([input_flags])
+        self.input_flags: InputFlags = (
+            input_flags if isinstance(input_flags, InputFlags) else InputFlags([input_flags])
+        )
 
     @classmethod
     def parse(cls, raw_command: str) -> Self:
@@ -108,13 +107,13 @@ class CommandParser:
                 continue
 
             input_flag = InputFlag(
-                name=crnt_flg_name[crnt_flg_name.rfind(MIN_FLAG_PREFIX) + 1:],
+                name=crnt_flg_name[crnt_flg_name.rfind(MIN_FLAG_PREFIX) + 1 :],
                 prefix=cast(
                     Literal["-", "--", "---"],
-                    crnt_flg_name[:crnt_flg_name.rfind(MIN_FLAG_PREFIX) + 1],
+                    crnt_flg_name[: crnt_flg_name.rfind(MIN_FLAG_PREFIX) + 1],
                 ),
                 input_value=crnt_flg_val,
-                status=None
+                status=None,
             )
 
             if input_flag in self._parsed_input_flags:
@@ -125,8 +124,7 @@ class CommandParser:
 
         return (self._parsed_input_flags, crnt_flg_name, crnt_flg_val)
 
-    def _is_next_token_value(self, current_index: int,
-                                   _tokens: list[str] | list[Never]) -> bool:
+    def _is_next_token_value(self, current_index: int, _tokens: list[str] | list[Never]) -> bool:
         next_index = current_index + 1
         if next_index >= len(_tokens):
             return False
@@ -134,17 +132,16 @@ class CommandParser:
         next_token = _tokens[next_index]
         return not next_token.startswith(MIN_FLAG_PREFIX)
 
+
 def _parse_single_token(
-    token: str,
-    crnt_flag_name: str | None,
-    crnt_flag_val: str | None
+    token: str, crnt_flag_name: str | None, crnt_flag_val: str | None
 ) -> tuple[str | None, str | None]:
     if not token.startswith(MIN_FLAG_PREFIX):
         if not crnt_flag_name or crnt_flag_val:
             raise UnprocessedInputFlagException
         return crnt_flag_name, token
 
-    prefix = token[:token.rfind(MIN_FLAG_PREFIX)]
+    prefix = token[: token.rfind(MIN_FLAG_PREFIX)]
     if len(token) < 2 or len(prefix) > 2:
         raise UnprocessedInputFlagException
 

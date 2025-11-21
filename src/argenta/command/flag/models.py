@@ -6,19 +6,21 @@ from typing import Literal, override
 
 
 class PossibleValues(Enum):
-    NEITHER = 'NEITHER'
-    ALL = 'ALL'
+    NEITHER = "NEITHER"
+    ALL = "ALL"
 
 
 class ValidationStatus(Enum):
-    VALID = 'VALID'
-    INVALID = 'INVALID'
-    UNDEFINED = 'UNDEFINED'
+    VALID = "VALID"
+    INVALID = "INVALID"
+    UNDEFINED = "UNDEFINED"
 
 
 class Flag:
     def __init__(
-        self, name: str, *,
+        self,
+        name: str,
+        *,
         prefix: Literal["-", "--", "---"] = "--",
         possible_values: list[str] | Pattern[str] | PossibleValues = PossibleValues.ALL,
     ) -> None:
@@ -65,7 +67,7 @@ class Flag:
 
     @override
     def __repr__(self) -> str:
-        return f'Flag<name={self.name}, prefix={self.prefix}>'
+        return f"Flag<name={self.name}, prefix={self.prefix}>"
 
     @override
     def __eq__(self, other: object) -> bool:
@@ -77,10 +79,12 @@ class Flag:
 
 class InputFlag:
     def __init__(
-        self, name: str, *,
-        prefix: Literal['-', '--', '---'] = '--',
+        self,
+        name: str,
+        *,
+        prefix: Literal["-", "--", "---"] = "--",
         input_value: str | None,
-        status: ValidationStatus | None
+        status: ValidationStatus | None,
     ):
         """
         Public. The entity of the flag of the entered command
@@ -90,7 +94,7 @@ class InputFlag:
         :return: None
         """
         self.name: str = name
-        self.prefix: Literal['-', '--', '---'] = prefix
+        self.prefix: Literal["-", "--", "---"] = prefix
         self.input_value: str | None = input_value
         self.status: ValidationStatus | None = status
 
@@ -105,17 +109,15 @@ class InputFlag:
 
     @override
     def __str__(self) -> str:
-        return f'{self.string_entity} {self.input_value}'
+        return f"{self.string_entity} {self.input_value}"
 
     @override
     def __repr__(self) -> str:
-        return f'InputFlag<name={self.name}, prefix={self.prefix}, value={self.input_value}, status={self.status}>'
+        return f"InputFlag<name={self.name}, prefix={self.prefix}, value={self.input_value}, status={self.status}>"
 
     @override
     def __eq__(self, other: object) -> bool:
         if isinstance(other, InputFlag):
-            return (
-                self.name == other.name
-            )
+            return self.name == other.name
         else:
             raise NotImplementedError

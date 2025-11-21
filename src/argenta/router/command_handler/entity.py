@@ -32,9 +32,7 @@ class CommandHandlers:
         Private. The model that unites all CommandHandler of the routers
         :param command_handlers: list of CommandHandlers for register
         """
-        self.command_handlers: list[CommandHandler] = (
-            command_handlers if command_handlers else []
-        )
+        self.command_handlers: list[CommandHandler] = command_handlers if command_handlers else []
 
     def add_handler(self, command_handler: CommandHandler) -> None:
         """

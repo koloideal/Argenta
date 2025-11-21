@@ -75,7 +75,7 @@ msgstr ""
 
 #: ../../root/api/app/index.rst:47
 msgid ""
-"``repeat_command_groups``: Если ``True``, список доступных команд "
+"``repeat_command_groups_printing``: Если ``True``, список доступных команд "
 "выводится перед каждым вводом."
 msgstr ""
 
@@ -296,7 +296,7 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ""
-#~ "``repeat_command_groups``: Если **True** (по "
+#~ "``repeat_command_groups_printing``: Если **True** (по "
 #~ "умолчанию), описание доступных команд будет"
 #~ " выводиться перед каждым вводом."
 #~ msgstr ""

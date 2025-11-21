@@ -30,7 +30,7 @@ App
                 system_router_title: str | None = "System points:", 
                 ignore_command_register: bool = True, 
                 dividing_line: AVAILABLE_DIVIDING_LINES = DEFAULT_DIVIDING_LINE, 
-                repeat_command_groups: bool = True, 
+                repeat_command_groups_printing: bool = True, 
                 override_system_messages: bool = False, 
                 autocompleter: AutoCompleter = DEFAULT_AUTOCOMPLETER, 
                 print_func: Printer = DEFAULT_PRINT_FUNC) -> None
@@ -40,14 +40,14 @@ App
     * ``prompt``: Приглашение к вводу, отображаемое перед каждой командой.
     * ``initial_message``: Сообщение, выводимое при запуске приложения.
     * ``farewell_message``: Сообщение, выводимое при выходе из приложения.
-    * ``exit_command``: Команда, используемая для выхода из приложения.
+    * ``exit_command``: Команда, которая маркируется как триггер для выхода из приложения.
     * ``system_router_title``: Заголовок для системного роутера (содержит команду выхода).
-    * ``ignore_command_register``: Если ``True``, регистр команд игнорируется при поиске обработчика.
-    * ``dividing_line``: Стиль разделительной линии (``StaticDividingLine`` или ``DynamicDividingLine``).
-    * ``repeat_command_groups``: Если ``True``, список доступных команд выводится перед каждым вводом.
+    * ``ignore_command_register``: Если ``True``, регистр вводимых команд игнорируется при поиске обработчика.
+    * ``dividing_line``: Тип разделительной линии (``StaticDividingLine`` или ``DynamicDividingLine``).
+    * ``repeat_command_groups_printing``: Если ``True``, список доступных команд выводится перед каждым вводом.
     * ``override_system_messages``: Если ``True``, стандартное форматирование (цвета, ASCII-арт) отключается.
-    * ``autocompleter``: Объект, отвечающий за автодополнение команд.
-    * ``print_func``: Функция для вывода всех системных сообщений (по умолчанию ``rich.print``).
+    * ``autocompleter``: Экземпляр класса :ref:`AutoCompleter <root_api_app_autocompleter>`, отвечающий за автодополнение команд.
+    * ``print_func``: Функция для вывода всех системных сообщений (по умолчанию ``rich.Console().print``).
 
 -----
     
@@ -68,7 +68,7 @@ App
 
 - .. py:method:: add_message_on_startup(self, message: str) -> None
 
-    Добавляет текстовое сообщение, которое выводится при запуске приложения после `initial_message`.
+    Добавляет текстовое сообщение, которое выводится при запуске приложения после ``initial_message``.
 
     :param message: Строка с сообщением.
 
@@ -89,7 +89,7 @@ App
 
 .. py:method:: set_description_message_pattern(self, handler: Callable[[str, str], str]) -> None
 
-   Устанавливает шаблон для форматирования строки описания команды.
+   Устанавливает шаблон для форматирования описания команды.
    
    Обработчик принимает триггер команды (``str``) и её описание (``str``), а возвращает отформатированную строку.
    

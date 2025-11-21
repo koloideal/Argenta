@@ -45,12 +45,16 @@ exclude = [
     ".__pycache__",
     "tests"
 ]
+line-length=110
 
 [tool.pyright]
 typeCheckingMode = "strict"
 
 [tool.mypy]
 disable_error_code = "import-untyped"
+
+[tool.isort]
+line_length=90
 
 [build-system]
 requires = ["hatchling"]

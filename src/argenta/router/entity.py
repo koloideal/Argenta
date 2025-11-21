@@ -1,7 +1,6 @@
 __all__ = ["Router"]
 
-from inspect import (get_annotations, getfullargspec, getsourcefile,
-                     getsourcelines)
+from inspect import get_annotations, getfullargspec, getsourcefile, getsourcelines
 from typing import Callable, TypeAlias
 
 from rich.console import Console
@@ -10,11 +9,12 @@ from argenta.command import Command, InputCommand
 from argenta.command.flag import ValidationStatus
 from argenta.command.flag.flags import Flags, InputFlags
 from argenta.response import Response, ResponseStatus
-from argenta.router.command_handler.entity import (CommandHandler,
-                                                   CommandHandlers)
-from argenta.router.exceptions import (RepeatedFlagNameException,
-                                       RequiredArgumentNotPassedException,
-                                       TriggerContainSpacesException)
+from argenta.router.command_handler.entity import CommandHandler, CommandHandlers
+from argenta.router.exceptions import (
+    RepeatedFlagNameException,
+    RequiredArgumentNotPassedException,
+    TriggerContainSpacesException,
+)
 
 HandlerFunc: TypeAlias = Callable[..., None]
 
@@ -78,9 +78,7 @@ class Router:
             if input_command_name.lower() in handle_command.aliases:
                 self.process_input_command(input_command_flags, command_handler)
 
-    def process_input_command(
-        self, input_command_flags: InputFlags, command_handler: CommandHandler
-    ) -> None:
+    def process_input_command(self, input_command_flags: InputFlags, command_handler: CommandHandler) -> None:
         """
         Private. Processes input command with the appropriate handler
         :param input_command_flags: input command flags as InputFlags
@@ -90,9 +88,7 @@ class Router:
         handle_command = command_handler.handled_command
         if handle_command.registered_flags.flags:
             if input_command_flags.flags:
-                response: Response = _structuring_input_flags(
-                    handle_command, input_command_flags
-                )
+                response: Response = _structuring_input_flags(handle_command, input_command_flags)
                 command_handler.handling(response)
             else:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
@@ -103,9 +99,7 @@ class Router:
                 for input_flag in input_command_flags:
                     input_flag.status = ValidationStatus.UNDEFINED
                     undefined_flags.add_flag(input_flag)
-                response = Response(
-                    ResponseStatus.UNDEFINED_FLAGS, input_flags=undefined_flags
-                )
+                response = Response(ResponseStatus.UNDEFINED_FLAGS, input_flags=undefined_flags)
                 command_handler.handling(response)
             else:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
@@ -142,15 +136,11 @@ class CommandDecorator:
 
     def __call__(self, handler_func: Callable[..., None]) -> Callable[..., None]:
         _validate_func_args(handler_func)
-        self.router.command_handlers.add_handler(
-            CommandHandler(handler_func, self.command)
-        )
+        self.router.command_handlers.add_handler(CommandHandler(handler_func, self.command))
         return handler_func
 
 
-def _structuring_input_flags(
-    handled_command: Command, input_flags: InputFlags
-) -> Response:
+def _structuring_input_flags(handled_command: Command, input_flags: InputFlags) -> Response:
     """
     Private. Validates flags of input command
     :param handled_command: entity of the handled command
