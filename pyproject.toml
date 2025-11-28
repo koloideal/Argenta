@@ -45,7 +45,7 @@ exclude = [
     ".__pycache__",
     "tests"
 ]
-line-length=110
+line-length=100
 
 [tool.pyright]
 typeCheckingMode = "strict"

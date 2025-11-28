@@ -25,7 +25,7 @@ ArgParser
 * ``description``: Описание приложения для отображения в справке.
 * ``epilog``: Дополнительная информация для отображения в конце справки.
 
-Основные методы и атрибуты
+Атрибуты
 ---------------------------
 
 .. py:attribute:: parsed_argspace: ArgSpace
@@ -64,16 +64,16 @@ ArgParser
 .. code-block:: bash
 
     $ python app.py
-    usage: MyApp [-h] --config CONFIG
-    MyApp: error: the following arguments are required: --config
+    usage: Argenta [-h] --config CONFIG
+    Argenta: error: the following arguments are required: --config
 
-**Недопустимое значение из списка choices:**
+**Недопустимое значение из списка possible_values:**
 
 .. code-block:: bash
 
     $ python app.py --config app.yaml --log-level TRACE
-    usage: MyApp [-h] --log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}
-    MyApp: error: argument --log-level: invalid choice: 'TRACE'
+    usage: Argenta [-h] --log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}
+    Argenta: error: argument --log-level: invalid choice: 'TRACE'
 
 **Использование устаревшего аргумента:**
 
