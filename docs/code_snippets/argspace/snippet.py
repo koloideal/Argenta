@@ -1,15 +1,15 @@
 from argenta import App, Orchestrator
 from argenta.orchestrator.argparser import ArgParser, ValueArgument
 
-# Определение аргументов приложения
 arguments = [
-    ValueArgument("host", help="Server host", default="localhost"),
-    ValueArgument("port", help="Server port", default="8080"),
+    ValueArgument("host", help="Server host", is_required=True),
+    ValueArgument("port", help="Server port", is_required=True),
 ]
 
-# Создание и запуск парсера
 argparser = ArgParser(
-    processed_args=arguments, name="WebServer", description="Simple web server"
+    processed_args=arguments, 
+    name="WebServer", 
+    description="Simple web server"
 )
 
 app = App()
@@ -17,10 +17,8 @@ orchestrator = Orchestrator(argparser)
 
 
 def main():
-    # Получение аргументов только после инициализации Orchestrator
     argspace = argparser.parsed_argspace
 
-    # Получение конкретных аргументов
     host = argspace.get_by_name("host")
     port = argspace.get_by_name("port")
 
