@@ -12,9 +12,10 @@ Arguments
 ValueArgument
 -------------
 
-Класс для аргументов, требующих передачи значения. Используется для параметров конфигурации, которым необходимо указать значение при запуске.
+Класс для аргументов, требующих передачи значения.
 
 .. py:class:: ValueArgument(BaseArgument)
+    :no-index:
 
 .. code-block:: python
    :linenos:
@@ -32,44 +33,16 @@ ValueArgument
 :param name: Имя аргумента
 :param prefix: Префикс (по умолчанию ``--``)
 :param help: Сообщение для справки (``--help``)
-:param possible_values: Список допустимых значений (передаётся в `choices` `ArgumentParser`)
+:param possible_values: Список допустимых значений 
 :param default: Значение по умолчанию, если аргумент не передан
-:param is_required: Если ``True``, аргумент становится обязательным
-:param is_deprecated: Если ``True``, помечает аргумент как устаревший
+:param is_required: Если ``True``, аргумент становится обязательным, если не передать при запуске приложение не запустится
+:param is_deprecated: Если ``True``, помечает аргумент как устаревший, если передать при запуске, то будет выведено предупреждение в консоль
 
 **Пример использования:**
 
-.. code-block:: python
+.. literalinclude:: ../../../code_snippets/arguments/snippet.py
+   :language: python
    :linenos:
-
-   from argenta import ArgParser, ValueArgument
-
-   # Создание аргументов
-   config_arg = ValueArgument(
-       "config",
-       help="Path to configuration file",
-       default="config.yaml"
-   )
-
-   log_level_arg = ValueArgument(
-       "log-level",
-       help="Logging level",
-       possible_values=["DEBUG", "INFO", "WARNING", "ERROR"],
-       default="INFO"
-   )
-
-   host_arg = ValueArgument(
-       "host",
-       help="Server host address",
-       is_required=True
-   )
-
-   # Регистрация в ArgParser
-   parser = ArgParser(
-       processed_args=[config_arg, log_level_arg, host_arg],
-       name="MyApp",
-       description="My application with CLI arguments"
-   )
 
 **Запуск приложения:**
 
@@ -83,9 +56,10 @@ ValueArgument
 BooleanArgument
 ---------------
 
-Класс для булевых аргументов, не требующих значения. Их наличие при запуске устанавливает значение в `True`, отсутствие — в `False`.
+Класс для булевых аргументов, не требующих значения. Их наличие при запуске устанавливает значение в **True**, отсутствие — в **False**.
 
 .. py:class:: BooleanArgument(BaseArgument)
+    :no-index:
 
 .. code-block:: python
    :linenos:
@@ -104,32 +78,9 @@ BooleanArgument
 
 **Пример использования:**
 
-.. code-block:: python
+.. literalinclude:: ../../../code_snippets/arguments/snippet2.py
+   :language: python
    :linenos:
-
-   from argenta import ArgParser, BooleanArgument
-
-   # Создание булевых аргументов
-   verbose_arg = BooleanArgument(
-       "verbose",
-       help="Enable verbose output"
-   )
-
-   debug_arg = BooleanArgument(
-       "debug",
-       help="Enable debug mode"
-   )
-
-   no_cache_arg = BooleanArgument(
-       "no-cache",
-       help="Disable caching"
-   )
-
-   # Регистрация в ArgParser
-   parser = ArgParser(
-       processed_args=[verbose_arg, debug_arg, no_cache_arg],
-       name="MyApp"
-   )
 
 **Запуск приложения:**
 
@@ -149,9 +100,10 @@ InputArgument
 .. seealso::
    ``InputArgument`` напрямую связан с контейнером ``ArgSpace`` и является его наполнителем. Подробнее о нём см. :ref:`здесь <root_api_orchestrator_argspace>`.
 
-Представляет собой обработанный аргумент командной строки. Этот класс используется внутри `ArgSpace` для хранения значений, полученных после парсинга.
+Представляет собой обработанный аргумент командной строки. Этот класс используется внутри ``ArgSpace`` для хранения значений, полученных после парсинга.
 
 .. py:class:: InputArgument
+    :no-index:
 
 .. code-block:: python
    :linenos:
@@ -163,39 +115,22 @@ InputArgument
 Создаёт экземпляр обработанного входного аргумента.
 
 :param name: Имя аргумента
-:param value: Значение аргумента. Для `BooleanArgument` — `True`, если аргумент передан; для `ValueArgument` — строка со значением
-:param founder_class: Класс-родитель, из которого был создан аргумент (`BooleanArgument` или `ValueArgument`)
+:param value: Значение аргумента. Для ``BooleanArgument`` — **True**, если аргумент передан и **False**, если нет; для **ValueArgument** — введённая строка 
+:param founder_class: Класс-родитель, из которого был создан аргумент (``BooleanArgument`` или ``ValueArgument``)
 
 **Атрибуты:**
 
 .. py:attribute:: name
-   :no-index:
 
-   Имя аргумента, указанное при создании `ValueArgument` или `BooleanArgument`.
+   Имя аргумента, указанное при создании ``ValueArgument`` или ``BooleanArgument``.
 
 .. py:attribute:: value
 
    Значение аргумента. Тип зависит от исходного класса:
 
-* Для `BooleanArgument`: `True`, если аргумент был передан.
-* Для `ValueArgument`: строка с переданным значением или значением по умолчанию
+* Для ``BooleanArgument``: **True**, если аргумент был передан.
+* Для ``ValueArgument``: строка с переданным значением или значением по умолчанию
 
 .. py:attribute:: founder_class
 
-   Ссылка на класс-родитель. Используется для определения типа и фильтрации в методе `get_by_type()`.
-
-**Методы:**
-
-.. py:method:: __str__() -> str
-
-   Возвращает строковое представление в формате `InputArgument(name=value)`.
-
-   .. code-block:: python
-      :linenos:
-
-      arg = InputArgument("verbose", True, BooleanArgument)
-      print(str(arg))  # InputArgument(verbose=True)
-
-.. py:method:: __repr__() -> str
-
-   Возвращает техническое представление объекта.
+   Ссылка на класс-родитель. Используется для определения типа и фильтрации.
