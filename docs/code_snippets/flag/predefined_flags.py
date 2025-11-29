@@ -1,6 +1,6 @@
 from argenta.command import Flags, PredefinedFlags
 
-# Использование предопределенных флагов при создании команды
+# Using predefined flags when creating a command
 command_flags = Flags(
     [
         PredefinedFlags.HELP,
@@ -9,7 +9,7 @@ command_flags = Flags(
     ]
 )
 
-# Использование сетевых флагов
+# Using Network Flags
 network_flags = Flags(
     [
         PredefinedFlags.HOST,
@@ -17,7 +17,7 @@ network_flags = Flags(
     ]
 )
 
-# Валидация значений предопределенных флагов
+# Validating the values of predefined flags
 print(PredefinedFlags.HOST.validate_input_flag_value("192.168.1.1"))  # True
 print(PredefinedFlags.HOST.validate_input_flag_value("invalid"))  # False
 
@@ -25,11 +25,11 @@ print(PredefinedFlags.PORT.validate_input_flag_value("8080"))  # True
 print(PredefinedFlags.PORT.validate_input_flag_value("99999"))  # True
 print(PredefinedFlags.PORT.validate_input_flag_value("abc"))  # False
 
-# Флаги без значений
+# Flags without values
 print(PredefinedFlags.HELP.validate_input_flag_value(None))  # True
 print(PredefinedFlags.HELP.validate_input_flag_value("something"))  # False
 
-# Проверка строковых представлений
+# Checking string representations
 print(PredefinedFlags.HELP.string_entity)  # --help
 print(PredefinedFlags.SHORT_HELP.string_entity)  # -H
 print(PredefinedFlags.HOST.string_entity)  # --host

@@ -3,7 +3,7 @@
 InputFlag
 =========
 
-Объект `InputFlag` представляет собой флаг, введённый пользователем. Он создаётся в результате обработки пользовательского ввода и содержит информацию о распознанном флаге: его имя, префикс, значение и статус валидации.
+Объект ``InputFlag`` представляет собой флаг, введённый пользователем. Он создаётся в результате обработки пользовательского ввода и содержит информацию о распознанном флаге: его имя, префикс, значение и статус валидации.
 
 .. seealso::
 
@@ -12,26 +12,6 @@ InputFlag
    Документация по :ref:`ValidationStatus <root_api_command_validation_status>` — статусы валидации флагов.
 
 -----
-
-Инициализация
--------------
-
-.. code-block:: python
-   :linenos:
-
-   __init__(
-       self, name: str, *,
-       prefix: Literal['-', '--', '---'] = '--',
-       input_value: str | None,
-       status: ValidationStatus | None
-   )
-
-Создаёт новый объект введённого флага.
-
-* ``name``: Имя введённого флага.
-* ``prefix``: Префикс флага (``-``, ``--``, ``---``). По умолчанию ``--``.
-* ``input_value``: Значение, переданное с флагом. Может быть `None`.
-* ``status``: Статус валидации из перечисления `ValidationStatus`.
 
 .. warning ::
    Экземпляры этого класса не предназначены для прямого создания. Они содержатся в объекте :ref:`Response <root_api_response>`.
@@ -55,13 +35,7 @@ InputFlag
 .. py:attribute:: status
    :no-index:
 
-   Статус валидации флага: `ValidationStatus.VALID`, `ValidationStatus.INVALID` или `ValidationStatus.UNDEFINED`.
-
-**Пример использования:**
-
-.. literalinclude:: ../../../code_snippets/input_flag/snippet1.py
-   :linenos:
-   :language: python
+   Статус валидации флага: ``ValidationStatus.VALID``, ``ValidationStatus.INVALID`` или ``ValidationStatus.UNDEFINED``.
 
 -----
 
@@ -80,14 +54,6 @@ string_entity
 Возвращает строковое представление флага в формате `prefix + name`.
 
 :return: Строковое представление флага
-
-Это свойство объединяет префикс и имя в строку, представляющую флаг так, как он был введён в командной строке.
-
-**Пример использования:**
-
-.. literalinclude:: ../../../code_snippets/input_flag/snippet2.py
-   :linenos:
-   :language: python
 
 -----
 
@@ -124,7 +90,7 @@ __repr__
 
 Возвращает отладочное представление объекта.
 
-:return: Строка в формате `InputFlag<prefix=..., name=..., value=..., status=...>`.
+:return: Строка в формате ``InputFlag<prefix=..., name=..., value=..., status=...>``.
 
 **Пример использования:**
 
@@ -145,13 +111,6 @@ __eq__
 Сравнивает два введённых флага на равенство по имени.
 
 :param other: Объект для сравнения.
-:return: `True`, если имена флагов совпадают, иначе `False`.
-:raises NotImplementedError: Если `other` не является экземпляром `InputFlag`.
+:return: **True**, если имена флагов совпадают, иначе **False**.
 
 Два введённых флага считаются равными, если их имена совпадают.
-
-**Пример использования:**
-
-.. literalinclude:: ../../../code_snippets/input_flag/snippet5.py
-   :linenos:
-   :language: python

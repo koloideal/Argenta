@@ -10,9 +10,9 @@ router = Router(title="Server Management")
         description="Start the server",
         flags=Flags(
             [
-                Flag("port", help="Server port", default="8080"),
-                Flag("host", help="Server host", default="localhost"),
-                Flag("debug", help="Enable debug mode"),
+                Flag("port"),
+                Flag("host"),
+                Flag("debug"),
             ]
         ),
         aliases=["run"],

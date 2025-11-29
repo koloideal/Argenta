@@ -1,20 +1,19 @@
 import re
-
 from argenta.command import Flag, PossibleValues
 
-# Простой флаг с любыми значениями
+# Simple flag with any values
 verbose_flag = Flag(name="verbose")
 
-# Флаг с коротким префиксом
+# Flag with short prefix
 short_flag = Flag(name="v", prefix="-")
 
-# Флаг без значения
+# Flag that does not take a value
 help_flag = Flag(name="help", possible_values=PossibleValues.NEITHER)
 
-# Флаг со списком допустимых значений
+# Flag with list of possible values
 format_flag = Flag(name="format", possible_values=["json", "xml", "csv"])
 
-# Флаг с регулярным выражением для валидации
+# Flag with regexp for validation input value
 email_flag = Flag(
     name="email",
     possible_values=re.compile(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"),

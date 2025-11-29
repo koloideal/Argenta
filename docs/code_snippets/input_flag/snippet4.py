@@ -7,6 +7,6 @@ flag = InputFlag(
     status=ValidationStatus.VALID,
 )
 
-# Отладочное представление объекта
+# Debug representation of the object
 print(repr(flag))
 # InputFlag<prefix='--', name='config', value='settings.json', status=ValidationStatus.VALID>

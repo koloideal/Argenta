@@ -15,6 +15,7 @@ ParseResult = tuple[str, InputFlags]
 
 MIN_FLAG_PREFIX: str = "-"
 DEFAULT_WITHOUT_FLAGS: Flags = Flags()
+DEFAULT_WITHOUT_ALIASES: list[Never] = []
 
 DEFAULT_WITHOUT_INPUT_FLAGS: InputFlags = InputFlags()
 
@@ -24,9 +25,9 @@ class Command:
         self,
         trigger: str,
         *,
-        description: str | None = None,
+        description: str = "Some useful command",
         flags: Flag | Flags = DEFAULT_WITHOUT_FLAGS,
-        aliases: list[str] | None = None,
+        aliases: list[str] | list[Never] = DEFAULT_WITHOUT_ALIASES,
     ):
         """
         Public. The command that can and should be registered in the Router
@@ -37,8 +38,8 @@ class Command:
         """
         self.registered_flags: Flags = flags if isinstance(flags, Flags) else Flags([flags])
         self.trigger: str = trigger
-        self.description: str = description if description else "Command without description"
-        self.aliases: list[str] = aliases if aliases else []
+        self.description: str = description
+        self.aliases: list[str] = []
 
     def validate_input_flag(self, flag: InputFlag) -> ValidationStatus:
         """

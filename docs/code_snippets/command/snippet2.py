@@ -4,7 +4,7 @@ router = Router(title="User Management")
 
 
 @router.command(Command("create-user", description="Create a new user account"))
-def handle_create_user(response):
+def handle_create_user(response: Response):
     print("Creating new user...")
 
 
