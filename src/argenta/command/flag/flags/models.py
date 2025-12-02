@@ -32,6 +32,9 @@ class BaseFlags(Generic[FlagType]):
         :return: None
         """
         self.flags.extend(flags)
+        
+    def __len__(self) -> int:
+        return len(self.flags)
 
     def __iter__(self) -> Iterator[FlagType]:
         return iter(self.flags)

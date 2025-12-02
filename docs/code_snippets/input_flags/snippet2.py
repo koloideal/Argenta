@@ -8,13 +8,16 @@ router = Router(title="Get Flag Example")
     Command(
         "config",
         description="Configure settings",
-        flags=Flags([Flag("host"), Flag("port"), Flag("debug")]),
+        flags=Flags([
+            Flag("host"), 
+            Flag("port"),
+            Flag("debug")
+        ]),
     )
 )
 def config_handler(response: Response):
     input_flags = response.input_flags
 
-    # Получаем флаг по имени
     host_flag = input_flags.get_flag_by_name("host")
     port_flag = input_flags.get_flag_by_name("port")
     debug_flag = input_flags.get_flag_by_name("debug")
@@ -28,7 +31,6 @@ def config_handler(response: Response):
     if debug_flag:
         print("Debug mode enabled")
 
-    # Если флаг не найден, get_flag_by_name вернёт None
     missing_flag = input_flags.get_flag_by_name("nonexistent")
     if missing_flag is None:
         print("Flag 'nonexistent' not found")
