@@ -7,8 +7,7 @@ from argenta.command.flag.flags import Flags, InputFlags
 from argenta.command.flag.models import PossibleValues, ValidationStatus
 from argenta.response.entity import Response
 from argenta.router import Router
-from argenta.router.entity import (  # pyright: ignore[reportPrivateUsage]
-    _structuring_input_flags, _validate_command, _validate_func_args)
+from argenta.router.entity import _structuring_input_flags, _validate_command, _validate_func_args  # pyright: ignore[reportPrivateUsage]
 from argenta.router.exceptions import (RepeatedFlagNameException,
                                        RequiredArgumentNotPassedException,
                                        TriggerContainSpacesException)

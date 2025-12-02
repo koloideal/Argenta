@@ -39,7 +39,7 @@ class Command:
         self.registered_flags: Flags = flags if isinstance(flags, Flags) else Flags([flags])
         self.trigger: str = trigger
         self.description: str = description
-        self.aliases: list[str] = []
+        self.aliases: list[str] = aliases
 
     def validate_input_flag(self, flag: InputFlag) -> ValidationStatus:
         """

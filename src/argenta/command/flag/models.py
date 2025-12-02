@@ -43,14 +43,14 @@ class Flag:
         """
         if self.possible_values == PossibleValues.NEITHER:
             return input_flag_value is None
+            
+        if self.possible_values == PossibleValues.ALL:
+            return input_flag_value is not None
 
         if isinstance(self.possible_values, Pattern):
             return isinstance(input_flag_value, str) and bool(self.possible_values.match(input_flag_value))
 
-        if isinstance(self.possible_values, list):
-            return input_flag_value in self.possible_values
-
-        return True
+        return input_flag_value in self.possible_values
 
     @property
     def string_entity(self) -> str:

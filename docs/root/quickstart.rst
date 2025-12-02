@@ -25,7 +25,7 @@
 
 **Результат**
 
-.. image:: https://i.ibb.co/JwK9Vv4j/2025-11-03-135118.png
+.. image:: https://i.ibb.co/35q24Bh8/image.png
    :alt: Simple App Example
    
 -----
@@ -43,7 +43,7 @@
 
 2. **Определение моделей данных и репозитория**
 
-Сначала определим модели данных для задачи и репозиторий для их хранения. Это будет наша "бизнес-логика".
+Сначала определим модели данных для задачи и репозиторий для их хранения.
 
 .. literalinclude:: ../code_snippets/quickstart/task_manager/repository.py
    :language: python

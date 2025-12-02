@@ -6,6 +6,7 @@ app = App(
     prompt=">> ",
     initial_message="Simple App",
     farewell_message="Goodbye!",
+    repeat_command_groups_printing=False
 )
 orchestrator = Orchestrator()
 
@@ -14,11 +15,11 @@ main_router = Router(title="Main commands")
 
 
 # 3. Define command and its handler
-@main_router.command(
-    Command(
-        "hello", description="Prints greeting message", flags=Flag("name")
-    )
-)
+@main_router.command(Command(
+    "hello", 
+    description="Prints greeting message", 
+    flags=Flag("name")
+))
 def hello_handler(response: Response):
     """This handler will be called for 'hello' command."""
     name = response.input_flags.get_flag_by_name("name")
