@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-03 19:01+0300\n"
+"POT-Creation-Date: 2025-12-02 22:27+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -25,39 +25,39 @@ msgstr ""
 
 #: ../../root/api/command/possible_values.rst:7
 msgid ""
-"`PossibleValues` — это перечисление (`Enum`), которое определяет "
-"специальные режимы валидации для значений флагов. Его задача — "
-"предоставить стандартные константы для управления поведением флагов. "
-"`PossibleValues` используется в параметре `possible_values` класса "
-"`Flag`, чтобы указать, может ли флаг принимать значения и какие "
-"ограничения на них накладываются."
+"``PossibleValues`` — это перечисление (``Enum``), которое определяет "
+"специальные режимы валидации для значений флагов. ``PossibleValues`` "
+"используется в параметре ``possible_values`` класса ``Flag``, чтобы "
+"указать, может ли флаг принимать значения и какие ограничения на них "
+"накладываются."
 msgstr ""
 
 #: ../../root/api/command/possible_values.rst:9
 msgid ""
-"`PossibleValues` наследуется от `Enum` и содержит два основных значения: "
-"`NEITHER` (для флагов без значений) и `ALL` (для флагов, принимающих "
-"любые значения). Это перечисление используется вместе со списками строк и"
-" регулярными выражениями для создания гибкой системы валидации."
+"``PossibleValues`` содержит два основных значения: ``NEITHER`` (для "
+"флагов, которые не могут принимать значения) и ``ALL`` (для флагов, "
+"принимающих любые значения). Это перечисление используется вместе со "
+"списками строк и регулярными выражениями для создания гибкой системы "
+"валидации."
 msgstr ""
 
 #: ../../root/api/command/possible_values.rst:12
 msgid ""
-"Результат валидации доступен через атрибут `status` у экземпляра "
-"`InputFlag`. Подробнее см. :ref:`здесь <root_api_command_input_flag>`."
+"Результат валидации доступен через атрибут ``status`` у экземпляра "
+"``InputFlag``. Подробнее см. :ref:`здесь <root_api_command_input_flag>`."
 msgstr ""
 
 #: ../../root/api/command/possible_values.rst:16
 msgid ""
 "Документация по :ref:`Flag <root_api_command_flag>` — класс флага, "
-"использующий `PossibleValues`."
+"использующий ``PossibleValues``."
 msgstr ""
 
 #: ../../root/api/command/possible_values.rst:18
 msgid ""
-"Документация по :ref:`PredefinedFlags "
-"<root_api_command_flag_predefined_flags>` — готовые флаги с примерами "
-"использования `PossibleValues`."
+"Документация по :ref:`ValidationStatus "
+"<root_api_command_validation_status>` — результат валидации ввёденного "
+"флага."
 msgstr ""
 
 #: ../../root/api/command/possible_values.rst:20
@@ -67,129 +67,102 @@ msgid ""
 msgstr ""
 
 #: ../../root/api/command/possible_values.rst:25
-msgid "Значения enum"
-msgstr ""
-
-#: ../../root/api/command/possible_values.rst:28
 msgid "NEITHER"
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:35
+#: ../../root/api/command/possible_values.rst:32
 msgid "Указывает, что флаг **не должен** иметь значения."
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:37
+#: ../../root/api/command/possible_values.rst:34
 msgid ""
 "Флаги с этим значением работают как булевы переключатели: их наличие в "
 "командной строке само по себе является информацией. Попытка передать "
 "такому флагу значение приведёт к ошибке валидации."
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:39
+#: ../../root/api/command/possible_values.rst:36
 msgid "**Примеры флагов с** ``NEITHER``:"
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:41
+#: ../../root/api/command/possible_values.rst:38
 msgid "``--help`` — флаг справки"
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:42
+#: ../../root/api/command/possible_values.rst:39
 msgid "``--verbose`` — флаг подробного вывода"
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:43
+#: ../../root/api/command/possible_values.rst:40
 msgid "``--force`` — флаг принудительного выполнения"
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:44
+#: ../../root/api/command/possible_values.rst:41
 msgid "``-A`` / ``--all`` — флаг выбора всех элементов"
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:46
-#: ../../root/api/command/possible_values.rst:73
+#: ../../root/api/command/possible_values.rst:43
+#: ../../root/api/command/possible_values.rst:68
 msgid "**Пример использования:**"
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:55
+#: ../../root/api/command/possible_values.rst:52
 msgid "ALL"
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:62
+#: ../../root/api/command/possible_values.rst:59
 msgid "Указывает, что флаг может принимать **любое** значение."
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:64
+#: ../../root/api/command/possible_values.rst:61
 msgid ""
 "Флаги с этим значением универсальны и не накладывают ограничений на "
 "передаваемые данные. Валидация всегда будет успешной."
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:66
+#: ../../root/api/command/possible_values.rst:63
 msgid "**Примеры флагов с** ``ALL``:"
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:68
-msgid "``--output`` — путь к выходному файлу"
-msgstr ""
-
-#: ../../root/api/command/possible_values.rst:69
+#: ../../root/api/command/possible_values.rst:65
 msgid "``--message`` — произвольное текстовое сообщение"
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:70
+#: ../../root/api/command/possible_values.rst:66
 msgid "``--name`` — произвольное имя"
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:71
-msgid "``--data`` — произвольные данные"
-msgstr ""
-
-#: ../../root/api/command/possible_values.rst:82
-msgid "Использование в Flag"
-msgstr ""
-
-#: ../../root/api/command/possible_values.rst:85
+#: ../../root/api/command/possible_values.rst:77
 msgid "Параметр possible_values"
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:87
+#: ../../root/api/command/possible_values.rst:79
 msgid ""
-"`PossibleValues` используется как один из возможных типов для параметра "
-"`possible_values` при создании экземпляра `Flag`."
+"``PossibleValues`` используется как один из возможных типов для параметра"
+" ``possible_values`` при создании экземпляра ``Flag``."
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:89
-msgid "**Доступные типы для** `possible_values`:"
+#: ../../root/api/command/possible_values.rst:81
+msgid "**Доступные типы для** ``possible_values``:"
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:91
-msgid "`PossibleValues.NEITHER`: флаг без значения."
+#: ../../root/api/command/possible_values.rst:83
+msgid "``PossibleValues.NEITHER``: флаг без значения."
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:92
-msgid "`PossibleValues.ALL`: флаг с любым значением (по умолчанию)."
+#: ../../root/api/command/possible_values.rst:84
+msgid "``PossibleValues.ALL``: флаг с любым значением (по умолчанию)."
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:93
-msgid "`list[str]`: флаг с ограниченным набором значений."
+#: ../../root/api/command/possible_values.rst:85
+msgid "``list[str]``: флаг с ограниченным набором значений."
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:94
-msgid "`Pattern[str]`: флаг со значением, проверяемым по регулярному выражению."
+#: ../../root/api/command/possible_values.rst:86
+msgid "``Pattern[str]``: флаг со значением, проверяемым по регулярному выражению."
 msgstr ""
 
-#: ../../root/api/command/possible_values.rst:96
+#: ../../root/api/command/possible_values.rst:88
 msgid "**Пример комбинированного использования:**"
 msgstr ""
-
-#: ../../root/api/command/possible_values.rst:105
-msgid "Использование в PredefinedFlags"
-msgstr ""
-
-#: ../../root/api/command/possible_values.rst:107
-msgid "Многие предопределённые флаги используют `PossibleValues.NEITHER`:"
-msgstr ""
-
-#~ msgid "mda"
-#~ msgstr ""
 

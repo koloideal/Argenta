@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-03 19:01+0300\n"
+"POT-Creation-Date: 2025-12-02 22:27+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -19,197 +19,144 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: ../../index.rst:38
+#: ../../index.rst:43
 msgid "Контент:"
 msgstr "Content:"
 
-#: ../../index.rst:48
+#: ../../index.rst:53
 msgid "Продвинутое использование:"
-msgstr ""
+msgstr "Advanced usage:"
 
-#: ../../index.rst:56
+#: ../../index.rst:61
 msgid "Для разработчиков:"
 msgstr "For developers:"
 
-#: ../../index.rst:63
+#: ../../index.rst:68
 msgid "GitHub"
 msgstr ""
 
-#: ../../index.rst:63
+#: ../../index.rst:68
 msgid "PyPI"
 msgstr ""
 
-#: ../../index.rst:63
+#: ../../index.rst:68
 msgid "Ссылки проекта:"
-msgstr "Project Links:"
+msgstr "Project links:"
 
 #: ../../index.rst:7
 msgid "Argenta"
 msgstr ""
 
-#: ../../index.rst:9
+#: ../../index.rst:10
+msgid "Что это и зачем?"
+msgstr "What is it and why?"
+
+#: ../../index.rst:12
 msgid ""
 "**Библиотека для построения модульных CLI-приложений с простым и приятным"
 " API.**"
-msgstr ""
-"Python library for building modular CLI applications with simple and "
-"agreeable API."
+msgstr "**A library for building modular CLI applications with a simple and pleasant API.**"
 
-#: ../../index.rst:11
+#: ../../index.rst:14
 msgid ""
 "Если у вас есть функциональность, которую вы хотите предоставить в виде "
 "CLI-приложения, Argenta поможет вам в этом. Основная цель библиотеки — "
 "дать разработчикам возможность сосредоточиться на реализации своих идей, "
 "предоставляя для этого удобные абстракции."
 msgstr ""
-
-#: ../../index.rst:14
-msgid "Пример приложения"
-msgstr ""
+"If you have functionality that you want to provide as a CLI application, "
+"Argenta will help you with that. The main goal of the library is to enable "
+"developers to focus on implementing their ideas by providing convenient abstractions."
 
 #: ../../index.rst:17
+msgid "App example"
+msgstr ""
+
+#: ../../index.rst:20
 msgid ""
 "Argenta предназначена для создания приложений, работающих в собственном "
 "контексте (scope). Это означает, что при запуске пользователь входит в "
 "интерактивную сессию, где ему доступна вся реализованная вами "
 "функциональность."
 msgstr ""
+"Argenta is designed for creating applications that work in their own context "
+"(scope). This means that when launched, the user enters an interactive session "
+"where all the functionality you've implemented is available."
 
-#: ../../index.rst:19
+#: ../../index.rst:22
 msgid ""
 "Один из ключевых принципов библиотеки — цикличность. После выполнения "
 "команды пользователь остаётся в интерактивной сессии, в отличие от таких "
 "библиотек, как ``argparse``, ``click`` и ``typer``. Выход из сессии "
-"контролируется самим пользователем."
+"контролируется пользователем."
 msgstr ""
-
-#: ../../index.rst:21
-msgid "**Ключевые особенности:**"
-msgstr ""
-
-#: ../../index.rst:23
-msgid ""
-"**Интерактивные сессии**. В отличие от традиционных CLI-инструментов, "
-"Argenta создаёт циклические сессии, позволяя пользователю выполнять "
-"команды последовательно, не перезапуская приложение."
-msgstr ""
+"One of the key principles of the library is cyclicity. After executing a command, "
+"the user remains in the interactive session, unlike libraries such as ``argparse``, "
+"``click``, and ``typer``. Exiting the session is controlled by the user."
 
 #: ../../index.rst:24
-msgid ""
-"**Декларативный синтаксис**. Команды и их обработчики объявляются с "
-"помощью простых декораторов, что делает код чистым и интуитивно понятным."
-msgstr ""
-
-#: ../../index.rst:25
-msgid ""
-"**Встроенное внедрение зависимостей (DI)**. Благодаря интеграции с "
-"`dishka <https://dishka.readthedocs.io/en/stable/>`_, вы можете легко "
-"внедрять сервисы (например, подключения к БД) прямо в обработчики команд,"
-" что упрощает их тестирование и переиспользование."
-msgstr ""
+msgid "**Ключевые особенности:**"
+msgstr "**Key features:**"
 
 #: ../../index.rst:26
 msgid ""
-"**Автоматическая валидация и парсинг**. Библиотека берёт на себя "
-"обработку флагов и аргументов командной строки, включая их парсинг, "
-"валидацию и преобразование типов."
+"**Интерактивные сессии**: В отличие от традиционных CLI-инструментов, "
+"``Argenta`` создаёт циклические сессии, позволяя пользователю выполнять "
+"команды последовательно, не перезапуская приложение."
 msgstr ""
+"**Interactive sessions**: Unlike traditional CLI tools, ``Argenta`` creates "
+"cyclical sessions, allowing users to execute commands sequentially without "
+"restarting the application."
 
 #: ../../index.rst:27
 msgid ""
-"**Гибкая настройка**. Вы можете легко кастомизировать системные "
-"сообщения, форматирование вывода и даже перенаправлять стандартный вывод "
-"(stdout) в свои обработчики."
+"**Декларативный синтаксис**: Команды и их обработчики объявляются с "
+"помощью простых декораторов, что делает код чистым и интуитивно понятным."
 msgstr ""
+"**Declarative syntax**: Commands and their handlers are declared using simple "
+"decorators, making the code clean and intuitive."
+
+#: ../../index.rst:28
+msgid ""
+"**Нативный DI**: Благодаря интеграции с `dishka "
+"<https://dishka.readthedocs.io/en/stable/>`_, вы можете легко внедрять "
+"зависимости прямо в обработчики команд, что упрощает их тестирование и "
+"переиспользование."
+msgstr ""
+"**Native DI**: Thanks to integration with `dishka "
+"<https://dishka.readthedocs.io/en/stable/>`_, you can easily inject "
+"dependencies directly into command handlers, simplifying their testing and reuse."
+
+#: ../../index.rst:29
+msgid ""
+"**Автоматическая валидация и парсинг**: Библиотека берёт на себя "
+"обработку флагов и аргументов командной строки, включая их парсинг, "
+"валидацию и преобразование типов."
+msgstr ""
+"**Automatic validation and parsing**: The library handles command-line flags "
+"and arguments, including their parsing, validation, and type conversion."
 
 #: ../../index.rst:30
-msgid "Архитектура и жизненный цикл"
+msgid ""
+"**Гибкая настройка**: Вы можете легко кастомизировать системные "
+"сообщения, форматирование вывода и т.д."
 msgstr ""
+"**Flexible configuration**: You can easily customize system messages, "
+"output formatting, and more."
 
-#: ../../index.rst:32
+#: ../../index.rst:35
+msgid "Архитектура и жизненный цикл"
+msgstr "Architecture and lifecycle"
+
+#: ../../index.rst:37
 msgid ""
 "Следующая диаграмма иллюстрирует, как компоненты Argenta взаимодействуют "
 "друг с другом, обрабатывая ввод пользователя."
 msgstr ""
+"The following diagram illustrates how Argenta components interact with each "
+"other while processing user input."
 
-#: ../../index.rst:34
+#: ../../index.rst:39
 msgid "Request Lifecycle Diagram"
 msgstr ""
-
-#~ msgid ""
-#~ "У вас есть некая функциональность и "
-#~ "вы хотите распространять её в виде "
-#~ "CLI? Argenta поможет вам. Основная цель"
-#~ " библиотеки дать возможность разработчикам "
-#~ "сфокусироваться на реализации своих идей, "
-#~ "предоставляя для этого удобные абстракциию."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Argenta нужна для создания приложений, "
-#~ "которым необходим свой скоуп, то есть:"
-#~ " при запуске приложения юзер входит в"
-#~ " абстрагированный скоуп, в котором у "
-#~ "него есть доступ к созданной "
-#~ "функциональности."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Один из основных принципов библиотеки "
-#~ "это цикличность, это значит, что после"
-#~ " ввода юзером команды он не выходит"
-#~ " из скоупа, в этом основное отличие"
-#~ " от таких библиотек, как ``argparse``, "
-#~ "``click`` и ``typer``. Выход из скоупа"
-#~ " контролируется самим юзером."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "**Обработчики**. Объекты представления приложения,"
-#~ " непосредственные обработчики введённых команд."
-#~ " Создание обработчиков максимально декларативно"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "**Маршрутизаторы**. Объекты маршрутизации, которые"
-#~ " регистрируют обработчиков, позволяя создавать"
-#~ " кастомные настройки для групп "
-#~ "обработчиков, а также семантически их "
-#~ "разделять."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "**Приложение**. Объект управления жизненным "
-#~ "циклом приложения, подключения созданных "
-#~ "маршрутизаторов, конфигурирования различных "
-#~ "вторичных утилит, таких как автокомплит, "
-#~ "логирование и т.д."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "**Оркестратор**. Объект *оркестрации*, который "
-#~ "конфигурирует, запускает и управляет всеми "
-#~ "остальными компонентами программы."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "**Внедрение зависимостей**. ``Argenta`` нативно "
-#~ "поддерживает ``dishka`` и предоставляет "
-#~ "возможность инжектирования зависимостей в "
-#~ "хэндлерах, резолвя тайпхинты, подробнее_."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "**Поддержка флагов**. Библиотека поддерживает "
-#~ "определение флагов, введённых вместе с "
-#~ "командой, ``Argenta`` сама парсит и "
-#~ "валидирует их, отдавая понятные сущности."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "**Поддержка аргументов**. Осуществленна поддержка"
-#~ " аргументов командной строки, позволяя "
-#~ "пользователю передавать различные параметры "
-#~ "при запуске приложения."
-#~ msgstr ""
 

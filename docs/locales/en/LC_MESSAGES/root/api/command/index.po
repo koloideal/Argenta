@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-03 19:01+0300\n"
+"POT-Creation-Date: 2025-12-02 22:27+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -26,9 +26,8 @@ msgstr ""
 #: ../../root/api/command/index.rst:6
 msgid ""
 "``Command`` — это основная единица функциональности в приложении. Каждая "
-"команда определяет действие, которое пользователь может выполнить, введя "
-"соответствующий триггер. Команды регистрируются в роутерах и формируют "
-"интерфейс взаимодействия с приложением."
+"команда связывает хэндлер с триггером, введя который он будет вызван для "
+"обработки."
 msgstr ""
 
 #: ../../root/api/command/index.rst:8
@@ -60,14 +59,14 @@ msgstr ""
 #: ../../root/api/command/index.rst:27
 msgid ""
 "``flags``: Набор флагов для настройки поведения. Может быть одиночным "
-"объектом `Flag` или коллекцией `Flags`."
+"объектом ``Flag`` или коллекцией ``Flags``."
 msgstr ""
 
 #: ../../root/api/command/index.rst:28
 msgid "``aliases``: Список строковых псевдонимов для основного триггера."
 msgstr ""
 
-#: ../../root/api/command/index.rst:30 ../../root/api/command/index.rst:125
+#: ../../root/api/command/index.rst:30 ../../root/api/command/index.rst:108
 msgid "**Атрибуты:**"
 msgstr ""
 
@@ -85,8 +84,9 @@ msgstr ""
 
 #: ../../root/api/command/index.rst:42
 msgid ""
-"Объект `Flags`, содержащий все зарегистрированные флаги. Автоматически "
-"конвертируется из одиночного `Flag` в коллекцию при инициализации."
+"Объект ``Flags``, содержащий все зарегистрированные флаги. Если был "
+"передан ``Flag``, то автоматически конвертируется из одиночного в "
+"коллекцию при инициализации."
 msgstr ""
 
 #: ../../root/api/command/index.rst:46
@@ -108,9 +108,7 @@ msgid "Регистрация команд"
 msgstr ""
 
 #: ../../root/api/command/index.rst:61
-msgid ""
-"Команды регистрируются в роутерах с помощью декоратора "
-"``@router.command()``, после чего становятся доступными для вызова."
+msgid "Команды передаются в качестве аргумента в декоратор ``@router.command()``."
 msgstr ""
 
 #: ../../root/api/command/index.rst:63
@@ -135,19 +133,19 @@ msgstr ""
 msgid "**Пример с псевдонимами:**"
 msgstr ""
 
-#: ../../root/api/command/index.rst:97
+#: ../../root/api/command/index.rst:85
 msgid "Теперь пользователь может вызвать команду любым из способов:"
 msgstr ""
 
-#: ../../root/api/command/index.rst:106
-msgid "Все эти варианты выполнят одну и ту же функцию ``handle_shutdown``."
+#: ../../root/api/command/index.rst:94
+msgid "Все эти варианты вызовут один и тот же хэндлер ``handle_shutdown``."
 msgstr ""
 
-#: ../../root/api/command/index.rst:113
+#: ../../root/api/command/index.rst:101
 msgid "InputCommand"
 msgstr ""
 
-#: ../../root/api/command/index.rst:115
+#: ../../root/api/command/index.rst:103
 msgid ""
 "``InputCommand`` представляет собой обработанную команду, введённую "
 "пользователем. Этот внутренний класс создаётся автоматически при "
@@ -155,39 +153,17 @@ msgid ""
 "создании пользовательского обработчика для неизвестных команд."
 msgstr ""
 
-#: ../../root/api/command/index.rst:118
+#: ../../root/api/command/index.rst:106
 msgid ""
 "Подробнее о пользовательских обработчиках исключений см. :ref:`здесь "
-"<root_error_handling>`."
+"<root_error_handling_unknown_command>`."
 msgstr ""
 
-#: ../../root/api/command/index.rst:120
-msgid "Создаёт экземпляр обработанной команды."
-msgstr ""
-
-#: ../../root/api/command/index.rst
-msgid "param trigger"
-msgstr ""
-
-#: ../../root/api/command/index.rst:122
-msgid "Триггер команды, извлечённый из пользовательского ввода."
-msgstr ""
-
-#: ../../root/api/command/index.rst
-msgid "param input_flags"
-msgstr ""
-
-#: ../../root/api/command/index.rst:123
-msgid "Флаги, переданные пользователем."
-msgstr ""
-
-#: ../../root/api/command/index.rst:130
+#: ../../root/api/command/index.rst:113
 msgid "Строковый триггер, введённый пользователем."
 msgstr ""
 
-#: ../../root/api/command/index.rst:135
-msgid ""
-"Объект `InputFlags`, содержащий все переданные с командой флаги. "
-"Автоматически конвертируется из одиночного `InputFlag` в коллекцию."
+#: ../../root/api/command/index.rst:118
+msgid "Объект ``InputFlags``, содержащий все введённые и распаршенные флаги."
 msgstr ""
 

@@ -88,7 +88,7 @@ BooleanArgument
 
    python app.py --verbose
    python app.py --debug --no-cache
-   python app.py  # без аргументов
+   python app.py  # without arguments
 
 -----
 
@@ -121,6 +121,7 @@ InputArgument
 **Атрибуты:**
 
 .. py:attribute:: name
+   :no-index:
 
    Имя аргумента, указанное при создании ``ValueArgument`` или ``BooleanArgument``.
 

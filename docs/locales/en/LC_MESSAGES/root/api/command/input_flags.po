@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-03 19:01+0300\n"
+"POT-Creation-Date: 2025-12-02 22:27+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -25,105 +25,93 @@ msgstr ""
 
 #: ../../root/api/command/input_flags.rst:6
 msgid ""
-"`InputFlags` — это коллекция флагов, введённых пользователем. Её основная"
-" задача — группировать и управлять набором флагов, переданных вместе с "
-"командой. `InputFlags` служит контейнером, который позволяет удобно "
-"извлекать, итерировать и проверять наличие флагов, а также работать с их "
-"значениями и статусами валидации."
+"``InputFlags`` — это коллекция флагов, введённых пользователем. Её "
+"основная задача — группировать и управлять набором флагов, переданных "
+"вместе с командой. ``InputFlags`` служит контейнером, который позволяет "
+"удобно извлекать, итерировать и проверять наличие флагов, а также "
+"работать с их значениями и статусами валидации."
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:8
-msgid ""
-"`InputFlags` наследуется от `BaseFlags` и специализируется на работе с "
-"объектами типа `InputFlag`. Этот класс создаётся автоматически при "
-"обработке пользовательского ввода и передаётся в обработчики команд через"
-" объект `Response`."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:12
+#: ../../root/api/command/input_flags.rst:10
 msgid ""
 "Документация по отдельным флагам (:ref:`Flag <root_api_command_flag>`, "
 ":ref:`InputFlag <root_api_command_input_flag>`)"
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:14
+#: ../../root/api/command/input_flags.rst:12
 msgid ""
 "Документация по :ref:`InputFlags <root_api_command_input_flags>` — "
 "коллекция обработанных флагов, введённых пользователем."
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:16
+#: ../../root/api/command/input_flags.rst:14
 msgid ""
 "Документация по :ref:`Response <root_api_response>` — объект ответа, "
 "содержащий ``InputFlags``"
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:18
+#: ../../root/api/command/input_flags.rst:16
 msgid ""
 ":ref:`Общая информация <root_flags>` о флагах и их использовании в "
 "приложении ``Argenta``"
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:23
+#: ../../root/api/command/input_flags.rst:21
 msgid "Инициализация"
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:30
+#: ../../root/api/command/input_flags.rst:28
 msgid "Создаёт новую коллекцию введённых флагов."
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:32
+#: ../../root/api/command/input_flags.rst:30
 msgid ""
-"``flags``: Необязательный список флагов типа `InputFlag` для "
+"``flags``: Необязательный список флагов типа ``InputFlag`` для "
 "инициализации коллекции. Если не указан, создаётся пустая коллекция."
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:35
+#: ../../root/api/command/input_flags.rst:33
 msgid ""
 "Экземпляры этого класса обычно не создаются напрямую. Они автоматически "
 "формируются системой при обработке пользовательского ввода и доступны "
-"через атрибут `input_flags` объекта `Response`."
+"через атрибут ``input_flags`` объекта ``Response``."
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:37
+#: ../../root/api/command/input_flags.rst:35
 msgid "**Атрибуты:**"
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:42
+#: ../../root/api/command/input_flags.rst:40
 msgid ""
-"Список всех введённых флагов типа `InputFlag`. Пуст, если флаги не были "
-"переданы при инициализации или пользователь не ввёл их с командой."
+"Список всех введённых флагов типа ``InputFlag``. Пуст, если флаги не были"
+" переданы при инициализации или пользователь не ввёл их с командой."
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:44
-#: ../../root/api/command/input_flags.rst:70
-#: ../../root/api/command/input_flags.rst:96
-#: ../../root/api/command/input_flags.rst:119
-#: ../../root/api/command/input_flags.rst:144
-#: ../../root/api/command/input_flags.rst:167
-#: ../../root/api/command/input_flags.rst:189
-#: ../../root/api/command/input_flags.rst:213
-#: ../../root/api/command/input_flags.rst:237
+#: ../../root/api/command/input_flags.rst:42
+#: ../../root/api/command/input_flags.rst:68
+#: ../../root/api/command/input_flags.rst:94
+#: ../../root/api/command/input_flags.rst:117
+#: ../../root/api/command/input_flags.rst:131
 msgid "**Пример использования:**"
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:53
+#: ../../root/api/command/input_flags.rst:51
 msgid "Методы"
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:56
+#: ../../root/api/command/input_flags.rst:54
 msgid "get_flag_by_name"
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:63
-msgid "Возвращает введённый флаг по имени."
+#: ../../root/api/command/input_flags.rst:61
+msgid "Возвращает флаг по имени."
 msgstr ""
 
 #: ../../root/api/command/input_flags.rst
 msgid "param name"
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:65
+#: ../../root/api/command/input_flags.rst:63
 msgid "Имя искомого флага (без префикса)."
 msgstr ""
 
@@ -131,21 +119,21 @@ msgstr ""
 msgid "return"
 msgstr ""
 
+#: ../../root/api/command/input_flags.rst:64
+msgid "Объект ``InputFlag`` или ``None``, если флаг не найден."
+msgstr ""
+
 #: ../../root/api/command/input_flags.rst:66
-msgid "Объект `InputFlag` или `None`, если флаг не найден."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:68
 msgid ""
-"Метод выполняет поиск по списку `flags` и возвращает первый флаг с "
-"соответствующим именем (без учёта префикса)."
+"Метод возвращает первый флаг с соответствующим именем (без учёта "
+"префикса)."
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:79
+#: ../../root/api/command/input_flags.rst:77
 msgid "add_flag"
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:86
+#: ../../root/api/command/input_flags.rst:84
 msgid "Добавляет введённый флаг в коллекцию."
 msgstr ""
 
@@ -153,33 +141,33 @@ msgstr ""
 msgid "param flag"
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:88
-msgid "Флаг типа `InputFlag` для добавления."
+#: ../../root/api/command/input_flags.rst:86
+msgid "Флаг типа ``InputFlag`` для добавления."
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:89
-#: ../../root/api/command/input_flags.rst:115
+#: ../../root/api/command/input_flags.rst:87
+#: ../../root/api/command/input_flags.rst:113
 msgid "None."
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:91
+#: ../../root/api/command/input_flags.rst:89
 msgid ""
-"Метод добавляет флаг в конец списка `flags`. Используется для "
+"Метод добавляет флаг в конец списка ``flags``. Используется для "
 "динамического расширения коллекции."
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:94
+#: ../../root/api/command/input_flags.rst:92
 msgid ""
 "Этот метод используется редко, так как `InputFlags` обычно создаётся "
 "автоматически. Однако он может быть полезен для тестирования или ручного "
 "создания коллекций."
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:105
+#: ../../root/api/command/input_flags.rst:103
 msgid "add_flags"
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:112
+#: ../../root/api/command/input_flags.rst:110
 msgid "Добавляет в коллекцию список введённых флагов."
 msgstr ""
 
@@ -187,160 +175,21 @@ msgstr ""
 msgid "param flags"
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:114
-msgid "Список флагов типа `InputFlag` для добавления."
+#: ../../root/api/command/input_flags.rst:112
+msgid "Список флагов типа ``InputFlag`` для добавления."
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:117
+#: ../../root/api/command/input_flags.rst:115
 msgid ""
 "Метод расширяет коллекцию, добавляя в неё все флаги из переданного "
 "списка. Эффективен для пакетного добавления."
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:128
-msgid "Магические методы"
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:131
-msgid "__iter__"
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:138
-msgid "Делает коллекцию итерируемой для использования в циклах."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:140
-msgid "Итератор по списку введённых флагов."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:142
-msgid ""
-"Позволяет перебирать все введённые флаги, что полезно для проверки их "
-"статусов или пакетной обработки."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:153
-msgid "__getitem__"
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:160
-msgid "Позволяет получать введённый флаг по индексу."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst
-msgid "param flag_index"
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:162
-msgid "Индекс флага в списке."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:163
-msgid "Флаг по указанному индексу."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:165
-msgid ""
-"Позволяет обращаться к флагам по их позиции, что может быть полезно для "
-"их обработки в определённом порядке."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:176
-msgid "__bool__"
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:183
-msgid "Определяет, содержит ли коллекция флаги."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:185
-msgid "`True`, если в коллекции есть хотя бы один флаг, иначе `False`."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:187
-msgid "Позволяет проверять наличие флагов в команде для условной логики."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:198
-msgid "__eq__"
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:205
-msgid "Сравнивает две коллекции введённых флагов на равенство."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst
-msgid "param other"
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:207
-msgid "Объект для сравнения."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:208
-msgid "`True`, если коллекции равны, иначе `False`."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst
-msgid "raises NotImplementedError"
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:209
-msgid "Если `other` не является экземпляром `InputFlags`."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:211
-msgid ""
-"Две коллекции считаются равными, если они содержат одинаковое количество "
-"флагов и все соответствующие флаги равны (сравнение по имени, см. "
-"`InputFlag.__eq__`)."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:222
-msgid "__contains__"
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:229
-msgid "Проверяет, содержится ли введённый флаг в коллекции."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst
-msgid "param ingressable_item"
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:231
-msgid "Объект `InputFlag` для проверки."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:232
-msgid "`True`, если флаг найден, иначе `False`."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst
-msgid "raises TypeError"
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:233
-msgid "Если `ingressable_item` не является экземпляром `InputFlag`."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:235
-msgid ""
-"Позволяет использовать оператор `in` для проверки наличия флага в "
-"коллекции."
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:246
+#: ../../root/api/command/input_flags.rst:126
 msgid "Практические примеры"
 msgstr ""
 
-#: ../../root/api/command/input_flags.rst:249
+#: ../../root/api/command/input_flags.rst:129
 msgid "Обработка всех флагов с проверкой статусов"
-msgstr ""
-
-#: ../../root/api/command/input_flags.rst:251
-msgid ""
-"Пример демонстрирует итерацию по всем введённым флагам с проверкой их "
-"статусов валидации:"
 msgstr ""
 

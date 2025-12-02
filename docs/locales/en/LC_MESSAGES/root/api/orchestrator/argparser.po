@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-03 19:01+0300\n"
+"POT-Creation-Date: 2025-12-02 22:29+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -58,35 +58,35 @@ msgstr ""
 msgid "``epilog``: Дополнительная информация для отображения в конце справки."
 msgstr ""
 
-#: ../../root/api/orchestrator/argparser.rst:29
-msgid "Основные методы и атрибуты"
+#: ../../root/api/orchestrator/argparser.rst:31
+msgid "Атрибуты"
 msgstr ""
 
-#: ../../root/api/orchestrator/argparser.rst:33
+#: ../../root/api/orchestrator/argparser.rst:35
 msgid ""
 "Экземпляр ``ArgSpace``, содержащий все обработанные аргументы командной "
 "строки. Подробнее см. :ref:`здесь <root_api_orchestrator_argspace>`."
 msgstr ""
 
-#: ../../root/api/orchestrator/argparser.rst:36
+#: ../../root/api/orchestrator/argparser.rst:38
 msgid ""
 "До инициализации ``Orchestrator``, в конструктор которого был передан "
 "экземпляр ``ArgParser``, атрибут ``parsed_argspace`` будет содержать "
 "пустой ``ArgSpace``."
 msgstr ""
 
-#: ../../root/api/orchestrator/argparser.rst:38
+#: ../../root/api/orchestrator/argparser.rst:40
 msgid ""
 "Парсинг и валидация аргументов происходят при инициализации "
 "``Orchestrator``, поэтому использовать ``parsed_argspace`` "
 "**целесообразно только после** этого."
 msgstr ""
 
-#: ../../root/api/orchestrator/argparser.rst:43
+#: ../../root/api/orchestrator/argparser.rst:45
 msgid "Лучшие практики"
 msgstr ""
 
-#: ../../root/api/orchestrator/argparser.rst:45
+#: ../../root/api/orchestrator/argparser.rst:47
 msgid ""
 "Использовать атрибут ``parsed_argspace`` рекомендуется только на этапе "
 "настройки приложения. В обработчиках лучшей практикой является получение "
@@ -94,115 +94,41 @@ msgid ""
 "<root_dependency_injection>`."
 msgstr ""
 
-#: ../../root/api/orchestrator/argparser.rst:48
-msgid "Пример использования"
+#: ../../root/api/orchestrator/argparser.rst:49
+msgid "**Пример использования:**"
 msgstr ""
 
-#: ../../root/api/orchestrator/argparser.rst:55
+#: ../../root/api/orchestrator/argparser.rst:56
 msgid "Обработка ошибок"
 msgstr ""
 
-#: ../../root/api/orchestrator/argparser.rst:58
+#: ../../root/api/orchestrator/argparser.rst:59
 msgid ""
 "Про типы аргументов подробнее в :ref:`Arguments "
 "<root_api_orchestrator_arguments>`"
 msgstr ""
 
-#: ../../root/api/orchestrator/argparser.rst:60
+#: ../../root/api/orchestrator/argparser.rst:61
 msgid ""
 "При работе с аргументами командной строки стандартный ``ArgumentParser`` "
 "автоматически обрабатывает следующие ситуации:"
 msgstr ""
 
-#: ../../root/api/orchestrator/argparser.rst:62
+#: ../../root/api/orchestrator/argparser.rst:63
 msgid "**Отсутствие обязательного аргумента:**"
 msgstr ""
 
-#: ../../root/api/orchestrator/argparser.rst:70
-msgid "**Недопустимое значение из списка choices:**"
+#: ../../root/api/orchestrator/argparser.rst:71
+msgid "**Недопустимое значение из списка possible_values:**"
 msgstr ""
 
-#: ../../root/api/orchestrator/argparser.rst:78
+#: ../../root/api/orchestrator/argparser.rst:79
 msgid "**Использование устаревшего аргумента:**"
 msgstr ""
 
-#: ../../root/api/orchestrator/argparser.rst:80
+#: ../../root/api/orchestrator/argparser.rst:81
 msgid ""
 "При использовании аргумента с ``is_deprecated=True`` выводится "
 "предупреждение, но выполнение продолжается:"
 msgstr ""
-
-#~ msgid "Argparser"
-#~ msgstr ""
-
-#~ msgid "nu"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Объект ``ArgParser`` в ``Argenta`` "
-#~ "предназначен для разбора и обработки "
-#~ "**аргументов командной строки**, которые "
-#~ "передаются вашему приложению при его "
-#~ "запуске. Важно не путать их с "
-#~ "флагами команд, которые пользователь вводит"
-#~ " в интерактивном режиме работы приложения."
-#~ " ``ArgParser`` позволяет вашему приложению "
-#~ "получать внешнюю конфигурацию в момент "
-#~ "старта, например, путь к файлу настроек,"
-#~ " флаги для отладки или режим запуска."
-#~ msgstr ""
-
-#~ msgid "Создает экземпляр парсера аргументов командной строки."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "``processed_args``: Список аргументов, которые "
-#~ "будут обрабатываться и парситься при "
-#~ "запуске приложения, подробнее :ref:`тут "
-#~ "<root_api_orchestrator_arguments>`."
-#~ msgstr ""
-
-#~ msgid "``name``: Имя приложения, которое будет отображаться в справке."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "``description``: Описание приложения, которое "
-#~ "будет отображаться в справке."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "``epilog``: Дополнительная информация, которая "
-#~ "будет отображаться в конце справки."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Экземпляр класса ``ArgSpace``, который "
-#~ "содержит все обработанные аргументы командной"
-#~ " строки, подробнее :ref:`тут "
-#~ "<root_api_orchestrator_argspace>`."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "До инициализации инстанса ``Orchestrator``, "
-#~ "которому в конструктор был передан "
-#~ "соответствующий экземпляр ``ArgParser``, атрибут "
-#~ "``parsed_argspace`` будет равен пустому "
-#~ "``ArgSpace``."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Парсинг и валидация аргументов командной "
-#~ "строки происходит при инициализации "
-#~ "``Orchestrator``, соответственно использование "
-#~ "атрибута ``parsed_argspace`` **целесообразно только"
-#~ " после инициализации** ``Orchestrator``."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Использование атрибута ``parsed_argspace`` "
-#~ "рекомендуется только на этапе настройки "
-#~ "приложения, в хэндлерах лучшей практикой "
-#~ "является получение ``ArgSpace`` через ``di``,"
-#~ "  подробнее :ref:`тут <root_dependency_injection>`."
-#~ msgstr ""
 

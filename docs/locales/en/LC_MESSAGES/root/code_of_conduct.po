@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-03 19:01+0300\n"
+"POT-Creation-Date: 2025-12-02 22:27+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -21,82 +21,93 @@ msgstr ""
 
 #: ../../root/code_of_conduct.rst:4
 msgid "Правила сообщества"
-msgstr ""
+msgstr "Community Guidelines"
 
 #: ../../root/code_of_conduct.rst:7
 msgid "Наше обязательство"
-msgstr ""
+msgstr "Our Pledge"
 
 #: ../../root/code_of_conduct.rst:9
 msgid ""
 "В целях создания открытой и гостеприимной атмосферы мы, как участники и "
 "мейнтейнеры, обязуемся сделать участие в нашем проекте и сообществе "
 "свободным от преследований для всех, независимо от возраста, "
-"телосложения, инвалидности, этнической принадлежности, гендерной "
-"идентичности и самовыражения, уровня опыта, образования, "
-"социально-экономического статуса, национальности, внешности, расы, "
-"религии или сексуальной идентичности и ориентации."
+"телосложения, инвалидности, этнической принадлежности, уровня опыта, "
+"образования, социально-экономического статуса, национальности, внешности,"
+" расы или религии."
 msgstr ""
+"In the interest of fostering an open and welcoming environment, we as "
+"contributors and maintainers pledge to make participation in our project and "
+"community a harassment-free experience for everyone, regardless of age, body "
+"size, disability, ethnicity, level of experience, education, socio-economic "
+"status, nationality, personal appearance, race, or religion."
 
 #: ../../root/code_of_conduct.rst:14
 msgid "Наши стандарты"
-msgstr ""
+msgstr "Our Standards"
 
 #: ../../root/code_of_conduct.rst:16
 msgid "Примеры поведения, которые способствуют созданию позитивной среды:"
-msgstr ""
+msgstr "Examples of behavior that contributes to creating a positive environment:"
 
 #: ../../root/code_of_conduct.rst:18
 msgid "Проявление эмпатии и доброты по отношению к другим."
-msgstr ""
+msgstr "Demonstrating empathy and kindness toward other people."
 
 #: ../../root/code_of_conduct.rst:19
 msgid "Уважение к различным мнениям, точкам зрения и опыту."
-msgstr ""
+msgstr "Being respectful of differing opinions, viewpoints, and experiences."
 
 #: ../../root/code_of_conduct.rst:20
 msgid "Предоставление и тактичное принятие конструктивной обратной связи."
-msgstr ""
+msgstr "Giving and gracefully accepting constructive feedback."
 
 #: ../../root/code_of_conduct.rst:21
 msgid ""
 "Принятие ответственности и извинения перед теми, кого затронули наши "
 "ошибки, а также извлечение уроков из этого опыта."
 msgstr ""
+"Accepting responsibility and apologizing to those affected by our mistakes, "
+"and learning from the experience."
 
 #: ../../root/code_of_conduct.rst:22
 msgid "Фокус на том, что лучше для всего сообщества."
-msgstr ""
+msgstr "Focusing on what is best for the overall community."
 
 #: ../../root/code_of_conduct.rst:24
 msgid "Примеры недопустимого поведения включают:"
-msgstr ""
+msgstr "Examples of unacceptable behavior include:"
 
 #: ../../root/code_of_conduct.rst:26
 msgid ""
 "Троллинг, оскорбительные или уничижительные комментарии, а также личные "
 "или политические нападки."
 msgstr ""
+"Trolling, insulting or derogatory comments, and personal or political attacks."
 
 #: ../../root/code_of_conduct.rst:27
 msgid "Публичное или частное преследование."
-msgstr ""
+msgstr "Public or private harassment."
 
 #: ../../root/code_of_conduct.rst:28
 msgid ""
 "Публикация личной информации других лиц (например, физического или "
 "электронного адреса) без их явного разрешения."
 msgstr ""
+"Publishing others' private information, such as a physical or email address, "
+"without their explicit permission."
 
 #: ../../root/code_of_conduct.rst:29
 msgid ""
 "Любое другое поведение, которое можно обоснованно считать неуместным в "
 "профессиональной среде."
 msgstr ""
+"Other conduct which could reasonably be considered inappropriate in a "
+"professional setting."
 
 #: ../../root/code_of_conduct.rst:34
 msgid "Наши обязанности"
-msgstr ""
+msgstr "Our Responsibilities"
 
 #: ../../root/code_of_conduct.rst:36
 msgid ""
@@ -104,6 +115,9 @@ msgid ""
 "соблюдения стандартов приемлемого поведения и предпримут справедливые "
 "корректирующие действия в ответ на любые случаи неприемлемого поведения."
 msgstr ""
+"Project maintainers are responsible for clarifying and enforcing standards of "
+"acceptable behavior and will take appropriate and fair corrective action in "
+"response to any instances of unacceptable behavior."
 
 #: ../../root/code_of_conduct.rst:38
 msgid ""
@@ -113,10 +127,14 @@ msgid ""
 "временно или навсегда блокировать любого участника за поведение, которое "
 "они сочтут неуместным, угрожающим, оскорбительным или вредным."
 msgstr ""
+"Project maintainers have the right and responsibility to remove, edit, or reject "
+"comments, commits, code, wiki edits, issues, and other contributions that are not "
+"aligned with this Code of Conduct, and will ban temporarily or permanently any "
+"contributor for behaviors that they deem inappropriate, threatening, offensive, or harmful."
 
 #: ../../root/code_of_conduct.rst:43
 msgid "Сфера применения"
-msgstr ""
+msgstr "Scope"
 
 #: ../../root/code_of_conduct.rst:45
 msgid ""
@@ -127,10 +145,15 @@ msgid ""
 "аккаунт в социальных сетях или выступление в качестве назначенного "
 "представителя на онлайн- или офлайн-мероприятии."
 msgstr ""
+"This Code of Conduct applies both within project spaces and in public spaces "
+"when an individual is officially representing the community. Examples of "
+"representing the community include using an official project email address, "
+"posting via an official social media account, or acting as an appointed "
+"representative at an online or offline event."
 
 #: ../../root/code_of_conduct.rst:50
 msgid "Обеспечение соблюдения"
-msgstr ""
+msgstr "Enforcement"
 
 #: ../../root/code_of_conduct.rst:52
 msgid ""
@@ -139,14 +162,17 @@ msgid ""
 "kolo.is.main@gmail.com. Все жалобы будут рассмотрены и расследованы "
 "оперативно и справедливо."
 msgstr ""
+"Instances of abusive, harassing, or otherwise unacceptable behavior may be "
+"reported to the project team at kolo.is.main@gmail.com. All complaints will be "
+"reviewed and investigated promptly and fairly."
 
 #: ../../root/code_of_conduct.rst:54
 msgid "Команда проекта обязуется уважать частную жизнь и безопасность заявителя."
-msgstr ""
+msgstr "The project team is obligated to respect the privacy and security of the reporter."
 
 #: ../../root/code_of_conduct.rst:59
 msgid "Атрибуция"
-msgstr ""
+msgstr "Attribution"
 
 #: ../../root/code_of_conduct.rst:61
 msgid ""
@@ -156,102 +182,9 @@ msgid ""
 "conduct/code_of_conduct.md>`__ и `2.0 <https://www.contributor-"
 "covenant.org/version/2/0/code_of_conduct/code_of_conduct.md>`__."
 msgstr ""
-
-#~ msgid ""
-#~ "В стремлении создать открытую и "
-#~ "приветливую атмосферу, мы, как участники "
-#~ "и мейнтейнеры, обязуемся сделать участие "
-#~ "в нашем проекте и сообществе свободным"
-#~ " от преследований для всех, независимо "
-#~ "от возраста, телосложения, инвалидности, "
-#~ "этнической принадлежности, половых характеристик,"
-#~ " уровня опыта, образования, "
-#~ "социально-экономического статуса, национальности, "
-#~ "внешности, расы и религии."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Примеры поведения, способствующего созданию "
-#~ "позитивной среды для нашего сообщества, "
-#~ "включают:"
-#~ msgstr ""
-
-#~ msgid "Проявление эмпатии и доброты по отношению к другим людям."
-#~ msgstr ""
-
-#~ msgid "Уважительное отношение к различным мнениям, точкам зрения и опыту."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Принятие ответственности, извинения перед "
-#~ "теми, кого затронули наши ошибки, и "
-#~ "извлечение уроков из этого опыта."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Сосредоточение на том, что лучше не "
-#~ "только для нас как отдельных личностей,"
-#~ " но и для всего сообщества в "
-#~ "целом."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Публикация личной информации других лиц, "
-#~ "такой как физический или электронный "
-#~ "адрес, без их явного разрешения."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Иное поведение, которое можно обоснованно "
-#~ "считать неуместным в профессиональной среде."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Мейнтейнеры проекта несут ответственность за"
-#~ " разъяснение и обеспечение соблюдения наших"
-#~ " стандартов приемлемого поведения и "
-#~ "предпримут соответствующие и справедливые "
-#~ "корректирующие действия в ответ на любые"
-#~ " случаи неприемлемого поведения."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Мейнтейнеры проекта имеют право и "
-#~ "обязанность удалять, редактировать или "
-#~ "отклонять комментарии, коммиты, код, правки"
-#~ " в вики, задачи и другие вклады, "
-#~ "которые не соответствуют настоящему Кодексу"
-#~ " поведения, или временно либо навсегда "
-#~ "заблокировать любого участника за другое "
-#~ "поведение, которое они сочтут неуместным, "
-#~ "угрожающим, оскорбительным или вредным."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Настоящий Кодекс поведения применяется во "
-#~ "всех пространствах сообщества, а также "
-#~ "когда человек официально представляет "
-#~ "сообщество в публичных местах. Примеры "
-#~ "представления нашего сообщества включают "
-#~ "использование официального адреса электронной "
-#~ "почты, публикации через официальный аккаунт"
-#~ " в социальных сетях или выступление в"
-#~ " качестве назначенного представителя на "
-#~ "онлайн- или офлайн-мероприятии."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "О случаях оскорбительного, преследовательского "
-#~ "или иного неприемлемого поведения можно "
-#~ "сообщить руководителям сообщества, ответственным "
-#~ "за обеспечение правоприменения, по адресу "
-#~ ". Все жалобы будут рассмотрены и "
-#~ "расследованы оперативно и справедливо."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Все руководители сообщества обязаны уважать"
-#~ " частную жизнь и безопасность заявителя "
-#~ "любого инцидента."
-#~ msgstr ""
+"This Code of Conduct is adapted from the `Contributor Covenant "
+"<https://www.contributor-covenant.org/>`__, version `1.4 <https://www"
+".contributor-covenant.org/version/1/4/code-of-"
+"conduct/code_of_conduct.md>`__ and `2.0 <https://www.contributor-"
+"covenant.org/version/2/0/code_of_conduct/code_of_conduct.md>`__."
 

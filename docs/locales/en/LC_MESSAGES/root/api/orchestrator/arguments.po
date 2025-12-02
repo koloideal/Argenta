@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-03 19:01+0300\n"
+"POT-Creation-Date: 2025-12-02 22:27+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -32,8 +32,8 @@ msgstr ""
 
 #: ../../root/api/orchestrator/arguments.rst:8
 msgid ""
-"Аргументы регистрируются в `ArgParser` и после обработки становятся "
-"доступными в объекте `ArgSpace`."
+"Аргументы регистрируются в ``ArgParser`` и после обработки становятся "
+"доступными в объекте ``ArgSpace``."
 msgstr ""
 
 #: ../../root/api/orchestrator/arguments.rst:13
@@ -41,12 +41,10 @@ msgid "ValueArgument"
 msgstr ""
 
 #: ../../root/api/orchestrator/arguments.rst:15
-msgid ""
-"Класс для аргументов, требующих передачи значения. Используется для "
-"параметров конфигурации, которым необходимо указать значение при запуске."
+msgid "Класс для аргументов, требующих передачи значения."
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:30
+#: ../../root/api/orchestrator/arguments.rst:31
 msgid "Создаёт аргумент командной строки, требующий значения."
 msgstr ""
 
@@ -54,9 +52,9 @@ msgstr ""
 msgid "param name"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:32
-#: ../../root/api/orchestrator/arguments.rst:100
-#: ../../root/api/orchestrator/arguments.rst:165
+#: ../../root/api/orchestrator/arguments.rst:33
+#: ../../root/api/orchestrator/arguments.rst:74
+#: ../../root/api/orchestrator/arguments.rst:117
 msgid "Имя аргумента"
 msgstr ""
 
@@ -64,8 +62,8 @@ msgstr ""
 msgid "param prefix"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:33
-#: ../../root/api/orchestrator/arguments.rst:101
+#: ../../root/api/orchestrator/arguments.rst:34
+#: ../../root/api/orchestrator/arguments.rst:75
 msgid "Префикс (по умолчанию ``--``)"
 msgstr ""
 
@@ -73,8 +71,8 @@ msgstr ""
 msgid "param help"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:34
-#: ../../root/api/orchestrator/arguments.rst:102
+#: ../../root/api/orchestrator/arguments.rst:35
+#: ../../root/api/orchestrator/arguments.rst:76
 msgid "Сообщение для справки (``--help``)"
 msgstr ""
 
@@ -82,15 +80,15 @@ msgstr ""
 msgid "param possible_values"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:35
-msgid "Список допустимых значений (передаётся в `choices` `ArgumentParser`)"
+#: ../../root/api/orchestrator/arguments.rst:36
+msgid "Список допустимых значений"
 msgstr ""
 
 #: ../../root/api/orchestrator/arguments.rst
 msgid "param default"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:36
+#: ../../root/api/orchestrator/arguments.rst:37
 msgid "Значение по умолчанию, если аргумент не передан"
 msgstr ""
 
@@ -98,62 +96,69 @@ msgstr ""
 msgid "param is_required"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:37
-msgid "Если ``True``, аргумент становится обязательным"
+#: ../../root/api/orchestrator/arguments.rst:38
+msgid ""
+"Если ``True``, аргумент становится обязательным. Если не передать при "
+"запуске, приложение не запустится"
 msgstr ""
 
 #: ../../root/api/orchestrator/arguments.rst
 msgid "param is_deprecated"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:38
-#: ../../root/api/orchestrator/arguments.rst:103
-msgid "Если ``True``, помечает аргумент как устаревший"
+#: ../../root/api/orchestrator/arguments.rst:39
+msgid ""
+"Если ``True``, помечает аргумент как устаревший. Если передать при "
+"запуске, будет выведено предупреждение в консоль"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:40
-#: ../../root/api/orchestrator/arguments.rst:105
+#: ../../root/api/orchestrator/arguments.rst:41
+#: ../../root/api/orchestrator/arguments.rst:79
 msgid "**Пример использования:**"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:74
-#: ../../root/api/orchestrator/arguments.rst:134
+#: ../../root/api/orchestrator/arguments.rst:47
+#: ../../root/api/orchestrator/arguments.rst:85
 msgid "**Запуск приложения:**"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:84
+#: ../../root/api/orchestrator/arguments.rst:57
 msgid "BooleanArgument"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:86
+#: ../../root/api/orchestrator/arguments.rst:59
 msgid ""
 "Класс для булевых аргументов, не требующих значения. Их наличие при "
-"запуске устанавливает значение в `True`, отсутствие — в `False`."
+"запуске устанавливает значение в **True**, отсутствие — в **False**."
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:98
+#: ../../root/api/orchestrator/arguments.rst:72
 msgid "Создаёт булев аргумент командной строки без значения."
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:147
+#: ../../root/api/orchestrator/arguments.rst:77
+msgid "Если ``True``, помечает аргумент как устаревший"
+msgstr ""
+
+#: ../../root/api/orchestrator/arguments.rst:98
 msgid "InputArgument"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:150
+#: ../../root/api/orchestrator/arguments.rst:101
 msgid ""
 "``InputArgument`` напрямую связан с контейнером ``ArgSpace`` и является "
 "его наполнителем. Подробнее о нём см. :ref:`здесь "
 "<root_api_orchestrator_argspace>`."
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:152
+#: ../../root/api/orchestrator/arguments.rst:103
 msgid ""
 "Представляет собой обработанный аргумент командной строки. Этот класс "
-"используется внутри `ArgSpace` для хранения значений, полученных после "
+"используется внутри ``ArgSpace`` для хранения значений, полученных после "
 "парсинга."
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:163
+#: ../../root/api/orchestrator/arguments.rst:115
 msgid "Создаёт экземпляр обработанного входного аргумента."
 msgstr ""
 
@@ -161,191 +166,47 @@ msgstr ""
 msgid "param value"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:166
+#: ../../root/api/orchestrator/arguments.rst:118
 msgid ""
-"Значение аргумента. Для `BooleanArgument` — `True`, если флаг передан; "
-"для `ValueArgument` — строка со значением"
+"Значение аргумента. Для ``BooleanArgument`` — **True**, если аргумент "
+"передан, и **False**, если нет; для ``ValueArgument`` — введённая строка"
 msgstr ""
 
 #: ../../root/api/orchestrator/arguments.rst
 msgid "param founder_class"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:167
+#: ../../root/api/orchestrator/arguments.rst:119
 msgid ""
-"Класс-родитель, из которого был создан аргумент (`BooleanArgument` или "
-"`ValueArgument`)"
+"Класс-родитель, из которого был создан аргумент (``BooleanArgument`` или "
+"``ValueArgument``)"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:169
+#: ../../root/api/orchestrator/arguments.rst:121
 msgid "**Атрибуты:**"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:174
+#: ../../root/api/orchestrator/arguments.rst:125
 msgid ""
-"Имя аргумента, указанное при создании `ValueArgument` или "
-"`BooleanArgument`."
+"Имя аргумента, указанное при создании ``ValueArgument`` или "
+"``BooleanArgument``."
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:178
+#: ../../root/api/orchestrator/arguments.rst:129
 msgid "Значение аргумента. Тип зависит от исходного класса:"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:180
-msgid "Для `BooleanArgument`: `True`, если флаг был передан."
+#: ../../root/api/orchestrator/arguments.rst:131
+msgid "Для ``BooleanArgument``: **True**, если аргумент был передан"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:181
+#: ../../root/api/orchestrator/arguments.rst:132
 msgid ""
-"Для `ValueArgument`: строка с переданным значением или значением по "
+"Для ``ValueArgument``: строка с переданным значением или значением по "
 "умолчанию"
 msgstr ""
 
-#: ../../root/api/orchestrator/arguments.rst:185
-msgid ""
-"Ссылка на класс-родитель. Используется для определения типа и фильтрации "
-"в методе `get_by_type()`."
+#: ../../root/api/orchestrator/arguments.rst:136
+msgid "Ссылка на класс-родитель. Используется для определения типа и фильтрации."
 msgstr ""
-
-#: ../../root/api/orchestrator/arguments.rst:187
-msgid "**Методы:**"
-msgstr ""
-
-#: ../../root/api/orchestrator/arguments.rst:191
-msgid "Возвращает строковое представление в формате `InputArgument(name=value)`."
-msgstr ""
-
-#: ../../root/api/orchestrator/arguments.rst:201
-msgid "Возвращает техническое представление объекта."
-msgstr ""
-
-#~ msgid "prikol"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Модуль ``Arguments`` предоставляет набор "
-#~ "классов для работы с аргументами "
-#~ "командной строки при запуске приложения "
-#~ "``Argenta``. Эти аргументы позволяют "
-#~ "настраивать поведение приложения на этапе "
-#~ "его старта, передавая различные параметры "
-#~ "конфигурации через интерфейс командной строки."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Аргументы регистрируются в ``ArgParser`` и "
-#~ "парсятся при запуске приложения, становясь "
-#~ "доступными через объект ``ArgSpace``."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Класс для аргументов командной строки, "
-#~ "требующих передачи значения. Используется для"
-#~ " параметров конфигурации, которым необходимо "
-#~ "указать конкретное значение при запуске "
-#~ "приложения."
-#~ msgstr ""
-
-#~ msgid "Создает аргумент командной строки, требующий значения."
-#~ msgstr ""
-
-#~ msgid "Префикс аргумента, по умолчанию ``--``"
-#~ msgstr ""
-
-#~ msgid "Сообщение справки, отображаемое при ``--help``"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Список допустимых значений для аргумента. "
-#~ "Передается в параметр ``choices`` "
-#~ "ArgumentParser"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Значение по умолчанию, используемое если "
-#~ "аргумент не передан при запуске"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Обязатялен ли аргумент. Если ``True``, "
-#~ "приложение не запустится без этого "
-#~ "аргумента"
-#~ msgstr ""
-
-#~ msgid "Является ли аргумент устаревшим"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Класс для булевых аргументов командной "
-#~ "строки, которые не требуют передачи "
-#~ "значения. Наличие или отсутствие аргумента "
-#~ "при запуске определяет состояние распаршенных"
-#~ " аргументов(``True`` при наличии и "
-#~ "``False`` при отсутствии)."
-#~ msgstr ""
-
-#~ msgid "Создает булевый аргумент командной строки без значения."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "``InputArgument`` непосредственно связан и "
-#~ "является наполнителем контейнера ``ArgSpace``, "
-#~ "подробнее про него :ref:`тут "
-#~ "<root_api_orchestrator_argspace>`."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Представляет собой распаршенный аргумент "
-#~ "командной строки после запуска приложения. "
-#~ "Этот класс используется внутри объекта "
-#~ "``ArgSpace`` для хранения значений аргументов,"
-#~ " полученных при парсинге."
-#~ msgstr ""
-
-#~ msgid "Создает экземпляр распарсенного входного аргумента."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Значение аргумента. Для ``BooleanArgument`` "
-#~ "всегда ``True`` если флаг передан, для"
-#~ " ``ValueArgument`` — строка со значением"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Класс-родитель, из которого был создан "
-#~ "этот аргумент (``BooleanArgument`` или "
-#~ "``ValueArgument``)"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Имя аргумента в виде строки. "
-#~ "Соответствует имени, указанному при создании"
-#~ " ``ValueArgument`` или ``BooleanArgument``."
-#~ msgstr ""
-
-#~ msgid "Значение аргумента. Тип значения зависит от исходного класса аргумента:"
-#~ msgstr ""
-
-#~ msgid "Для ``BooleanArgument``: ``True`` если флаг был передан при запуске"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Для ``ValueArgument``: строка с переданным "
-#~ "значением или значением по умолчанию"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Ссылка на класс, из которого был "
-#~ "создан этот аргумент. Используется для "
-#~ "определения типа аргумента и фильтрации "
-#~ "в методе ``get_by_type()``."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Возвращает строковое представление аргумента в"
-#~ " формате ``InputArgument(name=value)``."
-#~ msgstr ""
-
-#~ msgid "Возвращает техническое представление объекта в виде строки."
-#~ msgstr ""
 
