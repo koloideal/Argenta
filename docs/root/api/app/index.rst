@@ -171,6 +171,7 @@ PredefinedMessages
     
 
 .. py:class:: PredefinedMessages
+   :no-index:
 
    .. py:attribute:: USAGE
 

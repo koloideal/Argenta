@@ -32,12 +32,12 @@ DataBridge
 2.  Команда ``login --username <имя>`` вызывает ``login_handler``, который через внедрённый ``data_bridge`` сохраняет токен.
 3.  Команда ``get-profile`` вызывает ``get_profile_handler``, который так же получает ``data_bridge`` и извлекает из него токен.
 
-API класса
 -----------
 
 .. py:class:: DataBridge
 
    .. py:method:: __init__(self, initial_data: dict | None = None)
+      :no-index:
 
       Инициализирует хранилище. При использовании через ``di`` вызывается автоматически.
 
