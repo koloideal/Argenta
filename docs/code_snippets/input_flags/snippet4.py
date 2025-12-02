@@ -1,9 +1,9 @@
 from argenta.command.flag import InputFlag, InputFlags, ValidationStatus
 
-# Создаём коллекцию InputFlags
+# Create InputFlags collection
 flags = InputFlags()
 
-# Создаём несколько флагов
+# Create several flags
 flag1 = InputFlag(
     name="option1", prefix="--", input_value="value1", status=ValidationStatus.VALID
 )
@@ -16,7 +16,7 @@ flag3 = InputFlag(
     name="option3", prefix="---", input_value="value3", status=ValidationStatus.VALID
 )
 
-# Добавляем все флаги одним вызовом
+# Add all flags in one call
 flags.add_flags([flag1, flag2, flag3])
 
 print(f"Total flags: {len(flags.flags)}")

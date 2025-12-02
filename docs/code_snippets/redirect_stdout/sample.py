@@ -1,10 +1,10 @@
 from argenta import Response, Router
 
-# Для этого роутера перехват stdout будет отключен
+# For this router stdout redirect will be disabled
 interactive_router = Router(disable_redirect_stdout=True)
 
 
 @interactive_router.command("ask")
 def ask_name(response: Response):
-    name = input("Как вас зовут? ")
-    print(f"Приятно познакомиться, {name}!")
+    name = input("What is your name? ")
+    print(f"Nice to meet you, {name}!")

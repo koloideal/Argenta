@@ -1,6 +1,6 @@
 from argenta.orchestrator.argparser import ArgParser, BooleanArgument
 
-# Создание булевых аргументов
+# Create boolean arguments
 verbose_arg = BooleanArgument(
     "verbose",
     help="Enable verbose output"
@@ -16,7 +16,7 @@ no_cache_arg = BooleanArgument(
     help="Disable caching"
 )
 
-# Регистрация в ArgParser
+# Register in ArgParser
 parser = ArgParser(
     processed_args=[verbose_arg, debug_arg, no_cache_arg],
     name="MyApp"

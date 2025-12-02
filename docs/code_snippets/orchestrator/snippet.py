@@ -15,13 +15,13 @@ class ConnectionProvider(Provider):
         conn.close()
 
 
-# 2. Создаем и настраиваем App
+# 2. Create and configure App
 app = App()
-# ... здесь можно добавить роутеры ...
+# ... you can add routers here ...
 
-# 3. Создаем Orchestrator, передавая наш провайдер
+# 3. Create Orchestrator, passing our provider
 orchestrator = Orchestrator(custom_providers=[ConnectionProvider()])
 
-# 4. Запускаем приложение
+# 4. Start the application
 if __name__ == "__main__":
     orchestrator.start_polling(app)

@@ -1,7 +1,7 @@
 from argenta.command.flag import InputFlag, ValidationStatus
 from argenta.command.flag.flags.models import InputFlags
 
-# Создаём первую коллекцию
+# Create first collection
 flags1 = InputFlags(
     [
         InputFlag(name="flag1", input_value="value1", status=ValidationStatus.VALID),
@@ -9,7 +9,7 @@ flags1 = InputFlags(
     ]
 )
 
-# Создаём вторую коллекцию с теми же флагами
+# Create second collection with same flags
 flags2 = InputFlags(
     [
         InputFlag(name="flag1", input_value="value1", status=ValidationStatus.VALID),
@@ -17,7 +17,7 @@ flags2 = InputFlags(
     ]
 )
 
-# Создаём третью коллекцию с другими флагами
+# Create third collection with different values
 flags3 = InputFlags(
     [
         InputFlag(name="flag1", input_value="different", status=ValidationStatus.VALID),
@@ -25,13 +25,13 @@ flags3 = InputFlags(
     ]
 )
 
-print(f"flags1 == flags2: {flags1 == flags2}")  # True (одинаковые имена)
+print(f"flags1 == flags2: {flags1 == flags2}")  # True (same names)
 print(
     f"flags1 == flags3: {flags1 == flags3}"
-)  # True (имена одинаковые, значения не учитываются)
+)  # True (same names, values are not considered)
 
-# Разные коллекции
+# Different collections
 flags4 = InputFlags(
     [InputFlag(name="flag3", input_value="value3", status=ValidationStatus.VALID)]
 )
-print(f"flags1 == flags4: {flags1 == flags4}")  # False (разные флаги)
+print(f"flags1 == flags4: {flags1 == flags4}")  # False (different flags)

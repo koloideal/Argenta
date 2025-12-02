@@ -68,6 +68,7 @@ Router
    Выбрасывается, если триггер команды в ``Command`` содержит пробелы. Триггеры должны быть одним словом.
 
    **Неправильно:** ``Command("add user")``
+   
    **Правильно:** ``Command("add-user")``
 
 .. py:exception:: RepeatedFlagNameException
@@ -81,7 +82,7 @@ Router
 
       Command("send", flags=[
           Flag("recipient"),
-          Flag("recipient") 
+          Flag("recipient")  # Duplicate!
       ])
 
 .. py:exception:: RequiredArgumentNotPassedException

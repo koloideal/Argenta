@@ -5,7 +5,7 @@ router = Router(title="Data Example")
 
 @router.command(Command("set", description="Set data"))
 def set_handler(response: Response):
-    # Обновляем глобальное хранилище данных
+    # Update global data storage
     response.update_data(
         {
             "user_name": "John",
@@ -18,7 +18,7 @@ def set_handler(response: Response):
 
 @router.command(Command("show", description="Show data"))
 def show_handler(response: Response):
-    # Получаем данные из глобального хранилища
+    # Get data from global storage
     data = response.get_data()
     if "user_name" in data:
         print(f"User: {data['user_name']}")

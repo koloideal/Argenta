@@ -14,7 +14,7 @@ router = Router(title="Bool Check Example")
 def action_handler(response: Response):
     input_flags = response.input_flags
 
-    # Проверяем наличие флагов
+    # Check for flags presence
     if input_flags:
         print("Flags were provided:")
         for flag in input_flags:
@@ -22,6 +22,6 @@ def action_handler(response: Response):
     else:
         print("No flags provided, using defaults")
 
-    # Альтернативный способ проверки
+    # Alternative way to check
     has_flags = bool(input_flags)
     print(f"\nHas flags: {has_flags}")

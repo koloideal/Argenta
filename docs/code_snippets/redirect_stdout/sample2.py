@@ -1,5 +1,5 @@
 from argenta import App
 from argenta.app import StaticDividingLine
 
-# Все роутеры по умолчанию будут использовать статическую линию длиной 50 символов
+# All routers will use static line with length 50 by default
 app = App(dividing_line=StaticDividingLine(length=50))

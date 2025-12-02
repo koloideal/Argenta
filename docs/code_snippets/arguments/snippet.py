@@ -1,6 +1,6 @@
 from argenta.orchestrator.argparser import ArgParser, ValueArgument
 
-# Создание аргументов
+# Create arguments
 config_arg = ValueArgument(
     "config",
     help="Path to configuration file",
@@ -20,7 +20,7 @@ host_arg = ValueArgument(
     is_required=True
 )
 
-# Регистрация в ArgParser
+# Register in ArgParser
 parser = ArgParser(
     processed_args=[config_arg, log_level_arg, host_arg],
     name="MyApp",

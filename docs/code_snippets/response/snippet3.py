@@ -5,7 +5,7 @@ router = Router(title="Get Data Example")
 
 @router.command(Command("info", description="Show all stored data"))
 def info_handler(response: Response):
-    # Получаем все данные из глобального хранилища
+    # Get all data from global storage
     all_data = response.get_data()
 
     if all_data:

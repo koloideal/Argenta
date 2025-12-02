@@ -6,10 +6,10 @@ router = Router(title="Add Flag Example")
 
 @router.command(Command("test", description="Test command"))
 def test_handler(response: Response):
-    # Создаём новую коллекцию InputFlags
+    # Create new InputFlags collection
     new_flags = InputFlags()
 
-    # Добавляем один флаг
+    # Add one flag
     test_flag = InputFlag(
         name="test", prefix="--", input_value="value", status=ValidationStatus.VALID
     )

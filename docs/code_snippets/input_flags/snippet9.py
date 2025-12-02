@@ -15,18 +15,18 @@ router = Router(title="Contains Example")
 def check_handler(response: Response):
     input_flags = response.input_flags
 
-    # Проверяем наличие конкретного флага
+    # Check for specific flag presence
     verbose_flag = input_flags.get_flag_by_name("verbose")
     debug_flag = input_flags.get_flag_by_name("debug")
 
-    # Используем оператор in для проверки
+    # Use 'in' operator for checking
     if verbose_flag and verbose_flag in input_flags:
         print("Verbose flag is present")
 
     if debug_flag and debug_flag in input_flags:
         print("Debug flag is present")
 
-    # Можно создать флаг для проверки (сравнение идёт по имени)
+    # You can create a flag for checking (comparison is by name)
     test_flag = InputFlag(name="verbose", prefix="--", input_value="any", status=None)
 
     if test_flag in input_flags:

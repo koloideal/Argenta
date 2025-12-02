@@ -5,7 +5,7 @@ router = Router(title="Clear Data Example")
 
 @router.command(Command("clear", description="Clear all stored data"))
 def clear_handler(response: Response):
-    # Очищаем всё хранилище данных
+    # Clear all data storage
     response.clear_data()
     print("All data cleared")
 
