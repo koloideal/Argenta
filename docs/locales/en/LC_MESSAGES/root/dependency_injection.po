@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the Argenta package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
@@ -99,11 +98,11 @@ msgstr "DI in Argenta is based on **providers** and a **container**."
 
 #: ../../root/dependency_injection.rst:50
 msgid ""
-"**Провайдер (``Provider``)** — это \"рецепт\", который объясняет, как "
+"**Провайдер (Provider)** — это \"рецепт\", который объясняет, как "
 "создавать и настраивать ту или иную зависимость (например, подключение к "
 "БД, API-клиент или любой другой сервис)."
 msgstr ""
-"**Provider (``Provider``)** is a \"recipe\" that explains how to create and "
+"**Provider (Provider)** is a \"recipe\" that explains how to create and "
 "configure a particular dependency (for example, a database connection, API client, "
 "or any other service)."
 
