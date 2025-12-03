@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the Argenta package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
@@ -21,7 +20,7 @@ msgstr ""
 
 #: ../../root/api/response.rst:4
 msgid "Response"
-msgstr ""
+msgstr "Response"
 
 #: ../../root/api/response.rst:6
 msgid ""
@@ -29,44 +28,52 @@ msgid ""
 "создаётся автоматически при обработке пользовательского ввода и содержит "
 "статус валидации, введённые флаги."
 msgstr ""
+"``Response`` is an object that is passed to the command handler. It is created "
+"automatically when processing user input and contains validation status and entered flags."
 
 #: ../../root/api/response.rst:11
 msgid ""
 "Документация по :ref:`InputFlags <root_api_command_input_flags>` — "
 "коллекция введённых флагов команды."
 msgstr ""
+"Documentation for :ref:`InputFlags <root_api_command_input_flags>` — collection of "
+"entered command flags."
 
 #: ../../root/api/response.rst:13
 msgid ""
 "Документация по :ref:`ResponseStatus <root_api_response_status>` — "
 "статусы валидации флагов команды."
 msgstr ""
+"Documentation for :ref:`ResponseStatus <root_api_response_status>` — command flag "
+"validation statuses."
 
 #: ../../root/api/response.rst:15
 msgid ""
 "Документация по :ref:`InputFlag <root_api_command_input_flag>` — "
 "отдельный введённый флаг."
 msgstr ""
+"Documentation for :ref:`InputFlag <root_api_command_input_flag>` — individual "
+"entered flag."
 
 #: ../../root/api/response.rst:20
 msgid "Инициализация"
-msgstr ""
+msgstr "Initialization"
 
 #: ../../root/api/response.rst:30
 msgid "Создаёт новый объект ответа."
-msgstr ""
+msgstr "Creates a new response object."
 
 #: ../../root/api/response.rst:32
 msgid ""
 "``status``: Общий статус валидации флагов из перечисления "
 "``ResponseStatus``."
-msgstr ""
+msgstr "``status``: Overall flag validation status from the ``ResponseStatus`` enumeration."
 
 #: ../../root/api/response.rst:33
 msgid ""
 "``input_flags``: Коллекция введённых флагов (``InputFlags``). По "
 "умолчанию — пустая."
-msgstr ""
+msgstr "``input_flags``: Collection of entered flags (``InputFlags``). Empty by default."
 
 #: ../../root/api/response.rst:36
 msgid ""
@@ -74,10 +81,12 @@ msgid ""
 "автоматически формируются системой и передаются в обработчик команды в "
 "качестве первого обязательного аргумента."
 msgstr ""
+"Instances of this class are not intended for direct creation. They are automatically "
+"formed by the system and passed to the command handler as the first required argument."
 
 #: ../../root/api/response.rst:38
 msgid "**Атрибуты:**"
-msgstr ""
+msgstr "**Attributes:**"
 
 #: ../../root/api/response.rst:43
 msgid ""
@@ -85,20 +94,24 @@ msgid ""
 "Указывает, были ли среди введённых флагов некорректные или "
 "незарегистрированные."
 msgstr ""
+"Overall validation status of all command flags (``ResponseStatus``). Indicates "
+"whether there were any incorrect or unregistered flags among the entered ones."
 
 #: ../../root/api/response.rst:48
 msgid ""
 "Коллекция всех флагов, переданных с командой (``InputFlags``). Содержит "
 "все обработанные флаги с их значениями и статусами валидации."
 msgstr ""
+"Collection of all flags passed with the command (``InputFlags``). Contains all "
+"processed flags with their values and validation statuses."
 
 #: ../../root/api/response.rst:50
 msgid "**Пример использования:**"
-msgstr ""
+msgstr "**Usage example:**"
 
 #: ../../root/api/response.rst:59
 msgid "Работа с флагами"
-msgstr ""
+msgstr "Working with Flags"
 
 #: ../../root/api/response.rst:61
 msgid ""
@@ -106,14 +119,16 @@ msgid ""
 "``input_flags``. Вы можете проверять их наличие, получать значения и "
 "статусы валидации."
 msgstr ""
+"``Response`` provides access to entered flags through the ``input_flags`` attribute. "
+"You can check their presence, get values, and validation statuses."
 
 #: ../../root/api/response.rst:63
 msgid "**Пример работы с флагами:**"
-msgstr ""
+msgstr "**Example of working with flags:**"
 
 #: ../../root/api/response.rst:74
 msgid "ResponseStatus"
-msgstr ""
+msgstr "ResponseStatus"
 
 #: ../../root/api/response.rst:76
 msgid ""
@@ -121,6 +136,8 @@ msgid ""
 "валидации всех флагов команды. Используется в атрибуте ``status`` объекта"
 " ``Response``."
 msgstr ""
+"``ResponseStatus`` is an enumeration that defines the overall validation status of "
+"all command flags. Used in the ``status`` attribute of the ``Response`` object."
 
 #: ../../root/api/response.rst:79
 msgid "ALL_FLAGS_VALID"
@@ -131,6 +148,7 @@ msgid ""
 "Все введённые флаги прошли валидацию. Нет ни некорректных, ни "
 "незарегистрированных флагов."
 msgstr ""
+"All entered flags passed validation. There are no incorrect or unregistered flags."
 
 #: ../../root/api/response.rst:89
 msgid "UNDEFINED_FLAGS"
@@ -141,6 +159,7 @@ msgid ""
 "Среди введённых флагов есть незарегистрированные, но нет флагов с "
 "некорректными значениями."
 msgstr ""
+"Among the entered flags, there are unregistered ones, but no flags with incorrect values."
 
 #: ../../root/api/response.rst:99
 msgid "INVALID_VALUE_FLAGS"
@@ -151,6 +170,7 @@ msgid ""
 "Среди введённых флагов есть флаги с некорректными значениями, но нет "
 "незарегистрированных."
 msgstr ""
+"Among the entered flags, there are flags with incorrect values, but no unregistered ones."
 
 #: ../../root/api/response.rst:109
 msgid "UNDEFINED_AND_INVALID_FLAGS"
@@ -161,4 +181,5 @@ msgid ""
 "Среди введённых флагов есть как незарегистрированные, так и флаги с "
 "некорректными значениями."
 msgstr ""
+"Among the entered flags, there are both unregistered flags and flags with incorrect values."
 

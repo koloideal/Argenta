@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the Argenta package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
@@ -30,6 +29,9 @@ msgid ""
 " Каждый роутер представляет собой логический контейнер для определённого "
 "набора функций."
 msgstr ""
+"``Router`` is the main building block for organizing logic in an "
+"application. Its purpose is to group related commands and their handlers. "
+"Each router represents a logical container for a specific set of functions."
 
 #: ../../root/api/router.rst:8
 msgid ""
@@ -37,20 +39,25 @@ msgid ""
 "отвечать за аутентификацию (``login``, ``logout``), а другой — за "
 "операции с профилем (``profile-show``, ``profile-edit``)."
 msgstr ""
+"For example, in a user management application, one router can handle "
+"authentication (``login``, ``logout``), while another handles profile "
+"operations (``profile-show``, ``profile-edit``)."
 
 #: ../../root/api/router.rst:13
 msgid "Инициализация"
-msgstr ""
+msgstr "Initialization"
 
 #: ../../root/api/router.rst:21
 msgid "Создаёт новый экземпляр роутера."
-msgstr ""
+msgstr "Creates a new router instance."
 
 #: ../../root/api/router.rst:23
 msgid ""
 "``title``: Необязательный заголовок для группы команд. Отображается в "
 "списке доступных команд, помогая пользователю ориентироваться."
 msgstr ""
+"``title``: Optional title for the command group. Displayed in the list of "
+"available commands to help users navigate."
 
 #: ../../root/api/router.rst:24
 msgid ""
@@ -60,24 +67,30 @@ msgid ""
 "используется статическая разделительная линия. Подробнее см. в разделе "
 ":ref:`Переопределение стандартного вывода <root_redirect_stdout>`."
 msgstr ""
+"``disable_redirect_stdout``: If ``True``, disables ``stdout`` capture for "
+"all commands in this router. This is necessary for interactive commands "
+"(e.g., with ``input()``). When capture is disabled, a static separator line "
+"is automatically used. See :ref:`Overriding standard output <root_redirect_stdout>` "
+"for more details."
 
 #: ../../root/api/router.rst:29
 msgid "Регистрация команд"
-msgstr ""
+msgstr "Command Registration"
 
 #: ../../root/api/router.rst:31
 msgid ""
 "Для регистрации команды и привязки к ней обработчика используется "
 "декоратор ``@command``."
 msgstr ""
+"The ``@command`` decorator is used to register a command and bind a handler to it."
 
 #: ../../root/api/router.rst:35
 msgid "Декоратор для регистрации функции как обработчика команды."
-msgstr ""
+msgstr "Decorator for registering a function as a command handler."
 
 #: ../../root/api/router.rst
 msgid "Parameters"
-msgstr ""
+msgstr "Parameters"
 
 #: ../../root/api/router.rst:37
 msgid ""
@@ -85,20 +98,25 @@ msgid ""
 "Может быть строкой, которая станет триггером (без возможности настройки "
 "флагов и описания)."
 msgstr ""
+"A ``Command`` instance describing the trigger, flags, and command description. "
+"Can be a string that will become the trigger (without the ability to configure "
+"flags and description)."
 
 #: ../../root/api/router.rst:39
 msgid "**Пример использования:**"
-msgstr ""
+msgstr "**Usage example:**"
 
 #: ../../root/api/router.rst:48
 msgid "Системный роутер"
-msgstr ""
+msgstr "System Router"
 
 #: ../../root/api/router.rst:50
 msgid ""
 "``Argenta`` поставляется со встроенным системным роутером, который "
 "автоматически подключается к каждому приложению."
 msgstr ""
+"``Argenta`` comes with a built-in system router that is automatically "
+"connected to every application."
 
 #: ../../root/api/router.rst:55
 msgid ""
@@ -106,6 +124,9 @@ msgid ""
 " умолчанию — команда выхода). Имеет заголовок **«System points:»**, "
 "который можно переопределить в ``App``."
 msgstr ""
+"A predefined ``Router`` instance with basic system commands (by default, "
+"the exit command). Has the title **\"System points:\"**, which can be "
+"overridden in ``App``."
 
 #: ../../root/api/router.rst:57
 msgid ""
@@ -113,30 +134,35 @@ msgid ""
 "``argenta.router.defaults.system_router`` и используйте его декоратор "
 "``@command``."
 msgstr ""
+"You can add your own commands to this router. To do this, import "
+"``argenta.router.defaults.system_router`` and use its ``@command`` decorator."
 
 #: ../../root/api/router.rst:62
 msgid "Возможные исключения"
-msgstr ""
+msgstr "Possible Exceptions"
 
 #: ../../root/api/router.rst:64
 msgid ""
 "При регистрации команд и флагов в ``Router`` могут возникнуть следующие "
 "исключения:"
 msgstr ""
+"The following exceptions may occur when registering commands and flags in ``Router``:"
 
 #: ../../root/api/router.rst:68
 msgid ""
 "Выбрасывается, если триггер команды в ``Command`` содержит пробелы. "
 "Триггеры должны быть одним словом."
 msgstr ""
+"Raised if the command trigger in ``Command`` contains spaces. "
+"Triggers must be a single word."
 
 #: ../../root/api/router.rst:70
 msgid "**Неправильно:** ``Command(\"add user\")``"
-msgstr ""
+msgstr "**Incorrect:** ``Command(\"add user\")``"
 
 #: ../../root/api/router.rst:72
 msgid "**Правильно:** ``Command(\"add-user\")``"
-msgstr ""
+msgstr "**Correct:** ``Command(\"add-user\")``"
 
 #: ../../root/api/router.rst:76
 msgid ""
@@ -144,14 +170,17 @@ msgid ""
 "дублирующиеся имена. Имена флагов в рамках одной команды должны быть "
 "уникальны."
 msgstr ""
+"Raised if duplicate names were used when defining flags for a command. "
+"Flag names within a single command must be unique."
 
 #: ../../root/api/router.rst:78
 msgid "**Пример, вызывающий исключение:**"
-msgstr ""
+msgstr "**Example that raises an exception:**"
 
 #: ../../root/api/router.rst:90
 msgid ""
 "Возникает, если обработчик команды не принимает обязательный аргумент "
 "``Response``."
 msgstr ""
+"Raised if the command handler does not accept the required ``Response`` argument."
 

@@ -36,8 +36,7 @@
 .. code-block:: python
     :linenos:
 
-    # Внутри обработчика команды
-    user_name = input("Введите ваше имя: ")
+    user_name = input("Enter your name: ")
     print(f"Привет, {user_name}!")
 
 .. warning::

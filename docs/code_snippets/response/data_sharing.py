@@ -12,31 +12,31 @@ def authenticate_user(username: str) -> str:
 def login_handler(response: Response, data_bridge: FromDishka[DataBridge]):
     username_flag = response.input_flags.get_flag_by_name("username")
     if not username_flag or not username_flag.input_value:
-        print("Ошибка необходимо указать имя пользователя с помощью флага --username.")
+        print("Error: username must be specified using the --username flag.")
         return
 
     username = username_flag.input_value
     token = authenticate_user(username)
 
     data_bridge.update({"auth_token": token})
-    print(f"Успешный вход! Пользователь '{username}' аутентифицирован.")
+    print(f"Login successful! User '{username}' authenticated.")
 
 
 @router.command("get-profile")
-def get_profile_handler(response: Response, data_bridge: FromDishka[DataBridge])
+def get_profile_handler(response: Response, data_bridge: FromDishka[DataBridge]):
     token = data_bridge.get_by_key("auth_token")
 
     if not token:
-        print("Ошибка: вы не аутентифицированы. Сначала выполните команду 'login'.")
+        print("Error: you are not authenticated. Please run the 'login' command first.")
         return
 
-    print(f"Загрузка профиля с использованием токена: [yellow]{token}[/yellow]")
+    print(f"Loading profile using token: [yellow]{token}[/yellow]")
 
 
 @router.command("logout")
 def logout_handler(response: Response, data_bridge: FromDishka[DataBridge]):
     try:
         data_bridge.delete_by_key("auth_token")
-        print("Выход выполнен. Данные сессии очищены.")
+        print("Logout successful. Session data cleared.")
     except KeyError:
-        print("Вы и так не были аутентифицированы.")
+        print("You were not authenticated anyway.")

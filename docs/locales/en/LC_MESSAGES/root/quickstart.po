@@ -21,33 +21,37 @@ msgstr ""
 
 #: ../../root/quickstart.rst:4
 msgid "Быстрый старт"
-msgstr ""
+msgstr "Quick Start"
 
 #: ../../root/quickstart.rst:6
 msgid ""
 "В этом руководстве мы рассмотрим два примера создания CLI-приложения с "
 "помощью Argenta:"
 msgstr ""
+"In this guide, we will look at two examples of creating a CLI application with Argenta:"
 
 #: ../../root/quickstart.rst:8
 msgid ""
 "**Простой пример**: Минимальное приложение, быстрое знакомство с "
 "основными компонентами."
 msgstr ""
+"**Simple example**: A minimal application, quick introduction to the main components."
 
 #: ../../root/quickstart.rst:9
 msgid ""
 "**Более сложный пример**: Полнофункциональное приложение «Менеджер задач»"
 " с внедрением зависимостей и бизнес-логикой."
 msgstr ""
+"**More complex example**: A full-featured \"Task Manager\" application with "
+"dependency injection and business logic."
 
 #: ../../root/quickstart.rst:12
 msgid "Простой пример"
-msgstr ""
+msgstr "Simple Example"
 
 #: ../../root/quickstart.rst:14 ../../root/quickstart.rst:38
 msgid "**Установка**"
-msgstr ""
+msgstr "**Installation**"
 
 #: ../../root/quickstart.rst:20
 msgid ""
@@ -55,10 +59,12 @@ msgid ""
 "запуска приложения. Вы можете скопировать этот код, запустить его и сразу"
 " увидеть результат."
 msgstr ""
+"This example demonstrates the absolute minimum required to create and run an "
+"application. You can copy this code, run it, and immediately see the result."
 
 #: ../../root/quickstart.rst:26 ../../root/quickstart.rst:76
 msgid "**Результат**"
-msgstr ""
+msgstr "**Result**"
 
 #: ../../root/quickstart.rst:28
 msgid "Simple App Example"
@@ -66,7 +72,7 @@ msgstr ""
 
 #: ../../root/quickstart.rst:34
 msgid "Более сложный пример: Менеджер задач"
-msgstr ""
+msgstr "More Complex Example: Task Manager"
 
 #: ../../root/quickstart.rst:36
 msgid ""
@@ -74,50 +80,58 @@ msgid ""
 "CLI-приложение «Менеджер задач», которое продемонстрирует ключевые "
 "возможности Argenta."
 msgstr ""
+"In this guide, we will create a simple but full-featured CLI application \"Task "
+"Manager\" that will demonstrate the key features of Argenta."
 
 #: ../../root/quickstart.rst:44
 msgid "**Определение моделей данных и репозитория**"
-msgstr ""
+msgstr "**Defining Data Models and Repository**"
 
 #: ../../root/quickstart.rst:46
 msgid "Сначала определим модели данных для задачи и репозиторий для их хранения."
-msgstr ""
+msgstr "First, let's define data models for tasks and a repository to store them."
 
 #: ../../root/quickstart.rst:52
 msgid "**Создание провайдера для DI**"
-msgstr ""
+msgstr "**Creating a Provider for DI**"
 
 #: ../../root/quickstart.rst:54
 msgid ""
 "Чтобы Argenta могла внедрять ``TaskRepository`` в наши обработчики, мы "
 "создадим провайдер для ``dishka``."
 msgstr ""
+"To allow Argenta to inject ``TaskRepository`` into our handlers, we will create a "
+"provider for ``dishka``."
 
 #: ../../root/quickstart.rst:60
 msgid "**Создание обработчиков команд**"
-msgstr ""
+msgstr "**Creating Command Handlers**"
 
 #: ../../root/quickstart.rst:62
 msgid ""
 "Теперь создадим обработчики для команд ``add-task`` и ``list-tasks``. "
 "Обратите внимание, как мы используем флаги и внедряем ``TaskRepository``."
 msgstr ""
+"Now let's create handlers for the ``add-task`` and ``list-tasks`` commands. Notice "
+"how we use flags and inject ``TaskRepository``."
 
 #: ../../root/quickstart.rst:68
 msgid "**Сборка и запуск приложения**"
-msgstr ""
+msgstr "**Building and Running the Application**"
 
 #: ../../root/quickstart.rst:70
 msgid ""
 "Наконец, соберем все вместе: создадим экземпляр ``App``, подключим роутер"
 " и провайдер, а затем запустим приложение."
 msgstr ""
+"Finally, let's put it all together: create an ``App`` instance, connect the router "
+"and provider, and then run the application."
 
 #: ../../root/quickstart.rst:78
 msgid ""
 "Теперь вы можете запустить ``main.py`` и взаимодействовать с вашим новым "
 "CLI-приложением."
-msgstr ""
+msgstr "Now you can run ``main.py`` and interact with your new CLI application."
 
 #: ../../root/quickstart.rst:80
 msgid "Task Manager Example"
