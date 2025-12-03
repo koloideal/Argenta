@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the Argenta package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
@@ -21,7 +20,7 @@ msgstr ""
 
 #: ../../root/api/orchestrator/index.rst:4
 msgid "Orchestrator"
-msgstr ""
+msgstr "Orchestrator"
 
 #: ../../root/api/orchestrator/index.rst:6
 msgid ""
@@ -29,6 +28,8 @@ msgid ""
 " оркестрирует приложение, парсер командной строки, ``di`` и остальные "
 "компоненты, находящиеся по иерархии на уровне с ``App``."
 msgstr ""
+"``Orchestrator`` is a high-level component that configures and orchestrates the application, "
+"command-line parser, ``di``, and other components at the same hierarchical level as ``App``."
 
 #: ../../root/api/orchestrator/index.rst:8
 msgid ""
@@ -36,14 +37,16 @@ msgid ""
 "команд, маршрутизация), ``Orchestrator`` подготавливает окружение для его"
 " работы и служит точкой входа в приложение."
 msgstr ""
+"While ``App`` is responsible for interactive session logic (command input, routing), "
+"``Orchestrator`` prepares the environment for its operation and serves as the entry point to the application."
 
 #: ../../root/api/orchestrator/index.rst:13
 msgid "Инициализация"
-msgstr ""
+msgstr "Initialization"
 
 #: ../../root/api/orchestrator/index.rst:28
 msgid "Создаёт и конфигурирует экземпляр ``Orchestrator``."
-msgstr ""
+msgstr "Creates and configures an ``Orchestrator`` instance."
 
 #: ../../root/api/orchestrator/index.rst:30
 msgid ""
@@ -51,6 +54,8 @@ msgid ""
 " командной строки при запуске скрипта (не путать с командами в "
 "интерактивном режиме)."
 msgstr ""
+"``arg_parser``: ``ArgParser`` instance responsible for parsing command-line arguments "
+"at script startup (not to be confused with commands in interactive mode)."
 
 #: ../../root/api/orchestrator/index.rst:31
 msgid ""
@@ -58,6 +63,8 @@ msgid ""
 "``dishka.Provider`` для добавления ваших сервисов (например, подключений "
 "к БД или API-клиентов) в DI-контейнер."
 msgstr ""
+"``custom_providers``: List of custom ``dishka.Provider`` providers for adding your services "
+"(e.g., database connections or API clients) to the DI container."
 
 #: ../../root/api/orchestrator/index.rst:32
 msgid ""
@@ -65,34 +72,38 @@ msgid ""
 "автоматически внедрит зависимости в обработчики команд, инспектируя их "
 "сигнатуры."
 msgstr ""
+"``auto_inject_handlers``: If **True** (default), ``dishka`` will automatically inject "
+"dependencies into command handlers by inspecting their signatures."
 
 #: ../../root/api/orchestrator/index.rst:37
 msgid "Основные методы"
-msgstr ""
+msgstr "Main Methods"
 
 #: ../../root/api/orchestrator/index.rst:41
 msgid ""
 "Это главный метод, который запускает приложение. Он запускает бесконечный"
 " цикл ввода -> вывода."
 msgstr ""
+"This is the main method that starts the application. It launches an infinite input -> output loop."
 
 #: ../../root/api/orchestrator/index.rst
 msgid "Parameters"
-msgstr ""
+msgstr "Parameters"
 
 #: ../../root/api/orchestrator/index.rst:43
 msgid "Экземпляр ``App``, который будет запущен."
-msgstr ""
+msgstr "``App`` instance to be launched."
 
 #: ../../root/api/orchestrator/index.rst:48
 msgid "Назначение и использование"
-msgstr ""
+msgstr "Purpose and Usage"
 
 #: ../../root/api/orchestrator/index.rst:50
 msgid ""
 "``Orchestrator`` абстрагирует сложность, связанную с настройкой ``di`` и "
 "парсингом стартовых аргументов."
 msgstr ""
+"``Orchestrator`` abstracts the complexity associated with setting up ``di`` and parsing startup arguments."
 
 #: ../../root/api/orchestrator/index.rst:52
 msgid ""
@@ -100,8 +111,10 @@ msgid ""
 "интерактивной сессии, а ``Orchestrator`` — за подготовку окружения и "
 "запуск приложения."
 msgstr ""
+"This approach separates responsibilities: ``App`` is responsible for interactive session logic, "
+"while ``Orchestrator`` handles environment preparation and application launch."
 
 #: ../../root/api/orchestrator/index.rst:54
 msgid "**Пример использования:**"
-msgstr ""
+msgstr "**Usage example:**"
 
