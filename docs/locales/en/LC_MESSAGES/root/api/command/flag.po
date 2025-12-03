@@ -213,7 +213,7 @@ msgstr "Flag for displaying help: ``--help``"
 
 #: ../../root/api/command/flag.rst:165
 msgid "``name``: ``\"help\"``"
-msgstr "``name``: ``\"help\"\"`"
+msgstr "``name``: ``\"help\"``"
 
 #: ../../root/api/command/flag.rst:166 ../../root/api/command/flag.rst:182
 #: ../../root/api/command/flag.rst:224 ../../root/api/command/flag.rst:240
@@ -230,15 +230,18 @@ msgstr "``possible_values``: ``PossibleValues.NEITHER``"
 msgid "Короткая версия флага справки: ``-H``"
 msgstr "Short version of the help flag: ``-H``"
 
-#: ../../root/api/command/flag.rst:173 ../../root/api/command/flag.rst:231
+#: ../../root/api/command/flag.rst:173 
+#: ../../root/api/command/flag.rst:231
 msgid "``name``: ``\"H\"``"
-msgstr "``name``: ``\"H\"\"`"
+msgstr "``name``: ``\"H\"``"
 
-#: ../../root/api/command/flag.rst:174 ../../root/api/command/flag.rst:190
-#: ../../root/api/command/flag.rst:211 ../../root/api/command/flag.rst:232
+#: ../../root/api/command/flag.rst:174 
+#: ../../root/api/command/flag.rst:190
+#: ../../root/api/command/flag.rst:211 
+#: ../../root/api/command/flag.rst:232
 #: ../../root/api/command/flag.rst:248
 msgid "``prefix``: ``\"-\"``"
-msgstr "``prefix``: ``\"-\"\"`"
+msgstr "``prefix``: ``\"-\"``"
 
 #: ../../root/api/command/flag.rst:179
 msgid "Флаг для отображения информации: ``--info``"
@@ -246,7 +249,7 @@ msgstr "Flag for displaying information: ``--info``"
 
 #: ../../root/api/command/flag.rst:181
 msgid "``name``: ``\"info\"``"
-msgstr "``name``: ``\"info\"\"`"
+msgstr "``name``: ``\"info\"``"
 
 #: ../../root/api/command/flag.rst:187
 msgid "Короткая версия флага информации: ``-I``"
@@ -254,7 +257,7 @@ msgstr "Short version of the info flag: ``-I``"
 
 #: ../../root/api/command/flag.rst:189
 msgid "``name``: ``\"I\"``"
-msgstr "``name``: ``\"I\"\"`"
+msgstr "``name``: ``\"I\"``"
 
 #: ../../root/api/command/flag.rst:196
 msgid "Флаги выбора"
@@ -266,11 +269,11 @@ msgstr "Flag for selecting all items: ``--all``"
 
 #: ../../root/api/command/flag.rst:202
 msgid "``name``: ``\"all\"``"
-msgstr "``name``: ``\"all\"\"`"
+msgstr "``name``: ``\"all\"``"
 
 #: ../../root/api/command/flag.rst:203
 msgid "``prefix``: ``\"--\"``"
-msgstr "``prefix``: ``\"--\"\"`"
+msgstr "``prefix``: ``\"--\"``"
 
 #: ../../root/api/command/flag.rst:208
 msgid "Короткая версия флага выбора всех элементов: ``-A``"
@@ -278,7 +281,7 @@ msgstr "Short version of the select all flag: ``-A``"
 
 #: ../../root/api/command/flag.rst:210
 msgid "``name``: ``\"A\"``"
-msgstr "``name``: ``\"A\"\"`"
+msgstr "``name``: ``\"A\"``"
 
 #: ../../root/api/command/flag.rst:217
 msgid "Сетевые флаги"
@@ -290,7 +293,7 @@ msgstr "Flag for specifying host IP address: ``--host``"
 
 #: ../../root/api/command/flag.rst:223
 msgid "``name``: ``\"host\"``"
-msgstr "``name``: ``\"host\"\"`"
+msgstr "``name``: ``\"host\"``"
 
 #: ../../root/api/command/flag.rst:225 ../../root/api/command/flag.rst:233
 #, python-brace-format
@@ -311,7 +314,7 @@ msgstr "Flag for specifying port: ``--port``"
 
 #: ../../root/api/command/flag.rst:239
 msgid "``name``: ``\"port\"``"
-msgstr "``name``: ``\"port\"\"`"
+msgstr "``name``: ``\"port\"``"
 
 #: ../../root/api/command/flag.rst:241 ../../root/api/command/flag.rst:249
 #, python-brace-format
@@ -328,5 +331,5 @@ msgstr "Short version of the port flag: ``-P``"
 
 #: ../../root/api/command/flag.rst:247
 msgid "``name``: ``\"P\"``"
-msgstr "``name``: ``\"P\"\"`"
+msgstr "``name``: ``\"P\"``"
 
