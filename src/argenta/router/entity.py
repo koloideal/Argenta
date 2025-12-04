@@ -22,8 +22,8 @@ HandlerFunc: TypeAlias = Callable[..., None]
 class Router:
     def __init__(
         self,
-        *,
         title: str | None = "Default title",
+        *,
         disable_redirect_stdout: bool = False,
     ):
         """

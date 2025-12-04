@@ -93,7 +93,7 @@ msgid "Как это работает?"
 msgstr "How Does It Work?"
 
 #: ../../root/dependency_injection.rst:48
-msgid "В основе DI в Argenta лежат **провайдеры** и **контейнер**."
+msgid "В основе``di``в Argenta лежат **провайдеры** и **контейнер**."
 msgstr "DI in Argenta is based on **providers** and a **container**."
 
 #: ../../root/dependency_injection.rst:50

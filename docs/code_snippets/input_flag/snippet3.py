@@ -5,9 +5,9 @@ flag_with_value = InputFlag(
 )
 
 flag_without_value = InputFlag(
-    name="help", prefix="-", input_value=None, status=ValidationStatus.VALID
+    name="help", prefix="-", input_value='', status=ValidationStatus.VALID
 )
 
 # String representation includes value
 print(str(flag_with_value))  # --output result.txt
-print(str(flag_without_value))  # -help None
+print(str(flag_without_value))  # -help

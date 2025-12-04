@@ -1,7 +1,7 @@
 .. _root_flags:
 
-Флаги вводимых команд
-=====================
+Флаги команд
+============
 
 Флаги — это специальные параметры, которые пользователь может добавлять к командам для управления их поведением. 
 
@@ -55,6 +55,36 @@
    <command_name> <flag_prefix: Literal['-', '--', '---']><flag_name> <flag_value: Optional>
 
 Флаг состоит из префикса (``-``, ``--`` или ``---``), имени и, опционально, значения, которое указывается через пробел.
+
+**Примеры:**
+
+.. code-block:: shell
+
+   greet --name John        # Flag with value
+   deploy --verbose         # Flag without value (switch)
+   backup -f --compress     # Several flags
+
+-----
+
+Работа с флагами в обработчиках
+--------------------------------
+
+Чтобы получить значение флага в обработчике, используйте объект ``response.input_flags`` типа :ref:`InputFlags <root_api_command_input_flags>`.
+
+**Пример с флагом, имеющим значение:**
+
+.. literalinclude:: ../code_snippets/flags/greet_handler.py
+   :language: python
+   :linenos:
+
+**Пример с флагом-переключателем:**
+
+.. literalinclude:: ../code_snippets/flags/deploy_handler.py
+   :language: python
+   :linenos:
+
+.. seealso::
+   Подробнее о работе с объектом ``InputFlags`` см. в разделе :ref:`InputFlags <root_api_command_input_flags>`.
 
 -----
 

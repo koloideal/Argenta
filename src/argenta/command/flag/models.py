@@ -5,6 +5,9 @@ from re import Pattern
 from typing import Literal, override
 
 
+PREFIX_TYPE = Literal["-", "--", "---"]
+
+
 class PossibleValues(Enum):
     NEITHER = "NEITHER"
     ALL = "ALL"
@@ -21,7 +24,7 @@ class Flag:
         self,
         name: str,
         *,
-        prefix: Literal["-", "--", "---"] = "--",
+        prefix: PREFIX_TYPE = "--",
         possible_values: list[str] | Pattern[str] | PossibleValues = PossibleValues.ALL,
     ) -> None:
         """
@@ -32,23 +35,23 @@ class Flag:
         :return: None
         """
         self.name: str = name
-        self.prefix: Literal["-", "--", "---"] = prefix
+        self.prefix: PREFIX_TYPE = prefix
         self.possible_values: list[str] | Pattern[str] | PossibleValues = possible_values
 
-    def validate_input_flag_value(self, input_flag_value: str | None) -> bool:
+    def validate_input_flag_value(self, input_flag_value: str) -> bool:
         """
         Private. Validates the input flag value
         :param input_flag_value: The input flag value to validate
         :return: whether the entered flag is valid as bool
         """
         if self.possible_values == PossibleValues.NEITHER:
-            return input_flag_value is None
+            return input_flag_value == ''
             
         if self.possible_values == PossibleValues.ALL:
-            return input_flag_value is not None
+            return input_flag_value != ''
 
         if isinstance(self.possible_values, Pattern):
-            return isinstance(input_flag_value, str) and bool(self.possible_values.match(input_flag_value))
+            return bool(self.possible_values.match(input_flag_value))
 
         if isinstance(self.possible_values, list):
             return input_flag_value in self.possible_values
@@ -85,8 +88,8 @@ class InputFlag:
         self,
         name: str,
         *,
-        prefix: Literal["-", "--", "---"] = "--",
-        input_value: str | None,
+        prefix: PREFIX_TYPE = "--",
+        input_value: str,
         status: ValidationStatus | None,
     ):
         """
@@ -97,8 +100,8 @@ class InputFlag:
         :return: None
         """
         self.name: str = name
-        self.prefix: Literal["-", "--", "---"] = prefix
-        self.input_value: str | None = input_value
+        self.prefix: PREFIX_TYPE = prefix
+        self.input_value: str = input_value
         self.status: ValidationStatus | None = status
 
     @property

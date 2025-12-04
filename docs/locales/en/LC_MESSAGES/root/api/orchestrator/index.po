@@ -64,7 +64,7 @@ msgid ""
 "к БД или API-клиентов) в DI-контейнер."
 msgstr ""
 "``custom_providers``: List of custom ``dishka.Provider`` providers for adding your services "
-"(e.g., database connections or API clients) to the DI container."
+"(e.g., database connections or API clients) to the``di``container."
 
 #: ../../root/api/orchestrator/index.rst:32
 msgid ""

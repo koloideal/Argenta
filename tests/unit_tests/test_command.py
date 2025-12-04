@@ -6,8 +6,8 @@ from argenta.command.exceptions import (EmptyInputCommandException,
                                         UnprocessedInputFlagException)
 from argenta.command.flag import Flag, InputFlag
 from argenta.command.flag.flags import Flags
-from argenta.command.flag.models import PossibleValues
-from argenta.command.models import Command, InputCommand, ValidationStatus
+from argenta.command.flag.models import PossibleValues, ValidationStatus
+from argenta.command.models import Command, InputCommand
 
 
 class TestInputCommand(unittest.TestCase):
@@ -28,7 +28,7 @@ class TestInputCommand(unittest.TestCase):
 
     def test_validate_invalid_input_flag1(self):
         command = Command('some', flags=Flag('test'))
-        self.assertEqual(command.validate_input_flag(InputFlag('test', input_value=None, status=None)), ValidationStatus.INVALID)
+        self.assertEqual(command.validate_input_flag(InputFlag('test', input_value='', status=None)), ValidationStatus.INVALID)
 
     def test_validate_valid_input_flag2(self):
         command = Command('some', flags=Flags([Flag('test'), Flag('more')]))
@@ -36,15 +36,15 @@ class TestInputCommand(unittest.TestCase):
 
     def test_validate_undefined_input_flag1(self):
         command = Command('some', flags=Flag('test'))
-        self.assertEqual(command.validate_input_flag(InputFlag('more', input_value=None, status=None)), ValidationStatus.UNDEFINED)
+        self.assertEqual(command.validate_input_flag(InputFlag('more', input_value='', status=None)), ValidationStatus.UNDEFINED)
 
     def test_validate_undefined_input_flag2(self):
         command = Command('some', flags=Flags([Flag('test'), Flag('more')]))
-        self.assertEqual(command.validate_input_flag(InputFlag('case', input_value=None, status=None)), ValidationStatus.UNDEFINED)
+        self.assertEqual(command.validate_input_flag(InputFlag('case', input_value='', status=None)), ValidationStatus.UNDEFINED)
 
     def test_validate_undefined_input_flag3(self):
         command = Command('some')
-        self.assertEqual(command.validate_input_flag(InputFlag('case', input_value=None, status=None)), ValidationStatus.UNDEFINED)
+        self.assertEqual(command.validate_input_flag(InputFlag('case', input_value='', status=None)), ValidationStatus.UNDEFINED)
 
     def test_invalid_input_flag1(self):
         command = Command('some', flags=Flag('test', possible_values=PossibleValues.NEITHER))
