@@ -1,6 +1,8 @@
+![preview](https://i.ibb.co/fTQXbXV/a-minimalist-logo-design-featuring-the-t-OL3-WIOEp-Q5izi-Oyd6-FHq-XQ-CCd1xei4-Q2-Sky-Z0-GPf-SWMA.jpg)
+
 **Argenta** is a simple, yet elegant, CLI framework for building modular command-line applications. It provides a clean and intuitive way to create context-aware CLI tools with isolated command scopes.
 
-Argenta is the **"Simplest"**, **"Most Modular"**, and **"Most Elegant"** way to build interactive CLI applications in Python. Production Ready!
+Argenta is the **"Simplest"**, **"Most Modular"**, and **"Most Elegant"** way to build interactive CLI applications in Python. 
 
 📖 **Read the full documentation:** [argenta-docs.vercel.app](https://argenta-docs.vercel.app)<br>
 🌍 **Other languages:** [RU](https://github.com/koloideal/Argenta/blob/main/README.ru.md)
