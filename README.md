@@ -1,4 +1,4 @@
-![preview](https://i.ibb.co/fTQXbXV/a-minimalist-logo-design-featuring-the-t-OL3-WIOEp-Q5izi-Oyd6-FHq-XQ-CCd1xei4-Q2-Sky-Z0-GPf-SWMA.jpg)
+![preview](https://i.ibb.co/whkMfHw5/a-minimalist-logo-design-featuring-the-t-t-GXhfz-NFRwi-k-ROq-NMd-LWA-R7-6ru-YSh-G0kz-LKr5t-ZQ.jpg)
 
 **Argenta** is a simple and elegant framework for building modular CLI applications. It provides a clean and intuitive way to create context-aware command-line tools with isolated command scopes.
 
@@ -9,7 +9,7 @@ Argenta is the **"Simplest"**, **"Most Modular"**, and **"Most Elegant"** way to
 
 ---
 
-![preview](https://i.ibb.co/whkMfHw5/a-minimalist-logo-design-featuring-the-t-t-GXhfz-NFRwi-k-ROq-NMd-LWA-R7-6ru-YSh-G0kz-LKr5t-ZQ.jpg)
+![preview](https://i.ibb.co/fzWcfgFq/2025-12-04-173045.png)
 
 **Argenta** allows you to build interactive CLI applications incredibly easily. There's no need to manually parse complex command structures or manage state transitions — just use routers and commands!
 
