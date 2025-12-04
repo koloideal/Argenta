@@ -1,0 +1,175 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-04 20:39+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/dependency_injection.rst:4
+msgid "Внедрение зависимостей"
+msgstr "Dependency Injection"
+
+#: ../../root/dependency_injection.rst:6
+msgid ""
+"Внедрение зависимостей (Dependency Injection, DI) — это паттерн "
+"проектирования, который помогает писать слабосвязанный, легко тестируемый"
+" и расширяемый код. Вместо того чтобы обработчики сами создавали нужные "
+"им объекты (зависимости), они получают их извне."
+msgstr ""
+"Dependency Injection (DI) is a design pattern that helps write loosely "
+"coupled, easily testable, and extensible code. Instead of handlers "
+"creating the objects (dependencies) they need themselves, they receive "
+"them from outside."
+
+#: ../../root/dependency_injection.rst:8
+msgid ""
+"``Argenta`` использует библиотеку ``dishka`` для реализации DI, что "
+"позволяет декларативно объявлять зависимости прямо в сигнатурах ваших "
+"обработчиков. Подробнее о DI, IoC и API для создания провайдеров можно "
+"прочитать в `официальной документации dishka "
+"<https://dishka.readthedocs.io/en/stable/di_intro.html>`_."
+msgstr ""
+"``Argenta`` uses the ``dishka`` library to implement DI, which allows you"
+" to declaratively declare dependencies directly in your handler "
+"signatures. You can read more about DI, IoC, and the API for "
+"creating providers in the `official dishka documentation "
+"<https://dishka.readthedocs.io/en/stable/di_intro.html>`_."
+
+#: ../../root/dependency_injection.rst:14
+msgid "Основная идея"
+msgstr "Main Idea"
+
+#: ../../root/dependency_injection.rst:16
+msgid ""
+"Представьте, что вашему обработчику для работы нужен доступ к базе "
+"данных. Вместо импорта и инициализации соединения внутри функции, вы "
+"просто объявляете его как аргумент с аннотацией типа:"
+msgstr ""
+"Imagine your handler needs access to a database to work. Instead of "
+"importing and initializing the connection inside the function, you simply"
+" declare it as an argument with a type annotation:"
+
+#: ../../root/dependency_injection.rst:19
+msgid ""
+"``argenta.di.FromDishka`` является алиасом для ``dishka.FromDishka``, и "
+"они полностью взаимозаменяемы."
+msgstr ""
+"``argenta.di.FromDishka`` is an alias for ``dishka.FromDishka``, and they"
+" are fully interchangeable."
+
+#: ../../root/dependency_injection.rst:21
+#: ../../root/dependency_injection.rst:29
+#: ../../root/dependency_injection.rst:40
+#: ../../root/dependency_injection.rst:63
+msgid "**Пример использования:**"
+msgstr "**Usage example:**"
+
+#: ../../root/dependency_injection.rst:27
+msgid ""
+"``Argenta`` с помощью ``dishka`` разрешит зависимость по типу "
+"``Connection`` и внедрит её. Но прежде чем использовать зависимость, её "
+"необходимо объявить в провайдере:"
+msgstr ""
+"``Argenta`` with ``dishka`` will resolve the dependency by type "
+"``Connection`` and inject it. But before using the dependency, it must be"
+" declared in a provider:"
+
+#: ../../root/dependency_injection.rst:35
+msgid "После создания провайдера его необходимо зарегистрировать в оркестраторе."
+msgstr "After creating the provider, it must be registered in the orchestrator."
+
+#: ../../root/dependency_injection.rst:38
+msgid ""
+"Провайдеры регистрируются в ``Orchestrator``, а не в ``App``, так как "
+"оркестратор отвечает за настройку DI-контейнера на уровне всего "
+"приложения. Вы можете передать список из нескольких провайдеров через "
+"параметр ``custom_providers``."
+msgstr ""
+"Providers are registered in ``Orchestrator``, not in ``App``, because "
+"the orchestrator is responsible for configuring the DI container at the "
+"application level. You can pass a list of multiple providers through the "
+"``custom_providers`` parameter."
+
+#: ../../root/dependency_injection.rst:49
+msgid "Как это работает?"
+msgstr "How Does It Work?"
+
+#: ../../root/dependency_injection.rst:51
+msgid "В основе DI в Argenta лежат **провайдеры** и **контейнер**."
+msgstr "At the core of DI in Argenta are **providers** and a **container**."
+
+#: ../../root/dependency_injection.rst:53
+msgid ""
+"**Провайдер (Provider)** — это \"рецепт\", который объясняет, как "
+"создавать и настраивать ту или иную зависимость (например, подключение к "
+"БД, API-клиент или любой другой сервис)."
+msgstr ""
+"**Provider (Provider)** is a \"recipe\" that explains how to create and "
+"configure a particular dependency (for example, a database connection, "
+"API client, or any other service)."
+
+#: ../../root/dependency_injection.rst:54
+msgid ""
+"**Контейнер (IoC Container)** — это \"фабрика\", которая хранит все "
+"рецепты (провайдеры) и по запросу создаёт и выдаёт готовые зависимости."
+msgstr ""
+"**Container (IoC Container)** is a \"factory\" that stores all recipes "
+"(providers) and creates and provides ready dependencies on request."
+
+#: ../../root/dependency_injection.rst:59
+msgid "Встроенные провайдеры"
+msgstr "Built-in Providers"
+
+#: ../../root/dependency_injection.rst:61
+msgid ""
+"``Argenta`` поставляется со встроенным провайдером, который даёт доступ к"
+" важным системным зависимостям без дополнительной настройки. Например, вы"
+" можете получить объект :ref:`ArgSpace <root_api_orchestrator_argspace>`,"
+" который содержит аргументы командной строки, переданные при запуске "
+"приложения."
+msgstr ""
+"``Argenta`` comes with a built-in provider that gives access to important"
+" system dependencies without additional configuration. For example, you "
+"can get the :ref:`ArgSpace <root_api_orchestrator_argspace>` object, "
+"which contains the command-line arguments passed when the application was "
+"launched."
+
+#: ../../root/dependency_injection.rst:72
+msgid "Обмен данными между обработчиками"
+msgstr "Data Exchange Between Handlers"
+
+#: ../../root/dependency_injection.rst:74
+msgid ""
+"Помимо DI, обработчики могут обмениваться данными в рамках сессии через "
+"**объект контекста**. В ``Argenta`` эту роль выполняет объект "
+"``DataBridge``."
+msgstr ""
+"In addition to DI, handlers can exchange data within a session through a "
+"**context object**. In ``Argenta``, this role is performed by the "
+"``DataBridge`` object."
+
+#: ../../root/dependency_injection.rst:76
+msgid ""
+"Каждый обработчик может записывать в него данные, а также читать, "
+"обновлять и удалять их."
+msgstr ""
+"Each handler can write data to it, as well as read, update, and delete "
+"data."
+
+#: ../../root/dependency_injection.rst:79
+msgid "Подробнее об этом можно прочитать в разделе :ref:`root_api_bridge`."
+msgstr "You can read more about this in the :ref:`root_api_bridge` section."
+

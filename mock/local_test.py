@@ -1,3 +1,2 @@
-arg = '-repeat'
-
-print(arg[:arg.rfind('-')+1])
+import sys
+print(sys.version_info >= (3, 13))

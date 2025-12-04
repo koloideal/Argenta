@@ -1,0 +1,219 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-02 22:27+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/api/command/input_flags.rst:4
+msgid "InputFlags"
+msgstr "InputFlags"
+
+#: ../../root/api/command/input_flags.rst:6
+msgid ""
+"``InputFlags`` — это коллекция флагов, введённых пользователем. Её "
+"основная задача — группировать и управлять набором флагов, переданных "
+"вместе с командой. ``InputFlags`` служит контейнером, который позволяет "
+"удобно извлекать, итерировать и проверять наличие флагов, а также "
+"работать с их значениями и статусами валидации."
+msgstr ""
+"``InputFlags`` is a collection of flags entered by the user. Its main purpose is to "
+"group and manage the set of flags passed with a command. ``InputFlags`` serves as a "
+"container that allows convenient retrieval, iteration, and checking of flag presence, "
+"as well as working with their values and validation statuses."
+
+#: ../../root/api/command/input_flags.rst:10
+msgid ""
+"Документация по отдельным флагам (:ref:`Flag <root_api_command_flag>`, "
+":ref:`InputFlag <root_api_command_input_flag>`)"
+msgstr ""
+"Documentation for individual flags (:ref:`Flag <root_api_command_flag>`, "
+":ref:`InputFlag <root_api_command_input_flag>`)"
+
+#: ../../root/api/command/input_flags.rst:12
+msgid ""
+"Документация по :ref:`InputFlags <root_api_command_input_flags>` — "
+"коллекция обработанных флагов, введённых пользователем."
+msgstr ""
+"Documentation for :ref:`InputFlags <root_api_command_input_flags>` — "
+"a collection of processed flags entered by the user."
+
+#: ../../root/api/command/input_flags.rst:14
+msgid ""
+"Документация по :ref:`Response <root_api_response>` — объект ответа, "
+"содержащий ``InputFlags``"
+msgstr ""
+"Documentation for :ref:`Response <root_api_response>` — response object "
+"containing ``InputFlags``"
+
+#: ../../root/api/command/input_flags.rst:16
+msgid ""
+":ref:`Общая информация <root_flags>` о флагах и их использовании в "
+"приложении ``Argenta``"
+msgstr ""
+":ref:`General information <root_flags>` about flags and their usage in "
+"the ``Argenta`` application"
+
+#: ../../root/api/command/input_flags.rst:21
+msgid "Инициализация"
+msgstr "Initialization"
+
+#: ../../root/api/command/input_flags.rst:28
+msgid "Создаёт новую коллекцию введённых флагов."
+msgstr "Creates a new collection of entered flags."
+
+#: ../../root/api/command/input_flags.rst:30
+msgid ""
+"``flags``: Необязательный список флагов типа ``InputFlag`` для "
+"инициализации коллекции. Если не указан, создаётся пустая коллекция."
+msgstr ""
+"``flags``: Optional list of flags of type ``InputFlag`` for initializing the collection. "
+"If not specified, an empty collection is created."
+
+#: ../../root/api/command/input_flags.rst:33
+msgid ""
+"Экземпляры этого класса обычно не создаются напрямую. Они автоматически "
+"формируются системой при обработке пользовательского ввода и доступны "
+"через атрибут ``input_flags`` объекта ``Response``."
+msgstr ""
+"Instances of this class are usually not created directly. They are automatically "
+"formed by the system when processing user input and are accessible through the "
+"``input_flags`` attribute of the ``Response`` object."
+
+#: ../../root/api/command/input_flags.rst:35
+msgid "**Атрибуты:**"
+msgstr "**Attributes:**"
+
+#: ../../root/api/command/input_flags.rst:40
+msgid ""
+"Список всех введённых флагов типа ``InputFlag``. Пуст, если флаги не были"
+" переданы при инициализации или пользователь не ввёл их с командой."
+msgstr ""
+"List of all entered flags of type ``InputFlag``. Empty if flags were not passed "
+"during initialization or the user did not enter them with the command."
+
+#: ../../root/api/command/input_flags.rst:42
+#: ../../root/api/command/input_flags.rst:68
+#: ../../root/api/command/input_flags.rst:94
+#: ../../root/api/command/input_flags.rst:117
+#: ../../root/api/command/input_flags.rst:131
+msgid "**Пример использования:**"
+msgstr "**Usage example:**"
+
+#: ../../root/api/command/input_flags.rst:51
+msgid "Методы"
+msgstr "Methods"
+
+#: ../../root/api/command/input_flags.rst:54
+msgid "get_flag_by_name"
+msgstr ""
+
+#: ../../root/api/command/input_flags.rst:61
+msgid "Возвращает флаг по имени."
+msgstr "Returns a flag by name."
+
+#: ../../root/api/command/input_flags.rst
+msgid "param name"
+msgstr "param name"
+
+#: ../../root/api/command/input_flags.rst:63
+msgid "Имя искомого флага (без префикса)."
+msgstr "Name of the flag to search for (without prefix)."
+
+#: ../../root/api/command/input_flags.rst
+msgid "return"
+msgstr "return"
+
+#: ../../root/api/command/input_flags.rst:64
+msgid "Объект ``InputFlag`` или ``None``, если флаг не найден."
+msgstr "``InputFlag`` object or ``None`` if the flag is not found."
+
+#: ../../root/api/command/input_flags.rst:66
+msgid ""
+"Метод возвращает первый флаг с соответствующим именем (без учёта "
+"префикса)."
+msgstr ""
+"The method returns the first flag with the corresponding name (ignoring the prefix)."
+
+#: ../../root/api/command/input_flags.rst:77
+msgid "add_flag"
+msgstr ""
+
+#: ../../root/api/command/input_flags.rst:84
+msgid "Добавляет введённый флаг в коллекцию."
+msgstr "Adds an entered flag to the collection."
+
+#: ../../root/api/command/input_flags.rst
+msgid "param flag"
+msgstr "param flag"
+
+#: ../../root/api/command/input_flags.rst:86
+msgid "Флаг типа ``InputFlag`` для добавления."
+msgstr "Flag of type ``InputFlag`` to add."
+
+#: ../../root/api/command/input_flags.rst:87
+#: ../../root/api/command/input_flags.rst:113
+msgid "None."
+msgstr "None."
+
+#: ../../root/api/command/input_flags.rst:89
+msgid ""
+"Метод добавляет флаг в конец списка ``flags``. Используется для "
+"динамического расширения коллекции."
+msgstr ""
+"The method adds a flag to the end of the ``flags`` list. Used for dynamically extending the collection."
+
+#: ../../root/api/command/input_flags.rst:92
+msgid ""
+"Этот метод используется редко, так как `InputFlags` обычно создаётся "
+"автоматически. Однако он может быть полезен для тестирования или ручного "
+"создания коллекций."
+msgstr ""
+"This method is rarely used, as `InputFlags` is usually created automatically. "
+"However, it can be useful for testing or manual collection creation."
+
+#: ../../root/api/command/input_flags.rst:103
+msgid "add_flags"
+msgstr ""
+
+#: ../../root/api/command/input_flags.rst:110
+msgid "Добавляет в коллекцию список введённых флагов."
+msgstr "Adds a list of entered flags to the collection."
+
+#: ../../root/api/command/input_flags.rst
+msgid "param flags"
+msgstr "param flags"
+
+#: ../../root/api/command/input_flags.rst:112
+msgid "Список флагов типа ``InputFlag`` для добавления."
+msgstr "List of flags of type ``InputFlag`` to add."
+
+#: ../../root/api/command/input_flags.rst:115
+msgid ""
+"Метод расширяет коллекцию, добавляя в неё все флаги из переданного "
+"списка. Эффективен для пакетного добавления."
+msgstr ""
+"The method extends the collection by adding all flags from the provided list. "
+"Efficient for batch addition."
+
+#: ../../root/api/command/input_flags.rst:126
+msgid "Практические примеры"
+msgstr "Practical Examples"
+
+#: ../../root/api/command/input_flags.rst:129
+msgid "Обработка всех флагов с проверкой статусов"
+msgstr "Processing All Flags with Status Checking"
+

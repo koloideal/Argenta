@@ -3,11 +3,10 @@ __all__ = ["inject", "setup_dishka", "FromDishka"]
 from typing import Any, Callable, TypeVar
 
 from dishka import Container, FromDishka
-from dishka.integrations.base import wrap_injection, is_dishka_injected
+from dishka.integrations.base import is_dishka_injected, wrap_injection
 
-from argenta.response import Response
-from argenta.app import App
-
+from argenta.app.models import App
+from argenta.response.entity import Response
 
 T = TypeVar("T")
 
@@ -20,20 +19,18 @@ def inject(func: Callable[..., T]) -> Callable[..., T]:
     )
 
 
-def setup_dishka(app: App, *, auto_inject: bool = False) -> None:
+def setup_dishka(app: App, container: Container, *, auto_inject: bool = False) -> None:
     if auto_inject:
         _auto_inject_handlers(app)
+    Response.patch_by_container(container)
 
 
-def _get_container_from_response(
-    args: tuple[Any, ...], kwargs: dict[str, Any]
-) -> Container:
+def _get_container_from_response(args: tuple[Any, ...], kwargs: dict[str, Any]) -> Container:
     for arg in args:
         if isinstance(arg, Response):
             if hasattr(arg, "_dishka_container"):
                 return arg._dishka_container  # pyright: ignore[reportPrivateUsage]
             break
-
     raise RuntimeError("dishka container not found in Response")
 
 

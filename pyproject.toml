@@ -3,7 +3,7 @@ name = "argenta"
 version = "1.1.2"
 description = "Python library for building modular CLI applications"
 authors = [{ name = "kolo", email = "kolo.is.main@gmail.com" }]
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 readme = "README.md"
 license = { text = "MIT" }
 dependencies = [
@@ -11,6 +11,29 @@ dependencies = [
     "art (>=6.4,<7.0)",
     "pyreadline3>=3.5.4; sys_platform == 'win32'",
     "dishka>=1.7.2",
+]
+
+[dependency-groups]
+linters = [
+    "isort>=7.0.0",
+    "ruff>=0.12.12",
+    "wemake-python-styleguide>=0.17.0",
+]
+typecheckers = [
+    "mypy>=1.14.1",
+]
+docs = [
+    "esbonio>=1.0.0",
+    "shibuya>=2025.9.25",
+    "sphinx>=8.2.3",
+    "sphinx-autobuild>=2025.8.25",
+    "sphinx-intl>=2.3.2",
+]
+tests = [
+    "pyfakefs>=5.5.0",
+    "pytest>=8.3.2",
+    "pytest-cov>=7.0.0",
+    "pytest-mock>=3.15.1",
 ]
 
 [tool.ruff]
@@ -22,6 +45,7 @@ exclude = [
     ".__pycache__",
     "tests"
 ]
+line-length=90
 
 [tool.pyright]
 typeCheckingMode = "strict"
@@ -29,14 +53,9 @@ typeCheckingMode = "strict"
 [tool.mypy]
 disable_error_code = "import-untyped"
 
+[tool.isort]
+line_length=90
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[dependency-groups]
-dev = [
-    "mypy>=1.14.1",
-    "pytest>=8.3.2",
-    "ruff>=0.12.12",
-    "wemake-python-styleguide>=0.17.0",
-]

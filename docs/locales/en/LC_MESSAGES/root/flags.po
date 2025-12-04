@@ -1,0 +1,440 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-04 20:39+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/flags.rst:4
+msgid "Флаги вводимых команд"
+msgstr "Input Command Flags"
+
+#: ../../root/flags.rst:6
+msgid ""
+"Флаги — это специальные параметры, которые пользователь может добавлять к"
+" командам для управления их поведением."
+msgstr ""
+"Flags are special parameters that users can add to commands to control "
+"their behavior."
+
+#: ../../root/flags.rst:9
+msgid "Зачем нужны флаги в командах"
+msgstr "Why Flags Are Needed in Commands"
+
+#: ../../root/flags.rst:12
+msgid "Управление поведением команды"
+msgstr "Controlling Command Behavior"
+
+#: ../../root/flags.rst:14
+msgid ""
+"Основная цель флагов — предоставить способ изменить логику работы команды"
+" без её переработки. Команда может работать в нескольких режимах: "
+"стандартном, подробном, отладочном или упрощённом. Флаги переключают эти "
+"режимы по требованию пользователя, оставляя основную функциональность "
+"неизменной."
+msgstr ""
+"The main purpose of flags is to provide a way to change the command's "
+"logic without reworking it. A command can operate in several modes: "
+"standard, verbose, debug, or simplified. Flags switch these modes on user"
+" demand, keeping the core functionality unchanged."
+
+#: ../../root/flags.rst:17
+msgid "Опциональность и удобство"
+msgstr "Optionality and Convenience"
+
+#: ../../root/flags.rst:19
+msgid ""
+"Флаги решают проблему обязательности параметров. Если все параметры "
+"команды сделать обязательными, это затруднит использование команды. Флаги"
+" же позволяют задать значения только необходимые в конкретной ситуации, "
+"остальные используют значения по умолчанию."
+msgstr ""
+"Flags solve the problem of mandatory parameters. If all command "
+"parameters are made required, it makes the command difficult to use. "
+"Flags allow you to specify only the values needed in a specific "
+"situation, while others use default values."
+
+#: ../../root/flags.rst:22
+msgid "Когда могут понадобиться флаги"
+msgstr "When Flags Might Be Needed"
+
+#: ../../root/flags.rst:24
+msgid "**Переключение режимов работы**"
+msgstr "**Switching Operation Modes**"
+
+#: ../../root/flags.rst:25
+msgid ""
+"Команда выполняет развёртывание приложения обычно, но нужен режим без "
+"фактического развёртывания (dry-run) для проверки. Флаг ``--dry-run`` "
+"переключит режим работы."
+msgstr ""
+"A command deploys an application normally, but a mode without actual "
+"deployment (dry-run) is needed for verification. The ``--dry-run`` flag "
+"will switch the mode."
+
+#: ../../root/flags.rst:27
+msgid "**Настройка уровня детальности**"
+msgstr "**Adjusting Verbosity Level**"
+
+#: ../../root/flags.rst:28
+msgid ""
+"При отладке или анализе требуется больше информации о процессе выполнения"
+" команды. Флаги ``--verbose`` или ``--debug`` предоставляют подробный "
+"вывод."
+msgstr ""
+"When debugging or analyzing, more information about the command execution"
+" process is required. The ``--verbose`` or ``--debug`` flags provide "
+"detailed output."
+
+#: ../../root/flags.rst:30
+msgid "**Управление поведением при ошибках**"
+msgstr "**Managing Error Behavior**"
+
+#: ../../root/flags.rst:31
+msgid ""
+"По умолчанию команда может прерваться при первой ошибке. Флаг ``--force``"
+" позволит продолжить работу, пропуская некритичные ошибки."
+msgstr ""
+"By default, a command may abort on the first error. The ``--force`` flag "
+"allows continuing execution, skipping non-critical errors."
+
+#: ../../root/flags.rst:33
+msgid "**Форматирование вывода**"
+msgstr "**Output Formatting**"
+
+#: ../../root/flags.rst:34
+msgid ""
+"Команда выводит данные текстом, но в некоторых сценариях нужен JSON или "
+"CSV. Флаг ``--format=json`` переключит формат вывода."
+msgstr ""
+"A command outputs data as text, but in some scenarios JSON or CSV is "
+"needed. The ``--format=json`` flag will switch the output format."
+
+#: ../../root/flags.rst:36
+msgid "**Комбинирование опций**"
+msgstr "**Combining Options**"
+
+#: ../../root/flags.rst:37
+msgid ""
+"Часто нужна комбинация нескольких изменений: подробный вывод, dry-run "
+"режим и JSON формат. Несколько флагов решают эту задачу одновременно."
+msgstr ""
+"Often a combination of several changes is needed: verbose output, dry-run"
+" mode, and JSON format. Multiple flags solve this task simultaneously."
+
+#: ../../root/flags.rst:40
+msgid "Практическое значение"
+msgstr "Practical Significance"
+
+#: ../../root/flags.rst:42
+msgid ""
+"Флаги делают команды более предсказуемыми и контролируемыми. Пользователь"
+" может начать с простого использования, а затем добавлять флаги по мере "
+"необходимости. Это особенно важно при автоматизации задач в скриптах, где"
+" гибкость интерфейса критична."
+msgstr ""
+"Flags make commands more predictable and controllable. Users can start "
+"with simple usage and then add flags as needed. This is especially "
+"important when automating tasks in scripts, where interface flexibility "
+"is critical."
+
+#: ../../root/flags.rst:44
+msgid ""
+"Флаги также облегчают интеграцию команд в различные системы, так как "
+"дополнительное поведение достигается без изменения структуры команды, а "
+"только через передачу опциональных параметров."
+msgstr ""
+"Flags also facilitate command integration into various systems, as "
+"additional behavior is achieved without changing the command structure, "
+"only through passing optional parameters."
+
+#: ../../root/flags.rst:49
+msgid "Синтаксис флагов"
+msgstr "Flag Syntax"
+
+#: ../../root/flags.rst:51
+msgid "Общий синтаксис выглядит так:"
+msgstr "The general syntax looks like this:"
+
+#: ../../root/flags.rst:57
+msgid ""
+"Флаг состоит из префикса (``-``, ``--`` или ``---``), имени и, "
+"опционально, значения, которое указывается через пробел."
+msgstr ""
+"A flag consists of a prefix (``-``, ``--``, or ``---``), a name, and "
+"optionally a value, which is specified with a space."
+
+#: ../../root/flags.rst:59
+msgid "**Примеры:**"
+msgstr "**Examples:**"
+
+#: ../../root/flags.rst:70
+msgid "Работа с флагами в обработчиках"
+msgstr "Working with Flags in Handlers"
+
+#: ../../root/flags.rst:72
+msgid ""
+"Чтобы получить значение флага в обработчике, используйте объект "
+"``response.input_flags`` типа :ref:`InputFlags "
+"<root_api_command_input_flags>`."
+msgstr ""
+"To get the flag value in a handler, use the ``response.input_flags`` "
+"object of type :ref:`InputFlags <root_api_command_input_flags>`."
+
+#: ../../root/flags.rst:74
+msgid "**Пример с флагом, имеющим значение:**"
+msgstr "**Example with a flag that has a value:**"
+
+#: ../../root/flags.rst:80
+msgid "**Пример с флагом-переключателем:**"
+msgstr "**Example with a toggle flag:**"
+
+#: ../../root/flags.rst:87
+msgid ""
+"Подробнее о работе с объектом ``InputFlags`` см. в разделе "
+":ref:`InputFlags <root_api_command_input_flags>`."
+msgstr ""
+"For more details on working with the ``InputFlags`` object, see the "
+":ref:`InputFlags <root_api_command_input_flags>` section."
+
+#: ../../root/flags.rst:92
+msgid "Два типа флагов"
+msgstr "Two Types of Flags"
+
+#: ../../root/flags.rst:94
+msgid "Флаги бывают двух основных видов:"
+msgstr "Flags come in two main types:"
+
+#: ../../root/flags.rst:96
+msgid ""
+"**Флаги со значениями** — принимают параметр после имени флага (например,"
+" ``--name John``, ``--port 8080``)"
+msgstr ""
+"**Flags with values** — accept a parameter after the flag name (for "
+"example, ``--name John``, ``--port 8080``)"
+
+#: ../../root/flags.rst:97
+msgid ""
+"**Флаги-переключатели** — не принимают значения, их наличие само по себе "
+"является сигналом (например, ``--verbose``, ``--force``)"
+msgstr ""
+"**Toggle flags** — do not accept values, their presence itself is a "
+"signal (for example, ``--verbose``, ``--force``)"
+
+#: ../../root/flags.rst:99
+msgid ""
+"``Argenta`` позволяет регистрировать и вводить флаги обоих типов в любой "
+"последовательности для одной команды."
+msgstr ""
+"``Argenta`` allows registering and entering flags of both types in any "
+"sequence for a single command."
+
+#: ../../root/flags.rst:102
+msgid ""
+"Ошибки валидации не выбрасывают исключений. Вместо этого у каждого "
+"объекта :ref:`InputFlag <root_api_command_input_flag>` есть атрибут "
+"``status``, по которому можно определить, прошла ли валидация успешно. "
+"Подробное описание API для создания флагов находится в разделе :ref:`Flag"
+" <root_api_command_flag>`."
+msgstr ""
+"Validation errors do not throw exceptions. Instead, each :ref:`InputFlag "
+"<root_api_command_input_flag>` object has a ``status`` attribute that can"
+" be used to determine if validation was successful. A detailed "
+"description of the API for creating flags is in the :ref:`Flag "
+"<root_api_command_flag>` section."
+
+#: ../../root/flags.rst:104
+msgid ""
+"При регистрации флага можно задать правила валидации для его значения. По"
+" умолчанию любое значение считается корректным. Валидацию можно настроить"
+" несколькими способами:"
+msgstr ""
+"When registering a flag, you can set validation rules for its value. By "
+"default, any value is considered valid. Validation can be configured in "
+"several ways:"
+
+#: ../../root/flags.rst:109
+msgid "Флаги против аргументов"
+msgstr "Flags vs Arguments"
+
+#: ../../root/flags.rst:111
+msgid ""
+"В контексте Argenta флаги и аргументы относятся к разным уровням "
+"взаимодействия с приложением."
+msgstr ""
+"In the context of Argenta, flags and arguments belong to different levels"
+" of interaction with the application."
+
+#: ../../root/flags.rst:113
+msgid ""
+"**Аргументы** — это параметры, передаваемые при запуске приложения. Они "
+"определяют глобальную конфигурацию на протяжении всей его работы "
+"(например, адрес базы данных, уровень логирования)."
+msgstr ""
+"**Arguments** are parameters passed when launching the application. They "
+"define the global configuration throughout its operation (for example, "
+"database address, logging level)."
+
+#: ../../root/flags.rst:115
+msgid ""
+"API и более подробное описание в разделах :ref:`ArgParser "
+"<root_api_orchestrator_argparser>` и :ref:`Arguments "
+"<root_api_orchestrator_arguments>`."
+msgstr ""
+"API and more detailed description in the :ref:`ArgParser "
+"<root_api_orchestrator_argparser>` and :ref:`Arguments "
+"<root_api_orchestrator_arguments>` sections."
+
+#: ../../root/flags.rst:117
+msgid ""
+"**Флаги** — это параметры командных операций, доступные в рамках "
+"интерактивной сессии при вводе каждой новой команды. Они позволяют "
+"модифицировать поведение конкретной команды без перезагрузки приложения."
+msgstr ""
+"**Flags** are command operation parameters available within an "
+"interactive session when entering each new command. They allow modifying "
+"the behavior of a specific command without restarting the application."
+
+#: ../../root/flags.rst:119
+msgid ""
+"API и более подробное описание в разделе :ref:`Flag "
+"<root_api_command_flag>`."
+msgstr ""
+"API and more detailed description in the :ref:`Flag "
+"<root_api_command_flag>` section."
+
+#: ../../root/flags.rst:124
+msgid "Ключевые различия"
+msgstr "Key Differences"
+
+#: ../../root/flags.rst:126
+msgid "**Время жизни**"
+msgstr "**Lifetime**"
+
+#: ../../root/flags.rst:127
+msgid ""
+"Аргументы передаются один раз при запуске и действуют на весь период "
+"работы приложения. Флаги локальны и существуют только в рамках выполнения"
+" команды."
+msgstr ""
+"Arguments are passed once at startup and remain in effect for the entire "
+"application runtime. Flags are local and exist only within the execution "
+"of a command."
+
+#: ../../root/flags.rst:129
+msgid "**Изменяемость**"
+msgstr "**Mutability**"
+
+#: ../../root/flags.rst:130
+msgid ""
+"Для изменения аргументов необходимо перезапустить приложение. Флаги можно"
+" менять при каждом вводе команды."
+msgstr ""
+"To change arguments, the application must be restarted. Flags can be "
+"changed with each command input."
+
+#: ../../root/flags.rst:132
+msgid "**Назначение**"
+msgstr "**Purpose**"
+
+#: ../../root/flags.rst:133
+msgid ""
+"Аргументы управляют глобальной конфигурацией приложения. Флаги управляют "
+"поведением отдельных команд."
+msgstr ""
+"Arguments control the global configuration of the application. Flags "
+"control the behavior of individual commands."
+
+#: ../../root/flags.rst:138
+msgid "Практические примеры"
+msgstr "Practical Examples"
+
+#: ../../root/flags.rst:140
+msgid "Аргументы при запуске приложения:"
+msgstr "Arguments at application startup:"
+
+#: ../../root/flags.rst:142
+msgid "Адрес подключения к базе данных"
+msgstr "Database connection address"
+
+#: ../../root/flags.rst:143
+msgid "Режим работы (production, development, testing)"
+msgstr "Operation mode (production, development, testing)"
+
+#: ../../root/flags.rst:144
+msgid "Уровень логирования"
+msgstr "Logging level"
+
+#: ../../root/flags.rst:146
+msgid "Флаги в интерактивной сессии:"
+msgstr "Flags in an interactive session:"
+
+#: ../../root/flags.rst:148
+msgid "``deploy --verbose --dry-run`` — для команды развёртывания"
+msgstr "``deploy --verbose --dry-run`` — for the deployment command"
+
+#: ../../root/flags.rst:149
+msgid "``backup --compress --encrypted`` — для команды резервного копирования"
+msgstr "``backup --compress --encrypted`` — for the backup command"
+
+#: ../../root/flags.rst:150
+msgid "``test --parallel --coverage`` — для команды тестирования"
+msgstr "``test --parallel --coverage`` — for the testing command"
+
+#~ msgid "Определение и назначение"
+#~ msgstr "Definition and Purpose"
+
+#~ msgid "**Частота изменения**"
+#~ msgstr "**Change Frequency**"
+
+#~ msgid "**Уровень конфигурации**"
+#~ msgstr "**Configuration Level**"
+
+#~ msgid "**Использование**"
+#~ msgstr "**Usage**"
+
+#~ msgid ""
+#~ "Аргументы задают начальное состояние системы:"
+#~ " что подключить, как работать. Флаги "
+#~ "управляют тактикой выполнения команд: как "
+#~ "её выполнить, с какими изменениями."
+#~ msgstr ""
+#~ "Arguments set the initial state of "
+#~ "the system: what to connect, how "
+#~ "to operate. Flags control the tactics"
+#~ " of command execution: how to execute"
+#~ " it, with what changes."
+
+#~ msgid "При запуске приложения Argenta передаются аргументы:"
+#~ msgstr "When launching an Argenta application, arguments are passed:"
+
+#~ msgid "Путь к конфигурационным файлам"
+#~ msgstr "Path to configuration files"
+
+#~ msgid "В интерактивной сессии для каждой команды указываются флаги:"
+#~ msgstr "In an interactive session, flags are specified for each command:"
+
+#~ msgid ""
+#~ "Один пользователь может выполнить разные "
+#~ "команды с разными флагами в одной "
+#~ "сессии приложения, без необходимости "
+#~ "перезапуска с новыми аргументами."
+#~ msgstr ""
+#~ "A single user can execute different "
+#~ "commands with different flags in one "
+#~ "application session, without needing to "
+#~ "restart with new arguments."
+

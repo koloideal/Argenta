@@ -1,8 +1,7 @@
-from argenta.command.models import InputCommand, Command
-from argenta.app import App
-
 import unittest
 
+from argenta.app import App
+from argenta.command.models import Command, InputCommand
 from argenta.router import Router
 
 

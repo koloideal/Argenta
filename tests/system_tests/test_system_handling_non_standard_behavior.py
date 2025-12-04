@@ -1,14 +1,15 @@
-import _io
-from unittest.mock import patch, MagicMock
-from unittest import TestCase
 import io
 import re
 import sys
+from unittest import TestCase
+from unittest.mock import MagicMock, patch
 
+import _io
+
+from argenta import App, Orchestrator, Router
 from argenta.command import Command, PredefinedFlags
-from argenta.command.flag.models import ValidationStatus
 from argenta.command.flag.flags.models import Flags
-from argenta import Orchestrator, App, Router
+from argenta.command.flag.models import ValidationStatus
 from argenta.response import Response
 
 

@@ -1,0 +1,120 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-02 22:27+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/api/app/autocompleter.rst:4
+msgid "AutoCompleter"
+msgstr ""
+
+#: ../../root/api/app/autocompleter.rst:6
+msgid ""
+"``AutoCompleter`` — это компонент, отвечающий за интерактивное "
+"автодополнение команд. Он улучшает пользовательский опыт, предлагая "
+"подсказки и завершая ввод на основе истории команд, что ускоряет работу и"
+" снижает вероятность опечаток."
+msgstr ""
+"``AutoCompleter`` is a component responsible for interactive command autocompletion. "
+"It improves user experience by offering suggestions and completing input based on "
+"command history, which speeds up work and reduces the likelihood of typos."
+
+#: ../../root/api/app/autocompleter.rst:11
+msgid "Инициализация"
+msgstr "Initialization"
+
+#: ../../root/api/app/autocompleter.rst:18
+msgid "Создаёт и настраивает экземпляр ``AutoCompleter``."
+msgstr "Creates and configures an ``AutoCompleter`` instance."
+
+#: ../../root/api/app/autocompleter.rst:20
+msgid ""
+"``history_filename``: Имя файла для сохранения истории команд. Если "
+"указано, история будет сохраняться между сессиями. При значении ``None`` "
+"история хранится только в контексте сессии."
+msgstr ""
+"``history_filename``: Filename for saving command history. If specified, history "
+"will be saved between sessions. When set to ``None``, history is stored only within "
+"the session context."
+
+#: ../../root/api/app/autocompleter.rst:21
+msgid ""
+"``autocomplete_button``: Клавиша, активирующая автодополнение. По "
+"умолчанию — **Tab**."
+msgstr ""
+"``autocomplete_button``: Key that activates autocompletion. Defaults to **Tab**."
+
+#: ../../root/api/app/autocompleter.rst:26
+msgid "Назначение и возможности"
+msgstr "Purpose and Features"
+
+#: ../../root/api/app/autocompleter.rst:28
+msgid "Основные возможности ``AutoCompleter``:"
+msgstr "Main features of ``AutoCompleter``:"
+
+#: ../../root/api/app/autocompleter.rst:30
+msgid ""
+"**Автодополнение по истории**: При нажатии клавиши автодополнения (по "
+"умолчанию **Tab**) система ищет в истории команды, начинающиеся с уже "
+"введённого текста."
+msgstr ""
+"**History-based autocompletion**: When the autocompletion key is pressed (by default **Tab**), "
+"the system searches history for commands starting with the already entered text."
+
+#: ../../root/api/app/autocompleter.rst:32
+msgid ""
+"**Общий префикс**: Если найдено несколько команд с общим префиксом, будет"
+" подставлена только общая часть. Например, для команд ``show_users`` и "
+"``show_profile`` при вводе ``sho`` и нажатии **Tab** ввод дополнится до "
+"``show_``."
+msgstr ""
+"**Common prefix**: If multiple commands with a common prefix are found, only the common "
+"part will be inserted. For example, for commands ``show_users`` and ``show_profile``, "
+"when entering ``sho`` and pressing **Tab**, the input will be completed to ``show_``."
+
+#: ../../root/api/app/autocompleter.rst:34
+msgid ""
+"**Постоянная история**: Если указан ``history_filename``, история команд "
+"сохраняется в файл при выходе и загружается при следующем запуске. Это "
+"делает автодополнение со временем «умнее»."
+msgstr ""
+"**Persistent history**: If ``history_filename`` is specified, command history is saved "
+"to a file on exit and loaded on the next startup. This makes autocompletion \"smarter\" over time."
+
+#: ../../root/api/app/autocompleter.rst:36
+msgid ""
+"**Очистка истории**: При сохранении ``AutoCompleter`` удаляет дубликаты и"
+" несуществующие команды, поддерживая историю в актуальном состоянии."
+msgstr ""
+"**History cleanup**: When saving, ``AutoCompleter`` removes duplicates and non-existent "
+"commands, keeping the history up to date."
+
+#: ../../root/api/app/autocompleter.rst:38
+msgid ""
+"**Настройка клавиши**: Клавишу автодополнения можно изменить с помощью "
+"параметра ``autocomplete_button``."
+msgstr ""
+"**Key customization**: The autocompletion key can be changed using the ``autocomplete_button`` parameter."
+
+#: ../../root/api/app/autocompleter.rst:43
+msgid "Пример использования"
+msgstr "Usage Example"
+
+#: ../../root/api/app/autocompleter.rst:45
+msgid "``AutoCompleter`` передаётся как аргумент при инициализации `App`."
+msgstr "``AutoCompleter`` is passed as an argument when initializing `App`."
+

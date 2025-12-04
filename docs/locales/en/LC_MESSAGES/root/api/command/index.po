@@ -1,0 +1,196 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-04 20:39+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/api/command/index.rst:4
+msgid "Command"
+msgstr "Command"
+
+#: ../../root/api/command/index.rst:6
+msgid ""
+"``Command`` — это основная единица функциональности в приложении. Каждая "
+"команда связывает хэндлер с триггером, введя который он будет вызван для "
+"обработки."
+msgstr ""
+"``Command`` is the basic unit of functionality in an application. Each "
+"command links a handler to a trigger, which when entered will invoke it "
+"for processing."
+
+#: ../../root/api/command/index.rst:8
+msgid ""
+"``Command`` инкапсулирует всю информацию о команде: её триггер (ключевое "
+"слово для вызова), описание, набор флагов и список псевдонимов."
+msgstr ""
+"``Command`` encapsulates all information about a command: its trigger "
+"(keyword for invocation), description, set of flags, and list of aliases."
+
+#: ../../root/api/command/index.rst:13
+msgid "Инициализация"
+msgstr "Initialization"
+
+#: ../../root/api/command/index.rst:23
+msgid "Создаёт новую команду для регистрации в роутере."
+msgstr "Creates a new command for registration in a router."
+
+#: ../../root/api/command/index.rst:25
+msgid ""
+"``trigger``: Строковый триггер, который пользователь вводит для вызова "
+"команды. Является основным идентификатором."
+msgstr ""
+"``trigger``: String trigger that the user enters to invoke the command. "
+"Serves as the primary identifier."
+
+#: ../../root/api/command/index.rst:26
+msgid ""
+"``description``: Необязательное описание, объясняющее назначение команды."
+" Отображается в справке."
+msgstr ""
+"``description``: Optional description explaining the command's purpose. "
+"Displayed in help."
+
+#: ../../root/api/command/index.rst:27
+msgid ""
+"``flags``: Набор флагов для настройки поведения. Может быть одиночным "
+"объектом ``Flag`` или коллекцией ``Flags``."
+msgstr ""
+"``flags``: Set of flags for configuring behavior. Can be a single "
+"``Flag`` object or a ``Flags`` collection."
+
+#: ../../root/api/command/index.rst:28
+msgid "``aliases``: Список строковых псевдонимов для основного триггера."
+msgstr "``aliases``: List of string aliases for the main trigger."
+
+#: ../../root/api/command/index.rst:30 ../../root/api/command/index.rst:108
+msgid "**Атрибуты:**"
+msgstr "**Attributes:**"
+
+#: ../../root/api/command/index.rst:34
+msgid ""
+"Основной триггер команды. Используется для её идентификации при обработке"
+" пользовательского ввода."
+msgstr ""
+"The main command trigger. Used for its identification when processing "
+"user input."
+
+#: ../../root/api/command/index.rst:38
+msgid ""
+"Текстовое описание команды. Если не передано, используется значение по "
+"умолчанию."
+msgstr ""
+"Text description of the command. If not provided, the default value is "
+"used."
+
+#: ../../root/api/command/index.rst:42
+msgid ""
+"Объект ``Flags``, содержащий все зарегистрированные флаги. Если был "
+"передан ``Flag``, то автоматически конвертируется из одиночного в "
+"коллекцию при инициализации."
+msgstr ""
+"A ``Flags`` object containing all registered flags. If a ``Flag`` was "
+"passed, it is automatically converted from a single flag to a collection "
+"during initialization."
+
+#: ../../root/api/command/index.rst:46
+msgid "Список строковых псевдонимов. Пуст, если псевдонимы не заданы."
+msgstr "List of string aliases. Empty if no aliases are defined."
+
+#: ../../root/api/command/index.rst:48
+msgid "**Пример использования:**"
+msgstr "**Usage example:**"
+
+#: ../../root/api/command/index.rst:54
+msgid ""
+"Подробнее про флаги: :ref:`Flags <root_api_command_flags>` и :ref:`Флаги "
+"команд <root_flags>`."
+msgstr ""
+"More about flags: :ref:`Flags <root_api_command_flags>` and :ref:`Command "
+"flags <root_flags>`."
+
+#: ../../root/api/command/index.rst:59
+msgid "Регистрация команд"
+msgstr "Command Registration"
+
+#: ../../root/api/command/index.rst:61
+msgid "Команды передаются в качестве аргумента в декоратор ``@router.command()``."
+msgstr "Commands are passed as an argument to the ``@router.command()`` decorator."
+
+#: ../../root/api/command/index.rst:63
+msgid "**Базовый пример:**"
+msgstr "**Basic example:**"
+
+#: ../../root/api/command/index.rst:68
+msgid "**Команды с флагами:**"
+msgstr "**Commands with flags:**"
+
+#: ../../root/api/command/index.rst:76
+msgid "Работа с псевдонимами"
+msgstr "Working with Aliases"
+
+#: ../../root/api/command/index.rst:78
+msgid ""
+"Псевдонимы позволяют вызывать один и тот же обработчик разными "
+"триггерами, сохраняя флаги и описание команды."
+msgstr ""
+"Aliases allow invoking the same handler with different triggers while "
+"preserving the command's flags and description."
+
+#: ../../root/api/command/index.rst:80
+msgid "**Пример с псевдонимами:**"
+msgstr "**Example with aliases:**"
+
+#: ../../root/api/command/index.rst:85
+msgid "Теперь пользователь может вызвать команду любым из способов:"
+msgstr "Now the user can invoke the command in any of the following ways:"
+
+#: ../../root/api/command/index.rst:94
+msgid "Все эти варианты вызовут один и тот же хэндлер ``handle_shutdown``."
+msgstr "All these variants will invoke the same handler ``handle_shutdown``."
+
+#: ../../root/api/command/index.rst:101
+msgid "InputCommand"
+msgstr "InputCommand"
+
+#: ../../root/api/command/index.rst:103
+msgid ""
+"``InputCommand`` представляет собой обработанную команду, введённую "
+"пользователем. Этот внутренний класс создаётся автоматически при "
+"обработке пользовательского ввода. Прямая работа с ним возможна при "
+"создании пользовательского обработчика для неизвестных команд."
+msgstr ""
+"``InputCommand`` represents a processed command entered by the user. This"
+" internal class is created automatically when processing user input. "
+"Direct work with it is possible when creating a custom handler for "
+"unknown commands."
+
+#: ../../root/api/command/index.rst:106
+msgid ""
+"Подробнее о пользовательских обработчиках исключений см. :ref:`здесь "
+"<root_error_handling_unknown_command>`."
+msgstr ""
+"For more details on custom exception handlers, see :ref:`here "
+"<root_error_handling_unknown_command>`."
+
+#: ../../root/api/command/index.rst:113
+msgid "Строковый триггер, введённый пользователем."
+msgstr "String trigger entered by the user."
+
+#: ../../root/api/command/index.rst:118
+msgid "Объект ``InputFlags``, содержащий все введённые и распаршенные флаги."
+msgstr "An ``InputFlags`` object containing all entered and parsed flags."
+

@@ -1,18 +1,23 @@
-from argenta.command.flag.models import Flag, InputFlag, ValidationStatus
-from argenta.command.flag.flags.models import InputFlags, Flags
-from argenta.command.exceptions import (
-    UnprocessedInputFlagException,
-    RepeatedInputFlagsException,
-    EmptyInputCommandException,
-)
+__all__ = ["Command", "InputCommand"]
+
+import shlex
 from typing import Never, Self, cast, Literal
 
+from argenta.command.exceptions import (
+    EmptyInputCommandException,
+    RepeatedInputFlagsException,
+    UnprocessedInputFlagException,
+)
+from argenta.command.flag.flags.models import Flags, InputFlags
+from argenta.command.flag.models import Flag, InputFlag, ValidationStatus
 
 ParseFlagsResult = tuple[InputFlags, str | None, str | None]
 ParseResult = tuple[str, InputFlags]
 
 MIN_FLAG_PREFIX: str = "-"
+PREFIX_TYPE = Literal["-", "--", "---"]
 DEFAULT_WITHOUT_FLAGS: Flags = Flags()
+DEFAULT_WITHOUT_ALIASES: list[Never] = []
 
 DEFAULT_WITHOUT_INPUT_FLAGS: InputFlags = InputFlags()
 
@@ -20,10 +25,11 @@ DEFAULT_WITHOUT_INPUT_FLAGS: InputFlags = InputFlags()
 class Command:
     def __init__(
         self,
-        trigger: str, *, 
-        description: str | None = None,
+        trigger: str,
+        *,
+        description: str = "Some useful command",
         flags: Flag | Flags = DEFAULT_WITHOUT_FLAGS,
-        aliases: list[str] | None = None,
+        aliases: list[str] | list[Never] = DEFAULT_WITHOUT_ALIASES,
     ):
         """
         Public. The command that can and should be registered in the Router
@@ -34,12 +40,10 @@ class Command:
         """
         self.registered_flags: Flags = flags if isinstance(flags, Flags) else Flags([flags])
         self.trigger: str = trigger
-        self.description: str = description if description else "Command without description"
-        self.aliases: list[str] = aliases if aliases else []
+        self.description: str = description
+        self.aliases: list[str] | list[Never] = aliases
 
-    def validate_input_flag(
-        self, flag: InputFlag
-    ) -> ValidationStatus:
+    def validate_input_flag(self, flag: InputFlag) -> ValidationStatus:
         """
         Private. Validates the input flag
         :param flag: input flag for validation
@@ -57,8 +61,7 @@ class Command:
 
 
 class InputCommand:
-    def __init__(self, trigger: str, *, 
-                 input_flags: InputFlag | InputFlags = DEFAULT_WITHOUT_INPUT_FLAGS):
+    def __init__(self, trigger: str, *, input_flags: InputFlag | InputFlags = DEFAULT_WITHOUT_INPUT_FLAGS):
         """
         Private. The model of the input command, after parsing
         :param trigger:the trigger of the command
@@ -66,7 +69,9 @@ class InputCommand:
         :return: None
         """
         self.trigger: str = trigger
-        self.input_flags: InputFlags = input_flags if isinstance(input_flags, InputFlags) else InputFlags([input_flags])
+        self.input_flags: InputFlags = (
+            input_flags if isinstance(input_flags, InputFlags) else InputFlags([input_flags])
+        )
 
     @classmethod
     def parse(cls, raw_command: str) -> Self:
@@ -75,77 +80,50 @@ class InputCommand:
         :param raw_command: raw input command
         :return: model of the input command, after parsing as InputCommand
         """
-        trigger, input_flags = CommandParser(raw_command).parse_raw_command()
-
-        return cls(trigger=trigger, input_flags=input_flags)
+        tokens = shlex.split(raw_command)
         
-
-class CommandParser:
-    def __init__(self, raw_command: str) -> None:
-        self.raw_command: str = raw_command
-        self._parsed_input_flags: InputFlags = InputFlags()
-
-    def parse_raw_command(self) -> ParseResult:
-        if not self.raw_command:
-            raise EmptyInputCommandException()
-
-        input_flags, crnt_flag_name, crnt_flag_val = self._parse_flags(self.raw_command.split()[1:])
-
-        if any([crnt_flag_name, crnt_flag_val]):
-            raise UnprocessedInputFlagException()
-        else:
-            return (self.raw_command.split()[0], input_flags)
-
-    def _parse_flags(self, _tokens: list[str] | list[Never]) -> ParseFlagsResult:
-        crnt_flg_name, crnt_flg_val = None, None
-        for index, token in enumerate(_tokens):
-            crnt_flg_name, crnt_flg_val = _parse_single_token(token, crnt_flg_name, crnt_flg_val)
-
-            if not crnt_flg_name or self._is_next_token_value(index, _tokens):
-                continue
-
+        if not tokens:
+            raise EmptyInputCommandException
+        
+        command = tokens[0]
+        flags: InputFlags = InputFlags()
+        
+        i = 1
+        while i < len(tokens):
+            token = tokens[i]
+            
+            if token.startswith("---"):
+                prefix = "---"
+                name = token[3:]
+            elif token.startswith("--"):
+                prefix = "--"
+                name = token[2:]
+            elif token.startswith("-"):
+                prefix = "-"
+                name = token[1:]
+            else:
+                raise UnprocessedInputFlagException
+            
+            if not name:
+                raise UnprocessedInputFlagException
+            
+            if i + 1 < len(tokens) and not tokens[i + 1].startswith("-"):
+                input_value = tokens[i + 1]
+                i += 2
+            else:
+                input_value = ""
+                i += 1
+                
             input_flag = InputFlag(
-                name=crnt_flg_name[crnt_flg_name.rfind(MIN_FLAG_PREFIX) + 1:],
-                prefix=cast(
-                    Literal["-", "--", "---"],
-                    crnt_flg_name[:crnt_flg_name.rfind(MIN_FLAG_PREFIX) + 1],
-                ),
-                input_value=crnt_flg_val,
+                name=name,
+                prefix=cast(PREFIX_TYPE, prefix),  # pyright: ignore[reportUnnecessaryCast]
+                input_value=input_value,
                 status=None
             )
-            
-            if input_flag in self._parsed_input_flags:
+                
+            if input_flag in flags:
                 raise RepeatedInputFlagsException(input_flag)
             
-            self._parsed_input_flags.add_flag(input_flag)
-            crnt_flg_name, crnt_flg_val = None, None
-
-        return (self._parsed_input_flags, crnt_flg_name, crnt_flg_val)
-    
-    def _is_next_token_value(self, current_index: int,
-                                   _tokens: list[str] | list[Never]) -> bool:
-        next_index = current_index + 1
-        if next_index >= len(_tokens):
-            return False  
+            flags.add_flag(input_flag)
         
-        next_token = _tokens[next_index]
-        return not next_token.startswith(MIN_FLAG_PREFIX)
-    
-def _parse_single_token(
-    token: str,
-    crnt_flag_name: str | None,
-    crnt_flag_val: str | None
-) -> tuple[str | None, str | None]:
-    if not token.startswith(MIN_FLAG_PREFIX):
-        if not crnt_flag_name or crnt_flag_val:
-            raise UnprocessedInputFlagException
-        return crnt_flag_name, token
-
-    prefix = token[:token.rfind(MIN_FLAG_PREFIX)]
-    if len(token) < 2 or len(prefix) > 2:
-        raise UnprocessedInputFlagException
-
-    new_flag_name = token
-    new_flag_value = None
-
-    return new_flag_name, new_flag_value
+        return cls(command, input_flags=flags)

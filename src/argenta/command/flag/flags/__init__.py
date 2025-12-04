@@ -1,10 +1,2 @@
-__all__ = [
-    "Flags",
-    "InputFlags"
-]
-
-
-from argenta.command.flag.flags.models import (
-    Flags,
-    InputFlags
-)
+from argenta.command.flag.flags.models import Flags as Flags
+from argenta.command.flag.flags.models import InputFlags as InputFlags

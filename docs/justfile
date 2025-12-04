@@ -1,0 +1,30 @@
+set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
+set shell := ["bash", "-c"]
+
+# Variables
+sphinxopts := ""
+sphinxbuild := "sphinx-build"
+sourcedir := "."
+builddir := "_build"
+
+# Default recipe (help)
+default:
+    @{{sphinxbuild}} -M help "{{sourcedir}}" "{{builddir}}" {{sphinxopts}}
+
+# Build all language versions
+build:
+    {{sphinxbuild}} -b html -D language=ru {{sourcedir}} {{builddir}}/html/ru
+    {{sphinxbuild}} -b html -D language =en {{sourcedir}} {{builddir}}/html/en
+
+# Live preview for Russian version
+live-ru:
+    sphinx-autobuild -b html . _build/html/ru -D language=ru
+
+# Live preview for English version
+live-en:
+    sphinx-autobuild -b html . _build/html/en -D language=en
+
+# Update translation files
+update-langs:
+    {{sphinxbuild}} -b gettext . _build/gettext
+    sphinx-intl update -p _build/gettext -l en

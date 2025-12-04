@@ -1,29 +1,16 @@
+from argenta import App, Orchestrator
+from argenta.app import PredefinedMessages
+from argenta.orchestrator.argparser import ArgParser, BooleanArgument
+from argenta.app.dividing_line.models import DynamicDividingLine
 from mock.mock_app.routers import work_router
 
-from argenta import App, Orchestrator
-from argenta.app import PredefinedMessages, DynamicDividingLine, AutoCompleter
-from argenta.orchestrator import ArgParser
-from argenta.orchestrator.argparser import BooleanArgument, ValueArgument
-from dishka import Provider, provide, Scope  # type: ignore
-
-
-class temProvider(Provider):
-    @provide(scope=Scope.APP)
-    def get_apace(self) -> int:
-        return 1234
-
-arg_parser: ArgParser = ArgParser(
-    processed_args=[
-        BooleanArgument(name="repeat", is_deprecated=True),
-        ValueArgument(name="required", is_required=True),
-    ]
-)
 app: App = App(
-    dividing_line=DynamicDividingLine(),
-    autocompleter=AutoCompleter(),
+    dividing_line=DynamicDividingLine('^'),
 )
-orchestrator: Orchestrator = Orchestrator(arg_parser, custom_providers=[temProvider()])
+argparser = ArgParser([BooleanArgument('some')])
+orchestrator: Orchestrator = Orchestrator(argparser)
 
+print(argparser.parsed_argspace.get_by_type(BooleanArgument))
 
 def main():
     app.include_router(work_router)
@@ -34,6 +21,6 @@ def main():
 
     orchestrator.start_polling(app)
 
-
 if __name__ == "__main__":
-    main()
+    orchestrator.start_polling(app)
+    

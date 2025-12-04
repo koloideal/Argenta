@@ -1,0 +1,217 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-02 22:27+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/api/index.rst:5
+msgid "Публичное API"
+msgstr "Public API"
+
+#: ../../root/api/index.rst:8
+msgid "Описание раздела"
+msgstr "Section Description"
+
+#: ../../root/api/index.rst:10
+msgid "В этом разделе описан публичный API библиотеки. Он включает:"
+msgstr "This section describes the library's public API. It includes:"
+
+#: ../../root/api/index.rst:12
+msgid "Классы и функции для интеграции в ваши приложения."
+msgstr "Classes and functions for integration into your applications."
+
+#: ../../root/api/index.rst:13
+msgid "Рекомендации по использованию и поддерживаемые сценарии."
+msgstr "Usage recommendations and supported scenarios."
+
+#: ../../root/api/index.rst:14
+msgid "Примеры кода, подробные сигнатуры и описание возвращаемых значений."
+msgstr "Code examples, detailed signatures, and descriptions of return values."
+
+#: ../../root/api/index.rst:15
+msgid "Гарантии стабильности и обратной совместимости."
+msgstr "Stability and backward compatibility guarantees."
+
+#: ../../root/api/index.rst:17
+msgid ""
+"Интерфейсы, не описанные в этом разделе, считаются внутренними. Их "
+"использование может привести к ошибкам при обновлении библиотеки. При "
+"разработке собственных решений используйте только компоненты, описанные "
+"здесь. Это обеспечит стабильность и совместимость ваших продуктов с "
+"будущими версиями ``Argenta``."
+msgstr ""
+"Interfaces not described in this section are considered internal. Using them may "
+"lead to errors when updating the library. When developing your own solutions, use "
+"only the components described here. This will ensure the stability and compatibility "
+"of your products with future versions of ``Argenta``."
+
+#: ../../root/api/index.rst:22
+msgid "Публичные импорты"
+msgstr "Public Imports"
+
+#: ../../root/api/index.rst:24
+msgid ""
+"Все основные компоненты библиотеки доступны для прямого импорта из "
+"корневого пакета ``argenta`` или его подмодулей."
+msgstr ""
+"All main library components are available for direct import from the root package "
+"``argenta`` or its submodules."
+
+#: ../../root/api/index.rst:27
+msgid "Основные компоненты"
+msgstr "Main Components"
+
+#: ../../root/api/index.rst:32
+msgid ""
+":ref:`App <root_api_app_index>` — Объект приложения, который отвечает за "
+"логику роутинга, настройки, валидации и т.д."
+msgstr ""
+":ref:`App <root_api_app_index>` — Application object responsible for routing logic, "
+"settings, validation, etc."
+
+#: ../../root/api/index.rst:33
+msgid ""
+":ref:`Orchestrator <root_api_orchestrator_index>` — Класс для "
+"конфигурирования и запуска всего приложения."
+msgstr ""
+":ref:`Orchestrator <root_api_orchestrator_index>` — Class for configuring and "
+"launching the entire application."
+
+#: ../../root/api/index.rst:34
+msgid ""
+":ref:`Router <root_api_router>` — Класс для группировки и регистрации "
+"команд."
+msgstr ":ref:`Router <root_api_router>` — Class for grouping and registering commands."
+
+#: ../../root/api/index.rst:35
+msgid ""
+":ref:`Command <root_api_command_index>` — Класс для создания команд при "
+"инициализации хэндлеров."
+msgstr ""
+":ref:`Command <root_api_command_index>` — Class for creating commands when "
+"initializing handlers."
+
+#: ../../root/api/index.rst:36
+msgid ""
+":ref:`Response <root_api_response>` — Объект ответа, передаваемый в "
+"обработчики."
+msgstr ":ref:`Response <root_api_response>` — Response object passed to handlers."
+
+#: ../../root/api/index.rst:39
+msgid "Команды и флаги"
+msgstr "Commands and Flags"
+
+#: ../../root/api/index.rst:52
+msgid ":ref:`Flag <root_api_command_flag>` — Класс для описания флага."
+msgstr ":ref:`Flag <root_api_command_flag>` — Class for describing a flag."
+
+#: ../../root/api/index.rst:53
+msgid ":ref:`Flags <root_api_command_flags>` — Коллекция для регистрации флагов."
+msgstr ":ref:`Flags <root_api_command_flags>` — Collection for registering flags."
+
+#: ../../root/api/index.rst:54
+msgid ""
+":ref:`InputFlag <root_api_command_input_flag>` — Класс для введённого "
+"пользователем флага."
+msgstr ""
+":ref:`InputFlag <root_api_command_input_flag>` — Class for a user-entered flag."
+
+#: ../../root/api/index.rst:55
+msgid ""
+":ref:`InputFlags <root_api_command_input_flags>` — Коллекция введённых "
+"флагов."
+msgstr ":ref:`InputFlags <root_api_command_input_flags>` — Collection of entered flags."
+
+#: ../../root/api/index.rst:56
+msgid ""
+":ref:`PossibleValues <root_api_command_possible_values>` — Правила "
+"валидации значений флага."
+msgstr ""
+":ref:`PossibleValues <root_api_command_possible_values>` — Validation rules for "
+"flag values."
+
+#: ../../root/api/index.rst:57
+msgid ""
+":ref:`ValidationStatus <root_api_command_validation_status>` — Статусы "
+"валидации флагов."
+msgstr ""
+":ref:`ValidationStatus <root_api_command_validation_status>` — Flag validation statuses."
+
+#: ../../root/api/index.rst:58
+msgid ""
+":ref:`PredefinedFlags <root_api_command_flag_predefined_flags>` — "
+"Коллекция предопределённых флагов."
+msgstr ""
+":ref:`PredefinedFlags <root_api_command_flag_predefined_flags>` — Collection of "
+"predefined flags."
+
+#: ../../root/api/index.rst:61
+msgid "Настройка приложения"
+msgstr "Application Configuration"
+
+#: ../../root/api/index.rst:71
+msgid ""
+":ref:`AutoCompleter <root_api_app_autocompleter>` - Класс для настройки "
+"автодополнения."
+msgstr ""
+":ref:`AutoCompleter <root_api_app_autocompleter>` - Class for configuring "
+"autocompletion."
+
+#: ../../root/api/index.rst:72
+msgid ""
+":ref:`StaticDividingLine <root_api_app_dividing_lines>` — Статическая "
+"разделительная линия для оформления вывода."
+msgstr ""
+":ref:`StaticDividingLine <root_api_app_dividing_lines>` — Static dividing line for "
+"output formatting."
+
+#: ../../root/api/index.rst:73
+#: ../../root/api/index.rst:73
+msgid ""
+":ref:`DynamicDividingLine <root_api_app_dividing_lines>` — Динамическая "
+"разделительная линия для оформления вывода."
+msgstr ""
+":ref:`DynamicDividingLine <root_api_app_dividing_lines>` — Dynamic dividing line "
+"for output formatting."
+#: ../../root/api/index.rst:74
+msgid ""
+":ref:`PredefinedMessages <root_api_predefined_messages>` — Готовые "
+"сообщения для вывода при старте приложения."
+msgstr ""
+":ref:`PredefinedMessages <root_api_predefined_messages>` — Ready-made messages for "
+"output at application startup."
+
+#: ../../root/api/index.rst:77
+msgid "Внедрение зависимостей"
+msgstr "Dependency Injection"
+
+#: ../../root/api/index.rst:85
+msgid ""
+":ref:`FromDishka <root_dependency_injection>` — Маркер аргумента функции "
+"как зависимости, которая должна быть инжектирована."
+msgstr ""
+":ref:`FromDishka <root_dependency_injection>` — Marker for a function argument as a "
+"dependency that should be injected."
+
+#: ../../root/api/index.rst:86
+msgid ""
+":ref:`inject <root_dependency_injection>` — Декоратор для инжектирования "
+"зависимостей, указанных в сигнатуре."
+msgstr ""
+":ref:`inject <root_dependency_injection>` — Decorator for injecting dependencies "
+"specified in the signature."
+

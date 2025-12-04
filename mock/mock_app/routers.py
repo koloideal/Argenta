@@ -1,25 +1,10 @@
-from argenta.command import Command, PredefinedFlags, Flags, Flag, PossibleValues
-from argenta.response import Response
-from argenta import Router
+from argenta import Command, Response, Router
+from argenta.command import Flag, Flags
+
+work_router: Router = Router(title="Base points:", disable_redirect_stdout=True)
 
 
-work_router: Router = Router(title="Work points:", disable_redirect_stdout=True)
-
-flag = Flag("csdv", possible_values=PossibleValues.NEITHER)
-
-
-@work_router.command(
-    Command(
-        "get",
-        description="Get Help",
-        aliases=["help", "Get_help"],
-        flags=Flags([PredefinedFlags.PORT, PredefinedFlags.HOST]),
-    )
-)
+@work_router.command(Command("hello", flags=Flags(Flag("test")), description="Hello, world!"))
 def command_help(response: Response):
-	response.update_data({"data": [_ for _ in range(9999999)]})
-
-
-@work_router.command("run")
-def command_start_solving(response: Response):
-    print(response.get_data())
+    c = input("Enter your name: ")
+    print(f"Hello, {c}!")

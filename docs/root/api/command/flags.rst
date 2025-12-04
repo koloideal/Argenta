@@ -1,0 +1,113 @@
+.. _root_api_command_flags:
+
+Flags
+======
+
+``Flags`` — это коллекция флагов команды. Её основная задача — группировать и управлять набором флагов, зарегистрированных для конкретной команды. ``Flags`` служит контейнером, который позволяет удобно добавлять, извлекать, итерировать флаги и проверять их наличие.
+
+.. seealso::
+
+   Документация по отдельным флагам (:ref:`Flag <root_api_command_flag>`, :ref:`InputFlag <root_api_command_input_flag>`)
+   
+   Документация по :ref:`InputFlags <root_api_command_input_flags>` — коллекция обработанных флагов, введённых пользователем.
+   
+   :ref:`Общая информация <root_flags>` о флагах и их использовании в приложении ``Argenta``
+
+-----
+
+Инициализация
+-------------
+
+.. code-block:: python
+   :linenos:
+
+   __init__(self, flags: list[Flag] | None = None) -> None
+
+Создаёт новую коллекцию флагов.
+
+* ``flags``: Необязательный список флагов типа ``Flag`` для инициализации коллекции. Если не указан, создаётся пустая коллекция.
+
+**Атрибуты:**
+
+.. py:attribute:: flags
+   :no-index:
+
+   Список всех зарегистрированных флагов типа ``Flag``. 
+
+**Пример использования:**
+
+.. literalinclude:: ../../../code_snippets/flags/snippet.py
+   :linenos:
+   :language: python
+
+-----
+
+Методы
+------
+
+add_flag
+~~~~~~~~
+
+.. code-block:: python
+   :linenos:
+
+   add_flag(self, flag: Flag) -> None
+
+Добавляет флаг в коллекцию.
+
+:param flag: Флаг типа ``Flag`` для добавления.
+:return: None.
+
+Используется для динамического расширения набора флагов.
+
+**Пример использования:**
+
+.. literalinclude:: ../../../code_snippets/flags/snippet2.py
+   :linenos:
+   :language: python
+
+-----
+
+add_flags
+~~~~~~~~~
+
+.. code-block:: python
+   :linenos:
+
+   add_flags(self, flags: list[Flag]) -> None
+
+Добавляет в коллекцию список флагов.
+
+:param flags: Список флагов типа ``Flag`` для добавления.
+:return: None.
+
+Метод расширяет коллекцию, добавляя в неё все флаги из переданного списка. Эффективен для пакетного добавления.
+
+**Пример использования:**
+
+.. literalinclude:: ../../../code_snippets/flags/snippet3.py
+   :linenos:
+   :language: python
+
+-----
+
+get_flag_by_name
+~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+   :linenos:
+
+   get_flag_by_name(self, name: str) -> Flag | None
+
+Возвращает флаг по имени.
+
+:param name: Имя искомого флага.
+:return: Объект ``Flag`` или ``None``, если флаг не найден.
+
+Метод возвращает флаг с соответствующим именем. Если флаг не найден, возвращается ``None``.
+
+**Пример использования:**
+
+.. literalinclude:: ../../../code_snippets/flags/snippet4.py
+   :linenos:
+   :language: python

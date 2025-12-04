@@ -1,3 +1,5 @@
+__all__ = ["BooleanArgument", "ValueArgument", "InputArgument"]
+
 from typing import Literal
 
 
@@ -5,10 +7,8 @@ class BaseArgument:
     """
     Private. Base class for all arguments
     """
-    def __init__(self, name: str, *,
-                       help: str,
-                       is_deprecated: bool,
-                       prefix: Literal["-", "--", "---"]):
+
+    def __init__(self, name: str, *, help: str, is_deprecated: bool, prefix: Literal["-", "--", "---"]):
         """
         Public. Boolean argument, does not require a value
         :param name: name of the argument
@@ -20,20 +20,24 @@ class BaseArgument:
         self.help: str = help
         self.is_deprecated: bool = is_deprecated
         self.prefix: Literal["-", "--", "---"] = prefix
-        
+
     @property
     def string_entity(self) -> str:
         return self.prefix + self.name
 
 
 class ValueArgument(BaseArgument):
-    def __init__(self, name: str, *,
-                prefix: Literal["-", "--", "---"] = "--",
-                help: str = "Help message for the value argument", 
-                possible_values: list[str] | None = None,
-                default: str | None = None,
-                is_required: bool = False,
-                is_deprecated: bool = False):
+    def __init__(
+        self,
+        name: str,
+        *,
+        prefix: Literal["-", "--", "---"] = "--",
+        help: str = "Help message for the value argument",
+        possible_values: list[str] | None = None,
+        default: str | None = None,
+        is_required: bool = False,
+        is_deprecated: bool = False,
+    ):
         """
         Public. Value argument, must have the value
         :param name: name of the argument
@@ -52,10 +56,14 @@ class ValueArgument(BaseArgument):
 
 
 class BooleanArgument(BaseArgument):
-    def __init__(self, name: str, *,
-                prefix: Literal["-", "--", "---"] = "--",
-                help: str = "Help message for the boolean argument",
-                is_deprecated: bool = False):
+    def __init__(
+        self,
+        name: str,
+        *,
+        prefix: Literal["-", "--", "---"] = "--",
+        help: str = "Help message for the boolean argument",
+        is_deprecated: bool = False,
+    ):
         """
         Public. Boolean argument, does not require a value
         :param name: name of the argument
@@ -68,15 +76,13 @@ class BooleanArgument(BaseArgument):
 
 
 class InputArgument:
-    def __init__(self, name: str,
-                       value: str | None,
-                       founder_class: type[BaseArgument]) -> None:
+    def __init__(self, name: str, value: str | Literal[True], founder_class: type[BaseArgument]) -> None:
         self.name: str = name
-        self.value: str | None = value
+        self.value: str | Literal[True] = value
         self.founder_class: type[BaseArgument] = founder_class
-    
+
     def __str__(self) -> str:
         return f"InputArgument({self.name}={self.value})"
-       
+
     def __repr__(self) -> str:
         return f"InputArgument<name={self.name}, value={self.value}, founder_class={self.founder_class.__name__}>"

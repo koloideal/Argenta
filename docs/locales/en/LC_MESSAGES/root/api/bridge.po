@@ -1,0 +1,105 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-04 20:39+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/api/bridge.rst:4
+msgid "DataBridge"
+msgstr "DataBridge"
+
+#: ../../root/api/bridge.rst:6
+msgid ""
+"``DataBridge`` — это сущность, предоставляющая временное хранилище "
+"данных, которое существует в рамках одной сессии приложения (от запуска "
+"до выхода). Она предназначена для обмена данными между обработчиками."
+msgstr ""
+"``DataBridge`` is an entity that provides temporary data storage that "
+"exists within a single application session (from startup to exit). It is "
+"designed for data exchange between handlers."
+
+#: ../../root/api/bridge.rst:8
+msgid "Основной способ получения доступа к ``DataBridge`` — через DI."
+msgstr "The main way to access ``DataBridge`` is through DI."
+
+#: ../../root/api/bridge.rst:21
+msgid "**Практический пример: Аутентификация**"
+msgstr "**Practical Example: Authentication**"
+
+#: ../../root/api/bridge.rst:23
+msgid ""
+"Рассмотрим пример, где команда `login` сохраняет токен аутентификации, а "
+"команда `get-profile` использует его."
+msgstr ""
+"Let's consider an example where the `login` command saves an "
+"authentication token, and the `get-profile` command uses it."
+
+#: ../../root/api/bridge.rst:29
+msgid "**Как это работает:**"
+msgstr "**How it works:**"
+
+#: ../../root/api/bridge.rst:31
+msgid ""
+"При вызове обработчика ``dishka`` автоматически внедряет экземпляр "
+"``DataBridge``."
+msgstr ""
+"When calling a handler, ``dishka`` automatically injects a ``DataBridge``"
+" instance."
+
+#: ../../root/api/bridge.rst:32
+msgid ""
+"Команда ``login --username <имя>`` вызывает ``login_handler``, который "
+"через внедрённый ``data_bridge`` сохраняет токен."
+msgstr ""
+"The ``login --username <name>`` command calls ``login_handler``, which "
+"saves the token through the injected ``data_bridge``."
+
+#: ../../root/api/bridge.rst:33
+msgid ""
+"Команда ``get-profile`` вызывает ``get_profile_handler``, который так же "
+"получает ``data_bridge`` и извлекает из него токен."
+msgstr ""
+"The ``get-profile`` command calls ``get_profile_handler``, which also "
+"receives ``data_bridge`` and extracts the token from it."
+
+#: ../../root/api/bridge.rst:42
+msgid ""
+"Инициализирует хранилище. При использовании через DI вызывается "
+"автоматически."
+msgstr ""
+"Initializes the storage. When used through DI, it is called automatically."
+
+#: ../../root/api/bridge.rst:46
+msgid "Обновляет хранилище данными из словаря."
+msgstr "Updates the storage with data from a dictionary."
+
+#: ../../root/api/bridge.rst:50
+msgid "Возвращает все данные из хранилища."
+msgstr "Returns all data from the storage."
+
+#: ../../root/api/bridge.rst:54
+msgid "Возвращает значение по ключу или ``None``, если ключ не найден."
+msgstr "Returns the value by key or ``None`` if the key is not found."
+
+#: ../../root/api/bridge.rst:58
+msgid "Удаляет значение по ключу. Вызывает ``KeyError``, если ключ не найден."
+msgstr "Deletes the value by key. Raises ``KeyError`` if the key is not found."
+
+#: ../../root/api/bridge.rst:62
+msgid "Полностью очищает хранилище."
+msgstr "Completely clears the storage."
+

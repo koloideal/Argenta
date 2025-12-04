@@ -1,0 +1,150 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-02 22:27+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/api/app/dividing_lines.rst:4
+msgid "Dividing Lines"
+msgstr "Dividing Lines"
+
+#: ../../root/api/app/dividing_lines.rst:6
+msgid ""
+"Разделительные линии в ``Argenta`` используются для визуального "
+"структурирования вывода и отделения блоков информации друг от друга. "
+"Библиотека предлагает два типа линий: статическую и динамическую."
+msgstr ""
+"Dividing lines in ``Argenta`` are used for visual structuring of output and separating "
+"information blocks from each other. The library offers two types of lines: static and dynamic."
+
+#: ../../root/api/app/dividing_lines.rst:11
+msgid "``StaticDividingLine``"
+msgstr "``StaticDividingLine``"
+
+#: ../../root/api/app/dividing_lines.rst:13
+msgid ""
+"``StaticDividingLine`` создаёт разделительную линию **фиксированной** "
+"длины. Этот тип линии полезен для создания предсказуемого и "
+"унифицированного интерфейса."
+msgstr ""
+"``StaticDividingLine`` creates a dividing line of **fixed** length. This type of line "
+"is useful for creating a predictable and unified interface."
+
+#: ../../root/api/app/dividing_lines.rst:21
+msgid "Создаёт экземпляр статической разделительной линии."
+msgstr "Creates a static dividing line instance."
+
+#: ../../root/api/app/dividing_lines.rst:23
+msgid ""
+"``unit_part``: Символ для построения линии (учитывается только первый "
+"символ). По умолчанию: ``-``."
+msgstr ""
+"``unit_part``: Character for building the line (only the first character is considered). "
+"Defaults to: ``-``."
+
+#: ../../root/api/app/dividing_lines.rst:24
+msgid "``length``: Фиксированная длина линии. По умолчанию: ``25``."
+msgstr "``length``: Fixed line length. Defaults to: ``25``."
+
+#: ../../root/api/app/dividing_lines.rst:29
+msgid "``DynamicDividingLine``"
+msgstr "``DynamicDividingLine``"
+
+#: ../../root/api/app/dividing_lines.rst:31
+msgid ""
+"``DynamicDividingLine`` создаёт линию, длина которой **динамически** "
+"подстраивается под самую длинную строку в выводе команды. Это требует "
+"перехвата ``stdout``, в результате чего разделители идеально обрамляют "
+"выводимый контент."
+msgstr ""
+"``DynamicDividingLine`` creates a line whose length **dynamically** adjusts to the longest "
+"line in the command output. This requires capturing ``stdout``, resulting in dividers that "
+"perfectly frame the output content."
+
+#: ../../root/api/app/dividing_lines.rst:38
+msgid "Создаёт экземпляр динамической разделительной линии."
+msgstr "Creates a dynamic dividing line instance."
+
+#: ../../root/api/app/dividing_lines.rst:40
+msgid "``unit_part``: Символ для построения линии. По умолчанию: ``-``."
+msgstr "``unit_part``: Character for building the line. Defaults to: ``-``."
+
+#: ../../root/api/app/dividing_lines.rst:42
+msgid "Длина вычисляется автоматически и не задаётся при инициализации."
+msgstr "Length is calculated automatically and is not set during initialization."
+
+#: ../../root/api/app/dividing_lines.rst:45
+msgid ""
+"Обязательно почитайте про нюансы использования динамических линий и "
+"перехвата ``stdout`` в :ref:`этом разделе<root_redirect_stdout>`."
+msgstr ""
+"Be sure to read about the nuances of using dynamic lines and capturing ``stdout`` "
+"in :ref:`this section<root_redirect_stdout>`."
+
+#: ../../root/api/app/dividing_lines.rst:50
+msgid "Назначение и использование"
+msgstr "Purpose and Usage"
+
+#: ../../root/api/app/dividing_lines.rst:52
+msgid "Выбор между статической и динамической линией зависит от ваших задач."
+msgstr "The choice between static and dynamic lines depends on your needs."
+
+#: ../../root/api/app/dividing_lines.rst:54
+msgid "**StaticDividingLine** идеально подходит, если:"
+msgstr "**StaticDividingLine** is ideal if:"
+
+#: ../../root/api/app/dividing_lines.rst:56
+msgid "Вам нужен строгий и консистентный дизайн."
+msgstr "You need a strict and consistent design."
+
+#: ../../root/api/app/dividing_lines.rst:57
+msgid ""
+"Вы используете роутеры с отключённым перехватом ``stdout`` "
+"(``disable_redirect_stdout=True``), где динамическое вычисление длины "
+"невозможно."
+msgstr ""
+"You are using routers with disabled ``stdout`` capture (``disable_redirect_stdout=True``), "
+"where dynamic length calculation is not possible."
+
+#: ../../root/api/app/dividing_lines.rst:59
+msgid ""
+"**DynamicDividingLine** (поведение по умолчанию) — предпочтительный "
+"выбор, если:"
+msgstr "**DynamicDividingLine** (default behavior) is the preferred choice if:"
+
+#: ../../root/api/app/dividing_lines.rst:61
+msgid "Вы хотите, чтобы интерфейс был адаптивным."
+msgstr "You want the interface to be adaptive."
+
+#: ../../root/api/app/dividing_lines.rst:62
+msgid "Вывод ваших команд имеет разную длину."
+msgstr "Your command output has varying lengths."
+
+#: ../../root/api/app/dividing_lines.rst:63
+msgid ""
+"В ваших обработчиках нет интерактивных операций ввода (например, "
+"``input()``)."
+msgstr "Your handlers do not have interactive input operations (e.g., ``input()``)."
+
+#: ../../root/api/app/dividing_lines.rst:65
+msgid ""
+"Тип разделителя для всего приложения задаётся при инициализации ``App`` "
+"через параметр ``dividing_line``."
+msgstr ""
+"The divider type for the entire application is set during ``App`` initialization "
+"via the ``dividing_line`` parameter."
+

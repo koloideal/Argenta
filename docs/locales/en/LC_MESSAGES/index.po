@@ -1,0 +1,177 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-04 20:41+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../index.rst:43
+msgid "Контент:"
+msgstr "Content:"
+
+#: ../../index.rst:53
+msgid "Продвинутое использование:"
+msgstr "Advanced usage:"
+
+#: ../../index.rst:61
+msgid "Для разработчиков:"
+msgstr "For developers:"
+
+#: ../../index.rst:68
+msgid "GitHub"
+msgstr ""
+
+#: ../../index.rst:68
+msgid "PyPI"
+msgstr ""
+
+#: ../../index.rst:68
+msgid "Ссылки проекта:"
+msgstr "Project links:"
+
+#: ../../index.rst:7
+msgid "Argenta"
+msgstr ""
+
+#: ../../index.rst:10
+msgid "Что это и зачем?"
+msgstr "What is it and why?"
+
+#: ../../index.rst:12
+msgid ""
+"**Библиотека для построения модульных CLI-приложений с простым и приятным"
+" API.**"
+msgstr ""
+"**A library for building modular CLI applications with a simple and "
+"pleasant API.**"
+
+#: ../../index.rst:14
+msgid ""
+"Если у вас есть функциональность, которую вы хотите предоставить в виде "
+"CLI-приложения, Argenta поможет вам в этом. Основная цель библиотеки — "
+"дать разработчикам возможность сосредоточиться на реализации своих идей, "
+"предоставляя для этого удобные абстракции."
+msgstr ""
+"If you have functionality that you want to provide as a CLI application, "
+"Argenta will help you with that. The main goal of the library is to "
+"enable developers to focus on implementing their ideas by providing "
+"convenient abstractions."
+
+#: ../../index.rst:17
+msgid "App example"
+msgstr ""
+
+#: ../../index.rst:20
+msgid ""
+"Argenta предназначена для создания приложений, работающих в собственном "
+"контексте (scope). Это означает, что приложение запускается один раз и "
+"создаёт интерактивную сессию, похожую на Python REPL или MySQL консоль. "
+"При запуске пользователь входит в эту сессию, где ему доступна вся "
+"реализованная вами функциональность."
+msgstr ""
+"Argenta is designed for creating applications that work in their own "
+"context (scope). This means that the application starts once and creates "
+"an interactive session, similar to Python REPL or MySQL console. When "
+"launched, the user enters this session where all the functionality you've"
+" implemented is available."
+
+#: ../../index.rst:22
+msgid ""
+"Один из ключевых принципов библиотеки — цикличность. После выполнения "
+"команды пользователь остаётся в интерактивной сессии, в отличие от таких "
+"библиотек, как ``argparse``, ``click`` и ``typer``, где приложение "
+"завершается после каждой команды. Выход из сессии контролируется "
+"пользователем."
+msgstr ""
+"One of the key principles of the library is cyclicity. After executing a "
+"command, the user remains in the interactive session, "
+"unlike libraries such as ``argparse``, ``click``, "
+"and ``typer``, where the application terminates after each command. "
+"Exiting the session is controlled by the user."
+
+#: ../../index.rst:24
+msgid "**Ключевые особенности:**"
+msgstr "**Key features:**"
+
+#: ../../index.rst:26
+msgid ""
+"**Интерактивные сессии**: В отличие от традиционных CLI-инструментов, "
+"``Argenta`` создаёт циклические сессии, позволяя пользователю выполнять "
+"команды последовательно, не перезапуская приложение."
+msgstr ""
+"**Interactive sessions**: Unlike traditional CLI tools, ``Argenta`` "
+"creates cyclical sessions, allowing users to execute commands "
+"sequentially without restarting the application."
+
+#: ../../index.rst:27
+msgid ""
+"**Декларативный синтаксис**: Команды и их обработчики объявляются с "
+"помощью простых декораторов, что делает код интуитивно понятным и "
+"позволяет сосредоточиться на том, \"что\" вы хотите сделать, а не "
+"\"как\"."
+msgstr ""
+"**Declarative syntax**: Commands and their handlers are declared using "
+"simple decorators, making the code intuitive and allowing you to focus on"
+" \"what\" you want to do, not \"how\"."
+
+#: ../../index.rst:28
+msgid ""
+"**Нативный DI**: Благодаря интеграции с "
+"[dishka](https://dishka.readthedocs.io/en/stable/), вы можете легко "
+"внедрять зависимости прямо в обработчики команд, что упрощает их "
+"тестирование, позволяет избежать мутабельных глобалов и многое другое."
+msgstr ""
+"**Native DI**: Thanks to integration with `dishka "
+"<https://dishka.readthedocs.io/en/stable/>`_, you can easily inject "
+"dependencies directly into command handlers, simplifying their testing, "
+"avoiding mutable globals, and much more."
+
+#: ../../index.rst:29
+msgid ""
+"**Автоматическая валидация и парсинг**: Библиотека берёт на себя "
+"обработку флагов и аргументов командной строки, включая их парсинг, "
+"валидацию и преобразование типов."
+msgstr ""
+"**Automatic validation and parsing**: The library handles command-line "
+"flags and arguments, including their parsing, validation, and type "
+"conversion."
+
+#: ../../index.rst:30
+msgid ""
+"**Гибкая настройка**: Вы можете легко кастомизировать системные "
+"сообщения, форматирование вывода, создавать кастомные обработчики "
+"нестандартного поведения и т.д."
+msgstr ""
+"**Flexible configuration**: You can easily customize system messages, "
+"output formatting, create custom handlers for non-standard behavior, and "
+"more."
+
+#: ../../index.rst:35
+msgid "Архитектура и жизненный цикл"
+msgstr "Architecture and lifecycle"
+
+#: ../../index.rst:37
+msgid ""
+"Следующая диаграмма иллюстрирует, как компоненты Argenta взаимодействуют "
+"друг с другом, обрабатывая ввод пользователя."
+msgstr ""
+"The following diagram illustrates how Argenta components interact with "
+"each other while processing user input."
+
+#: ../../index.rst:39
+msgid "Request Lifecycle Diagram"
+msgstr ""
+

@@ -1,0 +1,195 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-02 22:27+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/error_handling.rst:4
+msgid "Обработка ошибок"
+msgstr "Error Handling"
+
+#: ../../root/error_handling.rst:6
+msgid ""
+"``Argenta`` выбрасывает исключения в пограничных случаях, связанных с "
+"пользовательским вводом. По умолчанию они обрабатываются системными "
+"обработчиками, но вы можете их переопределить. Это делается с помощью "
+"сеттеров экземпляра ``App`` вида ``.set_*_handler()``. Подробнее о каждом"
+" из них рассказано :ref:`ниже <possible_errors>`."
+msgstr ""
+"``Argenta`` throws exceptions in edge cases related to user input. By default, "
+"they are handled by system handlers, but you can override them. This is done using "
+"``App`` instance setters of the form ``.set_*_handler()``. More details about each "
+"of them are described :ref:`below <possible_errors>`."
+
+#: ../../root/error_handling.rst:10
+msgid ""
+"Ни одно исключение не остаётся необработанным, так как для каждого случая"
+" предусмотрен стандартный обработчик. Поэтому переопределение является "
+"опциональным."
+msgstr ""
+"No exception goes unhandled, as a default handler is provided for each case. "
+"Therefore, overriding is optional."
+
+#: ../../root/error_handling.rst:12 ../../root/error_handling.rst:37
+#: ../../root/error_handling.rst:61 ../../root/error_handling.rst:82
+#: ../../root/error_handling.rst:105 ../../root/error_handling.rst:126
+msgid "**Пример использования:**"
+msgstr "**Usage example:**"
+
+#: ../../root/error_handling.rst:22
+msgid "Возможные исключения и нестандартное поведение"
+msgstr "Possible Exceptions and Non-Standard Behavior"
+
+#: ../../root/error_handling.rst:25
+msgid "``UnprocessedInputFlagException``: Некорректный синтаксис флагов"
+msgstr "``UnprocessedInputFlagException``: Incorrect Flag Syntax"
+
+#: ../../root/error_handling.rst:27
+msgid ""
+"Это исключение выбрасывается, когда парсер не может обработать команду "
+"из-за некорректного синтаксиса. Чаще всего это связано с ошибкой в "
+"синтаксисе флагов. Подробнее о них можно прочитать в разделе :ref:`Flags "
+"<root_flags>`."
+msgstr ""
+"This exception is thrown when the parser cannot process a command due to incorrect "
+"syntax. Most often this is related to an error in flag syntax. You can read more "
+"about them in the :ref:`Flags <root_flags>` section."
+
+#: ../../root/error_handling.rst:29 ../../root/error_handling.rst:53
+#: ../../root/error_handling.rst:74 ../../root/error_handling.rst:97
+msgid "Стандартный обработчик выводит в консоль:"
+msgstr "The default handler outputs to the console:"
+
+#: ../../root/error_handling.rst:35
+msgid ""
+"Для переопределения используется сеттер "
+"``.set_incorrect_input_syntax_handler()``. Он принимает на вход "
+"обработчик с сигнатурой ``Callable[[str], None]``, где единственный "
+"аргумент — это строка с необработанной командой."
+msgstr ""
+"To override, use the ``.set_incorrect_input_syntax_handler()`` setter. It accepts "
+"a handler with the signature ``Callable[[str], None]``, where the only argument is "
+"a string with the unprocessed command."
+
+#: ../../root/error_handling.rst:46
+msgid "``RepeatedInputFlagsException``: Повторяющиеся флаги в команде"
+msgstr "``RepeatedInputFlagsException``: Repeated Flags in Command"
+
+#: ../../root/error_handling.rst:48
+msgid ""
+"Исключение выбрасывается, если пользователь ввёл команду с повторяющимися"
+" флагами. Два флага (:ref:`InputFlag <root_api_command_input_flag>`) "
+"считаются одинаковыми, если у них совпадают имена. Подробнее о флагах и "
+"их синтаксисе — в разделе :ref:`Flags <root_flags>`."
+msgstr ""
+"The exception is thrown if the user entered a command with repeated flags. Two "
+"flags (:ref:`InputFlag <root_api_command_input_flag>`) are considered the same if "
+"their names match. More about flags and their syntax in the :ref:`Flags "
+"<root_flags>` section."
+
+#: ../../root/error_handling.rst:51
+msgid ""
+"Сравнение на равенство у регистрируемых флагов (``Flag``) происходит "
+"иначе, подробнее в :ref:`Flag <root_flags>`."
+msgstr ""
+"Equality comparison for registered flags (``Flag``) works differently, see "
+":ref:`Flag <root_flags>` for details."
+
+#: ../../root/error_handling.rst:59
+msgid ""
+"Для переопределения используется сеттер "
+"``.set_repeated_input_flags_handler()``. Он принимает на вход обработчик "
+"с сигнатурой ``Callable[[str], None]``, где единственный аргумент — это "
+"строка с необработанной командой."
+msgstr ""
+"To override, use the ``.set_repeated_input_flags_handler()`` setter. It accepts a "
+"handler with the signature ``Callable[[str], None]``, where the only argument is a "
+"string with the unprocessed command."
+
+#: ../../root/error_handling.rst:70
+msgid "``EmptyInputCommandException``: Введена пустая команда"
+msgstr "``EmptyInputCommandException``: Empty Command Entered"
+
+#: ../../root/error_handling.rst:72
+msgid ""
+"Исключение выбрасывается, если пользователь ввёл пустую строку или "
+"строку, состоящую только из пробельных символов (``\\n``, ``\\t``, пробел"
+" и т.д.)."
+msgstr ""
+"The exception is thrown if the user entered an empty string or a string consisting "
+"only of whitespace characters (``\\n``, ``\\t``, space, etc.)."
+
+#: ../../root/error_handling.rst:80
+msgid ""
+"Для переопределения используется сеттер ``.set_empty_command_handler()``."
+" Он принимает на вход обработчик с сигнатурой ``Callable[[], None]`` (без"
+" аргументов)."
+msgstr ""
+"To override, use the ``.set_empty_command_handler()`` setter. It accepts a handler "
+"with the signature ``Callable[[], None]`` (no arguments)."
+
+#: ../../root/error_handling.rst:93
+msgid "Обработка неизвестной команды"
+msgstr "Handling Unknown Commands"
+
+#: ../../root/error_handling.rst:95
+msgid ""
+"Это поведение активируется, когда пользователь вводит команду, которая не"
+" зарегистрирована ни в одном из роутеров и не является псевдонимом "
+"(alias) для существующей команды."
+msgstr ""
+"This behavior is triggered when the user enters a command that is not registered "
+"in any of the routers and is not an alias for an existing command."
+
+#: ../../root/error_handling.rst:103
+msgid ""
+"Для переопределения используется сеттер "
+"``.set_unknown_command_handler()``. Он принимает на вход обработчик с "
+"сигнатурой ``Callable[[InputCommand], None]``, где аргумент — объект "
+":ref:`InputCommand <root_api_command_input_command>`."
+msgstr ""
+"To override, use the ``.set_unknown_command_handler()`` setter. It accepts a "
+"handler with the signature ``Callable[[InputCommand], None]``, where the argument "
+"is an :ref:`InputCommand <root_api_command_input_command>` object."
+
+#: ../../root/error_handling.rst:114
+msgid "Выход из приложения"
+msgstr "Exiting the Application"
+
+#: ../../root/error_handling.rst:116
+msgid ""
+"Это поведение активируется, когда пользователь вводит команду, помеченную"
+" как команда выхода."
+msgstr ""
+"This behavior is triggered when the user enters a command marked as an exit command."
+
+#: ../../root/error_handling.rst:118
+msgid ""
+"Стандартный обработчик выводит в консоль текст и завершает работу "
+"приложения:"
+msgstr "The default handler outputs text to the console and terminates the application:"
+
+#: ../../root/error_handling.rst:124
+msgid ""
+"Для переопределения используется сеттер ``.set_exit_command_handler()``. "
+"Он принимает на вход обработчик с сигнатурой ``Callable[[Response], "
+"None]``, где аргумент — объект :ref:`Response <root_api_response>`."
+msgstr ""
+"To override, use the ``.set_exit_command_handler()`` setter. It accepts a handler "
+"with the signature ``Callable[[Response], None]``, where the argument is a "
+":ref:`Response <root_api_response>` object."
+

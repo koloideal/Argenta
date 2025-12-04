@@ -1,0 +1,143 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-04 20:39+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/testing.rst:2
+msgid "Тестирование"
+msgstr "Testing"
+
+#: ../../root/testing.rst:4
+msgid ""
+"В этом разделе описаны практики тестирования приложений на основе "
+"``Argenta``. Примеры основаны на фактическом публичном API."
+msgstr ""
+"This section describes testing practices for applications based on "
+"``Argenta``. Examples are based on the actual public API."
+
+#: ../../root/testing.rst:7
+msgid "Модульное тестирование обработчиков"
+msgstr "Unit Testing Handlers"
+
+#: ../../root/testing.rst:9
+msgid ""
+"Обработчики в ``Argenta`` — обычные функции. Их удобно тестировать как "
+"чистые функции, не поднимая весь цикл приложения. Рекомендуются "
+"``unittest`` или ``pytest``."
+msgstr ""
+"Handlers in ``Argenta`` are regular functions. They are convenient to "
+"test as pure functions without starting the entire application cycle. "
+"``unittest`` or ``pytest`` are recommended."
+
+#: ../../root/testing.rst:11 ../../root/testing.rst:24
+#: ../../root/testing.rst:37 ../../root/testing.rst:55
+msgid "**Пример использования:**"
+msgstr "**Usage example:**"
+
+#: ../../root/testing.rst:20
+msgid "Тестирование с внедрением зависимостей (DI)"
+msgstr "Testing with Dependency Injection (DI)"
+
+#: ../../root/testing.rst:22
+msgid ""
+"Если обработчику нужны зависимости, используйте ``dishka`` и интеграцию "
+"``Argenta``:"
+msgstr ""
+"If a handler needs dependencies, use ``dishka`` and ``Argenta`` "
+"integration:"
+
+#: ../../root/testing.rst:33
+msgid "Интеграционное тестирование приложения"
+msgstr "Integration Testing of the Application"
+
+#: ../../root/testing.rst:35
+msgid ""
+"Для более высокого уровня тестов собирайте ``App`` и ``Router`` и "
+"вызывайте обработчики через парсинг команд, обходя бесконечный цикл "
+"ввода. Это даёт близкое к реальности поведение без необходимости "
+"симулировать ``stdin``."
+msgstr ""
+"For higher-level tests, assemble ``App`` and ``Router`` and call handlers"
+" through command parsing, bypassing the infinite input loop. This "
+"provides behavior close to reality without the need to simulate "
+"``stdin``."
+
+#: ../../root/testing.rst:46
+msgid "E2E-тестирование цикла"
+msgstr "E2E Testing of the Loop"
+
+#: ../../root/testing.rst:48
+msgid ""
+"Полный запуск цикла ``start_polling`` можно покрывать через подпроцесс с "
+"передачей строк в ``stdin``. Это тяжелее и обычно не требуется. Если всё "
+"же необходимо — пример ниже."
+msgstr ""
+"Full execution of the ``start_polling`` loop can be covered through a "
+"subprocess with passing strings to ``stdin``. This is heavier and usually"
+" not required. If still necessary, an example is below."
+
+#: ../../root/testing.rst:51
+msgid ""
+"**Важно:** Обязательно передавайте строковый триггер команды выхода "
+"последним элементом в списке ``side_effects`` при патче ``input``."
+msgstr ""
+"**Important:** Always pass the exit command string trigger as the last "
+"element in the ``side_effects`` list when patching ``input``."
+
+#: ../../root/testing.rst:53
+msgid ""
+"Иначе тестируемое приложение будет ожидать ввода следующей команды и не "
+"сможет корректно завершиться."
+msgstr ""
+"Otherwise, the application under test will wait for the next command "
+"input and will not be able to terminate correctly."
+
+#: ../../root/testing.rst:64
+msgid "Советы по тестированию"
+msgstr "Testing Tips"
+
+#: ../../root/testing.rst:66
+msgid "**Изолируйте тесты**: Каждый тест должен быть независимым от других."
+msgstr "**Isolate tests**: Each test should be independent of others."
+
+#: ../../root/testing.rst:67
+msgid ""
+"**Моки для внешних интеграций**: БД, HTTP-клиенты и т.п. подменяйте "
+"заглушками и провайдерами ``dishka``."
+msgstr ""
+"**Mocks for external integrations**: Replace databases, HTTP clients, "
+"etc. with stubs and ``dishka`` providers."
+
+#: ../../root/testing.rst:68
+msgid ""
+"**Покрывайте ошибочные сценарии**: Некорректные флаги, неизвестные "
+"команды, пустой ввод."
+msgstr "**Cover error scenarios**: Incorrect flags, unknown commands, empty input."
+
+#: ../../root/testing.rst:69
+msgid ""
+"**Минимизируйте зависимость от форматирования**: Сравнивайте ключевые "
+"фрагменты вывода, а не весь блок целиком."
+msgstr ""
+"**Minimize formatting dependency**: Compare key output fragments, not the"
+" entire block."
+
+#: ../../root/testing.rst:70
+msgid "**Измеряйте покрытие**: Используйте ``pytest-cov``."
+msgstr "**Measure coverage**: Use ``pytest-cov``."
+
