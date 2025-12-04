@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-02 22:27+0300\n"
+"POT-Creation-Date: 2025-12-04 20:39+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -29,9 +29,10 @@ msgid ""
 "информацию о распознанном флаге: его имя, префикс, значение и статус "
 "валидации."
 msgstr ""
-"The ``InputFlag`` object represents a flag entered by the user. It is created "
-"as a result of processing user input and contains information about the recognized "
-"flag: its name, prefix, value, and validation status."
+"The ``InputFlag`` object represents a flag entered by the user. It is "
+"created as a result of processing user input and contains information "
+"about the recognized flag: its name, prefix, value, and validation "
+"status."
 
 #: ../../root/api/command/input_flag.rst:10
 msgid ""
@@ -70,8 +71,12 @@ msgid "Префикс флага: ``-``, ``--`` или ``---``."
 msgstr "Flag prefix: ``-``, ``--``, or ``---``."
 
 #: ../../root/api/command/input_flag.rst:33
-msgid "Значение, переданное с флагом. Может быть `None` для флагов без значений."
-msgstr "Value passed with the flag. Can be `None` for flags without values."
+msgid ""
+"Значение, переданное с флагом. Может быть ``''`` (пустой строкой) для "
+"флагов без значений."
+msgstr ""
+"Value passed with the flag. Can be ``''`` (empty string) for flags "
+"without values."
 
 #: ../../root/api/command/input_flag.rst:38
 msgid ""
@@ -87,11 +92,13 @@ msgstr "Properties"
 
 #: ../../root/api/command/input_flag.rst:46
 msgid "string_entity"
-msgstr ""
+msgstr "string_entity"
 
 #: ../../root/api/command/input_flag.rst:54
 msgid "Возвращает строковое представление флага в формате ``prefix + name``."
-msgstr "Returns the string representation of the flag in the format ``prefix + name``."
+msgstr ""
+"Returns the string representation of the flag in the format ``prefix + "
+"name``."
 
 #: ../../root/api/command/input_flag.rst
 msgid "return"
@@ -107,7 +114,7 @@ msgstr "Magic Methods"
 
 #: ../../root/api/command/input_flag.rst:64
 msgid "__str__"
-msgstr ""
+msgstr "__str__"
 
 #: ../../root/api/command/input_flag.rst:71
 msgid "Возвращает строковое представление флага вместе с его значением."
@@ -124,7 +131,7 @@ msgstr "**Usage example:**"
 
 #: ../../root/api/command/input_flag.rst:84
 msgid "__repr__"
-msgstr ""
+msgstr "__repr__"
 
 #: ../../root/api/command/input_flag.rst:91
 msgid "Возвращает отладочное представление объекта."
@@ -140,7 +147,7 @@ msgstr ""
 
 #: ../../root/api/command/input_flag.rst:104
 msgid "__eq__"
-msgstr ""
+msgstr "__eq__"
 
 #: ../../root/api/command/input_flag.rst:111
 msgid "Сравнивает два введённых флага на равенство по имени."

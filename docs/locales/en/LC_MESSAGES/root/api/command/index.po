@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-02 22:27+0300\n"
+"POT-Creation-Date: 2025-12-04 20:39+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: ../../root/api/command/index.rst:4
 msgid "Command"
-msgstr ""
+msgstr "Command"
 
 #: ../../root/api/command/index.rst:6
 msgid ""
@@ -28,16 +28,17 @@ msgid ""
 "команда связывает хэндлер с триггером, введя который он будет вызван для "
 "обработки."
 msgstr ""
-"``Command`` is the basic unit of functionality in an application. Each command "
-"links a handler to a trigger, which when entered will invoke it for processing."
+"``Command`` is the basic unit of functionality in an application. Each "
+"command links a handler to a trigger, which when entered will invoke it "
+"for processing."
 
 #: ../../root/api/command/index.rst:8
 msgid ""
 "``Command`` инкапсулирует всю информацию о команде: её триггер (ключевое "
 "слово для вызова), описание, набор флагов и список псевдонимов."
 msgstr ""
-"``Command`` encapsulates all information about a command: its trigger (keyword for invocation), "
-"description, set of flags, and list of aliases."
+"``Command`` encapsulates all information about a command: its trigger "
+"(keyword for invocation), description, set of flags, and list of aliases."
 
 #: ../../root/api/command/index.rst:13
 msgid "Инициализация"
@@ -68,8 +69,8 @@ msgid ""
 "``flags``: Набор флагов для настройки поведения. Может быть одиночным "
 "объектом ``Flag`` или коллекцией ``Flags``."
 msgstr ""
-"``flags``: Set of flags for configuring behavior. Can be a single ``Flag`` "
-"object or a ``Flags`` collection."
+"``flags``: Set of flags for configuring behavior. Can be a single "
+"``Flag`` object or a ``Flags`` collection."
 
 #: ../../root/api/command/index.rst:28
 msgid "``aliases``: Список строковых псевдонимов для основного триггера."
@@ -84,14 +85,16 @@ msgid ""
 "Основной триггер команды. Используется для её идентификации при обработке"
 " пользовательского ввода."
 msgstr ""
-"The main command trigger. Used for its identification when processing user input."
+"The main command trigger. Used for its identification when processing "
+"user input."
 
 #: ../../root/api/command/index.rst:38
 msgid ""
 "Текстовое описание команды. Если не передано, используется значение по "
 "умолчанию."
 msgstr ""
-"Text description of the command. If not provided, the default value is used."
+"Text description of the command. If not provided, the default value is "
+"used."
 
 #: ../../root/api/command/index.rst:42
 msgid ""
@@ -99,8 +102,9 @@ msgid ""
 "передан ``Flag``, то автоматически конвертируется из одиночного в "
 "коллекцию при инициализации."
 msgstr ""
-"A ``Flags`` object containing all registered flags. If a ``Flag`` was passed, "
-"it is automatically converted from a single flag to a collection during initialization."
+"A ``Flags`` object containing all registered flags. If a ``Flag`` was "
+"passed, it is automatically converted from a single flag to a collection "
+"during initialization."
 
 #: ../../root/api/command/index.rst:46
 msgid "Список строковых псевдонимов. Пуст, если псевдонимы не заданы."
@@ -113,9 +117,10 @@ msgstr "**Usage example:**"
 #: ../../root/api/command/index.rst:54
 msgid ""
 "Подробнее про флаги: :ref:`Flags <root_api_command_flags>` и :ref:`Флаги "
-"вводимых команд <root_flags>`."
+"команд <root_flags>`."
 msgstr ""
-"More about flags: :ref:`Flags <root_api_command_flags>` and :ref:`Input command flags <root_flags>`."
+"More about flags: :ref:`Flags <root_api_command_flags>` and :ref:`Command "
+"flags <root_flags>`."
 
 #: ../../root/api/command/index.rst:59
 msgid "Регистрация команд"
@@ -142,8 +147,8 @@ msgid ""
 "Псевдонимы позволяют вызывать один и тот же обработчик разными "
 "триггерами, сохраняя флаги и описание команды."
 msgstr ""
-"Aliases allow invoking the same handler with different triggers while preserving "
-"the command's flags and description."
+"Aliases allow invoking the same handler with different triggers while "
+"preserving the command's flags and description."
 
 #: ../../root/api/command/index.rst:80
 msgid "**Пример с псевдонимами:**"
@@ -168,16 +173,18 @@ msgid ""
 "обработке пользовательского ввода. Прямая работа с ним возможна при "
 "создании пользовательского обработчика для неизвестных команд."
 msgstr ""
-"``InputCommand`` represents a processed command entered by the user. This internal "
-"class is created automatically when processing user input. Direct work with it is "
-"possible when creating a custom handler for unknown commands."
+"``InputCommand`` represents a processed command entered by the user. This"
+" internal class is created automatically when processing user input. "
+"Direct work with it is possible when creating a custom handler for "
+"unknown commands."
 
 #: ../../root/api/command/index.rst:106
 msgid ""
 "Подробнее о пользовательских обработчиках исключений см. :ref:`здесь "
 "<root_error_handling_unknown_command>`."
 msgstr ""
-"For more details on custom exception handlers, see :ref:`here <root_error_handling_unknown_command>`."
+"For more details on custom exception handlers, see :ref:`here "
+"<root_error_handling_unknown_command>`."
 
 #: ../../root/api/command/index.rst:113
 msgid "Строковый триггер, введённый пользователем."
