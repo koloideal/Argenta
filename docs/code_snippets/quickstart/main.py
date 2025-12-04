@@ -1,5 +1,5 @@
 # main.py
-from routers import router
+from .routers import router
 
 from argenta import App, Orchestrator
 
