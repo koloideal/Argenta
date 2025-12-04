@@ -9,7 +9,7 @@ Argenta is the **"Simplest"**, **"Most Modular"**, and **"Most Elegant"** way to
 
 ---
 
-![preview](https://i.ibb.co/tp9KmcZV/2025-12-04-172123.png)
+![preview](https://i.ibb.co/fzWcfgFq/2025-12-04-173045.png)
 
 ```python
 >>> from argenta import Router, Command, Response

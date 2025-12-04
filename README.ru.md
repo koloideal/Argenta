@@ -9,7 +9,7 @@ Argenta — это **"Самый простой"**, **"Самый модульн
 
 ---
 
-![preview](https://i.ibb.co/tp9KmcZV/2025-12-04-172123.png)
+![preview](https://i.ibb.co/fzWcfgFq/2025-12-04-173045.png)
 
 ```python
 >>> from argenta import Router, Command, Response
