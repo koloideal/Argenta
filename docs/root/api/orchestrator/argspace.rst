@@ -85,7 +85,7 @@ InputArgument
 .. literalinclude:: ../../../code_snippets/argspace/snippet.py
    :linenos:
    
-Доступ к аргументам из обработчиков осуществляется с помощью ``di``. Подробнее см. :ref:`здесь <root_dependency_injection>`.
+Доступ к аргументам из обработчиков осуществляется с помощью DI. Подробнее см. :ref:`здесь <root_dependency_injection>`.
 
 **Пример использования:**
 
