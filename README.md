@@ -9,7 +9,7 @@ Argenta is the **"Simplest"**, **"Most Modular"**, and **"Most Elegant"** way to
 
 ---
 
-![preview](https://i.ibb.co/fzWcfgFq/2025-12-04-173045.png)
+![preview](https://i.ibb.co/whkMfHw5/a-minimalist-logo-design-featuring-the-t-t-GXhfz-NFRwi-k-ROq-NMd-LWA-R7-6ru-YSh-G0kz-LKr5t-ZQ.jpg)
 
 **Argenta** allows you to build interactive CLI applications incredibly easily. There's no need to manually parse complex command structures or manage state transitions — just use routers and commands!
 
