@@ -1,5 +1,6 @@
 from argparse import Namespace
-from unittest.mock import MagicMock, call
+import sys
+from unittest.mock import call
 
 import pytest
 
@@ -164,6 +165,7 @@ class TestArgParser:
         assert isinstance(parser.parsed_argspace, ArgSpace)
         assert parser.parsed_argspace.all_arguments == []
 
+    @pytest.mark.skipif(sys.version_info < (3, 13), reason="requires python3.13 or higher")
     def test_register_args(self, mocker, value_arg: ValueArgument, bool_arg: BooleanArgument):
         """Tests that arguments are correctly registered with the underlying ArgumentParser."""
         mock_add_argument = mocker.patch("argparse.ArgumentParser.add_argument")
@@ -190,8 +192,34 @@ class TestArgParser:
             )
         ]
         mock_add_argument.assert_has_calls(expected_calls, any_order=True)
+        
+    @pytest.mark.skipif(sys.version_info > (3, 12), reason='for more latest python version has been other test')
+    def test_register_args(self, mocker, value_arg: ValueArgument, bool_arg: BooleanArgument):
+        """Tests that arguments are correctly registered with the underlying ArgumentParser."""
+        mock_add_argument = mocker.patch("argparse.ArgumentParser.add_argument")
 
-    def test_parse_args_populates_argspace(self, mocker, processed_args: list):
+        parser = ArgParser(processed_args=[value_arg, bool_arg])
+
+        expected_calls = [
+            # Call for the ValueArgument
+            call(
+                value_arg.string_entity,
+                action=value_arg.action,
+                help=value_arg.help,
+                default=value_arg.default,
+                choices=value_arg.possible_values,
+                required=value_arg.is_required
+            ),
+            # Call for the BooleanArgument
+            call(
+                bool_arg.string_entity,
+                action=bool_arg.action,
+                help=bool_arg.help
+            )
+        ]
+        mock_add_argument.assert_has_calls(expected_calls, any_order=True)
+
+    def test_parse_args_populates_argspace(self, mocker, processed_args: list[ValueArgument | BooleanArgument]):
         """Tests that _parse_args correctly calls the parser and populates the ArgSpace."""
         # 1. Mock the return value of the internal argparse instance
         mock_namespace = Namespace(config='config.json', debug=True)

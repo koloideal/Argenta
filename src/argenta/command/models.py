@@ -1,8 +1,7 @@
 __all__ = ["Command", "InputCommand"]
 
 import shlex
-from typing import Never, Self, cast
-from typing_extensions import Literal
+from typing import Never, Self, cast, Literal
 
 from argenta.command.exceptions import (
     EmptyInputCommandException,

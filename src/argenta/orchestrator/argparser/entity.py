@@ -3,6 +3,7 @@ __all__ = [
     "ArgParser",
 ]
 
+import sys
 from argparse import ArgumentParser, Namespace
 from typing import Never, Self
 
@@ -23,20 +24,20 @@ class ArgSpace:
             BooleanArgument: [],
             ValueArgument: []
         }
-        
+
         self._setup_getters()
 
     @classmethod
     def from_namespace(
-        cls, 
-        namespace: Namespace, 
+        cls,
+        namespace: Namespace,
         processed_args: list[ValueArgument | BooleanArgument]
     ) -> Self:
         name_type_paired_processed_args: dict[str, type[BaseArgument]] = {
             arg.name: type(arg) for arg in processed_args
         }
         parsed_arguments: list[InputArgument] = []
-        
+
         for name, value in vars(namespace).items():
             parsed_arguments.append(
                 InputArgument(
@@ -47,7 +48,7 @@ class ArgSpace:
             )
 
         return cls(parsed_arguments)
-        
+
     def _setup_getters(self) -> None:
         if not self.all_arguments:
             return
@@ -94,21 +95,40 @@ class ArgParser:
         )
 
     def _register_args(self, processed_args: list[ValueArgument | BooleanArgument]) -> None:
-        for arg in processed_args:
-            if isinstance(arg, BooleanArgument):
-                _ = self._core.add_argument(
-                    arg.string_entity,
-                    action=arg.action, 
-                    help=arg.help, 
-                    deprecated=arg.is_deprecated
-                )
-            else:
-                _ = self._core.add_argument(
-                    arg.string_entity,
-                    action=arg.action,
-                    help=arg.help,
-                    default=arg.default,
-                    choices=arg.possible_values,
-                    required=arg.is_required,
-                    deprecated=arg.is_deprecated,
-                )
+        if sys.version_info >= (3, 13):
+            for arg in processed_args:
+                if isinstance(arg, BooleanArgument):
+                    _ = self._core.add_argument(
+                        arg.string_entity,
+                        action=arg.action,
+                        help=arg.help,
+                        deprecated=arg.is_deprecated
+                    )
+                else:
+                    _ = self._core.add_argument(
+                        arg.string_entity,
+                        action=arg.action,
+                        help=arg.help,
+                        default=arg.default,
+                        choices=arg.possible_values,
+                        required=arg.is_required,
+                        deprecated=arg.is_deprecated,
+                    )
+        else:
+            for arg in processed_args:
+                if isinstance(arg, BooleanArgument):
+                    _ = self._core.add_argument(
+                        arg.string_entity,
+                        action=arg.action,
+                        help=arg.help,
+                    )
+                else:
+                    _ = self._core.add_argument(
+                        arg.string_entity,
+                        action=arg.action,
+                        help=arg.help,
+                        default=arg.default,
+                        choices=arg.possible_values,
+                        required=arg.is_required
+                    )
+                
