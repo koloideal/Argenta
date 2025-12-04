@@ -1,45 +1,96 @@
-# Argenta
+**Argenta** is a simple, yet elegant, CLI framework for building modular command-line applications. It provides a clean and intuitive way to create context-aware CLI tools with isolated command scopes.
 
-### Library for creating modular CLI applications
+Argenta is the **"Simplest"**, **"Most Modular"**, and **"Most Elegant"** way to build interactive CLI applications in Python. Production Ready!
 
-#### RU - [README.ru.md](https://github.com/koloideal/Argenta/blob/main/README.ru.md) • DE - [README.de.md](https://github.com/koloideal/Argenta/blob/main/README.de.md)
-
----
-
-Argenta allows you to encapsulate CLI functionality in isolated, abstracted environments. Eg: you are creating a utility similar to the Metasploit Framework, where the user first logs into a specific scope (for example, selects a module to scan), and then gets access to a set of commands specific only to that context. Argenta provides a simple and concise way to build such an architecture.
+📖 **Read the full documentation:** [argenta-docs.vercel.app](https://argenta-docs.vercel.app)<br>
+🌍 **Other languages:** [RU](https://github.com/koloideal/Argenta/blob/main/README.ru.md)
 
 ---
 
-![preview](https://github.com/koloideal/Argenta/blob/main/imgs/mock_app_preview4.png?raw=True)  
+![preview](https://github.com/koloideal/Argenta/blob/main/imgs/mock_app_preview4.png?raw=True)
 
----
-
-# Installing
-```bash
-pip install argenta
+```python
+>>> from argenta import Router, Command, Response
+>>>
+>>> router = Router()
+>>>
+>>> @router.command(Command("hello"))
+... def handler(response: Response):
+...     print("Hello, world!")
+>>>
+>>> from argenta import App, Orchestrator
+>>>
+>>> app = App()
+>>> app.include_router(router)
+>>> orchestrator = Orchestrator()
+>>> orchestrator.start_polling(app)
 ```
-or
-```bash
-poetry add argenta
+
+Argenta allows you to build interactive CLI applications extremely easily. There's no need to manually parse complex command structures or manage state transitions — just use routers and commands!
+
+## ✨ Installing Argenta and Supported Versions
+
+Argenta is available on PyPI:
+
+```console
+$ python -m pip install argenta
 ```
 
----
+or using Poetry:
 
-# Quick start
+```console
+$ poetry add argenta
+```
 
-An example of a simple application
+Argenta officially supports Python 3.7+.
+
+## 🚀 Supported Features & Best Practices
+
+Argenta is ready for the demands of building scalable, robust and maintainable CLI applications.
+
+- Context-Aware Command Routing
+- Isolated Command Scopes
+- Modular Router Architecture
+- Clean Decorator-Based API
+- Response Object Pattern
+- Command Orchestration
+- Interactive Polling Mode
+- Fully Type-Annotated
+- Easy to Test
+- Extensible
+
+Need something more? Create an issue, we listen.
+
+## 📝 Why did we create this?
+
+Building complex CLI applications often requires managing different contexts and command scopes. For example, when creating a utility similar to the Metasploit Framework, users need to enter specific scopes (like selecting a scanning module) and then access commands specific only to that context.
+
+Traditional CLI frameworks don't provide an elegant way to handle this kind of modular, context-aware architecture. Argenta was built to solve this problem by providing a simple and concise way to encapsulate CLI functionality in isolated, abstracted environments.
+
+We believe that building CLI applications should be as pleasant as building web applications with modern frameworks. Argenta brings the router pattern and clean separation of concerns to the CLI world.
+
+## 🚀 Quick Start
+
+Here's a simple example to get you started:
+
 ```python
 # routers.py
 from argenta.router import Router
 from argenta.command import Command
 from argenta.response import Response
 
-
 router = Router()
 
 @router.command(Command("hello"))
 def handler(response: Response):
+    """A simple hello world command"""
     print("Hello, world!")
+
+@router.command(Command("greet"))
+def greet_handler(response: Response):
+    """Greet a user by name"""
+    name = response.args.get("name", "stranger")
+    print(f"Hello, {name}!")
 ```
 
 ```python
@@ -48,26 +99,36 @@ from argenta.app import App
 from argenta.orchestrator import Orchestrator
 from routers import router
 
-app: App = App()
-orchestrator: Orchestrator = Orchestrator()
-
+app = App()
+orchestrator = Orchestrator()
 
 def main() -> None:
+    # Include your routers
     app.include_router(router)
+    
+    # Start the interactive CLI
     orchestrator.start_polling(app)
-
 
 if __name__ == '__main__':
     main()
 ```
 
+That's it! You now have a fully functional interactive CLI application with modular command routing.
+
+## 🔮 Features in Development
+
+- Full autocomplete support on Linux
+- Enhanced context switching
+- Built-in command history
+- Plugin system for extensions
+
+## 📚 Documentation
+
+Full documentation is available at [argenta-docs.vercel.app](https://argenta-docs.vercel.app)
+
 ---
 
-# Features in development
-
-- Full support for autocompleter on Linux
-
-## Full [docs](https://argenta-docs.vercel.app) | MIT 2025 kolo | made by [kolo](https://t.me/kolo_id)
+MIT 2025 kolo | made by [kolo](https://t.me/kolo_id)
 
 
 
