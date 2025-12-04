@@ -48,7 +48,7 @@ class ArgSpace:
 
         return cls(parsed_arguments)
         
-    def _setup_getters(self):
+    def _setup_getters(self) -> None:
         if not self.all_arguments:
             return
         for input_arg in self.all_arguments:

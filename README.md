@@ -35,7 +35,7 @@ Argenta is ready for the demands of building scalable, robust and maintainable C
 
 -   **Interactive Sessions**: Unlike traditional CLI tools, ``Argenta`` creates cyclic sessions, allowing users to execute commands sequentially without restarting the application.
 -   **Declarative Syntax**: Commands and their handlers are declared using simple decorators, making the code intuitive and allowing you to focus on "what" you want to do, not "how".
--   **Native DI**: Thanks to integration with `dishka <https://dishka.readthedocs.io/en/stable/>`_, you can easily inject dependencies directly into command handlers, simplifying testing, avoiding mutable globals, and much more.
+-   **Native DI**: Thanks to integration with [dishka](https://dishka.readthedocs.io/en/stable/), you can easily inject dependencies directly into command handlers, simplifying testing, avoiding mutable globals, and much more.
 -   **Automatic Validation and Parsing**: The library handles command-line flags and arguments processing, including parsing, validation, and type conversion.
 -   **Flexible Configuration**: You can easily customize system messages, output formatting, create custom handlers for non-standard behavior, and more.
 

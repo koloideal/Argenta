@@ -50,7 +50,10 @@ class Flag:
         if isinstance(self.possible_values, Pattern):
             return isinstance(input_flag_value, str) and bool(self.possible_values.match(input_flag_value))
 
-        return input_flag_value in self.possible_values
+        if isinstance(self.possible_values, list):
+            return input_flag_value in self.possible_values
+            
+        return False
 
     @property
     def string_entity(self) -> str:

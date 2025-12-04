@@ -51,7 +51,7 @@ Command
    :linenos:
    
 .. seealso ::
-   Подробнее про флаги: :ref:`Flags <root_api_command_flags>` и :ref:`Флаги вводимых команд <root_flags>`.
+   Подробнее про флаги: :ref:`Flags <root_api_command_flags>` и :ref:`Флаги команд <root_flags>`.
 
 -----
 
