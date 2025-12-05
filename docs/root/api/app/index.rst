@@ -30,7 +30,7 @@ App
                 system_router_title: str | None = "System points:", 
                 ignore_command_register: bool = True, 
                 dividing_line: AVAILABLE_DIVIDING_LINES = DEFAULT_DIVIDING_LINE, 
-                repeat_command_groups_printing: bool = True, 
+                repeat_command_groups_printing: bool = False, 
                 override_system_messages: bool = False, 
                 autocompleter: AutoCompleter = DEFAULT_AUTOCOMPLETER, 
                 print_func: Printer = DEFAULT_PRINT_FUNC) -> None

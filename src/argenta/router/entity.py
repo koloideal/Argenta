@@ -58,11 +58,11 @@ class Router:
 
         self._validate_command(redefined_command)
     
-        if overlapping := (self.aliases | self.triggers) & command.aliases:
+        if overlapping := (self.aliases | self.triggers) & redefined_command.aliases:
             Console().print(f"\n[b red]WARNING:[/b red] Overlapping trigger or alias: [b blue]{overlapping}[/b blue]")
         
-        self.aliases.update(command.aliases)
-        self.triggers.add(command.trigger)
+        self.aliases.update(redefined_command.aliases)
+        self.triggers.add(redefined_command.trigger)
 
         def decorator(func: HandlerFunc) -> HandlerFunc:
             _validate_func_args(func)
