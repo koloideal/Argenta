@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-04 20:39+0300\n"
+"POT-Creation-Date: 2025-12-05 10:01+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -40,21 +40,29 @@ msgstr ""
 
 #: ../../root/quickstart.rst:9
 msgid ""
+"**Пример средней сложности**: приложение \"Калькулятор\" с использованием"
+" и настройкой флагов."
+msgstr ""
+"**Medium-complexity example**: the Calculator app using"
+" and setting flags."
+
+#: ../../root/quickstart.rst:10
+msgid ""
 "**Более сложный пример**: полнофункциональное приложение «Менеджер задач»"
 " с внедрением зависимостей и бизнес-логикой."
 msgstr ""
 "**More complex example**: a full-featured \"Task Manager\" application "
 "with dependency injection and business logic."
 
-#: ../../root/quickstart.rst:12
+#: ../../root/quickstart.rst:13
 msgid "Простой пример"
 msgstr "Simple Example"
 
-#: ../../root/quickstart.rst:14 ../../root/quickstart.rst:74
+#: ../../root/quickstart.rst:15 ../../root/quickstart.rst:75
 msgid "**Установка**"
 msgstr "**Installation**"
 
-#: ../../root/quickstart.rst:20
+#: ../../root/quickstart.rst:21
 msgid ""
 "Этот пример демонстрирует абсолютный минимум, необходимый для создания и "
 "запуска приложения. Вы можете скопировать этот код, запустить его и сразу"
@@ -64,27 +72,27 @@ msgstr ""
 " an application. You can copy this code, run it, and immediately see the "
 "result."
 
-#: ../../root/quickstart.rst:26
+#: ../../root/quickstart.rst:27
 msgid "**Запуск**"
 msgstr "**Running**"
 
-#: ../../root/quickstart.rst:28
+#: ../../root/quickstart.rst:29
 msgid "Сохраните код в файл (например, ``main.py``) и запустите:"
 msgstr "Save the code to a file (for example, ``main.py``) and run:"
 
-#: ../../root/quickstart.rst:34 ../../root/quickstart.rst:112
+#: ../../root/quickstart.rst:35 ../../root/quickstart.rst:113
 msgid "**Результат**"
 msgstr "**Result**"
 
-#: ../../root/quickstart.rst:36
+#: ../../root/quickstart.rst:37
 msgid "Simple App Example"
 msgstr "Simple App Example"
 
-#: ../../root/quickstart.rst:42
+#: ../../root/quickstart.rst:43
 msgid "Промежуточный пример: Калькулятор с флагами"
 msgstr "Intermediate Example: Calculator with Flags"
 
-#: ../../root/quickstart.rst:44
+#: ../../root/quickstart.rst:45
 msgid ""
 "Прежде чем перейти к сложному примеру с DI, рассмотрим промежуточный "
 "вариант — калькулятор, который использует флаги для управления "
@@ -93,19 +101,19 @@ msgstr ""
 "Before moving to a complex example with DI, let's consider an "
 "intermediate option — a calculator that uses flags to control behavior."
 
-#: ../../root/quickstart.rst:50
+#: ../../root/quickstart.rst:51
 msgid "**Запуск:**"
 msgstr "**Running:**"
 
-#: ../../root/quickstart.rst:52
+#: ../../root/quickstart.rst:53
 msgid "Сохраните код в файл ``calculator.py`` и запустите:"
 msgstr "Save the code to a file ``calculator.py`` and run:"
 
-#: ../../root/quickstart.rst:58
+#: ../../root/quickstart.rst:59
 msgid "**Использование:**"
 msgstr "**Usage:**"
 
-#: ../../root/quickstart.rst:65
+#: ../../root/quickstart.rst:66
 msgid ""
 "Этот пример показывает, как работать с флагами без использования DI. "
 "Теперь перейдём к более сложному примеру."
@@ -113,11 +121,11 @@ msgstr ""
 "This example shows how to work with flags without using DI. Now let's "
 "move on to a more complex example."
 
-#: ../../root/quickstart.rst:70
+#: ../../root/quickstart.rst:71
 msgid "Сложный пример: Менеджер задач с DI"
 msgstr "Complex Example: Task Manager with DI"
 
-#: ../../root/quickstart.rst:72
+#: ../../root/quickstart.rst:73
 msgid ""
 "В этом руководстве мы создадим полнофункциональное CLI-приложение "
 "«Менеджер задач», которое продемонстрирует работу с внедрением "
@@ -126,19 +134,19 @@ msgstr ""
 "In this guide, we will create a full-featured CLI application \"Task "
 "Manager\" that will demonstrate working with dependency injection."
 
-#: ../../root/quickstart.rst:80
+#: ../../root/quickstart.rst:81
 msgid "**Определение моделей данных и репозитория**"
 msgstr "**Defining Data Models and Repository**"
 
-#: ../../root/quickstart.rst:82
+#: ../../root/quickstart.rst:83
 msgid "Сначала определим модели данных для задачи и репозиторий для их хранения."
 msgstr "First, let's define data models for tasks and a repository to store them."
 
-#: ../../root/quickstart.rst:88
+#: ../../root/quickstart.rst:89
 msgid "**Создание провайдера для DI**"
 msgstr "**Creating a Provider for DI**"
 
-#: ../../root/quickstart.rst:90
+#: ../../root/quickstart.rst:91
 msgid ""
 "Чтобы Argenta могла внедрять ``TaskRepository`` в наши обработчики, мы "
 "создадим провайдер для ``dishka``."
@@ -146,11 +154,11 @@ msgstr ""
 "To allow Argenta to inject ``TaskRepository`` into our handlers, we will "
 "create a provider for ``dishka``."
 
-#: ../../root/quickstart.rst:96
+#: ../../root/quickstart.rst:97
 msgid "**Создание обработчиков команд**"
 msgstr "**Creating Command Handlers**"
 
-#: ../../root/quickstart.rst:98
+#: ../../root/quickstart.rst:99
 msgid ""
 "Теперь создадим обработчики для команд ``add-task`` и ``list-tasks``. "
 "Обратите внимание, как мы используем флаги и внедряем ``TaskRepository``."
@@ -158,11 +166,11 @@ msgstr ""
 "Now let's create handlers for the ``add-task`` and ``list-tasks`` "
 "commands. Notice how we use flags and inject ``TaskRepository``."
 
-#: ../../root/quickstart.rst:104
+#: ../../root/quickstart.rst:105
 msgid "**Сборка и запуск приложения**"
 msgstr "**Building and Running the Application**"
 
-#: ../../root/quickstart.rst:106
+#: ../../root/quickstart.rst:107
 msgid ""
 "Наконец, соберем все вместе: создадим экземпляр ``App``, подключим роутер"
 " и провайдер, а затем запустим приложение."
@@ -170,13 +178,13 @@ msgstr ""
 "Finally, let's put it all together: create an ``App`` instance, connect "
 "the router and provider, and then run the application."
 
-#: ../../root/quickstart.rst:114
+#: ../../root/quickstart.rst:115
 msgid ""
 "Теперь вы можете запустить ``main.py`` и взаимодействовать с вашим новым "
 "CLI-приложением."
 msgstr "Now you can run ``main.py`` and interact with your new CLI application."
 
-#: ../../root/quickstart.rst:116
+#: ../../root/quickstart.rst:117
 msgid "Task Manager Example"
 msgstr "Task Manager Example"
 
