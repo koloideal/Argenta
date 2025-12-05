@@ -323,22 +323,13 @@ class BaseApp:
         for router_entity in self.registered_routers:
             router_triggers = router_entity.triggers
             router_aliases = router_entity.aliases
-            combined = router_triggers + router_aliases
+            combined = router_triggers | router_aliases
 
             for trigger in combined:
                 self._matching_default_triggers_with_routers[trigger] = router_entity
                 self._matching_lower_triggers_with_routers[trigger.lower()] = router_entity
 
         self._autocompleter.initial_setup(list(self._current_matching_triggers_with_routers.keys()))
-
-        seen = {}
-        for item in list(self._current_matching_triggers_with_routers.keys()):
-            if item in seen:
-                Console().print(
-                    f"\n[b red]WARNING:[/b red] Overlapping trigger or alias: [b blue]{item}[/b blue]"
-                )
-            else:
-                seen[item] = True
 
         if not self._override_system_messages:
             self._setup_default_view()

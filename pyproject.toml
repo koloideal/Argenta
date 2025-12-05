@@ -50,6 +50,14 @@ line-length=90
 [tool.pyright]
 typeCheckingMode = "strict"
 
+[[tool.pyright.executionEnvironments]]
+root = "tests/"
+reportPrivateUsage = false
+reportUnusedFunction = false
+
+[tool.coverage.run]
+branch = true
+
 [tool.mypy]
 disable_error_code = "import-untyped"
 
