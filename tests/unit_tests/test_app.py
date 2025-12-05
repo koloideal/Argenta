@@ -131,7 +131,7 @@ def test_print_framed_text3(capsys: CaptureFixture[str]):
 
     assert '\n--------------\n\nsome long test\n\n--------------\n' in captured.out
     
-def test_print_framed_text4(capsys: CaptureFixture[str]):
+def test_print_framed_text4():
     class OtherDividingLine:
         pass
         
@@ -211,7 +211,7 @@ def test_most_similiar_command4():
     
     assert app._most_similar_command('nonexists') is None
     
-def test_most_similiar_command3():
+def test_most_similiar_command5():
     app = App(override_system_messages=True)
     router = Router()
 
@@ -230,7 +230,7 @@ def test_most_similiar_command3():
     
 def test_app_set_description_message_gen():
     app = App()
-    descr_gen: DescriptionMessageGenerator = lambda command, description: print(command + '-+-' + description)
+    descr_gen: DescriptionMessageGenerator = lambda command, description: command + '-+-' + description
     app.set_description_message_pattern(descr_gen)
     
     assert app._description_message_gen is descr_gen
@@ -241,4 +241,56 @@ def test_app_set_exit_handler():
     app.set_exit_command_handler(handler)
     
     assert app._exit_command_handler is handler
+    
+def test_app_is_exit_command():
+    app = App(exit_command=Command('q', aliases={'exit'}))
+    assert app._is_exit_command(InputCommand('exit')) is True
+    
+def test_app_is_exit_command2():
+    app = App(exit_command=Command('q', aliases={'exit'}), ignore_command_register=False)
+    assert app._is_exit_command(InputCommand('exit')) is True
+    
+def test_app_is_exit_command3():
+    app = App(exit_command=Command('q', aliases={'exit'}))
+    assert app._is_exit_command(InputCommand('quit')) is False
+    
+def test_app_is_exit_command4():
+    app = App(exit_command=Command('q', aliases={'exit'}), ignore_command_register=False)
+    assert app._is_exit_command(InputCommand('Exit')) is False
+    
+def test_app_setup_default_view():
+    app = App(prompt='>>')
+    app._setup_default_view()
+    
+    assert app._prompt == '[italic dim bold]>>'
+    
+def test_app_setup_default_view2():
+    app = App()
+    app._setup_default_view()
+    assert app._unknown_command_handler(InputCommand('nonexists')) is None
+    
+def test_app_pre_cycle_setup(capsys: CaptureFixture[str]):
+    app = App()
+    app.add_message_on_startup('some message')
+    app._pre_cycle_setup()
+    stdout = capsys.readouterr()
+    
+    assert 'some message' in stdout.out
+    
+def test_app_with_router_with_disable_redirect_stdout(capsys: CaptureFixture[str]):
+    app = App(repeat_command_groups_printing=True)
+    router = Router(disable_redirect_stdout=True)
+    
+    @router.command('command')
+    def handler(res: Response):
+        print("Hello!")
+        
+    app.include_router(router)
+    
+    app._pre_cycle_setup()
+    app._process_exist_and_valid_command(InputCommand('command'))
+    
+    stdout = capsys.readouterr()
+    
+    assert 'Hello!' in stdout.out
     

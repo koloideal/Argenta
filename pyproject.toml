@@ -57,6 +57,10 @@ reportUnusedFunction = false
 
 [tool.coverage.run]
 branch = true
+omit = [
+    "src/argenta/app/protocols.py",
+    "src/argenta/command/exceptions.py"
+]
 
 [tool.mypy]
 disable_error_code = "import-untyped"

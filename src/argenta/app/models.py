@@ -19,7 +19,6 @@ from argenta.app.protocols import (
 )
 from argenta.app.registered_routers.entity import RegisteredRouters
 from argenta.command.exceptions import (
-    EmptyInputCommandException,
     InputCommandException,
     RepeatedInputFlagsException,
     UnprocessedInputFlagException,
@@ -40,7 +39,7 @@ class BaseApp:
         initial_message: str,
         farewell_message: str,
         exit_command: Command,
-        system_router_title: str | None,
+        system_router_title: str,
         ignore_command_register: bool,
         dividing_line: StaticDividingLine | DynamicDividingLine,
         repeat_command_groups_printing: bool,
@@ -51,7 +50,7 @@ class BaseApp:
         self._prompt: str = prompt
         self._print_func: Printer = print_func
         self._exit_command: Command = exit_command
-        self._system_router_title: str | None = system_router_title
+        self._system_router_title: str = system_router_title
         self._dividing_line: StaticDividingLine | DynamicDividingLine = dividing_line
         self._ignore_command_register: bool = ignore_command_register
         self._repeat_command_groups_printing_description: bool = repeat_command_groups_printing
@@ -144,8 +143,7 @@ class BaseApp:
         :return: None
         """
         for registered_router in self.registered_routers:
-            if registered_router.title:
-                self._print_func(registered_router.title)
+            self._print_func(registered_router.title)
             for command_handler in registered_router.command_handlers:
                 handled_command = command_handler.handled_command
                 self._print_func(
@@ -239,7 +237,7 @@ class BaseApp:
             self._incorrect_input_syntax_handler(raw_command)
         elif isinstance(error, RepeatedInputFlagsException):
             self._repeated_input_flags_handler(raw_command)
-        elif isinstance(error, EmptyInputCommandException):
+        else:
             self._empty_input_command_handler()
 
     def _setup_system_router(self) -> None:
@@ -253,9 +251,8 @@ class BaseApp:
         def _(response: Response) -> None:
             self._exit_command_handler(response)
 
-        if system_router not in self.registered_routers.registered_routers:
-            system_router.command_register_ignore = self._ignore_command_register
-            self.registered_routers.add_registered_router(system_router)
+        system_router.command_register_ignore = self._ignore_command_register
+        self.registered_routers.add_registered_router(system_router)
 
     def _most_similar_command(self, unknown_command: str) -> str | None:
         all_commands = list(self._current_matching_triggers_with_routers.keys())
@@ -342,6 +339,28 @@ class BaseApp:
             print("\n")
         if not self._repeat_command_groups_printing_description:
             self._print_command_group_description()
+            
+    def _process_exist_and_valid_command(self, input_command: InputCommand):
+        processing_router = self._current_matching_triggers_with_routers[input_command.trigger.lower()]
+
+        if processing_router.disable_redirect_stdout:
+            dividing_line_unit_part: str = self._dividing_line.get_unit_part()
+            self._print_func(
+                StaticDividingLine(dividing_line_unit_part).get_full_static_line(
+                    is_override=self._override_system_messages
+                )
+            )
+            processing_router.finds_appropriate_handler(input_command)
+            self._print_func(
+                StaticDividingLine(dividing_line_unit_part).get_full_static_line(
+                    is_override=self._override_system_messages
+                )
+            )
+        else:
+            with redirect_stdout(io.StringIO()) as stdout:
+                processing_router.finds_appropriate_handler(input_command)
+                stdout_result: str = stdout.getvalue()
+            self._print_framed_text(stdout_result)
 
 
 AVAILABLE_DIVIDING_LINES: TypeAlias = StaticDividingLine | DynamicDividingLine
@@ -360,7 +379,7 @@ class App(BaseApp):
         initial_message: str = "Argenta\n",
         farewell_message: str = "\nSee you\n",
         exit_command: Command = DEFAULT_EXIT_COMMAND,
-        system_router_title: str | None = "System points:",
+        system_router_title: str = "System points:",
         ignore_command_register: bool = True,
         dividing_line: AVAILABLE_DIVIDING_LINES = DEFAULT_DIVIDING_LINE,
         repeat_command_groups_printing: bool = False,
@@ -433,27 +452,7 @@ class App(BaseApp):
                 self._print_framed_text(stdout_res)
                 continue
 
-            processing_router = self._current_matching_triggers_with_routers[input_command.trigger.lower()]
-
-            if processing_router.disable_redirect_stdout:
-                dividing_line_unit_part: str = self._dividing_line.get_unit_part()
-                self._print_func(
-                    StaticDividingLine(dividing_line_unit_part).get_full_static_line(
-                        is_override=self._override_system_messages
-                    )
-                )
-                processing_router.finds_appropriate_handler(input_command)
-                self._print_func(
-                    StaticDividingLine(dividing_line_unit_part).get_full_static_line(
-                        is_override=self._override_system_messages
-                    )
-                )
-            else:
-                with redirect_stdout(io.StringIO()) as stdout:
-                    processing_router.finds_appropriate_handler(input_command)
-                    stdout_result: str = stdout.getvalue()
-                if stdout_result:
-                    self._print_framed_text(stdout_result)
+            self._process_exist_and_valid_command(input_command)
 
     def include_router(self, router: Router) -> None:
         """

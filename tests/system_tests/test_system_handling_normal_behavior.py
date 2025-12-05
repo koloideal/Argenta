@@ -99,8 +99,11 @@ class TestSystemHandlerNormalWork(PatchedArgvTestCase):
             if valid_flag and valid_flag.status == ValidationStatus.VALID:
                 print(f'flag value for {valid_flag.name} flag : {valid_flag.input_value}')
 
-        app = App(override_system_messages=True,
-                  print_func=print)
+        app = App(
+            override_system_messages=True,
+            repeat_command_groups_printing=True,
+            print_func=print
+        )
         app.include_router(router)
         orchestrator.start_polling(app)
 

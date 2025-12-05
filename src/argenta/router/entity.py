@@ -22,7 +22,7 @@ HandlerFunc: TypeAlias = Callable[..., None]
 class Router:
     def __init__(
         self,
-        title: str | None = "Default title",
+        title: str = "Default title",
         *,
         disable_redirect_stdout: bool = False,
     ):
@@ -36,7 +36,7 @@ class Router:
                which is ambiguous behavior and can lead to unexpected work
         :return: None
         """
-        self.title: str | None = title
+        self.title: str = title
         self.disable_redirect_stdout: bool = disable_redirect_stdout
 
         self.command_handlers: CommandHandlers = CommandHandlers()
