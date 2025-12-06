@@ -1,7 +1,6 @@
 import sys
 from argparse import Namespace
 from typing import TYPE_CHECKING
-from unittest.mock import call
 
 import pytest
 from pytest_mock import MockerFixture
@@ -18,7 +17,12 @@ if TYPE_CHECKING:
     from pytest_mock.plugin import MockType
 
 
-def test_value_argument_creation() -> None:
+# ============================================================================
+# Tests for argument model creation
+# ============================================================================
+
+
+def test_value_argument_stores_all_properties() -> None:
     arg: ValueArgument = ValueArgument(
         name="test_arg",
         prefix="--",
@@ -39,7 +43,7 @@ def test_value_argument_creation() -> None:
     assert arg.string_entity == "--test_arg"
 
 
-def test_boolean_argument_creation() -> None:
+def test_boolean_argument_stores_all_properties() -> None:
     arg: BooleanArgument = BooleanArgument(
         name="verbose", prefix="-", help="Enable verbose mode.", is_deprecated=True
     )
@@ -51,13 +55,28 @@ def test_boolean_argument_creation() -> None:
     assert arg.string_entity == "-verbose"
 
 
-def test_input_argument_creation() -> None:
+def test_input_argument_stores_all_properties() -> None:
     arg: InputArgument = InputArgument(
         name="file", value="/path/to/file", founder_class=ValueArgument
     )
     assert arg.name == "file"
     assert arg.value == "/path/to/file"
     assert arg.founder_class is ValueArgument
+
+
+def test_input_argument_str_representation() -> None:
+    arg = InputArgument('host', value='192.168.0.0', founder_class=ValueArgument)
+    assert str(arg) == 'InputArgument(host=192.168.0.0)'
+
+
+def test_input_argument_repr_representation() -> None:
+    arg = InputArgument('host', value='192.168.0.0', founder_class=ValueArgument)
+    assert repr(arg) == "InputArgument<name=host, value=192.168.0.0, founder_class=ValueArgument>"
+
+
+# ============================================================================
+# Fixtures for ArgSpace tests
+# ============================================================================
 
 
 @pytest.fixture
@@ -74,42 +93,49 @@ def arg_space(mock_arguments: list[InputArgument]) -> ArgSpace:
     return ArgSpace(all_arguments=mock_arguments)
 
 
-def test_argspace_initialization(arg_space: ArgSpace, mock_arguments: list[InputArgument]) -> None:
+# ============================================================================
+# Tests for ArgSpace initialization and basic operations
+# ============================================================================
+
+
+def test_argspace_initializes_with_arguments(arg_space: ArgSpace, mock_arguments: list[InputArgument]) -> None:
     assert len(arg_space.all_arguments) == 3
     assert arg_space.all_arguments == mock_arguments
 
 
-def test_argspace_get_by_name(arg_space: ArgSpace, mock_arguments: list[InputArgument]) -> None:
+def test_argspace_get_by_name_finds_existing_argument(arg_space: ArgSpace, mock_arguments: list[InputArgument]) -> None:
     found_arg: InputArgument | None = arg_space.get_by_name("arg1")
     assert found_arg is not None
     assert found_arg == mock_arguments[0]
 
 
-def test_argspace_get_by_name_not_found(arg_space: ArgSpace) -> None:
+def test_argspace_get_by_name_returns_none_for_missing_argument(arg_space: ArgSpace) -> None:
     found_arg: InputArgument | None = arg_space.get_by_name("non_existent_arg")
     assert found_arg is None
 
 
-def test_argspace_get_by_type(arg_space: ArgSpace, mock_arguments: list[InputArgument]) -> None:
-    value_args: list[InputArgument] = arg_space.get_by_type(ValueArgument)
+def test_argspace_get_by_type_filters_value_arguments(arg_space: ArgSpace, mock_arguments: list[InputArgument]) -> None:
+    value_args = arg_space.get_by_type(ValueArgument)
     assert len(value_args) == 2
     assert mock_arguments[0] in value_args
     assert mock_arguments[2] in value_args
 
-    bool_args: list[InputArgument] = arg_space.get_by_type(BooleanArgument)
+
+def test_argspace_get_by_type_filters_boolean_arguments(arg_space: ArgSpace, mock_arguments: list[InputArgument]) -> None:
+    bool_args = arg_space.get_by_type(BooleanArgument)
     assert len(bool_args) == 1
     assert mock_arguments[1] in bool_args
 
 
-def test_argspace_get_by_type_not_found(arg_space: ArgSpace) -> None:
+def test_argspace_get_by_type_returns_empty_list_for_unknown_type(arg_space: ArgSpace) -> None:
     class OtherArgument(BaseArgument):
         pass
 
-    other_args: list[InputArgument] = arg_space.get_by_type(OtherArgument)  # pyright: ignore[reportAssignmentType]
+    other_args = arg_space.get_by_type(OtherArgument)  # pyright: ignore[reportAssignmentType]
     assert other_args == []
 
 
-def test_argspace_from_namespace() -> None:
+def test_argspace_from_namespace_creates_argspace_from_parsed_namespace() -> None:
     namespace: Namespace = Namespace(config="config.json", debug=True, verbose=False)
     processed_args: list[ValueArgument | BooleanArgument] = [
         ValueArgument(name="config", prefix="--"),
@@ -130,6 +156,11 @@ def test_argspace_from_namespace() -> None:
     assert debug_arg is not None
     assert debug_arg.value is True
     assert debug_arg.founder_class is BooleanArgument
+
+
+# ============================================================================
+# Fixtures for ArgParser tests
+# ============================================================================
 
 
 @pytest.fixture
@@ -153,7 +184,12 @@ def processed_args(value_arg: ValueArgument, bool_arg: BooleanArgument) -> list[
     return [value_arg, bool_arg]
 
 
-def test_argparser_initialization(processed_args: list[ValueArgument | BooleanArgument]) -> None:
+# ============================================================================
+# Tests for ArgParser initialization
+# ============================================================================
+
+
+def test_argparser_initializes_with_all_properties(processed_args: list[ValueArgument | BooleanArgument]) -> None:
     parser: ArgParser = ArgParser(
         processed_args=processed_args,
         name="TestApp",
@@ -168,61 +204,93 @@ def test_argparser_initialization(processed_args: list[ValueArgument | BooleanAr
     assert parser.parsed_argspace.all_arguments == []
 
 
+# ============================================================================
+# Tests for ArgParser argument registration (Python version specific)
+# ============================================================================
+
+
 @pytest.mark.skipif(sys.version_info < (3, 13), reason="requires python3.13 or higher")
-def test_argparser_register_args_py313(
+def test_argparser_registers_arguments_with_deprecated_flag_py313(
     mocker: MockerFixture, value_arg: ValueArgument, bool_arg: BooleanArgument
 ) -> None:
     mock_add_argument: MockType = mocker.patch("argparse.ArgumentParser.add_argument")
 
-    parser: ArgParser = ArgParser(processed_args=[value_arg, bool_arg])  # pyright: ignore[reportUnusedVariable]
+    _parser: ArgParser = ArgParser(processed_args=[value_arg, bool_arg])
 
-    expected_calls: list[call] = [
-        call(
-            value_arg.string_entity,
-            action=value_arg.action,
-            help=value_arg.help,
-            default=value_arg.default,
-            choices=value_arg.possible_values,
-            required=value_arg.is_required,
-            deprecated=value_arg.is_deprecated,
-        ),
-        call(
-            bool_arg.string_entity,
-            action=bool_arg.action,
-            help=bool_arg.help,
-            deprecated=bool_arg.is_deprecated,
-        ),
-    ]
-    mock_add_argument.assert_has_calls(expected_calls, any_order=True)
+    # ArgParser may add additional arguments (like help), so check at least 2
+    assert mock_add_argument.call_count >= 2
+    
+    # Check that value_arg was registered correctly
+    value_arg_call = None
+    bool_arg_call = None
+    
+    for call_args in mock_add_argument.call_args_list:
+        args, kwargs = call_args
+        if len(args) > 0 and args[0] == value_arg.string_entity:
+            value_arg_call = (args, kwargs)
+        elif len(args) > 0 and args[0] == bool_arg.string_entity:
+            bool_arg_call = (args, kwargs)
+    
+    assert value_arg_call is not None, "value_arg was not registered"
+    _, value_kwargs = value_arg_call
+    assert value_kwargs['action'] == value_arg.action
+    assert value_kwargs['help'] == value_arg.help
+    assert value_kwargs['default'] == value_arg.default
+    assert value_kwargs['choices'] == value_arg.possible_values
+    assert value_kwargs['required'] == value_arg.is_required
+    assert value_kwargs['deprecated'] == value_arg.is_deprecated
+    
+    assert bool_arg_call is not None, "bool_arg was not registered"
+    _, bool_kwargs = bool_arg_call
+    assert bool_kwargs['action'] == bool_arg.action
+    assert bool_kwargs['help'] == bool_arg.help
+    assert bool_kwargs['deprecated'] == bool_arg.is_deprecated
 
 
 @pytest.mark.skipif(sys.version_info > (3, 12), reason="for more latest python version has been other test")
-def test_argparser_register_args_py312(
+def test_argparser_registers_arguments_without_deprecated_flag_py312(
     mocker: MockerFixture, value_arg: ValueArgument, bool_arg: BooleanArgument
 ) -> None:
     mock_add_argument: MockType = mocker.patch("argparse.ArgumentParser.add_argument")
 
-    parser: ArgParser = ArgParser(processed_args=[value_arg, bool_arg])
+    _parser: ArgParser = ArgParser(processed_args=[value_arg, bool_arg])
 
-    expected_calls: list[call] = [
-        call(
-            value_arg.string_entity,
-            action=value_arg.action,
-            help=value_arg.help,
-            default=value_arg.default,
-            choices=value_arg.possible_values,
-            required=value_arg.is_required,
-        ),
-        call(
-            bool_arg.string_entity,
-            action=bool_arg.action,
-            help=bool_arg.help,
-        ),
-    ]
-    mock_add_argument.assert_has_calls(expected_calls, any_order=True)
+    # ArgParser may add additional arguments (like help), so check at least 2
+    assert mock_add_argument.call_count >= 2
+    
+    # Check that value_arg was registered correctly
+    value_arg_call = None
+    bool_arg_call = None
+    
+    for call_args in mock_add_argument.call_args_list:
+        args, kwargs = call_args
+        if len(args) > 0 and args[0] == value_arg.string_entity:
+            value_arg_call = (args, kwargs)
+        elif len(args) > 0 and args[0] == bool_arg.string_entity:
+            bool_arg_call = (args, kwargs)
+    
+    assert value_arg_call is not None, "value_arg was not registered"
+    _, value_kwargs = value_arg_call
+    assert value_kwargs['action'] == value_arg.action
+    assert value_kwargs['help'] == value_arg.help
+    assert value_kwargs['default'] == value_arg.default
+    assert value_kwargs['choices'] == value_arg.possible_values
+    assert value_kwargs['required'] == value_arg.is_required
+    assert 'deprecated' not in value_kwargs
+    
+    assert bool_arg_call is not None, "bool_arg was not registered"
+    _, bool_kwargs = bool_arg_call
+    assert bool_kwargs['action'] == bool_arg.action
+    assert bool_kwargs['help'] == bool_arg.help
+    assert 'deprecated' not in bool_kwargs
 
 
-def test_argparser_parse_args_populates_argspace(
+# ============================================================================
+# Tests for ArgParser argument parsing
+# ============================================================================
+
+
+def test_argparser_parse_args_populates_argspace_correctly(
     mocker: MockerFixture, processed_args: list[ValueArgument | BooleanArgument]
 ) -> None:
     mock_namespace: Namespace = Namespace(config='config.json', debug=True)
@@ -245,11 +313,3 @@ def test_argparser_parse_args_populates_argspace(
     assert debug_arg is not None
     assert debug_arg.value is True
     assert debug_arg.founder_class is BooleanArgument
-    
-def test_str_input_argument():
-    arg = InputArgument('host', value='192.168.0.0', founder_class=ValueArgument)
-    assert str(arg) == 'InputArgument(host=192.168.0.0)'
-    
-def test_repr_input_argument():
-    arg = InputArgument('host', value='192.168.0.0', founder_class=ValueArgument)
-    assert repr(arg) == "InputArgument<name=host, value=192.168.0.0, founder_class=ValueArgument>" 

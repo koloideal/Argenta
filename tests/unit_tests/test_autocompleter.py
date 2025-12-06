@@ -1,9 +1,9 @@
 import os
+from typing import Any
 
 import pytest
 from pyfakefs.fake_filesystem import FakeFilesystem
 from pytest_mock import MockerFixture
-from pytest_mock.plugin import MockType
 
 from argenta.app.autocompleter.entity import (
     AutoCompleter,
@@ -12,8 +12,17 @@ from argenta.app.autocompleter.entity import (
 )
 
 
+HISTORY_FILE: str = "test_history.txt"
+COMMANDS: list[str] = ["start", "stop", "status"]
+
+
+# ============================================================================
+# Fixtures
+# ============================================================================
+
+
 @pytest.fixture
-def mock_readline(mocker: MockerFixture) -> MockType:
+def mock_readline(mocker: MockerFixture) -> Any:
     _history: list[str] = []
 
     def add_history(item: str) -> None:
@@ -30,31 +39,37 @@ def mock_readline(mocker: MockerFixture) -> MockType:
     def clear_history() -> None:
         _history.clear()
 
-    mock: MockType = mocker.MagicMock()
-    mocker.patch('argenta.app.autocompleter.entity.readline', mock)
+    mock: Any = mocker.MagicMock()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    mocker.patch('argenta.app.autocompleter.entity.readline', mock)  # pyright: ignore[reportUnknownArgumentType]
 
-    mock.reset_mock()
+    mock.reset_mock()  # pyright: ignore[reportUnknownMemberType]
     clear_history()
 
-    mock.add_history.side_effect = add_history
-    mock.get_history_item.side_effect = get_history_item
-    mock.get_current_history_length.side_effect = get_current_history_length
-    mock.get_completer_delims.return_value = " "
+    mock.add_history.side_effect = add_history  # pyright: ignore[reportUnknownMemberType]
+    mock.get_history_item.side_effect = get_history_item  # pyright: ignore[reportUnknownMemberType]
+    mock.get_current_history_length.side_effect = get_current_history_length  # pyright: ignore[reportUnknownMemberType]
+    mock.get_completer_delims.return_value = " "  # pyright: ignore[reportUnknownMemberType]
 
-    return mock
-
-
-HISTORY_FILE: str = "test_history.txt"
-COMMANDS: list[str] = ["start", "stop", "status"]
+    return mock  # pyright: ignore[reportReturnType, reportUnknownVariableType]
 
 
-def test_initialization() -> None:
+# ============================================================================
+# Tests for AutoCompleter initialization
+# ============================================================================
+
+
+def test_autocompleter_initializes_with_history_file_and_button() -> None:
     completer: AutoCompleter = AutoCompleter(history_filename=HISTORY_FILE, autocomplete_button="tab")
     assert completer.history_filename == HISTORY_FILE
     assert completer.autocomplete_button == "tab"
 
 
-def test_initial_setup_if_history_file_does_not_exist(fs: FakeFilesystem, mock_readline: MockType) -> None:
+# ============================================================================
+# Tests for initial setup
+# ============================================================================
+
+
+def test_initial_setup_creates_history_when_file_does_not_exist(fs: FakeFilesystem, mock_readline: Any) -> None:
     if os.path.exists(HISTORY_FILE):
         os.remove(HISTORY_FILE)
 
@@ -68,8 +83,8 @@ def test_initial_setup_if_history_file_does_not_exist(fs: FakeFilesystem, mock_r
     mock_readline.parse_and_bind.assert_called_with("tab: complete")
 
 
-def test_initial_setup_if_history_file_exists(fs: FakeFilesystem, mock_readline: MockType) -> None:
-    fs.create_file(HISTORY_FILE, contents="previous_command\n")
+def test_initial_setup_reads_existing_history_file(fs: FakeFilesystem, mock_readline: Any) -> None:
+    fs.create_file(HISTORY_FILE, contents="previous_command\n")  # pyright: ignore[reportUnknownMemberType]
 
     completer: AutoCompleter = AutoCompleter(history_filename=HISTORY_FILE)
     completer.initial_setup(COMMANDS)
@@ -80,7 +95,7 @@ def test_initial_setup_if_history_file_exists(fs: FakeFilesystem, mock_readline:
     mock_readline.parse_and_bind.assert_called_once()
 
 
-def test_initial_setup_with_no_history_filename(mock_readline: MockType) -> None:
+def test_initial_setup_works_without_history_filename(mock_readline: Any) -> None:
     completer: AutoCompleter = AutoCompleter(history_filename=None)
     completer.initial_setup(COMMANDS)
 
@@ -88,7 +103,12 @@ def test_initial_setup_with_no_history_filename(mock_readline: MockType) -> None
     assert mock_readline.add_history.call_count == len(COMMANDS)
 
 
-def test_exit_setup_writes_and_filters_history(fs: FakeFilesystem, mock_readline: MockType) -> None:
+# ============================================================================
+# Tests for exit setup and history filtering
+# ============================================================================
+
+
+def test_exit_setup_writes_and_filters_duplicate_commands(fs: FakeFilesystem, mock_readline: Any) -> None:
     mock_readline.add_history.side_effect = None
     mock_readline.add_history("start server")
     mock_readline.add_history("stop client")
@@ -96,7 +116,7 @@ def test_exit_setup_writes_and_filters_history(fs: FakeFilesystem, mock_readline
     mock_readline.add_history("start server")
 
     raw_history_content: str = "\n".join(["start server", "stop client", "invalid command", "start server"])
-    fs.create_file(HISTORY_FILE, contents=raw_history_content)
+    fs.create_file(HISTORY_FILE, contents=raw_history_content)  # pyright: ignore[reportUnknownMemberType]
 
     completer: AutoCompleter = AutoCompleter(history_filename=HISTORY_FILE)
     completer.exit_setup(all_commands=["start", "stop"], ignore_command_register=False)
@@ -109,13 +129,18 @@ def test_exit_setup_writes_and_filters_history(fs: FakeFilesystem, mock_readline
         assert lines == ["start server", "stop client"]
 
 
-def test_exit_setup_with_no_history_filename(mock_readline: MockType) -> None:
+def test_exit_setup_skips_writing_when_no_history_filename(mock_readline: Any) -> None:
     completer: AutoCompleter = AutoCompleter(history_filename=None)
     completer.exit_setup(all_commands=COMMANDS, ignore_command_register=False)
     mock_readline.write_history_file.assert_not_called()
 
 
-def test_complete_with_no_matches(mock_readline: MockType) -> None:
+# ============================================================================
+# Tests for autocomplete functionality
+# ============================================================================
+
+
+def test_complete_returns_none_when_no_matches_found(mock_readline: Any) -> None:
     cmd: str
     for cmd in ["start", "stop"]:
         mock_readline.add_history(cmd)
@@ -125,7 +150,7 @@ def test_complete_with_no_matches(mock_readline: MockType) -> None:
     assert completer._complete("run", 1) is None
 
 
-def test_complete_with_one_match(mock_readline: MockType) -> None:
+def test_complete_returns_single_match(mock_readline: Any) -> None:
     mock_readline.add_history("start server")
     mock_readline.add_history("stop server")
 
@@ -134,7 +159,7 @@ def test_complete_with_one_match(mock_readline: MockType) -> None:
     assert completer._complete("start", 1) is None
 
 
-def test_complete_with_multiple_matches(mock_readline: MockType) -> None:
+def test_complete_inserts_common_prefix_for_multiple_matches(mock_readline: Any) -> None:
     mock_readline.add_history("status client")
     mock_readline.add_history("status server")
     mock_readline.add_history("stop")
@@ -152,21 +177,32 @@ def test_complete_with_multiple_matches(mock_readline: MockType) -> None:
     mock_readline.insert_text.assert_not_called()
 
 
-def test_is_command_exist() -> None:
+# ============================================================================
+# Tests for helper functions
+# ============================================================================
+
+
+def test_is_command_exist_checks_case_sensitive_when_enabled() -> None:
     existing: list[str] = ["start", "stop", "status"]
 
     assert _is_command_exist("start", existing, ignore_command_register=False) is True
     assert _is_command_exist("START", existing, ignore_command_register=False) is False
     assert _is_command_exist("unknown", existing, ignore_command_register=False) is False
 
+
+def test_is_command_exist_checks_case_insensitive_when_enabled() -> None:
+    existing: list[str] = ["start", "stop", "status"]
+
     assert _is_command_exist("start", existing, ignore_command_register=True) is True
     assert _is_command_exist("START", existing, ignore_command_register=True) is True
     assert _is_command_exist("unknown", existing, ignore_command_register=True) is False
 
 
-def test_get_history_items(mock_readline: MockType) -> None:
+def test_get_history_items_returns_empty_list_initially(mock_readline: Any) -> None:
     assert _get_history_items() == []
 
+
+def test_get_history_items_returns_all_added_items(mock_readline: Any) -> None:
     mock_readline.add_history("first item")
     mock_readline.add_history("second item")
 
