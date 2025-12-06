@@ -340,7 +340,7 @@ class BaseApp:
         if not self._repeat_command_groups_printing_description:
             self._print_command_group_description()
             
-    def _process_exist_and_valid_command(self, input_command: InputCommand):
+    def _process_exist_and_valid_command(self, input_command: InputCommand) -> None:
         processing_router = self._current_matching_triggers_with_routers[input_command.trigger.lower()]
 
         if processing_router.disable_redirect_stdout:

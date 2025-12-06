@@ -6,6 +6,7 @@ from argenta.app.dividing_line import DynamicDividingLine, StaticDividingLine
 from argenta.app.protocols import DescriptionMessageGenerator, NonStandardBehaviorHandler
 from argenta.command.models import Command, InputCommand
 from argenta.response import Response
+from argenta.response.status import ResponseStatus
 from argenta.router import Router
 
 
@@ -348,3 +349,292 @@ def test_process_command_with_router_with_disabled_stdout_redirect(capsys: Captu
     stdout = capsys.readouterr()
     
     assert 'Hello!' in stdout.out
+
+
+# ============================================================================
+# Tests for handler setters and execution
+# ============================================================================
+
+
+def test_set_unknown_command_handler_stores_handler() -> None:
+    app = App()
+    call_tracker = {'called': False}
+    
+    def custom_handler(_command: InputCommand) -> None:
+        call_tracker['called'] = True
+    
+    app.set_unknown_command_handler(custom_handler)
+    app._unknown_command_handler(InputCommand('test'))
+    
+    assert call_tracker['called']
+
+
+def test_set_exit_handler_stores_handler() -> None:
+    app = App()
+    call_tracker = {'called': False}
+    
+    def custom_handler(_response: Response) -> None:
+        call_tracker['called'] = True
+    
+    app.set_exit_command_handler(custom_handler)
+    app._exit_command_handler(Response(ResponseStatus.ALL_FLAGS_VALID))
+    
+    assert call_tracker['called']
+
+
+def test_set_empty_command_handler_stores_handler() -> None:
+    app = App()
+    call_tracker = {'called': False}
+    
+    def custom_handler() -> None:
+        call_tracker['called'] = True
+    
+    app.set_empty_command_handler(custom_handler)
+    app._empty_input_command_handler()
+    
+    assert call_tracker['called']
+
+
+def test_set_incorrect_input_syntax_handler_stores_handler() -> None:
+    app = App()
+    call_tracker = {'called': False}
+    
+    def custom_handler(_command: str) -> None:
+        call_tracker['called'] = True
+    
+    app.set_incorrect_input_syntax_handler(custom_handler)
+    app._incorrect_input_syntax_handler('test --flag')
+    
+    assert call_tracker['called']
+
+
+def test_set_repeated_input_flags_handler_stores_handler() -> None:
+    app = App()
+    call_tracker = {'called': False}
+    
+    def custom_handler(_command: str) -> None:
+        call_tracker['called'] = True
+    
+    app.set_repeated_input_flags_handler(custom_handler)
+    app._repeated_input_flags_handler('test --flag --flag')
+    
+    assert call_tracker['called']
+
+
+# ============================================================================
+# Tests for handler execution with output
+# ============================================================================
+
+
+def test_unknown_command_handler_prints_custom_message(capsys: CaptureFixture[str]) -> None:
+    app = App(override_system_messages=True)
+    
+    def custom_handler(command: InputCommand) -> None:
+        print(f'Command not found: {command.trigger}')
+    
+    app.set_unknown_command_handler(custom_handler)
+    app._unknown_command_handler(InputCommand('unknown'))
+    
+    output = capsys.readouterr()
+    assert 'Command not found: unknown' in output.out
+
+
+def test_exit_command_handler_prints_custom_message(capsys: CaptureFixture[str]) -> None:
+    app = App(override_system_messages=True)
+    
+    def custom_handler(_response: Response) -> None:
+        print('Goodbye!')
+    
+    app.set_exit_command_handler(custom_handler)
+    app._exit_command_handler(Response(ResponseStatus.ALL_FLAGS_VALID))
+    
+    output = capsys.readouterr()
+    assert 'Goodbye!' in output.out
+
+
+def test_empty_command_handler_prints_custom_message(capsys: CaptureFixture[str]) -> None:
+    app = App(override_system_messages=True)
+    
+    def custom_handler() -> None:
+        print('Please enter a command')
+    
+    app.set_empty_command_handler(custom_handler)
+    app._empty_input_command_handler()
+    
+    output = capsys.readouterr()
+    assert 'Please enter a command' in output.out
+
+
+def test_incorrect_syntax_handler_prints_custom_message(capsys: CaptureFixture[str]) -> None:
+    app = App(override_system_messages=True)
+    
+    def custom_handler(command: str) -> None:
+        print(f'Syntax error in: {command}')
+    
+    app.set_incorrect_input_syntax_handler(custom_handler)
+    app._incorrect_input_syntax_handler('test --flag')
+    
+    output = capsys.readouterr()
+    assert 'Syntax error in: test --flag' in output.out
+
+
+def test_repeated_flags_handler_prints_custom_message(capsys: CaptureFixture[str]) -> None:
+    app = App(override_system_messages=True)
+    
+    def custom_handler(command: str) -> None:
+        print(f'Duplicate flags in: {command}')
+    
+    app.set_repeated_input_flags_handler(custom_handler)
+    app._repeated_input_flags_handler('test --flag --flag')
+    
+    output = capsys.readouterr()
+    assert 'Duplicate flags in: test --flag --flag' in output.out
+
+
+# ============================================================================
+# Tests for default handler behavior
+# ============================================================================
+
+
+def test_default_unknown_command_handler_prints_message(capsys: CaptureFixture[str]) -> None:
+    app = App(override_system_messages=True)
+    app._unknown_command_handler(InputCommand('unknown'))
+    
+    output = capsys.readouterr()
+    assert 'Unknown command: unknown' in output.out
+
+
+def test_default_empty_command_handler_prints_message(capsys: CaptureFixture[str]) -> None:
+    app = App(override_system_messages=True)
+    app._empty_input_command_handler()
+    
+    output = capsys.readouterr()
+    assert 'Empty input command' in output.out
+
+
+def test_default_incorrect_syntax_handler_prints_message(capsys: CaptureFixture[str]) -> None:
+    app = App(override_system_messages=True)
+    app._incorrect_input_syntax_handler('test --flag')
+    
+    output = capsys.readouterr()
+    assert 'Incorrect flag syntax: test --flag' in output.out
+
+
+def test_default_repeated_flags_handler_prints_message(capsys: CaptureFixture[str]) -> None:
+    app = App(override_system_messages=True)
+    app._repeated_input_flags_handler('test --flag --flag')
+    
+    output = capsys.readouterr()
+    assert 'Repeated input flags: test --flag --flag' in output.out
+
+
+# ============================================================================
+# Tests for handler chaining and multiple calls
+# ============================================================================
+
+
+def test_handler_can_be_replaced_multiple_times() -> None:
+    app = App()
+    call_tracker = {'count': 0}
+    
+    def handler1(_command: InputCommand) -> None:
+        call_tracker['count'] += 1
+    
+    def handler2(_command: InputCommand) -> None:
+        call_tracker['count'] += 10
+    
+    app.set_unknown_command_handler(handler1)
+    app._unknown_command_handler(InputCommand('test'))
+    assert call_tracker['count'] == 1
+    
+    app.set_unknown_command_handler(handler2)
+    app._unknown_command_handler(InputCommand('test'))
+    assert call_tracker['count'] == 11
+
+
+def test_handler_receives_correct_parameters() -> None:
+    app = App()
+    received_data = {'trigger': None}
+    
+    def custom_handler(command: InputCommand) -> None:
+        received_data['trigger'] = command.trigger
+    
+    app.set_unknown_command_handler(custom_handler)
+    app._unknown_command_handler(InputCommand('mycommand'))
+    
+    assert received_data['trigger'] == 'mycommand'
+
+
+def test_exit_handler_receives_response_object() -> None:
+    app = App()
+    received_data = {'response': None}
+    
+    def custom_handler(response: Response) -> None:
+        received_data['response'] = response
+    
+    app.set_exit_command_handler(custom_handler)
+    test_response = Response(ResponseStatus.ALL_FLAGS_VALID)
+    app._exit_command_handler(test_response)
+    
+    assert received_data['response'] is test_response
+
+
+# ============================================================================
+# Tests for handler integration with routers
+# ============================================================================
+
+
+def test_app_with_router_and_custom_unknown_handler(capsys: CaptureFixture[str]) -> None:
+    app = App(override_system_messages=True)
+    router = Router()
+    
+    @router.command(Command('test'))
+    def handler(_res: Response) -> None:
+        print('test executed')
+    
+    app.include_router(router)
+    
+    def custom_unknown_handler(command: InputCommand) -> None:
+        print(f'Not found: {command.trigger}')
+    
+    app.set_unknown_command_handler(custom_unknown_handler)
+    
+    # Test that unknown command uses custom handler
+    assert app._is_unknown_command(InputCommand('unknown'))
+    app._unknown_command_handler(InputCommand('unknown'))
+    
+    output = capsys.readouterr()
+    assert 'Not found: unknown' in output.out
+
+
+def test_app_handlers_work_with_multiple_routers() -> None:
+    app = App(override_system_messages=True)
+    router1 = Router()
+    router2 = Router()
+    
+    @router1.command(Command('cmd1'))
+    def handler1(_res: Response) -> None:
+        pass
+    
+    @router2.command(Command('cmd2'))
+    def handler2(_res: Response) -> None:
+        pass
+    
+    app.include_routers(router1, router2)
+    app._pre_cycle_setup()
+    
+    call_tracker = {'called': False}
+    
+    def custom_handler(_command: InputCommand) -> None:
+        call_tracker['called'] = True
+    
+    app.set_unknown_command_handler(custom_handler)
+    
+    # Both commands should be known
+    assert not app._is_unknown_command(InputCommand('cmd1'))
+    assert not app._is_unknown_command(InputCommand('cmd2'))
+    
+    # Unknown command should trigger handler
+    assert app._is_unknown_command(InputCommand('unknown'))
+    app._unknown_command_handler(InputCommand('unknown'))
+    assert call_tracker['called']

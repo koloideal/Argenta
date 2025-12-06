@@ -43,11 +43,10 @@ class Flag:
         Private. Validates the input flag value
         :param input_flag_value: The input flag value to validate
         :return: whether the entered flag is valid as bool
-        """
-        if self.possible_values == PossibleValues.NEITHER:
-            return input_flag_value == ''
-            
-        if self.possible_values == PossibleValues.ALL:
+        """ 
+        if isinstance(self.possible_values, PossibleValues):
+            if self.possible_values == PossibleValues.NEITHER:
+                return input_flag_value == ''
             return input_flag_value != ''
 
         if isinstance(self.possible_values, Pattern):
