@@ -13,6 +13,10 @@ tests:
 tests-cov:
     python -m pytest --cov=argenta tests
 
+# Запустить тесты с отчетом о покрытии с html репортом
+tests-cov-html:
+    python -m pytest --cov=argenta tests --cov-report=html
+
 # Отформатировать код (Ruff + isort)
 format:
     python -m ruff format ./src

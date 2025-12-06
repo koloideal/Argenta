@@ -9,7 +9,7 @@ from time import time
 from argenta import App
 
 
-def get_time_of_pre_cycle_setup(app: App) -> float:
+def get_time_of_pre_cycle_setup(app: App) -> float: 
     """
     Public. Return time of pre cycle setup
     :param app: app instance for testing time of pre cycle setup

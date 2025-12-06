@@ -94,7 +94,7 @@ class ArgParser:
             namespace=self._core.parse_args(), processed_args=self.processed_args
         )
 
-    def _register_args(self, processed_args: list[ValueArgument | BooleanArgument]) -> None:
+    def _register_args(self, processed_args: list[ValueArgument | BooleanArgument]) -> None: # pragma: no cover
         if sys.version_info >= (3, 13):
             for arg in processed_args:
                 if isinstance(arg, BooleanArgument):

@@ -20,7 +20,7 @@ class RequiredArgumentNotPassedException(Exception):
 
     @override
     def __str__(self) -> str:
-        return "Required argument not passed"
+        return "Required argument with type Response not passed"
 
 
 class TriggerContainSpacesException(Exception):

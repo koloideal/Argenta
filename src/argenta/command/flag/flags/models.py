@@ -39,9 +39,6 @@ class BaseFlags(Generic[FlagType]):
     def __iter__(self) -> Iterator[FlagType]:
         return iter(self.flags)
 
-    def __next__(self) -> FlagType:
-        return next(iter(self))
-
     def __getitem__(self, flag_index: int) -> FlagType:
         return self.flags[flag_index]
 
@@ -61,7 +58,7 @@ class Flags(BaseFlags[Flag]):
     @override
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Flags):
-            return NotImplemented
+            return False
 
         if len(self.flags) != len(other.flags):
             return False
@@ -91,7 +88,7 @@ class InputFlags(BaseFlags[InputFlag]):
     @override
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, InputFlags):
-            raise NotImplementedError
+            return False
 
         if len(self.flags) != len(other.flags):
             return False

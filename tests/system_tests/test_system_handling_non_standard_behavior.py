@@ -1,10 +1,8 @@
-import io
 import re
 import sys
-from unittest import TestCase
-from unittest.mock import MagicMock, patch
+from collections.abc import Iterator
 
-import _io
+import pytest
 
 from argenta import App, Orchestrator, Router
 from argenta.command import Command, PredefinedFlags
@@ -13,252 +11,255 @@ from argenta.command.flag.models import ValidationStatus
 from argenta.response import Response
 
 
-class PatchedArgvTestCase(TestCase):
-    def setUp(self):
-        super().setUp()
-        self.patcher = patch.object(sys, 'argv', ['program.py'])
-        self.mock_argv = self.patcher.start()
-        self.addCleanup(self.patcher.stop)
+@pytest.fixture(autouse=True)
+def patch_argv(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(sys, 'argv', ['program.py'])
 
 
-class TestSystemHandlerNormalWork(PatchedArgvTestCase):
-    @patch("builtins.input", side_effect=["help", "q"])
-    @patch("sys.stdout", new_callable=io.StringIO)
-    def test_input_incorrect_command(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
-        router = Router()
-        orchestrator = Orchestrator()
-
-        @router.command(Command('test'))
-        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
-            print('test command')
+def _mock_input(inputs: Iterator[str]) -> str:
+    return next(inputs)
 
-        app = App(override_system_messages=True,
-                  print_func=print)
-        app.include_router(router)
-        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
-        orchestrator.start_polling(app)
 
-        output = mock_stdout.getvalue()
+# ============================================================================
+# Tests for empty input handling
+# ============================================================================
 
-        self.assertIn("\nUnknown command: help\n", output)
 
+def test_empty_input_triggers_empty_command_handler(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    inputs = iter(["", "q"])
+    monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
+    
+    router = Router()
+    orchestrator = Orchestrator()
 
-    @patch("builtins.input", side_effect=["TeSt", "Q"])
-    @patch("sys.stdout", new_callable=io.StringIO)
-    def test_input_incorrect_command2(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
-        router = Router()
-        orchestrator = Orchestrator()
+    @router.command(Command('test'))
+    def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
+        print('test command')
 
-        @router.command(Command('test'))
-        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
-            print('test command')
+    app = App(override_system_messages=True, print_func=print)
+    app.include_router(router)
+    app.set_empty_command_handler(lambda: print('Empty input command'))
+    orchestrator.start_polling(app)
 
-        app = App(ignore_command_register=False,
-                  override_system_messages=True,
-                  print_func=print)
-        app.include_router(router)
-        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
-        orchestrator.start_polling(app)
+    output = capsys.readouterr().out
 
-        output = mock_stdout.getvalue()
+    assert "\nEmpty input command\n" in output
 
-        self.assertIn('\nUnknown command: TeSt\n', output)
 
+# ============================================================================
+# Tests for unknown command handling
+# ============================================================================
 
-    @patch("builtins.input", side_effect=["test --help", "q"])
-    @patch("sys.stdout", new_callable=io.StringIO)
-    def test_input_correct_command_with_unregistered_flag(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
-        router = Router()
-        orchestrator = Orchestrator()
 
-        @router.command(Command('test'))
-        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
-            undefined_flag = response.input_flags.get_flag_by_name('help')
-            if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
-                print(f'test command with undefined flag: {undefined_flag.string_entity}')
+def test_unknown_command_triggers_unknown_command_handler(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    inputs = iter(["help", "q"])
+    monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
+    
+    router = Router()
+    orchestrator = Orchestrator()
 
-        app = App(override_system_messages=True,
-                  print_func=print)
-        app.include_router(router)
-        orchestrator.start_polling(app)
+    @router.command(Command('test'))
+    def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
+        print('test command')
 
-        output = mock_stdout.getvalue()
+    app = App(override_system_messages=True, print_func=print)
+    app.include_router(router)
+    app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
+    orchestrator.start_polling(app)
 
-        self.assertIn('\ntest command with undefined flag: --help\n', output)
+    output = capsys.readouterr().out
 
+    assert "\nUnknown command: help\n" in output
 
-    @patch("builtins.input", side_effect=["test --port 22", "q"])
-    @patch("sys.stdout", new_callable=io.StringIO)
-    def test_input_correct_command_with_unregistered_flag2(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
-        router = Router()
-        orchestrator = Orchestrator()
 
-        @router.command(Command('test'))
-        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
-            undefined_flag = response.input_flags.get_flag_by_name("port")
-            if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
-                print(f'test command with undefined flag with value: {undefined_flag.string_entity} {undefined_flag.input_value}')
-            else:
-                raise
+def test_case_sensitive_command_triggers_unknown_command_handler(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    inputs = iter(["TeSt", "Q"])
+    monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
+    
+    router = Router()
+    orchestrator = Orchestrator()
 
-        app = App(override_system_messages=True,
-                  print_func=print)
-        app.include_router(router)
-        orchestrator.start_polling(app)
+    @router.command(Command('test'))
+    def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
+        print('test command')
 
-        output = mock_stdout.getvalue()
+    app = App(ignore_command_register=False, override_system_messages=True, print_func=print)
+    app.include_router(router)
+    app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
+    orchestrator.start_polling(app)
 
-        self.assertIn('\ntest command with undefined flag with value: --port 22\n', output)
+    output = capsys.readouterr().out
 
+    assert '\nUnknown command: TeSt\n' in output
 
-    @patch("builtins.input", side_effect=["test --host 192.168.32.1 --port 132", "q"])
-    @patch("sys.stdout", new_callable=io.StringIO)
-    def test_input_correct_command_with_one_correct_flag_an_one_incorrect_flag(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
-        router = Router()
-        orchestrator = Orchestrator()
-        flags = Flags([PredefinedFlags.HOST])
 
-        @router.command(Command('test', flags=flags))
-        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
-            undefined_flag = response.input_flags.get_flag_by_name("port")
-            if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
-                print(f'connecting to host with flag: {undefined_flag.string_entity} {undefined_flag.input_value}')
+def test_mixed_valid_and_unknown_commands_handled_correctly(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    inputs = iter(["test", "some", "q"])
+    monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
+    
+    router = Router()
+    orchestrator = Orchestrator()
 
-        app = App(override_system_messages=True,
-                  print_func=print)
-        app.include_router(router)
-        orchestrator.start_polling(app)
+    @router.command(Command('test'))
+    def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
+        print('test command')
 
-        output = mock_stdout.getvalue()
+    app = App(override_system_messages=True, print_func=print)
+    app.include_router(router)
+    app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
+    orchestrator.start_polling(app)
 
-        self.assertIn('\nconnecting to host with flag: --port 132\n', output)
+    output = capsys.readouterr().out
 
+    assert re.search(r'\ntest command\n(.|\n)*\nUnknown command: some', output)
 
-    @patch("builtins.input", side_effect=["test", "some", "q"])
-    @patch("sys.stdout", new_callable=io.StringIO)
-    def test_input_one_correct_command_and_one_incorrect_command(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
-        router = Router()
-        orchestrator = Orchestrator()
 
-        @router.command(Command('test'))
-        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
-            print(f'test command')
+def test_multiple_commands_with_unknown_command_in_between(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    inputs = iter(["test", "some", "more", "q"])
+    monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
+    
+    router = Router()
+    orchestrator = Orchestrator()
 
-        app = App(override_system_messages=True,
-                  print_func=print)
-        app.include_router(router)
-        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
-        orchestrator.start_polling(app)
+    @router.command(Command('test'))
+    def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
+        print('test command')
 
-        output = mock_stdout.getvalue()
+    @router.command(Command('more'))
+    def test1(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
+        print('more command')
 
-        self.assertRegex(output, re.compile(r'\ntest command\n(.|\n)*\nUnknown command: some'))
+    app = App(override_system_messages=True, print_func=print)
+    app.include_router(router)
+    app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
+    orchestrator.start_polling(app)
 
+    output = capsys.readouterr().out
 
-    @patch("builtins.input", side_effect=["test", "some", "more", "q"])
-    @patch("sys.stdout", new_callable=io.StringIO)
-    def test_input_two_correct_commands_and_one_incorrect_command(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
-        router = Router()
-        orchestrator = Orchestrator()
+    assert re.search(r'\ntest command\n(.|\n)*\nUnknown command: some\n(.|\n)*\nmore command', output)
 
-        @router.command(Command('test'))
-        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
-            print(f'test command')
 
-        @router.command(Command('more'))
-        def test1(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
-            print(f'more command')
+# ============================================================================
+# Tests for unregistered flag handling
+# ============================================================================
 
-        app = App(override_system_messages=True,
-                  print_func=print)
-        app.include_router(router)
-        app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
-        orchestrator.start_polling(app)
 
-        output = mock_stdout.getvalue()
+def test_unregistered_flag_without_value_is_accessible(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    inputs = iter(["test --help", "q"])
+    monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
+    
+    router = Router()
+    orchestrator = Orchestrator()
 
-        self.assertRegex(output, re.compile(r'\ntest command\n(.|\n)*\nUnknown command: some\n(.|\n)*\nmore command'))
+    @router.command(Command('test'))
+    def test(response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
+        undefined_flag = response.input_flags.get_flag_by_name('help')
+        if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
+            print(f'test command with undefined flag: {undefined_flag.string_entity}')
 
+    app = App(override_system_messages=True, print_func=print)
+    app.include_router(router)
+    orchestrator.start_polling(app)
 
-    @patch("builtins.input", side_effect=["test 535 --port", "q"])
-    @patch("sys.stdout", new_callable=io.StringIO)
-    def test_input_correct_command_with_incorrect_flag(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
-        router = Router()
-        orchestrator = Orchestrator()
+    output = capsys.readouterr().out
 
-        @router.command(Command('test'))
-        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
-            print(f'test command')
+    assert '\ntest command with undefined flag: --help\n' in output
 
-        app = App(override_system_messages=True,
-                  print_func=print)
-        app.include_router(router)
-        app.set_incorrect_input_syntax_handler(lambda command: print(f'Incorrect flag syntax: "{command}"'))
-        orchestrator.start_polling(app)
 
-        output = mock_stdout.getvalue()
+def test_unregistered_flag_with_value_is_accessible(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    inputs = iter(["test --port 22", "q"])
+    monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
+    
+    router = Router()
+    orchestrator = Orchestrator()
 
-        self.assertIn("\nIncorrect flag syntax: \"test 535 --port\"\n", output)
+    @router.command(Command('test'))
+    def test(response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
+        undefined_flag = response.input_flags.get_flag_by_name("port")
+        if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
+            print(f'test command with undefined flag with value: {undefined_flag.string_entity} {undefined_flag.input_value}')
+        else:
+            raise
 
+    app = App(override_system_messages=True, print_func=print)
+    app.include_router(router)
+    orchestrator.start_polling(app)
 
-    @patch("builtins.input", side_effect=["", "q"])
-    @patch("sys.stdout", new_callable=io.StringIO)
-    def test_input_empty_command(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
-        router = Router()
-        orchestrator = Orchestrator()
+    output = capsys.readouterr().out
 
-        @router.command(Command('test'))
-        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
-            print(f'test command')
+    assert '\ntest command with undefined flag with value: --port 22\n' in output
 
-        app = App(override_system_messages=True,
-                  print_func=print)
-        app.include_router(router)
-        app.set_empty_command_handler(lambda: print('Empty input command'))
-        orchestrator.start_polling(app)
 
-        output = mock_stdout.getvalue()
+def test_registered_and_unregistered_flags_coexist(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    inputs = iter(["test --host 192.168.32.1 --port 132", "q"])
+    monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
+    
+    router = Router()
+    orchestrator = Orchestrator()
+    flags = Flags([PredefinedFlags.HOST])
 
-        self.assertIn("\nEmpty input command\n", output)
+    @router.command(Command('test', flags=flags))
+    def test(response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
+        undefined_flag = response.input_flags.get_flag_by_name("port")
+        if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
+            print(f'connecting to host with flag: {undefined_flag.string_entity} {undefined_flag.input_value}')
 
+    app = App(override_system_messages=True, print_func=print)
+    app.include_router(router)
+    orchestrator.start_polling(app)
 
-    @patch("builtins.input", side_effect=["test --port 22 --port 33", "q"])
-    @patch("sys.stdout", new_callable=io.StringIO)
-    def test_input_correct_command_with_repeated_flags(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
-        router = Router()
-        orchestrator = Orchestrator()
+    output = capsys.readouterr().out
 
-        @router.command(Command('test', flags=PredefinedFlags.PORT))
-        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
-            print('test command')
+    assert '\nconnecting to host with flag: --port 132\n' in output
 
-        app = App(override_system_messages=True,
-                  print_func=print)
-        app.include_router(router)
-        app.set_repeated_input_flags_handler(lambda command: print(f'Repeated input flags: "{command}"'))
-        orchestrator.start_polling(app)
 
-        output = mock_stdout.getvalue()
+# ============================================================================
+# Tests for incorrect flag syntax handling
+# ============================================================================
 
-        self.assertIn('Repeated input flags: "test --port 22 --port 33"', output)
 
-    @patch("builtins.input", side_effect=["test --help", "q"])
-    @patch("sys.stdout", new_callable=io.StringIO)
-    def test_input_correct_command_with_unregistered_flag3(self, mock_stdout: _io.StringIO, magick_mock: MagicMock):
-        router = Router()
-        orchestrator = Orchestrator()
+def test_flag_without_value_triggers_incorrect_syntax_handler(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    inputs = iter(["test 535 --port", "q"])
+    monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
+    
+    router = Router()
+    orchestrator = Orchestrator()
 
-        @router.command(Command('test'))
-        def test(response: Response) -> None: # pyright: ignore[reportUnusedFunction]
-            undefined_flag = response.input_flags.get_flag_by_name('help')
-            if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
-                print(f'test command with undefined flag: {undefined_flag.string_entity}')
+    @router.command(Command('test'))
+    def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
+        print('test command')
 
-        app = App(override_system_messages=True,
-                  print_func=print)
-        app.include_router(router)
-        orchestrator.start_polling(app)
+    app = App(override_system_messages=True, print_func=print)
+    app.include_router(router)
+    app.set_incorrect_input_syntax_handler(lambda command: print(f'Incorrect flag syntax: "{command}"'))
+    orchestrator.start_polling(app)
 
-        output = mock_stdout.getvalue()
+    output = capsys.readouterr().out
 
-        self.assertIn('\ntest command with undefined flag: --help\n', output)
+    assert "\nIncorrect flag syntax: \"test 535 --port\"\n" in output
+
+
+# ============================================================================
+# Tests for repeated flag handling
+# ============================================================================
+
+
+def test_repeated_flags_trigger_repeated_flags_handler(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    inputs = iter(["test --port 22 --port 33", "q"])
+    monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
+    
+    router = Router()
+    orchestrator = Orchestrator()
+
+    @router.command(Command('test', flags=PredefinedFlags.PORT))
+    def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
+        print('test command')
+
+    app = App(override_system_messages=True, print_func=print)
+    app.include_router(router)
+    app.set_repeated_input_flags_handler(lambda command: print(f'Repeated input flags: "{command}"'))
+    orchestrator.start_polling(app)
+
+    output = capsys.readouterr().out
+
+    assert 'Repeated input flags: "test --port 22 --port 33"' in output
