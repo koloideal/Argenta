@@ -59,7 +59,8 @@ reportUnusedFunction = false
 branch = true
 omit = [
     "src/argenta/app/protocols.py",
-    "src/argenta/command/exceptions.py"
+    "src/argenta/command/exceptions.py",
+    "src/argenta/metrics/*"
 ]
 
 [tool.mypy]

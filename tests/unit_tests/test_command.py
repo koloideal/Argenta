@@ -23,6 +23,18 @@ def test_parse_raw_command_without_flag_name_with_value():
 def test_parse_raw_command_with_repeated_flag_name():
     with pytest.raises(RepeatedInputFlagsException):
         InputCommand.parse('ssh --host 192.168.0.3 --host 172.198.0.43')
+        
+        
+def test_parse_raw_command_with_triple_prefix():
+    assert InputCommand.parse(
+        'ssh ---host 192.168.0.0'
+    ).input_flags.get_flag_by_name('host') == \
+    InputFlag('host', input_value='192.168.0.0', prefix='---')
+    
+    
+def test_parse_raw_command_with_unprocessed_entity():
+    with pytest.raises(UnprocessedInputFlagException):
+        InputCommand.parse('ssh --host 192.168.0.3 9977')
 
 
 def test_parse_empty_raw_command():

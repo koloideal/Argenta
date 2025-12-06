@@ -1,7 +1,9 @@
 import re
+from sys import flags
 
 from argenta.command.flag import Flag, InputFlag, PossibleValues
 from argenta.command.flag.flags import Flags, InputFlags
+import pytest
 
 
 def test_get_string_entity():
@@ -114,3 +116,112 @@ def test_add_flags():
     flags = Flags()
     flags.add_flags([Flag('test'), Flag('test2')])
     assert len(flags.flags) == 2
+    
+def test_eq_flags():
+    flags = Flags([Flag('some')])
+    flags2 = Flags([Flag('some')])
+    assert flags == flags2
+    
+def test_contains_flags():
+    flags = Flags([Flag('some')])
+    flag = Flag('some')
+    assert flag in flags
+    
+def test_eq_flags2():
+    flags = Flags([Flag('some')])
+    flags2 = Flags([Flag('other')])
+    assert flags != flags2
+    
+def test_eq_flags3():
+    flags = Flags([Flag('some')])
+    flags2 = Flags([Flag('some'), Flag('other')])
+    assert flags != flags2
+    
+def test_eq_flags4():
+    flags = Flags([Flag('some')])
+    not_flags = object()
+    assert flags != not_flags
+    
+def test_contains_flags2():
+    flags = Flags([Flag('some')])
+    flag = Flag('nonexists')
+    assert flag not in flags
+    
+def test_contains_flags3():
+    flags = Flags([Flag('some')])
+    not_flag = object
+    with pytest.raises(TypeError):
+        not_flag in flags  # pyright: ignore[reportUnusedExpression]
+        
+def test_get_flag_by_name():
+    flags = Flags([Flag('some')])
+    assert flags.get_flag_by_name('some') == Flag('some')
+    
+def test_eq_input_flags3():
+    flags = InputFlags([InputFlag('some', input_value='')])
+    flags2 = InputFlags([
+        InputFlag('some', input_value=''), 
+        InputFlag('some2', input_value='')
+    ])
+    assert flags != flags2
+    
+def test_eq_input_flags4():
+    flags = InputFlags([InputFlag('some', input_value='')])
+    not_flags = object()
+    assert flags != not_flags
+    
+def test_contains_input_flags2():
+    flags = InputFlags([InputFlag('some', input_value='')])
+    flag = InputFlag('nonexists', input_value='')
+    assert flag not in flags
+    
+def test_contains_input_flags3():
+    flags = InputFlags([InputFlag('some', input_value='')])
+    not_flag = object
+    with pytest.raises(TypeError):
+        not_flag in flags  # pyright: ignore[reportUnusedExpression]
+
+def test_len_flags():
+    flags = Flags([Flag('one'), Flag('two')])
+    assert len(flags) == 2
+    
+def test_bool_flags():
+    flags = Flags([Flag('one'), Flag('two')])
+    assert bool(flags)
+    
+def test_bool_flags2():
+    flags = Flags([])
+    assert not bool(flags)
+    
+def test_getitem_flags():
+    flags = Flags([Flag('one'), Flag('two')])
+    assert flags[1] == Flag('two')
+    
+def test_str_flag():
+    flag = Flag('two')
+    assert str(flag) == '--two'
+    
+def test_repr_flag():
+    flag = Flag('two')
+    assert repr(flag) == 'Flag<name=two, prefix=-->'
+    
+def test_eq_flag():
+    flag = Flag('two')
+    not_flag = object()
+    with pytest.raises(NotImplementedError):
+        flag == not_flag  # pyright: ignore[reportUnusedExpression]
+        
+def test_str_input_flag():
+    flag = InputFlag('two', input_value='value')
+    assert str(flag) == '--two value'
+    
+def test_repr_input_flag():
+    flag = InputFlag('two', input_value='some_value')
+    assert repr(flag) == 'InputFlag<name=two, prefix=--, value=some_value, status=None>'
+    
+def test_eq_input_flag():
+    flag = InputFlag('two', input_value='')
+    not_flag = object()
+    with pytest.raises(NotImplementedError):
+        flag == not_flag  # pyright: ignore[reportUnusedExpression]
+    

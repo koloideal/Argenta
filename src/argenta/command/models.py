@@ -104,9 +104,6 @@ class InputCommand:
             else:
                 raise UnprocessedInputFlagException
             
-            if not name:
-                raise UnprocessedInputFlagException
-            
             if i + 1 < len(tokens) and not tokens[i + 1].startswith("-"):
                 input_value = tokens[i + 1]
                 i += 2

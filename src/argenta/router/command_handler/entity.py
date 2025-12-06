@@ -44,6 +44,3 @@ class CommandHandlers:
 
     def __iter__(self) -> Iterator[CommandHandler]:
         return iter(self.command_handlers)
-
-    def __next__(self) -> CommandHandler:
-        return next(iter(self.command_handlers))

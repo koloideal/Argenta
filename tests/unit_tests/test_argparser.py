@@ -245,3 +245,11 @@ def test_argparser_parse_args_populates_argspace(
     assert debug_arg is not None
     assert debug_arg.value is True
     assert debug_arg.founder_class is BooleanArgument
+    
+def test_str_input_argument():
+    arg = InputArgument('host', value='192.168.0.0', founder_class=ValueArgument)
+    assert str(arg) == 'InputArgument(host=192.168.0.0)'
+    
+def test_repr_input_argument():
+    arg = InputArgument('host', value='192.168.0.0', founder_class=ValueArgument)
+    assert repr(arg) == "InputArgument<name=host, value=192.168.0.0, founder_class=ValueArgument>" 
