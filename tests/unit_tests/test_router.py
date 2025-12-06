@@ -1,5 +1,6 @@
 import re
 import pytest
+from pytest import CaptureFixture
 
 from argenta.command import Command, InputCommand
 from argenta.command.flag import Flag, InputFlag
@@ -89,64 +90,59 @@ def test_get_router_aliases():
 def test_get_router_aliases2():
     router = Router()
     @router.command(Command('some', aliases={'test', 'case'}))
-    def handler(response: Response): 
+    def handler(response: Response):
         pass
     @router.command(Command('ext', aliases={'more', 'foo'}))
-    def handler2(response: Response): 
+    def handler2(response: Response):
         pass
     assert router.aliases == {'test', 'case', 'more', 'foo'}
 
 def test_get_router_aliases3():
     router = Router()
     @router.command(Command('some'))
-    def handler(response: Response): 
+    def handler(response: Response):
         pass
     assert router.aliases == set()
-    
+
 def test_find_appropiate_handler(capsys: pytest.CaptureFixture[str]):
     router = Router()
-    
+
     @router.command(Command('hello', aliases={'hi'}))
     def handler(res: Response):
         print("Hello World!")
-        
+
     router.finds_appropriate_handler(InputCommand('hi'))
-    
+
     output = capsys.readouterr()
-    
+
     assert "Hello World!" in output.out
-    
+
 def test_find_appropiate_handler2(capsys: CaptureFixture[str]):
     router = Router()
-    
+
     @router.command(Command('hello', flags=Flag('flag'), aliases={'hi'}))
     def handler(res: Response):
         print("Hello World!")
-        
+
     router.finds_appropriate_handler(InputCommand('hi'))
-    
+
     output = capsys.readouterr()
-    
+
     assert "Hello World!" in output.out
-    
+
 def test_wrong_typehint(capsys: pytest.CaptureFixture[str]):
     class NotResponse: pass
-    
+
     def func(response: NotResponse): pass
-    
+
     _validate_func_args(func)
-    
+
     output = capsys.readouterr()
-    
+
     assert "WARNING" in output.out
-    
+
 def test_missing_typehint(capsys: pytest.CaptureFixture[str]):
     def func(response): pass  # pyright: ignore[reportMissingParameterType, reportUnknownParameterType]
-    
     _validate_func_args(func)  # pyright: ignore[reportUnknownArgumentType]
-    
     output = capsys.readouterr()
-    
     assert output.out == ''
-        
-    

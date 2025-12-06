@@ -1,5 +1,4 @@
 import re
-from sys import flags
 
 from argenta.command.flag import Flag, InputFlag, PossibleValues
 from argenta.command.flag.flags import Flags, InputFlags

@@ -129,17 +129,6 @@ class Router:
                 command_handler.handling(response)
 
 
-class CommandDecorator:
-    def __init__(self, router_instance: Router, command: Command):
-        self.router: Router = router_instance
-        self.command: Command = command
-
-    def __call__(self, handler_func: Callable[..., None]) -> Callable[..., None]:
-        _validate_func_args(handler_func)
-        self.router.command_handlers.add_handler(CommandHandler(handler_func, self.command))
-        return handler_func
-
-
 def _structuring_input_flags(handled_command: Command, input_flags: InputFlags) -> Response:
     """
     Private. Validates flags of input command
