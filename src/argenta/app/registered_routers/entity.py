@@ -24,6 +24,3 @@ class RegisteredRouters:
 
     def __iter__(self) -> Iterator[Router]:
         return iter(self.registered_routers)
-
-    def __next__(self) -> Router:
-        return next(iter(self.registered_routers))

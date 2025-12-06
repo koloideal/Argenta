@@ -43,20 +43,16 @@ class Flag:
         Private. Validates the input flag value
         :param input_flag_value: The input flag value to validate
         :return: whether the entered flag is valid as bool
-        """
-        if self.possible_values == PossibleValues.NEITHER:
-            return input_flag_value == ''
-            
-        if self.possible_values == PossibleValues.ALL:
+        """ 
+        if isinstance(self.possible_values, PossibleValues):
+            if self.possible_values == PossibleValues.NEITHER:
+                return input_flag_value == ''
             return input_flag_value != ''
 
         if isinstance(self.possible_values, Pattern):
             return bool(self.possible_values.match(input_flag_value))
 
-        if isinstance(self.possible_values, list):
-            return input_flag_value in self.possible_values
-            
-        return False
+        return input_flag_value in self.possible_values
 
     @property
     def string_entity(self) -> str:
@@ -88,9 +84,9 @@ class InputFlag:
         self,
         name: str,
         *,
-        prefix: PREFIX_TYPE = "--",
         input_value: str,
-        status: ValidationStatus | None,
+        prefix: PREFIX_TYPE = "--",
+        status: ValidationStatus | None = None,
     ):
         """
         Public. The entity of the flag of the entered command

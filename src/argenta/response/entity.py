@@ -9,7 +9,7 @@ EMPTY_INPUT_FLAGS: InputFlags = InputFlags()
 
 
 class Response:
-    _dishka_container: Container
+    __dishka_container__: Container
 
     def __init__(
         self,
@@ -26,4 +26,4 @@ class Response:
 
     @classmethod
     def patch_by_container(cls, container: Container) -> None:
-        cls._dishka_container = container
+        cls.__dishka_container__ = container
