@@ -1,3 +1,4 @@
+from argenta.router.exceptions import RepeatedAliasNameException
 import pytest
 from pytest import CaptureFixture
 
@@ -207,24 +208,17 @@ def test_include_routers_registers_multiple_routers() -> None:
     assert app.registered_routers.registered_routers == [router, router2]
 
 
-def test_overlapping_aliases_prints_warning(capsys: CaptureFixture[str]) -> None:
-    app = App(override_system_messages=True)
+def test_overlapping_aliases_raises_exception() -> None:
     router = Router()
 
     @router.command(Command('test', aliases={'alias'}))
     def handler(_res: Response) -> None:
         pass
 
-    @router.command(Command('test2', aliases={'alias'}))
-    def handler2(_res: Response) -> None:
-        pass
-
-    app.include_routers(router)
-    app._pre_cycle_setup()
-
-    captured = capsys.readouterr()
-
-    assert "Overlapping" in captured.out
+    with pytest.raises(RepeatedAliasNameException):
+        @router.command(Command('test2', aliases={'alias'}))
+        def handler2(_res: Response) -> None:
+            pass
 
 
 # ============================================================================

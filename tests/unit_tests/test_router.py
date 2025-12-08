@@ -12,6 +12,7 @@ from argenta.router import Router
 from argenta.router.entity import _structuring_input_flags, _validate_func_args  # pyright: ignore[reportPrivateUsage]
 from argenta.router.exceptions import (
     RepeatedFlagNameException,
+    RepeatedTriggerNameException,
     RequiredArgumentNotPassedException,
     TriggerContainSpacesException,
 )
@@ -26,7 +27,20 @@ def test_validate_command_raises_error_for_trigger_with_spaces() -> None:
     router = Router()
     with pytest.raises(TriggerContainSpacesException):
         router._validate_command(Command(trigger='command with spaces'))
-
+        
+        
+def test_validate_command_raises_error_for_same_trigger() -> None:
+    router = Router()
+    
+    @router.command('comm')
+    def handler(res: Response):
+        pass
+    
+    with pytest.raises(RepeatedTriggerNameException):
+        @router.command('comm')
+        def handler2(res: Response):
+            pass
+        
 
 def test_validate_command_raises_error_for_repeated_flag_names() -> None:
     router = Router()
@@ -188,6 +202,33 @@ def test_finds_appropriate_handler_executes_handler_by_alias(capsys: CaptureFixt
         print("Hello World!")
 
     router.finds_appropriate_handler(InputCommand('hi'))
+
+    output = capsys.readouterr()
+
+    assert "Hello World!" in output.out
+    
+def test_finds_appropriate_handler_executes_handler_by_alias_with_differrent_register(capsys: CaptureFixture[str]) -> None:
+    router = Router()
+
+    @router.command(Command('hello', aliases={'hI'}))
+    def handler(_res: Response) -> None:
+        print("Hello World!")
+
+    router.finds_appropriate_handler(InputCommand('HI'))
+
+    output = capsys.readouterr()
+
+    assert "Hello World!" in output.out
+    
+    
+def test_finds_appropriate_handler_executes_handler_by_trigger_with_differrent_register(capsys: CaptureFixture[str]) -> None:
+    router = Router()
+
+    @router.command(Command('heLLo'))
+    def handler(_res: Response) -> None:
+        print("Hello World!")
+
+    router.finds_appropriate_handler(InputCommand('HellO'))
 
     output = capsys.readouterr()
 
