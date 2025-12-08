@@ -23,6 +23,7 @@ from argenta.command.exceptions import (
     RepeatedInputFlagsException,
     UnprocessedInputFlagException,
 )
+from argenta.router.exceptions import RepeatedAliasNameException, RepeatedTriggerNameException
 from argenta.command.models import Command, InputCommand
 from argenta.response import Response
 from argenta.router import Router
@@ -273,6 +274,28 @@ class BaseApp:
 
         self.system_router.command_register_ignore = self._ignore_command_register
         self.registered_routers.add_registered_router(self.system_router)
+    
+    def _validate_routers_for_collisions(self) -> None:
+        """
+        Private. Validates that there are no trigger/alias collisions between routers
+        :return: None
+        :raises: RepeatedTriggerNameException or RepeatedAliasNameException if collision detected
+        """
+        
+        all_triggers: set[str] = set()
+        all_aliases: set[str] = set()
+        
+        for router_entity in self.registered_routers:
+            trigger_collisions: set[str] = (all_triggers | all_aliases) & router_entity.triggers
+            if trigger_collisions:
+                raise RepeatedTriggerNameException()
+            
+            alias_collisions: set[str] = (all_aliases | all_triggers) & router_entity.aliases
+            if alias_collisions:
+                raise RepeatedAliasNameException(alias_collisions)
+            
+            all_triggers.update(router_entity.triggers)
+            all_aliases.update(router_entity.aliases)
 
     def _most_similar_command(self, unknown_command: str) -> str | None:
         all_commands = list(self._current_matching_triggers_with_routers.keys())
@@ -344,6 +367,7 @@ class BaseApp:
         :return: None
         """
         self._setup_system_router()
+        self._validate_routers_for_collisions()
 
         for router_entity in self.registered_routers:
             router_triggers = router_entity.triggers

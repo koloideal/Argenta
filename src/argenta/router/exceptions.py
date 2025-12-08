@@ -1,4 +1,10 @@
-__all__ = ["RepeatedFlagNameException", "RequiredArgumentNotPassedException", "TriggerContainSpacesException"]
+__all__ = [
+    "RepeatedFlagNameException",
+    "RepeatedTriggerNameException",
+    "RepeatedAliasNameException",
+    "RequiredArgumentNotPassedException",
+    "TriggerContainSpacesException",
+]
 
 from typing import override
 

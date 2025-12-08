@@ -80,6 +80,9 @@ class Router:
             
         if command_name.lower() in self.triggers:
             raise RepeatedTriggerNameException()
+        
+        if command_name.lower() in self.aliases:
+            raise RepeatedAliasNameException({command_name.lower()})
             
         if overlapping := (self.aliases | self.triggers) & set(map(lambda x: x.lower(), command.aliases)):
             raise RepeatedAliasNameException(overlapping)

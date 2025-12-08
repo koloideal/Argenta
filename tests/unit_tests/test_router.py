@@ -9,8 +9,9 @@ from argenta.command.flag.flags import Flags, InputFlags
 from argenta.command.flag.models import PossibleValues, ValidationStatus
 from argenta.response.entity import Response
 from argenta.router import Router
-from argenta.router.entity import _structuring_input_flags, _validate_func_args  # pyright: ignore[reportPrivateUsage]
+from argenta.router.entity import _structuring_input_flags, _validate_func_args
 from argenta.router.exceptions import (
+    RepeatedAliasNameException,
     RepeatedFlagNameException,
     RepeatedTriggerNameException,
     RequiredArgumentNotPassedException,
@@ -247,3 +248,60 @@ def test_finds_appropriate_handler_executes_handler_with_flags_by_alias(capsys: 
     output = capsys.readouterr()
 
     assert "Hello World!" in output.out
+
+
+# ============================================================================
+# Tests for alias and trigger collision detection
+# ============================================================================
+
+
+def test_validate_command_raises_error_for_alias_collision_with_existing_trigger() -> None:
+    router = Router()
+    
+    @router.command('hello')
+    def handler(_res: Response) -> None:
+        pass
+    
+    with pytest.raises(RepeatedAliasNameException):
+        @router.command(Command('world', aliases={'hello'}))
+        def handler2(_res: Response) -> None:
+            pass
+
+
+def test_validate_command_raises_error_for_alias_collision_with_existing_alias() -> None:
+    router = Router()
+    
+    @router.command(Command('hello', aliases={'hi'}))
+    def handler(_res: Response) -> None:
+        pass
+    
+    with pytest.raises(RepeatedAliasNameException):
+        @router.command(Command('world', aliases={'hi'}))
+        def handler2(_res: Response) -> None:
+            pass
+
+
+def test_validate_command_raises_error_for_trigger_collision_with_existing_alias() -> None:
+    router = Router()
+    
+    @router.command(Command('hello', aliases={'hi'}))
+    def handler(_res: Response) -> None:
+        pass
+    
+    with pytest.raises(RepeatedAliasNameException):
+        @router.command('hi')
+        def handler2(_res: Response) -> None:
+            pass
+
+
+def test_validate_command_raises_error_for_alias_collision_case_insensitive() -> None:
+    router = Router()
+    
+    @router.command(Command('hello', aliases={'Hi'}))
+    def handler(_res: Response) -> None:
+        pass
+    
+    with pytest.raises(RepeatedAliasNameException):
+        @router.command(Command('world', aliases={'hI'}))
+        def handler2(_res: Response) -> None:
+            pass

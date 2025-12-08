@@ -29,8 +29,8 @@ html_static_path = ["_static"]
 
 html_context = {
     "languages": [
-        ("English", "/en/latest/%s/", "en"),
-        ("Русский", "/ru/latest/%s/", "ru"),
+        ("English", "/en/latest/%s.html", "en"),
+        ("Русский", "/ru/latest/%s.html", "ru"),
     ]
 }
 
