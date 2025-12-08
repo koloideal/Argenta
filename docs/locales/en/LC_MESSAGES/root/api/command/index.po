@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-04 20:39+0300\n"
+"POT-Creation-Date: 2025-12-08 19:48+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -35,10 +35,10 @@ msgstr ""
 #: ../../root/api/command/index.rst:8
 msgid ""
 "``Command`` инкапсулирует всю информацию о команде: её триггер (ключевое "
-"слово для вызова), описание, набор флагов и список псевдонимов."
+"слово для вызова), описание, набор флагов и множество псевдонимов."
 msgstr ""
 "``Command`` encapsulates all information about a command: its trigger "
-"(keyword for invocation), description, set of flags, and list of aliases."
+"(keyword for invocation), description, set of flags, and set of aliases."
 
 #: ../../root/api/command/index.rst:13
 msgid "Инициализация"
@@ -73,8 +73,8 @@ msgstr ""
 "``Flag`` object or a ``Flags`` collection."
 
 #: ../../root/api/command/index.rst:28
-msgid "``aliases``: Список строковых псевдонимов для основного триггера."
-msgstr "``aliases``: List of string aliases for the main trigger."
+msgid "``aliases``: Множество строковых псевдонимов для основного триггера."
+msgstr "``aliases``: Set of string aliases for the main trigger."
 
 #: ../../root/api/command/index.rst:30 ../../root/api/command/index.rst:108
 msgid "**Атрибуты:**"
@@ -107,8 +107,8 @@ msgstr ""
 "during initialization."
 
 #: ../../root/api/command/index.rst:46
-msgid "Список строковых псевдонимов. Пуст, если псевдонимы не заданы."
-msgstr "List of string aliases. Empty if no aliases are defined."
+msgid "Множество строковых псевдонимов. Пуст, если псевдонимы не заданы."
+msgstr "Set of string aliases. Empty if no aliases are defined."
 
 #: ../../root/api/command/index.rst:48
 msgid "**Пример использования:**"
@@ -119,8 +119,8 @@ msgid ""
 "Подробнее про флаги: :ref:`Flags <root_api_command_flags>` и :ref:`Флаги "
 "команд <root_flags>`."
 msgstr ""
-"More about flags: :ref:`Flags <root_api_command_flags>` and :ref:`Command "
-"flags <root_flags>`."
+"More about flags: :ref:`Flags <root_api_command_flags>` and :ref:`Command"
+" flags <root_flags>`."
 
 #: ../../root/api/command/index.rst:59
 msgid "Регистрация команд"

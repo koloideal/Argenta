@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-04 20:39+0300\n"
+"POT-Creation-Date: 2025-12-08 19:48+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -46,17 +46,22 @@ msgstr ""
 "``Router``) if your commands:"
 
 #: ../../root/redirect_stdout.rst:15
-msgid ""
-"✓ Используют ``input()`` для интерактивного ввода данных от пользователя "
-"✓ Используют прогресс-бары (``tqdm``, ``rich.progress``) ✓ Выводят данные"
-" в реальном времени (streaming, логи) ✓ Используют библиотеки, которые "
-"напрямую работают с ``stdout``"
-msgstr ""
-"✓ Use ``input()`` for interactive user input ✓ Use progress bars "
-"(``tqdm``, ``rich.progress``) ✓ Output data in real-time (streaming, "
-"logs) ✓ Use libraries that work directly with ``stdout``"
+msgid "✓ Используют ``input()`` для интерактивного ввода данных от пользователя"
+msgstr "✓ Use ``input()`` for interactive user input"
 
-#: ../../root/redirect_stdout.rst:20
+#: ../../root/redirect_stdout.rst:17
+msgid "✓ Используют прогресс-бары (``tqdm``, ``rich.progress``)"
+msgstr "✓ Use progress bars (``tqdm``, ``rich.progress``)"
+
+#: ../../root/redirect_stdout.rst:19
+msgid "✓ Выводят данные в реальном времени (streaming, логи)"
+msgstr "✓ Output data in real-time (streaming, logs)"
+
+#: ../../root/redirect_stdout.rst:21
+msgid "✓ Используют библиотеки, которые напрямую работают с ``stdout``"
+msgstr "✓ Use libraries that work directly with ``stdout``"
+
+#: ../../root/redirect_stdout.rst:23
 msgid ""
 "Для обычных команд с ``print()`` перехват можно оставить включённым — это"
 " не влияет на их работу."
@@ -64,11 +69,11 @@ msgstr ""
 "For regular commands with ``print()``, interception can be left enabled —"
 " it does not affect their operation."
 
-#: ../../root/redirect_stdout.rst:25
+#: ../../root/redirect_stdout.rst:28
 msgid "Механизм перехвата ``stdout``"
 msgstr "``stdout`` Interception Mechanism"
 
-#: ../../root/redirect_stdout.rst:27
+#: ../../root/redirect_stdout.rst:30
 msgid ""
 "По умолчанию ``Argenta`` перехватывает весь текст, выводимый в ``stdout``"
 " внутри обработчика команды. Это необходимо для реализации **динамических"
@@ -83,15 +88,15 @@ msgstr ""
 "draw the top and bottom borders. This approach creates a neat interface "
 "where the command output is \"wrapped\" in a frame fitted to its content."
 
-#: ../../root/redirect_stdout.rst:29
+#: ../../root/redirect_stdout.rst:32
 msgid "Пример приложения с динамической разделительной линией:"
 msgstr "Example of an application with a dynamic dividing line:"
 
-#: ../../root/redirect_stdout.rst:31
+#: ../../root/redirect_stdout.rst:34
 msgid "Example of an application with a dynamic dividing line"
 msgstr "Example of an application with a dynamic dividing line"
 
-#: ../../root/redirect_stdout.rst:34
+#: ../../root/redirect_stdout.rst:37
 msgid ""
 "Как вы можете заметить, разделительная линия ровно той же длины, что и "
 "самая длинная строка в выводе."
@@ -99,15 +104,15 @@ msgstr ""
 "As you can see, the dividing line is exactly the same length as the "
 "longest line in the output."
 
-#: ../../root/redirect_stdout.rst:36
+#: ../../root/redirect_stdout.rst:39
 msgid "То же приложение с статической линией:"
 msgstr "The same application with a static line:"
 
-#: ../../root/redirect_stdout.rst:38
+#: ../../root/redirect_stdout.rst:41
 msgid "Example of an application with a static dividing line"
 msgstr "Example of an application with a static dividing line"
 
-#: ../../root/redirect_stdout.rst:41
+#: ../../root/redirect_stdout.rst:44
 msgid ""
 "В этом примере разделительная линия имеет фиксированную длину (по "
 "умолчанию 25 символов)."
@@ -115,11 +120,11 @@ msgstr ""
 "In this example, the dividing line has a fixed length (25 characters by "
 "default)."
 
-#: ../../root/redirect_stdout.rst:46
+#: ../../root/redirect_stdout.rst:49
 msgid "Побочные эффекты перехвата ``stdout``"
 msgstr "Side Effects of ``stdout`` Interception"
 
-#: ../../root/redirect_stdout.rst:48
+#: ../../root/redirect_stdout.rst:51
 msgid ""
 "Побочный эффект этого механизма проявляется при использовании функций, "
 "которые последовательно выводят текст в консоль и ожидают ввод от "
@@ -129,7 +134,7 @@ msgstr ""
 "sequentially output text to the console and expect user input. A classic "
 "example is the standard ``input()`` function."
 
-#: ../../root/redirect_stdout.rst:57
+#: ../../root/redirect_stdout.rst:60
 msgid ""
 "При включённом перехвате ``stdout`` текст (например, ``\"Введите ваше "
 "имя: \"``) **не будет выведен в консоль немедленно**. Он попадёт в буфер "
@@ -141,11 +146,11 @@ msgstr ""
 " into a buffer and appear only after the handler finishes, along with the"
 " rest of the output. This can confuse the user."
 
-#: ../../root/redirect_stdout.rst:62
+#: ../../root/redirect_stdout.rst:65
 msgid "Отключение перехвата ``stdout`` с помощью ``disable_redirect_stdout``"
 msgstr "Disabling ``stdout`` Interception with ``disable_redirect_stdout``"
 
-#: ../../root/redirect_stdout.rst:64
+#: ../../root/redirect_stdout.rst:67
 msgid ""
 "Чтобы решить эту проблему, в конструкторе ``Router`` предусмотрен "
 "специальный аргумент:"
@@ -153,11 +158,11 @@ msgstr ""
 "To solve this problem, the ``Router`` constructor provides a special "
 "argument:"
 
-#: ../../root/redirect_stdout.rst:66
+#: ../../root/redirect_stdout.rst:69
 msgid "**disable_redirect_stdout** (``bool``, по умолчанию ``False``)"
 msgstr "**disable_redirect_stdout** (``bool``, default ``False``)"
 
-#: ../../root/redirect_stdout.rst:68
+#: ../../root/redirect_stdout.rst:71
 msgid ""
 "Если при создании роутера установить ``disable_redirect_stdout=True``, "
 "механизм перехвата ``stdout`` будет отключён для всех его обработчиков."
@@ -165,11 +170,11 @@ msgstr ""
 "If you set ``disable_redirect_stdout=True`` when creating a router, the "
 "``stdout`` interception mechanism will be disabled for all its handlers."
 
-#: ../../root/redirect_stdout.rst:70 ../../root/redirect_stdout.rst:100
+#: ../../root/redirect_stdout.rst:73 ../../root/redirect_stdout.rst:103
 msgid "**Пример использования:**"
 msgstr "**Usage example:**"
 
-#: ../../root/redirect_stdout.rst:76
+#: ../../root/redirect_stdout.rst:79
 msgid ""
 "В этом случае ``input()`` будет работать как обычно, и пользователь сразу"
 " увидит приглашение к вводу."
@@ -177,11 +182,11 @@ msgstr ""
 "In this case, ``input()`` will work as usual, and the user will "
 "immediately see the input prompt."
 
-#: ../../root/redirect_stdout.rst:81
+#: ../../root/redirect_stdout.rst:84
 msgid "Типы разделительных линий"
 msgstr "Types of Dividing Lines"
 
-#: ../../root/redirect_stdout.rst:83
+#: ../../root/redirect_stdout.rst:86
 msgid ""
 "``Argenta`` поддерживает два типа разделителей, которые настраиваются при"
 " инициализации ``App``:"
@@ -189,11 +194,11 @@ msgstr ""
 "``Argenta`` supports two types of dividers, which are configured during "
 "``App`` initialization:"
 
-#: ../../root/redirect_stdout.rst:85
+#: ../../root/redirect_stdout.rst:88
 msgid "**``DynamicDividingLine()``**"
 msgstr "**``DynamicDividingLine()``**"
 
-#: ../../root/redirect_stdout.rst:86
+#: ../../root/redirect_stdout.rst:89
 msgid ""
 "Поведение по умолчанию. Длина линии динамически подстраивается под самый "
 "длинный текст в выводе."
@@ -201,7 +206,7 @@ msgstr ""
 "Default behavior. The line length dynamically adjusts to the longest text"
 " in the output."
 
-#: ../../root/redirect_stdout.rst:87
+#: ../../root/redirect_stdout.rst:90
 msgid ""
 "Требует включённого перехвата ``stdout`` "
 "(``disable_redirect_stdout=False`` в роутере)."
@@ -209,11 +214,11 @@ msgstr ""
 "Requires enabled ``stdout`` interception "
 "(``disable_redirect_stdout=False`` in the router)."
 
-#: ../../root/redirect_stdout.rst:89
+#: ../../root/redirect_stdout.rst:92
 msgid "**``StaticDividingLine(length: int = 25)``**"
 msgstr "**``StaticDividingLine(length: int = 25)``**"
 
-#: ../../root/redirect_stdout.rst:90
+#: ../../root/redirect_stdout.rst:93
 msgid ""
 "Линия имеет фиксированную длину (по умолчанию 25 символов), которую можно"
 " задать через аргумент ``length``."
@@ -221,7 +226,7 @@ msgstr ""
 "The line has a fixed length (25 characters by default), which can be set "
 "via the ``length`` argument."
 
-#: ../../root/redirect_stdout.rst:91
+#: ../../root/redirect_stdout.rst:94
 msgid ""
 "Используется принудительно для роутеров с "
 "``disable_redirect_stdout=True``, так как без перехвата вывода невозможно"
@@ -230,11 +235,11 @@ msgstr ""
 "Used forcibly for routers with ``disable_redirect_stdout=True``, as it is"
 " impossible to determine dynamic length without output interception."
 
-#: ../../root/redirect_stdout.rst:96
+#: ../../root/redirect_stdout.rst:99
 msgid "Настройка разделительной линии в ``App``"
 msgstr "Configuring the Dividing Line in ``App``"
 
-#: ../../root/redirect_stdout.rst:98
+#: ../../root/redirect_stdout.rst:101
 msgid ""
 "Вы можете глобально задать тип разделителя для всего приложения через "
 "аргумент ``dividing_line`` в конструкторе ``App``."
@@ -242,63 +247,63 @@ msgstr ""
 "You can globally set the divider type for the entire application via the "
 "``dividing_line`` argument in the ``App`` constructor."
 
-#: ../../root/redirect_stdout.rst:109
+#: ../../root/redirect_stdout.rst:112
 msgid "Итоговое поведение"
 msgstr "Resulting Behavior"
 
-#: ../../root/redirect_stdout.rst:115
+#: ../../root/redirect_stdout.rst:118
 msgid "``disable_redirect_stdout`` на ``Router``"
 msgstr "``disable_redirect_stdout`` on ``Router``"
 
-#: ../../root/redirect_stdout.rst:116
+#: ../../root/redirect_stdout.rst:119
 msgid "Тип линии в ``App``"
 msgstr "Line type in ``App``"
 
-#: ../../root/redirect_stdout.rst:117
+#: ../../root/redirect_stdout.rst:120
 msgid "Фактическое поведение"
 msgstr "Actual behavior"
 
-#: ../../root/redirect_stdout.rst:118
+#: ../../root/redirect_stdout.rst:121
 msgid "``input()`` работает корректно?"
 msgstr "Does ``input()`` work correctly?"
 
-#: ../../root/redirect_stdout.rst:119 ../../root/redirect_stdout.rst:123
+#: ../../root/redirect_stdout.rst:122 ../../root/redirect_stdout.rst:126
 msgid "``False`` (по умолчанию)"
 msgstr "``False`` (default)"
 
-#: ../../root/redirect_stdout.rst:120 ../../root/redirect_stdout.rst:128
+#: ../../root/redirect_stdout.rst:123 ../../root/redirect_stdout.rst:131
 msgid "``DynamicDividingLine``"
 msgstr "``DynamicDividingLine``"
 
-#: ../../root/redirect_stdout.rst:121
+#: ../../root/redirect_stdout.rst:124
 msgid "Динамическая линия, длина по содержимому"
 msgstr "Dynamic line, length by content"
 
-#: ../../root/redirect_stdout.rst:122 ../../root/redirect_stdout.rst:126
+#: ../../root/redirect_stdout.rst:125 ../../root/redirect_stdout.rst:129
 msgid "Нет"
 msgstr "No"
 
-#: ../../root/redirect_stdout.rst:124 ../../root/redirect_stdout.rst:132
+#: ../../root/redirect_stdout.rst:127 ../../root/redirect_stdout.rst:135
 msgid "``StaticDividingLine``"
 msgstr "``StaticDividingLine``"
 
-#: ../../root/redirect_stdout.rst:125 ../../root/redirect_stdout.rst:133
+#: ../../root/redirect_stdout.rst:128 ../../root/redirect_stdout.rst:136
 msgid "Статическая линия указанной длины"
 msgstr "Static line of specified length"
 
-#: ../../root/redirect_stdout.rst:127 ../../root/redirect_stdout.rst:131
+#: ../../root/redirect_stdout.rst:130 ../../root/redirect_stdout.rst:134
 msgid "``True``"
 msgstr "``True``"
 
-#: ../../root/redirect_stdout.rst:129
+#: ../../root/redirect_stdout.rst:132
 msgid "**Принудительно статическая линия** (длина по умолч.)"
 msgstr "**Forcibly static line** (default length)"
 
-#: ../../root/redirect_stdout.rst:130 ../../root/redirect_stdout.rst:134
+#: ../../root/redirect_stdout.rst:133 ../../root/redirect_stdout.rst:137
 msgid "Да"
 msgstr "Yes"
 
-#: ../../root/redirect_stdout.rst:136
+#: ../../root/redirect_stdout.rst:139
 msgid ""
 "Таким образом, для интерактивных команд, требующих ввода от пользователя,"
 " отключайте перехват ``stdout`` на уровне роутера. Для всех остальных "
