@@ -272,7 +272,6 @@ class BaseApp:
         def _(response: Response) -> None:
             self._exit_command_handler(response)
 
-        self.system_router.command_register_ignore = self._ignore_command_register
         self.registered_routers.add_registered_router(self.system_router)
     
     def _validate_routers_for_collisions(self) -> None:
@@ -519,7 +518,6 @@ class App(BaseApp):
         :param router: registered router
         :return: None
         """
-        router.command_register_ignore = self._ignore_command_register
         self.registered_routers.add_registered_router(router)
 
     def include_routers(self, *routers: Router) -> None:

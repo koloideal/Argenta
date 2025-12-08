@@ -7,16 +7,14 @@ from rich.console import Console
 
 from argenta.command import Command, InputCommand
 from argenta.command.flag import ValidationStatus
-from argenta.command.flag.flags import Flags, InputFlags
+from argenta.command.flag.flags import InputFlags
 from argenta.response import Response, ResponseStatus
 from argenta.router.command_handler.entity import CommandHandler, CommandHandlers
-from argenta.router.exceptions import (
-    RepeatedAliasNameException,
-    RepeatedFlagNameException,
-    RepeatedTriggerNameException,
-    RequiredArgumentNotPassedException,
-    TriggerContainSpacesException,
-)
+from argenta.router.exceptions import (RepeatedAliasNameException,
+                                       RepeatedFlagNameException,
+                                       RepeatedTriggerNameException,
+                                       RequiredArgumentNotPassedException,
+                                       TriggerContainSpacesException)
 
 HandlerFunc: TypeAlias = Callable[..., None]
 
@@ -42,8 +40,6 @@ class Router:
         self.disable_redirect_stdout: bool = disable_redirect_stdout
 
         self.command_handlers: CommandHandlers = CommandHandlers()
-        self.command_register_ignore: bool = False
-        
         self.aliases: set[str] = set()
         self.triggers: set[str] = set()
 
@@ -87,12 +83,11 @@ class Router:
         if overlapping := (self.aliases | self.triggers) & set(map(lambda x: x.lower(), command.aliases)):
             raise RepeatedAliasNameException(overlapping)
             
-        flags: Flags = command.registered_flags
-        flags_name: list[str] = [flag.string_entity.lower() for flag in flags]
+        flags_name: list[str] = [flag.string_entity.lower() for flag in command.registered_flags]
         if len(set(flags_name)) < len(flags_name):
             raise RepeatedFlagNameException()
         
-    def _update_routing_keys(self, registered_command: Command):
+    def _update_routing_keys(self, registered_command: Command) -> None:
         redefined_command_aliases_in_lower = set(map(lambda x: x.lower(), registered_command.aliases))
         self.aliases.update(redefined_command_aliases_in_lower)
         self.triggers.add(registered_command.trigger.lower())

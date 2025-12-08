@@ -1,11 +1,10 @@
 __all__ = ["CommandHandler", "CommandHandlers"]
 
 from collections.abc import Iterator
-from typing import Callable
+from typing import Callable, Never
 
 from argenta.command import Command
 from argenta.response import Response
-
 
 HandlerFunc = Callable[..., None]
 
@@ -30,7 +29,7 @@ class CommandHandler:
 
 
 class CommandHandlers:
-    def __init__(self, command_handlers: tuple[CommandHandler] = tuple()):
+    def __init__(self, command_handlers: tuple[CommandHandler] | tuple[Never, ...] = tuple()):
         """
         Private. The model that unites all CommandHandler of the routers
         :param command_handlers: list of CommandHandlers for register
@@ -49,7 +48,7 @@ class CommandHandlers:
         for alias in command_handler.handled_command.aliases:
             self.paired_command_handler_trigger[alias.lower()] = command_handler
             
-    def get_command_handler_by_trigger(self, trigger: str):
+    def get_command_handler_by_trigger(self, trigger: str) -> CommandHandler | None:
         print(self.paired_command_handler_trigger)
         return self.paired_command_handler_trigger.get(trigger)
 
