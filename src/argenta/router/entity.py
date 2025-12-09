@@ -104,7 +104,7 @@ class Router:
         command_handler = self.command_handlers.get_command_handler_by_trigger(input_command_name)
         
         if not command_handler:
-            raise RuntimeError(f"Handler for '{input_command.trigger}' command not found!")
+            raise RuntimeError(f"Handler for '{input_command.trigger}' command not found. Panic!")
         else:
             self.process_input_command(input_command_flags, command_handler)
 

@@ -1,10 +1,14 @@
-from argenta import Command, Response, Router
+from argenta import Command, Response, Router, App, Orchestrator
 from argenta.command import InputCommand
 
 router = Router()
+orchestrator = Orchestrator()
 
-@router.command(Command('heLLo'))
-def handler(_res: Response) -> None:
-    print("Hello World!")
+@router.command(Command('test'))
+def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
+    print('test command')
 
-router.finds_appropriate_handler(InputCommand('HellO'))
+app = App(override_system_messages=True, print_func=print)
+app.include_router(router)
+app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
+orchestrator.start_polling(app)

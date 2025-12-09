@@ -48,7 +48,7 @@ class AutoCompleter:
         else:
             return None
 
-    def initial_setup(self, all_commands: list[str]) -> None:
+    def initial_setup(self, all_commands: set[str]) -> None:
         """
         Private. Initial setup function
         :param all_commands: Registered commands for adding them to the autocomplete history
@@ -69,7 +69,7 @@ class AutoCompleter:
         readline.set_completer_delims(readline.get_completer_delims().replace(" ", ""))
         readline.parse_and_bind(f"{self.autocomplete_button}: complete")
 
-    def exit_setup(self, all_commands: list[str], ignore_command_register: bool) -> None:
+    def exit_setup(self, all_commands: set[str]) -> None:
         """
         Private. Exit setup function
         :return: None
@@ -80,20 +80,10 @@ class AutoCompleter:
                 raw_history = history_file.read()
             pretty_history: list[str] = []
             for line in set(raw_history.strip().split("\n")):
-                if _is_command_exist(
-                    line.split()[0], all_commands, ignore_command_register
-                ):
+                if line.split()[0] in all_commands:
                     pretty_history.append(line)
             with open(self.history_filename, "w") as history_file:
                 _ = history_file.write("\n".join(pretty_history))
-
-
-def _is_command_exist(
-    command: str, existing_commands: list[str], ignore_command_register: bool
-) -> bool:
-    if ignore_command_register:
-        return command.lower() in existing_commands
-    return command in existing_commands
 
 
 def _get_history_items() -> list[str] | list[Never]:

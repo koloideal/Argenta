@@ -40,7 +40,6 @@ class BaseApp:
         farewell_message: str,
         exit_command: Command,
         system_router_title: str,
-        ignore_command_register: bool,
         dividing_line: StaticDividingLine | DynamicDividingLine,
         repeat_command_groups_printing: bool,
         override_system_messages: bool,
@@ -51,8 +50,7 @@ class BaseApp:
         self._print_func: Printer = print_func
         self._exit_command: Command = exit_command
         self._dividing_line: StaticDividingLine | DynamicDividingLine = dividing_line
-        self._ignore_command_register: bool = ignore_command_register
-        self._repeat_command_groups_printing_description: bool = repeat_command_groups_printing
+        self._repeat_command_groups_printing: bool = repeat_command_groups_printing
         self._override_system_messages: bool = override_system_messages
         self._autocompleter: AutoCompleter = autocompleter
         self.system_router: Router = Router(title=system_router_title)
@@ -65,15 +63,6 @@ class BaseApp:
         )
         self.registered_routers: RegisteredRouters = RegisteredRouters()
         self._messages_on_startup: list[str] = []
-
-        self._matching_lower_triggers_with_routers: dict[str, Router] = {}
-        self._matching_default_triggers_with_routers: dict[str, Router] = {}
-
-        self._current_matching_triggers_with_routers: dict[str, Router] = (
-            self._matching_lower_triggers_with_routers
-            if self._ignore_command_register
-            else self._matching_default_triggers_with_routers
-        )
 
         self._incorrect_input_syntax_handler: NonStandardBehaviorHandler[str] = (
             lambda _: print_func(f"Incorrect flag syntax: {_}")
@@ -217,36 +206,11 @@ class BaseApp:
         """
         trigger = command.trigger
         exit_trigger = self._exit_command.trigger
-        if self._ignore_command_register:
-            if trigger.lower() == exit_trigger.lower():
-                return True
-            elif trigger.lower() in [x.lower() for x in self._exit_command.aliases]:
-                return True
-        else:
-            if trigger == exit_trigger:
-                return True
-            elif trigger in self._exit_command.aliases:
-                return True
+        if trigger.lower() == exit_trigger.lower():
+            return True
+        elif trigger.lower() in [x.lower() for x in self._exit_command.aliases]:
+            return True
         return False
-
-    def _is_unknown_command(self, command: InputCommand) -> bool:
-        """
-        Private. Checks if the given command is an unknown command
-        :param command: command to check
-        :return: is it an unknown command or not as bool
-        """
-        input_command_trigger = command.trigger
-        if self._ignore_command_register:
-            if input_command_trigger.lower() in list(
-                self._current_matching_triggers_with_routers.keys()
-            ):
-                return False
-        else:
-            if input_command_trigger in list(
-                self._current_matching_triggers_with_routers.keys()
-            ):
-                return False
-        return True
 
     def _error_handler(self, error: InputCommandException, raw_command: str) -> None:
         """
@@ -297,7 +261,7 @@ class BaseApp:
             all_aliases.update(router_entity.aliases)
 
     def _most_similar_command(self, unknown_command: str) -> str | None:
-        all_commands = list(self._current_matching_triggers_with_routers.keys())
+        all_commands = self.registered_routers.get_triggers()
 
         matches_startswith_unknown_command: Matches = sorted(
             cmd for cmd in all_commands if cmd.startswith(unknown_command)
@@ -368,20 +332,7 @@ class BaseApp:
         self._setup_system_router()
         self._validate_routers_for_collisions()
 
-        for router_entity in self.registered_routers:
-            router_triggers = router_entity.triggers
-            router_aliases = router_entity.aliases
-            combined = router_triggers | router_aliases
-
-            for trigger in combined:
-                self._matching_default_triggers_with_routers[trigger] = router_entity
-                self._matching_lower_triggers_with_routers[trigger.lower()] = (
-                    router_entity
-                )
-
-        self._autocompleter.initial_setup(
-            list(self._current_matching_triggers_with_routers.keys())
-        )
+        self._autocompleter.initial_setup(self.registered_routers.get_triggers())
 
         if not self._override_system_messages:
             self._setup_default_view()
@@ -392,13 +343,14 @@ class BaseApp:
             self._print_func(message)
         if self._messages_on_startup:
             print("\n")
-        if not self._repeat_command_groups_printing_description:
+        if not self._repeat_command_groups_printing:
             self._print_command_group_description()
 
     def _process_exist_and_valid_command(self, input_command: InputCommand) -> None:
-        processing_router = self._current_matching_triggers_with_routers[
-            input_command.trigger.lower()
-        ]
+        processing_router = self.registered_routers.get_router_by_trigger(input_command.trigger.lower())
+        
+        if not processing_router:
+            raise RuntimeError(f"Router for '{input_command.trigger}' not found. Panic!")
 
         if processing_router.disable_redirect_stdout:
             dividing_line_unit_part: str = self._dividing_line.get_unit_part()
@@ -452,7 +404,6 @@ class App(BaseApp):
         :param farewell_message: displayed at the end of the app
         :param exit_command: the entity of the command that will be terminated when entered
         :param system_router_title: system router title
-        :param ignore_command_register: whether to ignore the case of the entered commands
         :param dividing_line: the entity of the dividing line
         :param repeat_command_groups_printing: whether to repeat the available commands and their description
         :param override_system_messages: whether to redefine the default formatting of system messages
@@ -466,7 +417,6 @@ class App(BaseApp):
             farewell_message=farewell_message,
             exit_command=exit_command,
             system_router_title=system_router_title,
-            ignore_command_register=ignore_command_register,
             dividing_line=dividing_line,
             repeat_command_groups_printing=repeat_command_groups_printing,
             override_system_messages=override_system_messages,
@@ -481,7 +431,7 @@ class App(BaseApp):
         """
         self._pre_cycle_setup()
         while True:
-            if self._repeat_command_groups_printing_description:
+            if self._repeat_command_groups_printing:
                 self._print_command_group_description()
 
             raw_command: str = Console().input(self._prompt)
@@ -497,13 +447,10 @@ class App(BaseApp):
 
             if self._is_exit_command(input_command):
                 self.system_router.finds_appropriate_handler(input_command)
-                self._autocompleter.exit_setup(
-                    list(self._current_matching_triggers_with_routers.keys()),
-                    self._ignore_command_register,
-                )
+                self._autocompleter.exit_setup(self.registered_routers.get_triggers())
                 return
 
-            if self._is_unknown_command(input_command):
+            if self.registered_routers.get_router_by_trigger(input_command.trigger.lower()):
                 with redirect_stdout(io.StringIO()) as stdout:
                     self._unknown_command_handler(input_command)
                     stdout_res: str = stdout.getvalue()

@@ -208,7 +208,7 @@ def test_finds_appropriate_handler_executes_handler_by_alias(capsys: CaptureFixt
 
     assert "Hello World!" in output.out
     
-def test_finds_appropriate_handler_executes_handler_by_alias_with_differrent_register(capsys: CaptureFixture[str]) -> None:
+def test_finds_appropriate_handler_executes_handler_by_alias_case_insensitive(capsys: CaptureFixture[str]) -> None:
     router = Router()
 
     @router.command(Command('hello', aliases={'hI'}))
@@ -222,7 +222,7 @@ def test_finds_appropriate_handler_executes_handler_by_alias_with_differrent_reg
     assert "Hello World!" in output.out
     
     
-def test_finds_appropriate_handler_executes_handler_by_trigger_with_differrent_register(capsys: CaptureFixture[str]) -> None:
+def test_finds_appropriate_handler_executes_handler_by_trigger_case_insensitive(capsys: CaptureFixture[str]) -> None:
     router = Router()
 
     @router.command(Command('heLLo'))
@@ -305,3 +305,95 @@ def test_validate_command_raises_error_for_alias_collision_case_insensitive() ->
         @router.command(Command('world', aliases={'hI'}))
         def handler2(_res: Response) -> None:
             pass
+
+
+# ============================================================================
+# Tests for RegisteredRouters
+# ============================================================================
+
+
+def test_registered_routers_get_router_by_trigger() -> None:
+    from argenta.app.registered_routers.entity import RegisteredRouters
+    
+    registered_routers = RegisteredRouters()
+    router = Router()
+    
+    @router.command('hello')
+    def handler(_res: Response) -> None:
+        pass
+    
+    registered_routers.add_registered_router(router)
+    
+    assert registered_routers.get_router_by_trigger('hello') == router
+
+
+def test_registered_routers_get_router_by_alias() -> None:
+    from argenta.app.registered_routers.entity import RegisteredRouters
+    
+    registered_routers = RegisteredRouters()
+    router = Router()
+    
+    @router.command(Command('hello', aliases={'hi'}))
+    def handler(_res: Response) -> None:
+        pass
+    
+    registered_routers.add_registered_router(router)
+    
+    assert registered_routers.get_router_by_trigger('hi') == router
+
+
+def test_registered_routers_get_router_case_insensitive() -> None:
+    from argenta.app.registered_routers.entity import RegisteredRouters
+    
+    registered_routers = RegisteredRouters()
+    router = Router()
+    
+    @router.command(Command('HeLLo'))
+    def handler(_res: Response) -> None:
+        pass
+    
+    registered_routers.add_registered_router(router)
+    
+    # Trigger stored in lowercase, should match regardless of case
+    assert registered_routers.get_router_by_trigger('hello') == router
+    assert registered_routers.get_router_by_trigger('HELLO') is None  # Exact match required in dict
+
+
+def test_registered_routers_get_triggers_returns_all_triggers_and_aliases() -> None:
+    from argenta.app.registered_routers.entity import RegisteredRouters
+    
+    registered_routers = RegisteredRouters()
+    router1 = Router()
+    router2 = Router()
+    
+    @router1.command(Command('hello', aliases={'hi'}))
+    def handler1(_res: Response) -> None:
+        pass
+    
+    @router2.command(Command('world', aliases={'w'}))
+    def handler2(_res: Response) -> None:
+        pass
+    
+    registered_routers.add_registered_router(router1)
+    registered_routers.add_registered_router(router2)
+    
+    triggers = registered_routers.get_triggers()
+    assert 'hello' in triggers
+    assert 'hi' in triggers
+    assert 'world' in triggers
+    assert 'w' in triggers
+
+
+def test_registered_routers_returns_none_for_unknown_trigger() -> None:
+    from argenta.app.registered_routers.entity import RegisteredRouters
+    
+    registered_routers = RegisteredRouters()
+    router = Router()
+    
+    @router.command('hello')
+    def handler(_res: Response) -> None:
+        pass
+    
+    registered_routers.add_registered_router(router)
+    
+    assert registered_routers.get_router_by_trigger('unknown') is None

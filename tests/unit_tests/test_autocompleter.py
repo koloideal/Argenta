@@ -7,13 +7,12 @@ from pytest_mock import MockerFixture
 
 from argenta.app.autocompleter.entity import (
     AutoCompleter,
-    _get_history_items,
-    _is_command_exist,
+    _get_history_items
 )
 
 
 HISTORY_FILE: str = "test_history.txt"
-COMMANDS: list[str] = ["start", "stop", "status"]
+COMMANDS: set[str] = {"start", "stop", "status"}
 
 
 # ============================================================================
@@ -119,7 +118,7 @@ def test_exit_setup_writes_and_filters_duplicate_commands(fs: FakeFilesystem, mo
     fs.create_file(HISTORY_FILE, contents=raw_history_content)  # pyright: ignore[reportUnknownMemberType]
 
     completer: AutoCompleter = AutoCompleter(history_filename=HISTORY_FILE)
-    completer.exit_setup(all_commands=["start", "stop"], ignore_command_register=False)
+    completer.exit_setup(all_commands={"start", "stop"})
 
     mock_readline.write_history_file.assert_called_once_with(HISTORY_FILE)
 
@@ -131,7 +130,7 @@ def test_exit_setup_writes_and_filters_duplicate_commands(fs: FakeFilesystem, mo
 
 def test_exit_setup_skips_writing_when_no_history_filename(mock_readline: Any) -> None:
     completer: AutoCompleter = AutoCompleter(history_filename=None)
-    completer.exit_setup(all_commands=COMMANDS, ignore_command_register=False)
+    completer.exit_setup(all_commands=COMMANDS)
     mock_readline.write_history_file.assert_not_called()
 
 
@@ -180,22 +179,6 @@ def test_complete_inserts_common_prefix_for_multiple_matches(mock_readline: Any)
 # ============================================================================
 # Tests for helper functions
 # ============================================================================
-
-
-def test_is_command_exist_checks_case_sensitive_when_enabled() -> None:
-    existing: list[str] = ["start", "stop", "status"]
-
-    assert _is_command_exist("start", existing, ignore_command_register=False) is True
-    assert _is_command_exist("START", existing, ignore_command_register=False) is False
-    assert _is_command_exist("unknown", existing, ignore_command_register=False) is False
-
-
-def test_is_command_exist_checks_case_insensitive_when_enabled() -> None:
-    existing: list[str] = ["start", "stop", "status"]
-
-    assert _is_command_exist("start", existing, ignore_command_register=True) is True
-    assert _is_command_exist("START", existing, ignore_command_register=True) is True
-    assert _is_command_exist("unknown", existing, ignore_command_register=True) is False
 
 
 def test_get_history_items_returns_empty_list_initially(mock_readline: Any) -> None:
