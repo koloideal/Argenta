@@ -2,7 +2,6 @@ __all__ = ["NonStandardBehaviorHandler", "EmptyCommandHandler", "Printer", "Desc
 
 from typing import Protocol, TypeVar
 
-
 T = TypeVar("T", contravariant=True)  # noqa: WPS111
 
 

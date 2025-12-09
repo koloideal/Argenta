@@ -1,7 +1,7 @@
 __all__ = ["Command", "InputCommand"]
 
 import shlex
-from typing import Never, Self, cast, Literal
+from typing import Literal, Never, Self, cast
 
 from argenta.command.exceptions import (
     EmptyInputCommandException,
@@ -38,10 +38,15 @@ class Command:
         :param flags: processed commands
         :param aliases: string synonyms for the main trigger
         """
-        self.registered_flags: Flags = flags if isinstance(flags, Flags) else Flags([flags])
+        pretty_flags = flags if isinstance(flags, Flags) else Flags([flags])
+        self.registered_flags: Flags = pretty_flags
         self.trigger: str = trigger
         self.description: str = description
         self.aliases: set[str] | set[Never] = aliases
+
+        self._paired_string_entity_flag: dict[str, Flag] = {
+            flag.string_entity: flag for flag in pretty_flags
+        }
 
     def validate_input_flag(self, flag: InputFlag) -> ValidationStatus:
         """
@@ -49,19 +54,22 @@ class Command:
         :param flag: input flag for validation
         :return: is input flag valid as bool
         """
-        registered_flags: Flags = self.registered_flags
-        for registered_flag in registered_flags:
-            if registered_flag.string_entity == flag.string_entity:
-                is_valid = registered_flag.validate_input_flag_value(flag.input_value)
-                if is_valid:
-                    return ValidationStatus.VALID
-                else:
-                    return ValidationStatus.INVALID
+        if registered_flag := self._paired_string_entity_flag.get(flag.string_entity):
+            is_valid = registered_flag.validate_input_flag_value(flag.input_value)
+            if is_valid:
+                return ValidationStatus.VALID
+            else:
+                return ValidationStatus.INVALID
         return ValidationStatus.UNDEFINED
 
 
 class InputCommand:
-    def __init__(self, trigger: str, *, input_flags: InputFlag | InputFlags = DEFAULT_WITHOUT_INPUT_FLAGS):
+    def __init__(
+        self,
+        trigger: str,
+        *,
+        input_flags: InputFlag | InputFlags = DEFAULT_WITHOUT_INPUT_FLAGS,
+    ):
         """
         Private. The model of the input command, after parsing
         :param trigger:the trigger of the command
@@ -70,7 +78,9 @@ class InputCommand:
         """
         self.trigger: str = trigger
         self.input_flags: InputFlags = (
-            input_flags if isinstance(input_flags, InputFlags) else InputFlags([input_flags])
+            input_flags
+            if isinstance(input_flags, InputFlags)
+            else InputFlags([input_flags])
         )
 
     @classmethod
@@ -81,17 +91,17 @@ class InputCommand:
         :return: model of the input command, after parsing as InputCommand
         """
         tokens = shlex.split(raw_command)
-        
+
         if not tokens:
             raise EmptyInputCommandException
-        
+
         command = tokens[0]
         flags: InputFlags = InputFlags()
-        
+
         i = 1
         while i < len(tokens):
             token = tokens[i]
-            
+
             if token.startswith("---"):
                 prefix = "---"
                 name = token[3:]
@@ -103,24 +113,24 @@ class InputCommand:
                 name = token[1:]
             else:
                 raise UnprocessedInputFlagException
-            
+
             if i + 1 < len(tokens) and not tokens[i + 1].startswith("-"):
                 input_value = tokens[i + 1]
                 i += 2
             else:
                 input_value = ""
                 i += 1
-                
+
             input_flag = InputFlag(
                 name=name,
                 prefix=cast(PREFIX_TYPE, prefix),  # pyright: ignore[reportUnnecessaryCast]
                 input_value=input_value,
-                status=None
+                status=None,
             )
-                
+
             if input_flag in flags:
                 raise RepeatedInputFlagsException(input_flag)
-            
+
             flags.add_flag(input_flag)
-        
+
         return cls(command, input_flags=flags)

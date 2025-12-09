@@ -23,10 +23,10 @@ from argenta.command.exceptions import (
     RepeatedInputFlagsException,
     UnprocessedInputFlagException,
 )
+from argenta.router.exceptions import RepeatedAliasNameException, RepeatedTriggerNameException
 from argenta.command.models import Command, InputCommand
 from argenta.response import Response
 from argenta.router import Router
-from argenta.router.defaults import system_router
 
 Matches: TypeAlias = list[str] | list[Never]
 
@@ -40,7 +40,6 @@ class BaseApp:
         farewell_message: str,
         exit_command: Command,
         system_router_title: str,
-        ignore_command_register: bool,
         dividing_line: StaticDividingLine | DynamicDividingLine,
         repeat_command_groups_printing: bool,
         override_system_messages: bool,
@@ -50,12 +49,11 @@ class BaseApp:
         self._prompt: str = prompt
         self._print_func: Printer = print_func
         self._exit_command: Command = exit_command
-        self._system_router_title: str = system_router_title
         self._dividing_line: StaticDividingLine | DynamicDividingLine = dividing_line
-        self._ignore_command_register: bool = ignore_command_register
-        self._repeat_command_groups_printing_description: bool = repeat_command_groups_printing
+        self._repeat_command_groups_printing: bool = repeat_command_groups_printing
         self._override_system_messages: bool = override_system_messages
         self._autocompleter: AutoCompleter = autocompleter
+        self.system_router: Router = Router(title=system_router_title)
 
         self._farewell_message: str = farewell_message
         self._initial_message: str = initial_message
@@ -66,27 +64,20 @@ class BaseApp:
         self.registered_routers: RegisteredRouters = RegisteredRouters()
         self._messages_on_startup: list[str] = []
 
-        self._matching_lower_triggers_with_routers: dict[str, Router] = {}
-        self._matching_default_triggers_with_routers: dict[str, Router] = {}
-
-        self._current_matching_triggers_with_routers: dict[str, Router] = (
-            self._matching_lower_triggers_with_routers
-            if self._ignore_command_register
-            else self._matching_default_triggers_with_routers
+        self._incorrect_input_syntax_handler: NonStandardBehaviorHandler[str] = (
+            lambda _: print_func(f"Incorrect flag syntax: {_}")
         )
-
-        self._incorrect_input_syntax_handler: NonStandardBehaviorHandler[str] = lambda _: print_func(
-            f"Incorrect flag syntax: {_}"
+        self._repeated_input_flags_handler: NonStandardBehaviorHandler[str] = (
+            lambda _: print_func(f"Repeated input flags: {_}")
         )
-        self._repeated_input_flags_handler: NonStandardBehaviorHandler[str] = lambda _: print_func(
-            f"Repeated input flags: {_}"
+        self._empty_input_command_handler: EmptyCommandHandler = lambda: print_func(
+            "Empty input command"
         )
-        self._empty_input_command_handler: EmptyCommandHandler = lambda: print_func("Empty input command")
-        self._unknown_command_handler: NonStandardBehaviorHandler[InputCommand] = lambda _: print_func(
-            f"Unknown command: {_.trigger}"
+        self._unknown_command_handler: NonStandardBehaviorHandler[InputCommand] = (
+            lambda _: print_func(f"Unknown command: {_.trigger}")
         )
-        self._exit_command_handler: NonStandardBehaviorHandler[Response] = lambda _: print_func(
-            self._farewell_message
+        self._exit_command_handler: NonStandardBehaviorHandler[Response] = (
+            lambda _: print_func(self._farewell_message)
         )
 
     def set_description_message_pattern(self, _: DescriptionMessageGenerator, /) -> None:
@@ -97,7 +88,9 @@ class BaseApp:
         """
         self._description_message_gen = _
 
-    def set_incorrect_input_syntax_handler(self, _: NonStandardBehaviorHandler[str], /) -> None:
+    def set_incorrect_input_syntax_handler(
+        self, _: NonStandardBehaviorHandler[str], /
+    ) -> None:
         """
         Public. Sets the handler for incorrect flags when entering a command
         :param _: handler for incorrect flags when entering a command
@@ -105,7 +98,9 @@ class BaseApp:
         """
         self._incorrect_input_syntax_handler = _
 
-    def set_repeated_input_flags_handler(self, _: NonStandardBehaviorHandler[str], /) -> None:
+    def set_repeated_input_flags_handler(
+        self, _: NonStandardBehaviorHandler[str], /
+    ) -> None:
         """
         Public. Sets the handler for repeated flags when entering a command
         :param _: handler for repeated flags when entering a command
@@ -113,7 +108,9 @@ class BaseApp:
         """
         self._repeated_input_flags_handler = _
 
-    def set_unknown_command_handler(self, _: NonStandardBehaviorHandler[InputCommand], /) -> None:
+    def set_unknown_command_handler(
+        self, _: NonStandardBehaviorHandler[InputCommand], /
+    ) -> None:
         """
         Public. Sets the handler for unknown commands when entering a command
         :param _: handler for unknown commands when entering a command
@@ -129,7 +126,9 @@ class BaseApp:
         """
         self._empty_input_command_handler = _
 
-    def set_exit_command_handler(self, _: NonStandardBehaviorHandler[Response], /) -> None:
+    def set_exit_command_handler(
+        self, _: NonStandardBehaviorHandler[Response], /
+    ) -> None:
         """
         Public. Sets the handler for exit command when entering a command
         :param _: handler for exit command when entering a command
@@ -164,7 +163,11 @@ class BaseApp:
             clear_text = re.sub(r"\u001b\[[0-9;]*m", "", text)
             max_length_line = max([len(line) for line in clear_text.split("\n")])
             max_length_line = (
-                max_length_line if 10 <= max_length_line <= 80 else 80 if max_length_line > 80 else 10
+                max_length_line
+                if 10 <= max_length_line <= 80
+                else 80
+                if max_length_line > 80
+                else 10
             )
 
             self._print_func(
@@ -181,11 +184,15 @@ class BaseApp:
 
         elif isinstance(self._dividing_line, StaticDividingLine):  # pyright: ignore[reportUnnecessaryIsInstance]
             self._print_func(
-                self._dividing_line.get_full_static_line(is_override=self._override_system_messages)
+                self._dividing_line.get_full_static_line(
+                    is_override=self._override_system_messages
+                )
             )
             print(text.strip("\n"))
             self._print_func(
-                self._dividing_line.get_full_static_line(is_override=self._override_system_messages)
+                self._dividing_line.get_full_static_line(
+                    is_override=self._override_system_messages
+                )
             )
 
         else:
@@ -199,32 +206,11 @@ class BaseApp:
         """
         trigger = command.trigger
         exit_trigger = self._exit_command.trigger
-        if self._ignore_command_register:
-            if trigger.lower() == exit_trigger.lower():
-                return True
-            elif trigger.lower() in [x.lower() for x in self._exit_command.aliases]:
-                return True
-        else:
-            if trigger == exit_trigger:
-                return True
-            elif trigger in self._exit_command.aliases:
-                return True
+        if trigger.lower() == exit_trigger.lower():
+            return True
+        elif trigger.lower() in [x.lower() for x in self._exit_command.aliases]:
+            return True
         return False
-
-    def _is_unknown_command(self, command: InputCommand) -> bool:
-        """
-        Private. Checks if the given command is an unknown command
-        :param command: command to check
-        :return: is it an unknown command or not as bool
-        """
-        input_command_trigger = command.trigger
-        if self._ignore_command_register:
-            if input_command_trigger.lower() in list(self._current_matching_triggers_with_routers.keys()):
-                return False
-        else:
-            if input_command_trigger in list(self._current_matching_triggers_with_routers.keys()):
-                return False
-        return True
 
     def _error_handler(self, error: InputCommandException, raw_command: str) -> None:
         """
@@ -245,17 +231,37 @@ class BaseApp:
         Private. Sets up system router
         :return: None
         """
-        system_router.title = self._system_router_title
 
-        @system_router.command(self._exit_command)
+        @self.system_router.command(self._exit_command)
         def _(response: Response) -> None:
             self._exit_command_handler(response)
 
-        system_router.command_register_ignore = self._ignore_command_register
-        self.registered_routers.add_registered_router(system_router)
+        self.registered_routers.add_registered_router(self.system_router)
+    
+    def _validate_routers_for_collisions(self) -> None:
+        """
+        Private. Validates that there are no trigger/alias collisions between routers
+        :return: None
+        :raises: RepeatedTriggerNameException or RepeatedAliasNameException if collision detected
+        """
+        
+        all_triggers: set[str] = set()
+        all_aliases: set[str] = set()
+        
+        for router_entity in self.registered_routers:
+            trigger_collisions: set[str] = (all_triggers | all_aliases) & router_entity.triggers
+            if trigger_collisions:
+                raise RepeatedTriggerNameException()
+            
+            alias_collisions: set[str] = (all_aliases | all_triggers) & router_entity.aliases
+            if alias_collisions:
+                raise RepeatedAliasNameException(alias_collisions)
+            
+            all_triggers.update(router_entity.triggers)
+            all_aliases.update(router_entity.aliases)
 
     def _most_similar_command(self, unknown_command: str) -> str | None:
-        all_commands = list(self._current_matching_triggers_with_routers.keys())
+        all_commands = self.registered_routers.get_triggers()
 
         matches_startswith_unknown_command: Matches = sorted(
             cmd for cmd in all_commands if cmd.startswith(unknown_command)
@@ -279,7 +285,9 @@ class BaseApp:
         :return: None
         """
         self._prompt = f"[italic dim bold]{self._prompt}"
-        self._initial_message = "\n" + f"[bold red]{text2art(self._initial_message, font='tarty1')}" + "\n"
+        self._initial_message = (
+            "\n" + f"[bold red]{text2art(self._initial_message, font='tarty1')}" + "\n"
+        )
         self._farewell_message = (
             "[bold red]\n\n"
             + str(text2art(self._farewell_message, font="chanky"))  # pyright: ignore[reportUnknownArgumentType]
@@ -297,14 +305,20 @@ class BaseApp:
         self._repeated_input_flags_handler = lambda raw_command: self._print_func(
             f"[red bold]Repeated input flags: {escape(raw_command)}"
         )
-        self._empty_input_command_handler = lambda: self._print_func("[red bold]Empty input command")
+        self._empty_input_command_handler = lambda: self._print_func(
+            "[red bold]Empty input command"
+        )
 
         def unknown_command_handler(command: InputCommand) -> None:
             cmd_trg: str = command.trigger
             mst_sim_cmd: str | None = self._most_similar_command(cmd_trg)
-            first_part_of_text = f"[red]Unknown command:[/red] [blue]{escape(cmd_trg)}[/blue]"
+            first_part_of_text = (
+                f"[red]Unknown command:[/red] [blue]{escape(cmd_trg)}[/blue]"
+            )
             second_part_of_text = (
-                ("[red], most similar:[/red] " + ("[blue]" + mst_sim_cmd + "[/blue]")) if mst_sim_cmd else ""
+                ("[red], most similar:[/red] " + ("[blue]" + mst_sim_cmd + "[/blue]"))
+                if mst_sim_cmd
+                else ""
             )
             self._print_func(first_part_of_text + second_part_of_text)
 
@@ -316,17 +330,9 @@ class BaseApp:
         :return: None
         """
         self._setup_system_router()
+        self._validate_routers_for_collisions()
 
-        for router_entity in self.registered_routers:
-            router_triggers = router_entity.triggers
-            router_aliases = router_entity.aliases
-            combined = router_triggers | router_aliases
-
-            for trigger in combined:
-                self._matching_default_triggers_with_routers[trigger] = router_entity
-                self._matching_lower_triggers_with_routers[trigger.lower()] = router_entity
-
-        self._autocompleter.initial_setup(list(self._current_matching_triggers_with_routers.keys()))
+        self._autocompleter.initial_setup(self.registered_routers.get_triggers())
 
         if not self._override_system_messages:
             self._setup_default_view()
@@ -337,11 +343,14 @@ class BaseApp:
             self._print_func(message)
         if self._messages_on_startup:
             print("\n")
-        if not self._repeat_command_groups_printing_description:
+        if not self._repeat_command_groups_printing:
             self._print_command_group_description()
-            
+
     def _process_exist_and_valid_command(self, input_command: InputCommand) -> None:
-        processing_router = self._current_matching_triggers_with_routers[input_command.trigger.lower()]
+        processing_router = self.registered_routers.get_router_by_trigger(input_command.trigger.lower())
+        
+        if not processing_router:
+            raise RuntimeError(f"Router for '{input_command.trigger}' not found. Panic!")
 
         if processing_router.disable_redirect_stdout:
             dividing_line_unit_part: str = self._dividing_line.get_unit_part()
@@ -395,7 +404,6 @@ class App(BaseApp):
         :param farewell_message: displayed at the end of the app
         :param exit_command: the entity of the command that will be terminated when entered
         :param system_router_title: system router title
-        :param ignore_command_register: whether to ignore the case of the entered commands
         :param dividing_line: the entity of the dividing line
         :param repeat_command_groups_printing: whether to repeat the available commands and their description
         :param override_system_messages: whether to redefine the default formatting of system messages
@@ -409,7 +417,6 @@ class App(BaseApp):
             farewell_message=farewell_message,
             exit_command=exit_command,
             system_router_title=system_router_title,
-            ignore_command_register=ignore_command_register,
             dividing_line=dividing_line,
             repeat_command_groups_printing=repeat_command_groups_printing,
             override_system_messages=override_system_messages,
@@ -424,7 +431,7 @@ class App(BaseApp):
         """
         self._pre_cycle_setup()
         while True:
-            if self._repeat_command_groups_printing_description:
+            if self._repeat_command_groups_printing:
                 self._print_command_group_description()
 
             raw_command: str = Console().input(self._prompt)
@@ -439,13 +446,11 @@ class App(BaseApp):
                 continue
 
             if self._is_exit_command(input_command):
-                system_router.finds_appropriate_handler(input_command)
-                self._autocompleter.exit_setup(
-                    list(self._current_matching_triggers_with_routers.keys()), self._ignore_command_register
-                )
+                self.system_router.finds_appropriate_handler(input_command)
+                self._autocompleter.exit_setup(self.registered_routers.get_triggers())
                 return
 
-            if self._is_unknown_command(input_command):
+            if self.registered_routers.get_router_by_trigger(input_command.trigger.lower()):
                 with redirect_stdout(io.StringIO()) as stdout:
                     self._unknown_command_handler(input_command)
                     stdout_res: str = stdout.getvalue()
@@ -460,7 +465,6 @@ class App(BaseApp):
         :param router: registered router
         :return: None
         """
-        router.command_register_ignore = self._ignore_command_register
         self.registered_routers.add_registered_router(router)
 
     def include_routers(self, *routers: Router) -> None:
