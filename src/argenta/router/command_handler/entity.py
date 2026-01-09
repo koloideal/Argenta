@@ -49,7 +49,6 @@ class CommandHandlers:
             self.paired_command_handler_trigger[alias.lower()] = command_handler
             
     def get_command_handler_by_trigger(self, trigger: str) -> CommandHandler | None:
-        print(self.paired_command_handler_trigger)
         return self.paired_command_handler_trigger.get(trigger)
 
     def __iter__(self) -> Iterator[CommandHandler]:

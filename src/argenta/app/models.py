@@ -211,6 +211,11 @@ class BaseApp:
         elif trigger.lower() in [x.lower() for x in self._exit_command.aliases]:
             return True
         return False
+        
+    def _is_unknown_command(self, input_command: InputCommand) -> bool:
+        if not self.registered_routers.get_router_by_trigger(input_command.trigger.lower()):
+            return True
+        return False
 
     def _error_handler(self, error: InputCommandException, raw_command: str) -> None:
         """
@@ -389,7 +394,6 @@ class App(BaseApp):
         farewell_message: str = "\nSee you\n",
         exit_command: Command = DEFAULT_EXIT_COMMAND,
         system_router_title: str = "System points:",
-        ignore_command_register: bool = True,
         dividing_line: AVAILABLE_DIVIDING_LINES = DEFAULT_DIVIDING_LINE,
         repeat_command_groups_printing: bool = False,
         override_system_messages: bool = False,
@@ -450,7 +454,7 @@ class App(BaseApp):
                 self._autocompleter.exit_setup(self.registered_routers.get_triggers())
                 return
 
-            if self.registered_routers.get_router_by_trigger(input_command.trigger.lower()):
+            if self._is_unknown_command(input_command):
                 with redirect_stdout(io.StringIO()) as stdout:
                     self._unknown_command_handler(input_command)
                     stdout_res: str = stdout.getvalue()

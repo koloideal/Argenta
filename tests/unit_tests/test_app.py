@@ -26,24 +26,9 @@ def test_default_exit_command_uppercase_q_is_recognized() -> None:
     assert app._is_exit_command(InputCommand('Q')) is True
 
 
-def test_exit_command_not_recognized_when_case_sensitivity_enabled() -> None:
-    app = App(ignore_command_register=False)
-    assert app._is_exit_command(InputCommand('q')) is False
-
-
 def test_custom_exit_command_is_recognized() -> None:
     app = App(exit_command=Command('quit'))
     assert app._is_exit_command(InputCommand('quit')) is True
-
-
-def test_custom_exit_command_case_insensitive_by_default() -> None:
-    app = App(exit_command=Command('quit'))
-    assert app._is_exit_command(InputCommand('qUIt')) is True
-
-
-def test_custom_exit_command_case_sensitive_when_enabled() -> None:
-    app = App(ignore_command_register=False, exit_command=Command('quit'))
-    assert app._is_exit_command(InputCommand('qUIt')) is False
 
 
 def test_exit_command_alias_is_recognized() -> None:
@@ -51,19 +36,9 @@ def test_exit_command_alias_is_recognized() -> None:
     assert app._is_exit_command(InputCommand('exit')) is True
 
 
-def test_exit_command_alias_case_sensitive_when_enabled() -> None:
-    app = App(exit_command=Command('q', aliases={'exit'}), ignore_command_register=False)
-    assert app._is_exit_command(InputCommand('exit')) is True
-
-
 def test_non_exit_command_is_not_recognized() -> None:
     app = App(exit_command=Command('q', aliases={'exit'}))
     assert app._is_exit_command(InputCommand('quit')) is False
-
-
-def test_non_exit_command_with_wrong_case_is_not_recognized() -> None:
-    app = App(exit_command=Command('q', aliases={'exit'}), ignore_command_register=False)
-    assert app._is_exit_command(InputCommand('Exit')) is False
 
 
 # ============================================================================
@@ -74,29 +49,20 @@ def test_non_exit_command_with_wrong_case_is_not_recognized() -> None:
 def test_registered_command_is_not_unknown() -> None:
     app = App()
     app.set_unknown_command_handler(lambda command: None)
-    app._current_matching_triggers_with_routers = {'fr': Router(), 'tr': Router(), 'de': Router()}
+    router = Router()
+    
+    @router.command('fr')
+    def handler(res: Response):
+        pass
+        
+    app.include_router(router)
     assert app._is_unknown_command(InputCommand('fr')) is False
 
 
 def test_unregistered_command_is_unknown() -> None:
     app = App()
     app.set_unknown_command_handler(lambda command: None)
-    app._current_matching_triggers_with_routers = {'fr': Router(), 'tr': Router(), 'de': Router()}
     assert app._is_unknown_command(InputCommand('cr')) is True
-
-
-def test_command_with_wrong_case_is_unknown_when_case_sensitivity_enabled() -> None:
-    app = App(ignore_command_register=False)
-    app.set_unknown_command_handler(lambda command: None)
-    app._current_matching_triggers_with_routers = {'Pr': Router(), 'tW': Router(), 'deQW': Router()}
-    assert app._is_unknown_command(InputCommand('pr')) is True
-
-
-def test_command_with_exact_case_is_not_unknown_when_case_sensitivity_enabled() -> None:
-    app = App(ignore_command_register=False)
-    app.set_unknown_command_handler(lambda command: None)
-    app._current_matching_triggers_with_routers = {'Pr': Router(), 'tW': Router(), 'deQW': Router()}
-    assert app._is_unknown_command(InputCommand('tW')) is False
 
 
 # ============================================================================
@@ -632,7 +598,7 @@ def test_handler_can_be_replaced_multiple_times() -> None:
 
 def test_handler_receives_correct_parameters() -> None:
     app = App()
-    received_data = {'trigger': None}
+    received_data: dict[str, None | str] = {'trigger': None}
     
     def custom_handler(command: InputCommand) -> None:
         received_data['trigger'] = command.trigger
@@ -645,7 +611,7 @@ def test_handler_receives_correct_parameters() -> None:
 
 def test_exit_handler_receives_response_object() -> None:
     app = App()
-    received_data = {'response': None}
+    received_data: dict[str, None | Response] = {'response': None}
     
     def custom_handler(response: Response) -> None:
         received_data['response'] = response

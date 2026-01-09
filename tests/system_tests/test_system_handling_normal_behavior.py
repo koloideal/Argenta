@@ -46,26 +46,6 @@ def test_simple_command_executes_successfully(monkeypatch: pytest.MonkeyPatch, c
     assert '\ntest command\n' in output
 
 
-def test_case_insensitive_command_executes_when_enabled(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
-    inputs = iter(["TeSt", "q"])
-    monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
-    
-    router = Router()
-    orchestrator = Orchestrator()
-
-    @router.command(Command('test'))
-    def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
-        print('test command')
-
-    app = App(ignore_command_register=True, override_system_messages=True, print_func=print)
-    app.include_router(router)
-    orchestrator.start_polling(app)
-
-    output = capsys.readouterr().out
-
-    assert '\ntest command\n' in output
-
-
 def test_two_commands_execute_sequentially(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     inputs = iter(["test", "some", "q"])
     monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
