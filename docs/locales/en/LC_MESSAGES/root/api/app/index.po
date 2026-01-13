@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-04 20:39+0300\n"
+"POT-Creation-Date: 2026-01-13 21:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -38,23 +38,23 @@ msgstr ""
 msgid "Инициализация"
 msgstr "Initialization"
 
-#: ../../root/api/app/index.rst:38
+#: ../../root/api/app/index.rst:37
 msgid "Создаёт и настраивает экземпляр приложения."
 msgstr "Creates and configures an application instance."
 
-#: ../../root/api/app/index.rst:40
+#: ../../root/api/app/index.rst:39
 msgid "``prompt``: Приглашение к вводу, отображаемое перед каждой командой."
 msgstr "``prompt``: Input prompt displayed before each command."
 
-#: ../../root/api/app/index.rst:41
+#: ../../root/api/app/index.rst:40
 msgid "``initial_message``: Сообщение, выводимое при запуске приложения."
 msgstr "``initial_message``: Message displayed when the application starts."
 
-#: ../../root/api/app/index.rst:42
+#: ../../root/api/app/index.rst:41
 msgid "``farewell_message``: Сообщение, выводимое при выходе из приложения."
 msgstr "``farewell_message``: Message displayed when exiting the application."
 
-#: ../../root/api/app/index.rst:43
+#: ../../root/api/app/index.rst:42
 msgid ""
 "``exit_command``: Команда, которая маркируется как триггер для выхода из "
 "приложения."
@@ -62,7 +62,7 @@ msgstr ""
 "``exit_command``: Command that is marked as a trigger for exiting the "
 "application."
 
-#: ../../root/api/app/index.rst:44
+#: ../../root/api/app/index.rst:43
 msgid ""
 "``system_router_title``: Заголовок для системного роутера (содержит "
 "команду выхода)."
@@ -70,15 +70,7 @@ msgstr ""
 "``system_router_title``: Title for the system router (contains the exit "
 "command)."
 
-#: ../../root/api/app/index.rst:45
-msgid ""
-"``ignore_command_register``: Если ``True``, регистр вводимых команд "
-"игнорируется при поиске обработчика."
-msgstr ""
-"``ignore_command_register``: If ``True``, command case is ignored when "
-"searching for a handler."
-
-#: ../../root/api/app/index.rst:46
+#: ../../root/api/app/index.rst:44
 msgid ""
 "``dividing_line``: Тип разделительной линии (``StaticDividingLine`` или "
 "``DynamicDividingLine``)."
@@ -86,7 +78,7 @@ msgstr ""
 "``dividing_line``: Type of dividing line (``StaticDividingLine`` or "
 "``DynamicDividingLine``)."
 
-#: ../../root/api/app/index.rst:47
+#: ../../root/api/app/index.rst:45
 msgid ""
 "``repeat_command_groups_printing``: Если ``True``, список доступных "
 "команд выводится перед каждым вводом."
@@ -94,7 +86,7 @@ msgstr ""
 "``repeat_command_groups_printing``: If ``True``, the list of available "
 "commands is displayed before each input."
 
-#: ../../root/api/app/index.rst:48
+#: ../../root/api/app/index.rst:46
 msgid ""
 "``override_system_messages``: Если ``True``, стандартное форматирование "
 "(цвета, ASCII-арт) отключается."
@@ -102,7 +94,7 @@ msgstr ""
 "``override_system_messages``: If ``True``, standard formatting (colors, "
 "ASCII art) is disabled."
 
-#: ../../root/api/app/index.rst:49
+#: ../../root/api/app/index.rst:47
 msgid ""
 "``autocompleter``: Экземпляр класса :ref:`AutoCompleter "
 "<root_api_app_autocompleter>`, отвечающий за автодополнение команд."
@@ -111,7 +103,7 @@ msgstr ""
 "<root_api_app_autocompleter>` class responsible for command "
 "autocompletion."
 
-#: ../../root/api/app/index.rst:50
+#: ../../root/api/app/index.rst:48
 msgid ""
 "``print_func``: Функция для вывода всех системных сообщений (по умолчанию"
 " ``rich.Console().print``)."
@@ -119,11 +111,21 @@ msgstr ""
 "``print_func``: Function for outputting all system messages (defaults to "
 "``rich.Console().print``)."
 
-#: ../../root/api/app/index.rst:55
+#: ../../root/api/app/index.rst:53
+msgid ""
+"В приложениях на Argenta регистр вводимых команд не важен, проверка на "
+"существование и роутинг команд производится на основании триггеров, "
+"приведённых к нижнему регистру."
+msgstr ""
+"In applications on Argenta, the case of the entered commands is not important, checking for the "
+" existence and routing of commands is performed based on triggers "
+"reduced to lowercase."
+
+#: ../../root/api/app/index.rst:56
 msgid "Основные методы"
 msgstr "Main Methods"
 
-#: ../../root/api/app/index.rst:59
+#: ../../root/api/app/index.rst:60
 msgid ""
 "Регистрирует роутер в приложении. Все команды из этого роутера становятся"
 " доступными для вызова."
@@ -135,19 +137,19 @@ msgstr ""
 msgid "Parameters"
 msgstr "Parameters"
 
-#: ../../root/api/app/index.rst:61
+#: ../../root/api/app/index.rst:62
 msgid "Экземпляр ``Router`` для регистрации."
 msgstr "``Router`` instance to register."
 
-#: ../../root/api/app/index.rst:65
+#: ../../root/api/app/index.rst:66
 msgid "Регистрирует несколько роутеров одновременно."
 msgstr "Registers multiple routers simultaneously."
 
-#: ../../root/api/app/index.rst:67
+#: ../../root/api/app/index.rst:68
 msgid "Последовательность экземпляров ``Router`` для регистрации."
 msgstr "Sequence of ``Router`` instances to register."
 
-#: ../../root/api/app/index.rst:71
+#: ../../root/api/app/index.rst:72
 msgid ""
 "Добавляет текстовое сообщение, которое выводится при запуске приложения "
 "после ``initial_message``."
@@ -155,11 +157,11 @@ msgstr ""
 "Adds a text message that is displayed when the application starts after "
 "``initial_message``."
 
-#: ../../root/api/app/index.rst:73
+#: ../../root/api/app/index.rst:74
 msgid "Строка с сообщением."
 msgstr "String with the message."
 
-#: ../../root/api/app/index.rst:76
+#: ../../root/api/app/index.rst:77
 msgid ""
 "Для вывода стандартных сообщений можно использовать готовые шаблоны из "
 ":ref:`PredefinedMessages <root_api_predefined_messages>`."
@@ -167,11 +169,11 @@ msgstr ""
 "For outputting standard messages, you can use ready-made templates from "
 ":ref:`PredefinedMessages <root_api_predefined_messages>`."
 
-#: ../../root/api/app/index.rst:81
+#: ../../root/api/app/index.rst:82
 msgid "Методы установки обработчиков"
 msgstr "Handler Setup Methods"
 
-#: ../../root/api/app/index.rst:83
+#: ../../root/api/app/index.rst:84
 msgid ""
 "``App`` позволяет настраивать реакцию на различные события, такие как "
 "ошибки ввода или неизвестные команды."
@@ -179,7 +181,7 @@ msgstr ""
 "``App`` allows you to configure responses to various events, such as "
 "input errors or unknown commands."
 
-#: ../../root/api/app/index.rst:86
+#: ../../root/api/app/index.rst:87
 msgid ""
 "Подробнее об исключениях и их обработке в соответствующем :ref:`разделе "
 "документации <root_error_handling>`."
@@ -187,59 +189,59 @@ msgstr ""
 "For more details on exceptions and their handling, see the corresponding "
 ":ref:`documentation section <root_error_handling>`."
 
-#: ../../root/api/app/index.rst:92
+#: ../../root/api/app/index.rst:93
 msgid "Устанавливает шаблон для форматирования описания команды."
 msgstr "Sets the template for formatting command descriptions."
 
-#: ../../root/api/app/index.rst:94
+#: ../../root/api/app/index.rst:95
 msgid "Обработчик принимает триггер команды (``str``) и её описание (``str``)."
 msgstr ""
 "The handler accepts the command trigger (``str``) and its description "
 "(``str``)."
 
-#: ../../root/api/app/index.rst:100
+#: ../../root/api/app/index.rst:101
 msgid "Устанавливает обработчик при некорректном введённом синтаксисе флагов."
 msgstr "Sets the handler for incorrect flag syntax input."
 
-#: ../../root/api/app/index.rst:102 ../../root/api/app/index.rst:110
+#: ../../root/api/app/index.rst:103 ../../root/api/app/index.rst:111
 msgid "Обработчик принимает строку, введённую пользователем."
 msgstr "The handler accepts the string entered by the user."
 
-#: ../../root/api/app/index.rst:108
+#: ../../root/api/app/index.rst:109
 msgid "Устанавливает обработчик при повторяющихся флагах в введённой команде."
 msgstr "Sets the handler for duplicate flags in the entered command."
 
-#: ../../root/api/app/index.rst:116
+#: ../../root/api/app/index.rst:117
 msgid "Устанавливает обработчик при вводе неизвестной команды."
 msgstr "Sets the handler for entering an unknown command."
 
-#: ../../root/api/app/index.rst:118
+#: ../../root/api/app/index.rst:119
 msgid "Обработчик принимает объект ``InputCommand`` - объект введённой команды."
 msgstr ""
 "The handler accepts an ``InputCommand`` object - the entered command "
 "object."
 
-#: ../../root/api/app/index.rst:124
+#: ../../root/api/app/index.rst:125
 msgid "Устанавливает обработчик при вводе пустой строки."
 msgstr "Sets the handler for entering an empty string."
 
-#: ../../root/api/app/index.rst:126
+#: ../../root/api/app/index.rst:127
 msgid "Обработчик не принимает аргументов."
 msgstr "The handler accepts no arguments."
 
-#: ../../root/api/app/index.rst:132
+#: ../../root/api/app/index.rst:133
 msgid "Переопределяет стандартное поведение при вызове команды выхода."
 msgstr "Overrides the default behavior when the exit command is invoked."
 
-#: ../../root/api/app/index.rst:134
+#: ../../root/api/app/index.rst:135
 msgid "Обработчик принимает объект ``Response``."
 msgstr "The handler accepts a ``Response`` object."
 
-#: ../../root/api/app/index.rst:147
+#: ../../root/api/app/index.rst:148
 msgid "PredefinedMessages"
 msgstr "PredefinedMessages"
 
-#: ../../root/api/app/index.rst:149
+#: ../../root/api/app/index.rst:150
 msgid ""
 "``PredefinedMessages`` — это контейнер, содержащий набор готовых к "
 "использованию сообщений. Они отформатированы с использованием синтаксиса "
@@ -250,31 +252,40 @@ msgstr ""
 "messages. They are formatted using ``rich`` syntax and are intended for "
 "displaying standard information, such as usage hints."
 
-#: ../../root/api/app/index.rst:151
+#: ../../root/api/app/index.rst:152
 msgid "Рекомендуется использовать их при старте приложения."
 msgstr "It is recommended to use them when starting the application."
 
-#: ../../root/api/app/index.rst:178
+#: ../../root/api/app/index.rst:179
 msgid "Строка: ``[b dim]Usage[/b dim]: [i]<command> <[green]flags[/green]>[/i]``"
 msgstr "String: ``[b dim]Usage[/b dim]: [i]<command> <[green]flags[/green]>[/i]``"
 
-#: ../../root/api/app/index.rst:180
+#: ../../root/api/app/index.rst:181
 msgid "Отображается как: ``Usage: <command> <flags>``"
 msgstr "Displayed as: ``Usage: <command> <flags>``"
 
-#: ../../root/api/app/index.rst:184
+#: ../../root/api/app/index.rst:185
 msgid "Строка: ``[b dim]Help[/b dim]: [i]<command>[/i] [b red]--help[/b red]``"
 msgstr "String: ``[b dim]Help[/b dim]: [i]<command>[/i] [b red]--help[/b red]``"
 
-#: ../../root/api/app/index.rst:186
+#: ../../root/api/app/index.rst:187
 msgid "Отображается как: ``Help: <command> --help``"
 msgstr "Displayed as: ``Help: <command> --help``"
 
-#: ../../root/api/app/index.rst:190
+#: ../../root/api/app/index.rst:191
 msgid "Строка: ``[b dim]Autocomplete[/b dim]: [i]<part>[/i] [bold]<tab>``"
 msgstr "String: ``[b dim]Autocomplete[/b dim]: [i]<part>[/i] [bold]<tab>``"
 
-#: ../../root/api/app/index.rst:192
+#: ../../root/api/app/index.rst:193
 msgid "Отображается как: ``Autocomplete: <part> <tab>``"
 msgstr "Displayed as: ``Autocomplete: <part> <tab>``"
+
+#~ msgid ""
+#~ "``ignore_command_register``: Если ``True``, регистр"
+#~ " вводимых команд игнорируется при поиске"
+#~ " обработчика."
+#~ msgstr ""
+#~ "``ignore_command_register``: If ``True``, command"
+#~ " case is ignored when searching for"
+#~ " a handler."
 
