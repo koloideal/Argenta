@@ -1,1 +1,1 @@
-from .benchmarks.pre_cycle_setup import *
+from .benchmarks import *
