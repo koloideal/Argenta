@@ -23,7 +23,7 @@ class Benchmark:
         self.description = description
         self.iterations = iterations
         
-    def __call__(self) -> float:
+    def run(self) -> float:
         return self.func()
     
     @override
@@ -84,9 +84,9 @@ class Benchmarks:
             return decorator
         else:
             return decorator(call)
-            
+
     @classmethod
     def get_benchmarks(cls) -> list[Benchmark]:
         return cls._benchmarks
-            
+
 benchmark = Benchmarks.register

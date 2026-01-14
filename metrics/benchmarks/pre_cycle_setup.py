@@ -1,3 +1,11 @@
+__all__ = [
+    "benchmark_no_aliases",
+    "benchmark_many_aliases",
+    "benchmark_few_aliases",
+    "benchmark_extreme_aliases",
+    "benchmark_very_many_aliases"
+]
+
 from argenta import App
 from argenta.router import Router
 from argenta.command.models import Command

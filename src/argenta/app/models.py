@@ -339,9 +339,6 @@ class BaseApp:
 
         self._autocompleter.initial_setup(self.registered_routers.get_triggers())
 
-        if not self._override_system_messages:
-            self._setup_default_view()
-
         self._print_func(self._initial_message)
 
         for message in self._messages_on_startup:
@@ -382,7 +379,7 @@ DEFAULT_DIVIDING_LINE: StaticDividingLine = StaticDividingLine()
 
 DEFAULT_PRINT_FUNC: Printer = Console().print
 DEFAULT_AUTOCOMPLETER: AutoCompleter = AutoCompleter()
-DEFAULT_EXIT_COMMAND: Command = Command("Q", description="Exit command")
+DEFAULT_EXIT_COMMAND: Command = Command("q", description="Exit command")
 
 
 class App(BaseApp):
@@ -427,6 +424,8 @@ class App(BaseApp):
             autocompleter=autocompleter,
             print_func=print_func,
         )
+        if not self._override_system_messages:
+            self._setup_default_view()
 
     def run_polling(self) -> None:
         """
