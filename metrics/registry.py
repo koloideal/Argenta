@@ -1,14 +1,18 @@
-from typing import Any, Callable, ClassVar, ParamSpec, TypeVar, overload, override, Generic
+__all__ = [
+    "Benchmark",
+    "Benchmarks",
+    "benchmark"
+]
+
+from typing import Callable, ClassVar, overload, override
 
 
-P = ParamSpec("P")
-R = TypeVar("R", default=float)
+BenchmarkAsFunc = Callable[[], float]
 
-
-class Benchmark(Generic[P, R]):
+class Benchmark:
     def __init__(
         self, 
-        func: Callable[P, R], 
+        func: BenchmarkAsFunc, 
         *,
         name: str, 
         description: str, 
@@ -19,8 +23,8 @@ class Benchmark(Generic[P, R]):
         self.description = description
         self.iterations = iterations
         
-    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> R:
-        return self.func(*args, **kwargs)
+    def __call__(self) -> float:
+        return self.func()
     
     @override
     def __repr__(self) -> str:
@@ -32,18 +36,18 @@ class Benchmark(Generic[P, R]):
     
 
 class Benchmarks:
-    _benchmarks: ClassVar[list[Benchmark[Any, Any]]] = []
+    _benchmarks: ClassVar[list[Benchmark]] = []
 
     @overload
     @classmethod
     def register(
         cls,
-        call: Callable[P, R],
+        call: BenchmarkAsFunc,
         *,
         name: str = "",
         description: str = "",
         iterations: int = 100,
-    ) -> Callable[P, R]: ...
+    ) -> BenchmarkAsFunc: ...
 
     @overload
     @classmethod
@@ -54,18 +58,18 @@ class Benchmarks:
         name: str = "",
         description: str = "",
         iterations: int = 100,
-    ) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
+    ) -> Callable[[BenchmarkAsFunc], BenchmarkAsFunc]: ...
 
     @classmethod
     def register(
         cls,
-        call: Callable[P, R] | None = None,
+        call: BenchmarkAsFunc | None = None,
         *,
         name: str = "",
         description: str = "",
         iterations: int = 100,
-    ) -> Callable[[Callable[P, R]], Callable[P, R]] | Callable[P, R]:
-        def decorator(func: Callable[P, R]) -> Callable[P, R]:
+    ) -> Callable[[BenchmarkAsFunc], BenchmarkAsFunc] | BenchmarkAsFunc:
+        def decorator(func: BenchmarkAsFunc) -> BenchmarkAsFunc:
             cls._benchmarks.append(
                 Benchmark(
                     func,
@@ -82,7 +86,7 @@ class Benchmarks:
             return decorator(call)
             
     @classmethod
-    def get_benchmarks(cls) -> list[Benchmark[Any, Any]]:
+    def get_benchmarks(cls) -> list[Benchmark]:
         return cls._benchmarks
             
 benchmark = Benchmarks.register
