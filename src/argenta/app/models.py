@@ -270,11 +270,12 @@ class BaseApp:
         all_aliases: set[str] = set()
         
         for router_entity in self.registered_routers:
-            trigger_collisions: set[str] = (all_triggers | all_aliases) & router_entity.triggers
+            union_units: set[str] = all_triggers | all_aliases
+            trigger_collisions: set[str] = union_units & router_entity.triggers
             if trigger_collisions:
                 raise RepeatedTriggerNameException()
             
-            alias_collisions: set[str] = (all_aliases | all_triggers) & router_entity.aliases
+            alias_collisions: set[str] = union_units & router_entity.aliases
             if alias_collisions:
                 raise RepeatedAliasNameException(alias_collisions)
             
