@@ -458,9 +458,9 @@ class App(BaseApp):
 
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
-            except InputCommandException as error:
+            except InputCommandException as error: # noqa F841
                 stderr_result = self._capture_stdout(
-                    lambda: self._error_handler(error, raw_command)
+                    lambda: self._error_handler(error, raw_command) # noqa F821 
                 )
                 self._print_framed_text(stderr_result)
                 continue
