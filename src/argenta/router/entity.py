@@ -1,10 +1,11 @@
 __all__ = ["Router"]
 
 from inspect import get_annotations, getfullargspec, getsourcefile, getsourcelines
-from typing import Callable, TypeAlias
+from typing import Callable
 
 from rich.console import Console
 
+from argenta.app.protocols import HandlerFunc
 from argenta.command import Command, InputCommand
 from argenta.command.flag import ValidationStatus
 from argenta.command.flag.flags import InputFlags
@@ -15,8 +16,6 @@ from argenta.router.exceptions import (RepeatedAliasNameException,
                                        RepeatedTriggerNameException,
                                        RequiredArgumentNotPassedException,
                                        TriggerContainSpacesException)
-
-HandlerFunc: TypeAlias = Callable[..., None]
 
 
 class Router:
@@ -176,13 +175,12 @@ def _validate_func_args(func: HandlerFunc) -> None:
 
     response_arg_annotation = func_annotations.get(response_arg)
 
-    if response_arg_annotation is not None:
-        if response_arg_annotation is not Response:
-            source_line: int = getsourcelines(func)[1]
-            Console().print(
-                f'\nFile "{getsourcefile(func)}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
-                + f"of argument([green]{response_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue],"
-                + f" [i]but[/i] [bold blue]{response_arg_annotation}[/bold blue] [i]is specified[/i]",
-                highlight=False,
-            )
+    if response_arg_annotation is not None and response_arg_annotation is not Response:
+        source_line: int = getsourcelines(func)[1]
+        Console().print(
+            f'\nFile "{getsourcefile(func)}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
+            + f"of argument([green]{response_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue],"
+            + f" [i]but[/i] [bold blue]{response_arg_annotation}[/bold blue] [i]is specified[/i]",
+            highlight=False,
+        )
     

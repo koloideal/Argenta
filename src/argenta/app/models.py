@@ -3,7 +3,7 @@ __all__ = ["App"]
 import io
 import re
 from contextlib import redirect_stdout
-from typing import Never, TypeAlias
+from typing import Callable, Never, TypeAlias
 
 from art import text2art
 from rich.console import Console
@@ -29,6 +29,8 @@ from argenta.response import Response
 from argenta.router import Router
 
 Matches: TypeAlias = list[str] | list[Never]
+
+_ANSI_ESCAPE_RE: re.Pattern[str] = re.compile(r"\u001b\[[0-9;]*m")
 
 
 class BaseApp:
@@ -57,6 +59,8 @@ class BaseApp:
 
         self._farewell_message: str = farewell_message
         self._initial_message: str = initial_message
+
+        self._stdout_buffer: io.StringIO = io.StringIO()
 
         self._description_message_gen: DescriptionMessageGenerator = (
             lambda command, description: f"{command} *=*=* {description}"
@@ -160,7 +164,7 @@ class BaseApp:
         :return: None
         """
         if isinstance(self._dividing_line, DynamicDividingLine):
-            clear_text = re.sub(r"\u001b\[[0-9;]*m", "", text)
+            clear_text = _ANSI_ESCAPE_RE.sub("", text)
             max_length_line = max([len(line) for line in clear_text.split("\n")])
             max_length_line = (
                 max_length_line
@@ -216,6 +220,18 @@ class BaseApp:
         if not self.registered_routers.get_router_by_trigger(input_command.trigger.lower()):
             return True
         return False
+
+    def _capture_stdout(self, func: Callable[[], None]) -> str:
+        """
+        Private. Captures stdout from a function call using a reusable buffer
+        :param func: function to execute with captured stdout
+        :return: captured stdout as string
+        """
+        self._stdout_buffer.seek(0)
+        self._stdout_buffer.truncate(0)
+        with redirect_stdout(self._stdout_buffer):
+            func()
+        return self._stdout_buffer.getvalue()
 
     def _error_handler(self, error: InputCommandException, raw_command: str) -> None:
         """
@@ -368,9 +384,9 @@ class BaseApp:
                 )
             )
         else:
-            with redirect_stdout(io.StringIO()) as stdout:
-                processing_router.finds_appropriate_handler(input_command)
-                stdout_result: str = stdout.getvalue()
+            stdout_result = self._capture_stdout(
+                lambda: processing_router.finds_appropriate_handler(input_command)
+            )
             self._print_framed_text(stdout_result)
 
 
@@ -442,9 +458,9 @@ class App(BaseApp):
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
             except InputCommandException as error:
-                with redirect_stdout(io.StringIO()) as stderr:
-                    self._error_handler(error, raw_command)
-                    stderr_result: str = stderr.getvalue()
+                stderr_result = self._capture_stdout(
+                    lambda: self._error_handler(error, raw_command)
+                )
                 self._print_framed_text(stderr_result)
                 continue
 
@@ -454,9 +470,9 @@ class App(BaseApp):
                 return
 
             if self._is_unknown_command(input_command):
-                with redirect_stdout(io.StringIO()) as stdout:
-                    self._unknown_command_handler(input_command)
-                    stdout_res: str = stdout.getvalue()
+                stdout_res = self._capture_stdout(
+                    lambda: self._unknown_command_handler(input_command)
+                )
                 self._print_framed_text(stdout_res)
                 continue
 

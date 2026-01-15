@@ -1,12 +1,11 @@
 __all__ = ["CommandHandler", "CommandHandlers"]
 
 from collections.abc import Iterator
-from typing import Callable, Never
+from typing import Never
 
+from argenta.app.protocols import HandlerFunc
 from argenta.command import Command
 from argenta.response import Response
-
-HandlerFunc = Callable[..., None]
 
 
 class CommandHandler:
