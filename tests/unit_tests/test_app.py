@@ -1,3 +1,4 @@
+from argenta.router.exceptions import RepeatedAliasNameException
 import pytest
 from pytest import CaptureFixture
 
@@ -25,24 +26,9 @@ def test_default_exit_command_uppercase_q_is_recognized() -> None:
     assert app._is_exit_command(InputCommand('Q')) is True
 
 
-def test_exit_command_not_recognized_when_case_sensitivity_enabled() -> None:
-    app = App(ignore_command_register=False)
-    assert app._is_exit_command(InputCommand('q')) is False
-
-
 def test_custom_exit_command_is_recognized() -> None:
     app = App(exit_command=Command('quit'))
     assert app._is_exit_command(InputCommand('quit')) is True
-
-
-def test_custom_exit_command_case_insensitive_by_default() -> None:
-    app = App(exit_command=Command('quit'))
-    assert app._is_exit_command(InputCommand('qUIt')) is True
-
-
-def test_custom_exit_command_case_sensitive_when_enabled() -> None:
-    app = App(ignore_command_register=False, exit_command=Command('quit'))
-    assert app._is_exit_command(InputCommand('qUIt')) is False
 
 
 def test_exit_command_alias_is_recognized() -> None:
@@ -50,19 +36,9 @@ def test_exit_command_alias_is_recognized() -> None:
     assert app._is_exit_command(InputCommand('exit')) is True
 
 
-def test_exit_command_alias_case_sensitive_when_enabled() -> None:
-    app = App(exit_command=Command('q', aliases={'exit'}), ignore_command_register=False)
-    assert app._is_exit_command(InputCommand('exit')) is True
-
-
 def test_non_exit_command_is_not_recognized() -> None:
     app = App(exit_command=Command('q', aliases={'exit'}))
     assert app._is_exit_command(InputCommand('quit')) is False
-
-
-def test_non_exit_command_with_wrong_case_is_not_recognized() -> None:
-    app = App(exit_command=Command('q', aliases={'exit'}), ignore_command_register=False)
-    assert app._is_exit_command(InputCommand('Exit')) is False
 
 
 # ============================================================================
@@ -73,29 +49,20 @@ def test_non_exit_command_with_wrong_case_is_not_recognized() -> None:
 def test_registered_command_is_not_unknown() -> None:
     app = App()
     app.set_unknown_command_handler(lambda command: None)
-    app._current_matching_triggers_with_routers = {'fr': Router(), 'tr': Router(), 'de': Router()}
+    router = Router()
+    
+    @router.command('fr')
+    def handler(res: Response):
+        pass
+        
+    app.include_router(router)
     assert app._is_unknown_command(InputCommand('fr')) is False
 
 
 def test_unregistered_command_is_unknown() -> None:
     app = App()
     app.set_unknown_command_handler(lambda command: None)
-    app._current_matching_triggers_with_routers = {'fr': Router(), 'tr': Router(), 'de': Router()}
     assert app._is_unknown_command(InputCommand('cr')) is True
-
-
-def test_command_with_wrong_case_is_unknown_when_case_sensitivity_enabled() -> None:
-    app = App(ignore_command_register=False)
-    app.set_unknown_command_handler(lambda command: None)
-    app._current_matching_triggers_with_routers = {'Pr': Router(), 'tW': Router(), 'deQW': Router()}
-    assert app._is_unknown_command(InputCommand('pr')) is True
-
-
-def test_command_with_exact_case_is_not_unknown_when_case_sensitivity_enabled() -> None:
-    app = App(ignore_command_register=False)
-    app.set_unknown_command_handler(lambda command: None)
-    app._current_matching_triggers_with_routers = {'Pr': Router(), 'tW': Router(), 'deQW': Router()}
-    assert app._is_unknown_command(InputCommand('tW')) is False
 
 
 # ============================================================================
@@ -207,24 +174,101 @@ def test_include_routers_registers_multiple_routers() -> None:
     assert app.registered_routers.registered_routers == [router, router2]
 
 
-def test_overlapping_aliases_prints_warning(capsys: CaptureFixture[str]) -> None:
-    app = App(override_system_messages=True)
+def test_overlapping_aliases_raises_exception() -> None:
     router = Router()
 
     @router.command(Command('test', aliases={'alias'}))
     def handler(_res: Response) -> None:
         pass
 
-    @router.command(Command('test2', aliases={'alias'}))
+    with pytest.raises(RepeatedAliasNameException):
+        @router.command(Command('test2', aliases={'alias'}))
+        def handler2(_res: Response) -> None:
+            pass
+
+
+def test_app_detects_trigger_collision_between_routers() -> None:
+    from argenta.router.exceptions import RepeatedTriggerNameException
+    
+    app = App()
+    router1 = Router()
+    router2 = Router()
+
+    @router1.command('hello')
+    def handler1(_res: Response) -> None:
+        pass
+
+    @router2.command('hello')
     def handler2(_res: Response) -> None:
         pass
 
-    app.include_routers(router)
-    app._pre_cycle_setup()
+    app.include_router(router1)
+    app.include_router(router2)
 
-    captured = capsys.readouterr()
+    with pytest.raises(RepeatedTriggerNameException):
+        app._pre_cycle_setup()
 
-    assert "Overlapping" in captured.out
+
+def test_app_detects_alias_collision_between_routers() -> None:
+    app = App()
+    router1 = Router()
+    router2 = Router()
+
+    @router1.command(Command('hello', aliases={'hi'}))
+    def handler1(_res: Response) -> None:
+        pass
+
+    @router2.command(Command('world', aliases={'hi'}))
+    def handler2(_res: Response) -> None:
+        pass
+
+    app.include_router(router1)
+    app.include_router(router2)
+
+    with pytest.raises(RepeatedAliasNameException):
+        app._pre_cycle_setup()
+
+
+def test_app_detects_trigger_alias_collision_between_routers() -> None:
+    app = App()
+    router1 = Router()
+    router2 = Router()
+
+    @router1.command('hello')
+    def handler1(_res: Response) -> None:
+        pass
+
+    @router2.command(Command('world', aliases={'hello'}))
+    def handler2(_res: Response) -> None:
+        pass
+
+    app.include_router(router1)
+    app.include_router(router2)
+
+    with pytest.raises(RepeatedAliasNameException):
+        app._pre_cycle_setup()
+
+
+def test_app_detects_collision_case_insensitive() -> None:
+    from argenta.router.exceptions import RepeatedTriggerNameException
+    
+    app = App()
+    router1 = Router()
+    router2 = Router()
+
+    @router1.command('Hello')
+    def handler1(_res: Response) -> None:
+        pass
+
+    @router2.command('hELLo')
+    def handler2(_res: Response) -> None:
+        pass
+
+    app.include_router(router1)
+    app.include_router(router2)
+
+    with pytest.raises(RepeatedTriggerNameException):
+        app._pre_cycle_setup()
 
 
 # ============================================================================
@@ -317,8 +361,6 @@ def test_set_exit_command_handler_stores_handler() -> None:
 
 def test_setup_default_view_formats_prompt() -> None:
     app = App(prompt='>>')
-    app._setup_default_view()
-    
     assert app._prompt == '[italic dim bold]>>'
 
 
@@ -554,7 +596,7 @@ def test_handler_can_be_replaced_multiple_times() -> None:
 
 def test_handler_receives_correct_parameters() -> None:
     app = App()
-    received_data = {'trigger': None}
+    received_data: dict[str, None | str] = {'trigger': None}
     
     def custom_handler(command: InputCommand) -> None:
         received_data['trigger'] = command.trigger
@@ -567,7 +609,7 @@ def test_handler_receives_correct_parameters() -> None:
 
 def test_exit_handler_receives_response_object() -> None:
     app = App()
-    received_data = {'response': None}
+    received_data: dict[str, None | Response] = {'response': None}
     
     def custom_handler(response: Response) -> None:
         received_data['response'] = response

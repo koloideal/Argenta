@@ -1,22 +1,21 @@
 __all__ = ["Router"]
 
 from inspect import get_annotations, getfullargspec, getsourcefile, getsourcelines
-from typing import Callable, TypeAlias
+from typing import Callable
 
 from rich.console import Console
 
+from argenta.app.protocols import HandlerFunc
 from argenta.command import Command, InputCommand
 from argenta.command.flag import ValidationStatus
-from argenta.command.flag.flags import Flags, InputFlags
+from argenta.command.flag.flags import InputFlags
 from argenta.response import Response, ResponseStatus
 from argenta.router.command_handler.entity import CommandHandler, CommandHandlers
-from argenta.router.exceptions import (
-    RepeatedFlagNameException,
-    RequiredArgumentNotPassedException,
-    TriggerContainSpacesException,
-)
-
-HandlerFunc: TypeAlias = Callable[..., None]
+from argenta.router.exceptions import (RepeatedAliasNameException,
+                                       RepeatedFlagNameException,
+                                       RepeatedTriggerNameException,
+                                       RequiredArgumentNotPassedException,
+                                       TriggerContainSpacesException)
 
 
 class Router:
@@ -40,8 +39,6 @@ class Router:
         self.disable_redirect_stdout: bool = disable_redirect_stdout
 
         self.command_handlers: CommandHandlers = CommandHandlers()
-        self.command_register_ignore: bool = False
-        
         self.aliases: set[str] = set()
         self.triggers: set[str] = set()
 
@@ -57,13 +54,8 @@ class Router:
             redefined_command = command
 
         self._validate_command(redefined_command)
-    
-        if overlapping := (self.aliases | self.triggers) & redefined_command.aliases:
-            Console().print(f"\n[b red]WARNING:[/b red] Overlapping trigger or alias: [b blue]{overlapping}[/b blue]")
+        self._update_routing_keys(redefined_command)
         
-        self.aliases.update(redefined_command.aliases)
-        self.triggers.add(redefined_command.trigger)
-
         def decorator(func: HandlerFunc) -> HandlerFunc:
             _validate_func_args(func)
             self.command_handlers.add_handler(CommandHandler(func, redefined_command))
@@ -80,10 +72,24 @@ class Router:
         command_name: str = command.trigger
         if command_name.find(" ") != -1:
             raise TriggerContainSpacesException()
-        flags: Flags = command.registered_flags
-        flags_name: list[str] = [flag.string_entity.lower() for flag in flags]
+            
+        if command_name.lower() in self.triggers:
+            raise RepeatedTriggerNameException()
+        
+        if command_name.lower() in self.aliases:
+            raise RepeatedAliasNameException({command_name.lower()})
+            
+        if overlapping := (self.aliases | self.triggers) & set(map(lambda x: x.lower(), command.aliases)):
+            raise RepeatedAliasNameException(overlapping)
+            
+        flags_name: list[str] = [flag.string_entity.lower() for flag in command.registered_flags]
         if len(set(flags_name)) < len(flags_name):
             raise RepeatedFlagNameException()
+        
+    def _update_routing_keys(self, registered_command: Command) -> None:
+        redefined_command_aliases_in_lower = set(map(lambda x: x.lower(), registered_command.aliases))
+        self.aliases.update(redefined_command_aliases_in_lower)
+        self.triggers.add(registered_command.trigger.lower())
 
     def finds_appropriate_handler(self, input_command: InputCommand) -> None:
         """
@@ -91,15 +97,15 @@ class Router:
         :param input_command: input command as InputCommand
         :return: None
         """
-        input_command_name: str = input_command.trigger
+        input_command_name: str = input_command.trigger.lower()
         input_command_flags: InputFlags = input_command.input_flags
 
-        for command_handler in self.command_handlers:
-            handle_command = command_handler.handled_command
-            if input_command_name.lower() == handle_command.trigger.lower():
-                self.process_input_command(input_command_flags, command_handler)
-            if input_command_name.lower() in handle_command.aliases:
-                self.process_input_command(input_command_flags, command_handler)
+        command_handler = self.command_handlers.get_command_handler_by_trigger(input_command_name)
+        
+        if not command_handler:
+            raise RuntimeError(f"Handler for '{input_command.trigger}' command not found. Panic!")
+        else:
+            self.process_input_command(input_command_flags, command_handler)
 
     def process_input_command(self, input_command_flags: InputFlags, command_handler: CommandHandler) -> None:
         """
@@ -147,13 +153,14 @@ def _structuring_input_flags(handled_command: Command, input_flags: InputFlags) 
             undefined_flags = True
 
     status = ResponseStatus.from_flags(
-        has_invalid_value_flags=invalid_value_flags, has_undefined_flags=undefined_flags
+        has_invalid_value_flags=invalid_value_flags, 
+        has_undefined_flags=undefined_flags
     )
 
     return Response(status=status, input_flags=input_flags)
 
 
-def _validate_func_args(func: Callable[..., None]) -> None:
+def _validate_func_args(func: HandlerFunc) -> None:
     """
     Private. Validates the arguments of the handler
     :param func: entity of the handler func
@@ -168,13 +175,12 @@ def _validate_func_args(func: Callable[..., None]) -> None:
 
     response_arg_annotation = func_annotations.get(response_arg)
 
-    if response_arg_annotation is not None:
-        if response_arg_annotation is not Response:
-            source_line: int = getsourcelines(func)[1]
-            Console().print(
-                f'\nFile "{getsourcefile(func)}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
-                + f"of argument([green]{response_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue],"
-                + f" [i]but[/i] [bold blue]{response_arg_annotation}[/bold blue] [i]is specified[/i]",
-                highlight=False,
-            )
+    if response_arg_annotation is not None and response_arg_annotation is not Response:
+        source_line: int = getsourcelines(func)[1]
+        Console().print(
+            f'\nFile "{getsourcefile(func)}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
+            + f"of argument([green]{response_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue],"
+            + f" [i]but[/i] [bold blue]{response_arg_annotation}[/bold blue] [i]is specified[/i]",
+            highlight=False,
+        )
     

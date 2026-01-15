@@ -1,9 +1,10 @@
-__all__ = ["NonStandardBehaviorHandler", "EmptyCommandHandler", "Printer", "DescriptionMessageGenerator"]
+__all__ = ["NonStandardBehaviorHandler", "EmptyCommandHandler", "Printer", "DescriptionMessageGenerator", "HandlerFunc"]
 
-from typing import Protocol, TypeVar
+from typing import ParamSpec, Protocol, TypeVar
+from argenta.response import Response
 
-
-T = TypeVar("T", contravariant=True)  # noqa: WPS111
+T = TypeVar("T", contravariant=True) 
+P = ParamSpec("P")
 
 
 class NonStandardBehaviorHandler(Protocol[T]):
@@ -23,4 +24,9 @@ class Printer(Protocol):
 
 class DescriptionMessageGenerator(Protocol):
     def __call__(self, _command: str, _description: str, /) -> str:
+        raise NotImplementedError
+
+
+class HandlerFunc(Protocol):
+    def __call__(self, response: Response) -> None:
         raise NotImplementedError

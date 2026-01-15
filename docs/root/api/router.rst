@@ -54,7 +54,7 @@ Router
 
    Предопределённый экземпляр ``Router`` с базовыми системными командами (по умолчанию — команда выхода). Имеет заголовок **«System points:»**, который можно переопределить в ``App``.
 
-   Вы можете добавлять свои команды в этот роутер. Для этого импортируйте ``argenta.router.defaults.system_router`` и используйте его декоратор ``@command``.
+   Вы можете добавлять свои команды в этот роутер. Для этого используйте атрибут ``.system_router`` у созданного экхемпляра ``Orchestrator`` и используйте его декоратор ``@command``.
 
 -----   
    
@@ -88,4 +88,42 @@ Router
 .. py:exception:: RequiredArgumentNotPassedException
 
    Возникает, если обработчик команды не принимает обязательный аргумент ``Response``.
+
+.. py:exception:: RepeatedTriggerNameException
+
+   Возникает, если при регистрации команд в роутере были использованы дублирующиеся триггеры. Каждая команда должна иметь уникальный триггер в рамках приложения.
+
+   **Пример, вызывающий исключение:**
+
+   .. code-block:: python
+      :linenos:
+
+      router = Router()
+      
+      @router.command(Command("start"))
+      def start_handler(response: Response) -> None:
+          pass
+      
+      @router.command(Command("start"))  # Duplicate trigger!
+      def another_start_handler(response: Response) -> None:
+          pass
+
+.. py:exception:: RepeatedAliasNameException
+
+   Возникает, если при регистрации команд были использованы дублирующиеся алиасы. Алиасы должны быть уникальны в рамках всего приложения.
+
+   **Пример, вызывающий исключение:**
+
+   .. code-block:: python
+      :linenos:
+
+      router = Router()
+      
+      @router.command(Command("start", aliases={"s", "run"}))
+      def start_handler(response: Response) -> None:
+          pass
+      
+      @router.command(Command("begin", aliases={"s"}))  # Duplicate alias "s"!
+      def begin_handler(response: Response) -> None:
+          pass
 

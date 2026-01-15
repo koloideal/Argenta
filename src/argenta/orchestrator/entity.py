@@ -14,7 +14,7 @@ class Orchestrator:
     def __init__(
         self,
         arg_parser: ArgParser = DEFAULT_ARGPARSER,
-        custom_providers: list[Provider] = [],
+        custom_providers: list[Provider] | None = None,
         auto_inject_handlers: bool = True,
     ):
         """
@@ -23,7 +23,7 @@ class Orchestrator:
         :return: None
         """
         self._arg_parser: ArgParser = arg_parser
-        self._custom_providers: list[Provider] = custom_providers
+        self._custom_providers: list[Provider] = custom_providers or []
         self._auto_inject_handlers: bool = auto_inject_handlers
 
         self._arg_parser._parse_args()  # pyright: ignore[reportPrivateUsage]

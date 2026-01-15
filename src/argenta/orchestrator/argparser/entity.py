@@ -7,12 +7,9 @@ import sys
 from argparse import ArgumentParser, Namespace
 from typing import Never, Self
 
-from argenta.orchestrator.argparser.arguments.models import (
-    BaseArgument,
-    BooleanArgument,
-    InputArgument,
-    ValueArgument,
-)
+from argenta.orchestrator.argparser.arguments.models import (BaseArgument,
+                                                             BooleanArgument,
+                                                             InputArgument, ValueArgument)
 
 
 class ArgSpace:

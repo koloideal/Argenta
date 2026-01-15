@@ -55,6 +55,11 @@ root = "tests/"
 reportPrivateUsage = false
 reportUnusedFunction = false
 
+[[tool.pyright.executionEnvironments]]
+root = "metrics/"
+reportPrivateUsage = false
+reportUnusedFunction = false
+
 [tool.coverage.run]
 branch = true
 omit = [

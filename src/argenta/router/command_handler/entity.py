@@ -1,20 +1,21 @@
 __all__ = ["CommandHandler", "CommandHandlers"]
 
 from collections.abc import Iterator
-from typing import Callable
+from typing import Never
 
+from argenta.app.protocols import HandlerFunc
 from argenta.command import Command
 from argenta.response import Response
 
 
 class CommandHandler:
-    def __init__(self, handler_as_func: Callable[..., None], handled_command: Command):
+    def __init__(self, handler_as_func: HandlerFunc, handled_command: Command):
         """
         Private. Entity of the model linking the handler and the command being processed
         :param handler: the handler being called
         :param handled_command: the command being processed
         """
-        self.handler_as_func: Callable[..., None] = handler_as_func
+        self.handler_as_func: HandlerFunc = handler_as_func
         self.handled_command: Command = handled_command
 
     def handling(self, response: Response) -> None:
@@ -27,12 +28,13 @@ class CommandHandler:
 
 
 class CommandHandlers:
-    def __init__(self, command_handlers: list[CommandHandler] | None = None):
+    def __init__(self, command_handlers: tuple[CommandHandler] | tuple[Never, ...] = tuple()):
         """
         Private. The model that unites all CommandHandler of the routers
         :param command_handlers: list of CommandHandlers for register
         """
-        self.command_handlers: list[CommandHandler] = command_handlers if command_handlers else []
+        self.command_handlers: list[CommandHandler] = list(command_handlers) if command_handlers else []
+        self.paired_command_handler_trigger: dict[str, CommandHandler] = {x.handled_command.trigger: x for x in command_handlers}
 
     def add_handler(self, command_handler: CommandHandler) -> None:
         """
@@ -41,6 +43,12 @@ class CommandHandlers:
         :return: None
         """
         self.command_handlers.append(command_handler)
+        self.paired_command_handler_trigger[command_handler.handled_command.trigger.lower()] = command_handler
+        for alias in command_handler.handled_command.aliases:
+            self.paired_command_handler_trigger[alias.lower()] = command_handler
+            
+    def get_command_handler_by_trigger(self, trigger: str) -> CommandHandler | None:
+        return self.paired_command_handler_trigger.get(trigger)
 
     def __iter__(self) -> Iterator[CommandHandler]:
         return iter(self.command_handlers)

@@ -4,7 +4,6 @@ from enum import Enum
 from re import Pattern
 from typing import Literal, override
 
-
 PREFIX_TYPE = Literal["-", "--", "---"]
 
 

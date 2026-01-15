@@ -28,7 +28,6 @@ App
                 farewell_message: str = "\nSee you\n", 
                 exit_command: Command = DEFAULT_EXIT_COMMAND, 
                 system_router_title: str | None = "System points:", 
-                ignore_command_register: bool = True, 
                 dividing_line: AVAILABLE_DIVIDING_LINES = DEFAULT_DIVIDING_LINE, 
                 repeat_command_groups_printing: bool = False, 
                 override_system_messages: bool = False, 
@@ -42,7 +41,6 @@ App
     * ``farewell_message``: Сообщение, выводимое при выходе из приложения.
     * ``exit_command``: Команда, которая маркируется как триггер для выхода из приложения.
     * ``system_router_title``: Заголовок для системного роутера (содержит команду выхода).
-    * ``ignore_command_register``: Если ``True``, регистр вводимых команд игнорируется при поиске обработчика.
     * ``dividing_line``: Тип разделительной линии (``StaticDividingLine`` или ``DynamicDividingLine``).
     * ``repeat_command_groups_printing``: Если ``True``, список доступных команд выводится перед каждым вводом.
     * ``override_system_messages``: Если ``True``, стандартное форматирование (цвета, ASCII-арт) отключается.
@@ -50,6 +48,9 @@ App
     * ``print_func``: Функция для вывода всех системных сообщений (по умолчанию ``rich.Console().print``).
 
 -----
+
+.. note::
+    В приложениях на Argenta регистр вводимых команд не важен, проверка на существование и роутинг команд производится на основании триггеров, приведённых к нижнему регистру.
     
 Основные методы
 ---------------

@@ -72,27 +72,6 @@ def test_unknown_command_triggers_unknown_command_handler(monkeypatch: pytest.Mo
     assert "\nUnknown command: help\n" in output
 
 
-def test_case_sensitive_command_triggers_unknown_command_handler(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
-    inputs = iter(["TeSt", "Q"])
-    monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
-    
-    router = Router()
-    orchestrator = Orchestrator()
-
-    @router.command(Command('test'))
-    def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
-        print('test command')
-
-    app = App(ignore_command_register=False, override_system_messages=True, print_func=print)
-    app.include_router(router)
-    app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
-    orchestrator.start_polling(app)
-
-    output = capsys.readouterr().out
-
-    assert '\nUnknown command: TeSt\n' in output
-
-
 def test_mixed_valid_and_unknown_commands_handled_correctly(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     inputs = iter(["test", "some", "q"])
     monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
