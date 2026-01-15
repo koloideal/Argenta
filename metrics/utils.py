@@ -16,15 +16,15 @@ from metrics.registry import Benchmark
 
 
 def get_time_of_pre_cycle_setup(app: App) -> float:
-    start = time.monotonic()
+    start = time.perf_counter()
     with redirect_stdout(io.StringIO()):
         app._pre_cycle_setup()  # pyright: ignore[reportPrivateUsage]
-    end = time.monotonic()
-    return end - start
+    end = time.perf_counter()
+    return (end - start) * 1000 # as milliseconds
 
 
 def attempts_to_average(bench_attempts: list[float], iterations: int) -> Decimal:
-    return Decimal(sum(bench_attempts) / iterations).quantize(Decimal("0.00001"), rounding=ROUND_HALF_UP)
+    return Decimal(sum(bench_attempts) / iterations).quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
 
 
 @dataclass(frozen=True)
