@@ -1,14 +1,26 @@
 __all__ = [
     "Benchmark",
     "Benchmarks",
+    "BenchmarkResult",
     "benchmark"
 ]
 
+from dataclasses import dataclass
+from decimal import Decimal
 from typing import Callable, ClassVar, overload, override
 
 BenchmarkAsFunc = Callable[[], float]
 
 
+@dataclass(frozen=True)
+class BenchmarkResult:
+    type_: str
+    name: str
+    description: str
+    iterations: int
+    avg_time: Decimal
+
+    
 class Benchmark:
     def __init__(
             self,

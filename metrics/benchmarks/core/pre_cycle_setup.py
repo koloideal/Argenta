@@ -7,12 +7,12 @@ __all__ = [
 ]
 
 from argenta import App
-from argenta.router import Router
 from argenta.command.models import Command
 from argenta.response import Response
+from argenta.router import Router
 
+from ..models import benchmark
 from ..utils import get_time_of_pre_cycle_setup
-from ..registry import benchmark
 
 
 @benchmark(type_="pre_cycle_setup", description="With no aliases")

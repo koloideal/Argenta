@@ -1,6 +1,6 @@
 __all__ = ["NonStandardBehaviorHandler", "EmptyCommandHandler", "Printer", "DescriptionMessageGenerator", "HandlerFunc"]
 
-from typing import ParamSpec, Protocol, TypeVar
+from typing import Any, ParamSpec, Protocol, TypeVar
 from argenta.response import Response
 
 T = TypeVar("T", contravariant=True) 
@@ -28,5 +28,5 @@ class DescriptionMessageGenerator(Protocol):
 
 
 class HandlerFunc(Protocol):
-    def __call__(self, response: Response) -> None:
+    def __call__(self, response: Response, /, *args: Any, **kwargs: Any) -> None:
         raise NotImplementedError
