@@ -1,0 +1,65 @@
+__all__ = [
+    "benchmark_few_commands",
+    "benchmark_many_commands",
+    "benchmark_many_aliases",
+    "benchmark_partial_match",
+    "benchmark_extreme_commands"
+]
+
+import io
+from contextlib import redirect_stdout
+
+from argenta import App
+from argenta.command.models import Command
+from argenta.response import Response
+from argenta.router import Router
+
+from ..models import benchmark
+from ..utils import get_time_of_most_similar_command
+
+
+def setup_app_with_commands(command_count: int, aliases_per_command: int = 0) -> App:
+    app = App(override_system_messages=True)
+    router = Router()
+
+    for i in range(command_count):
+        aliases = {f'alias{i}_{j}' for j in range(aliases_per_command)} if aliases_per_command else set()
+
+        @router.command(Command(f'command{i}', aliases=aliases))
+        def handler(_res: Response) -> None:
+            pass
+
+    app.include_router(router)
+    with redirect_stdout(io.StringIO()):
+        app._pre_cycle_setup()  # pyright: ignore[reportPrivateUsage]
+    return app
+
+
+@benchmark(type_="most_similar_command", description="Few commands (10 commands, no match)")
+def benchmark_few_commands() -> float:
+    app = setup_app_with_commands(10)
+    return get_time_of_most_similar_command(app, "unknown")
+
+
+@benchmark(type_="most_similar_command", description="Many commands (50 commands, no match)")
+def benchmark_many_commands() -> float:
+    app = setup_app_with_commands(50)
+    return get_time_of_most_similar_command(app, "unknown")
+
+
+@benchmark(type_="most_similar_command", description="Many aliases (20 commands, 10 aliases each)")
+def benchmark_many_aliases() -> float:
+    app = setup_app_with_commands(20, aliases_per_command=10)
+    return get_time_of_most_similar_command(app, "unknown")
+
+
+@benchmark(type_="most_similar_command", description="Partial match (50 commands, prefix match)")
+def benchmark_partial_match() -> float:
+    app = setup_app_with_commands(50)
+    return get_time_of_most_similar_command(app, "comm")
+
+
+@benchmark(type_="most_similar_command", description="Extreme (100 commands, 20 aliases each)")
+def benchmark_extreme_commands() -> float:
+    app = setup_app_with_commands(100, aliases_per_command=20)
+    return get_time_of_most_similar_command(app, "comm")

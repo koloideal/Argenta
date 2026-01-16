@@ -168,9 +168,9 @@ class BaseApp:
             max_length_line = max([len(line) for line in clear_text.split("\n")])
             max_length_line = (
                 max_length_line
-                if 10 <= max_length_line <= 80
-                else 80
-                if max_length_line > 80
+                if 10 <= max_length_line <= 100
+                else 100
+                if max_length_line > 100
                 else 10
             )
 
@@ -306,7 +306,7 @@ class BaseApp:
         Private. Sets up default app view
         :return: None
         """
-        self._prompt = f"[italic dim bold]{self._prompt}"
+        self._prompt = f"[italic dim bold]{self._prompt}[/italic dim bold]"
         self._initial_message = (
             "\n" + f"[bold red]{text2art(self._initial_message, font='tarty1')}" + "\n"
         )
