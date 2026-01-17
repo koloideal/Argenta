@@ -14,8 +14,7 @@ from argenta.command.models import Command
 from argenta.response import Response
 from argenta.router import Router
 
-from ..models import benchmark
-from ..utils import get_time_of_most_similar_command
+from .entity import benchmarks
 
 
 def setup_app_with_commands(command_count: int, aliases_per_command: int = 0) -> App:
@@ -35,31 +34,31 @@ def setup_app_with_commands(command_count: int, aliases_per_command: int = 0) ->
     return app
 
 
-@benchmark(type_="most_similar_command", description="Few commands (10 commands, no match)")
-def benchmark_few_commands() -> float:
+@benchmarks.register(type_="most_similar_command", description="Few commands (10 commands, no match)")
+def benchmark_few_commands() -> None:
     app = setup_app_with_commands(10)
-    return get_time_of_most_similar_command(app, "unknown")
+    app._most_similar_command("unknown")
 
 
-@benchmark(type_="most_similar_command", description="Many commands (50 commands, no match)")
-def benchmark_many_commands() -> float:
+@benchmarks.register(type_="most_similar_command", description="Many commands (50 commands, no match)")
+def benchmark_many_commands() -> None:
     app = setup_app_with_commands(50)
-    return get_time_of_most_similar_command(app, "unknown")
+    app._most_similar_command("unknown")
 
 
-@benchmark(type_="most_similar_command", description="Many aliases (20 commands, 10 aliases each)")
-def benchmark_many_aliases() -> float:
+@benchmarks.register(type_="most_similar_command", description="Many aliases (20 commands, 10 aliases each)")
+def benchmark_many_aliases() -> None:
     app = setup_app_with_commands(20, aliases_per_command=10)
-    return get_time_of_most_similar_command(app, "unknown")
+    app._most_similar_command("unknown")
 
 
-@benchmark(type_="most_similar_command", description="Partial match (50 commands, prefix match)")
-def benchmark_partial_match() -> float:
+@benchmarks.register(type_="most_similar_command", description="Partial match (50 commands, prefix match)")
+def benchmark_partial_match() -> None:
     app = setup_app_with_commands(50)
-    return get_time_of_most_similar_command(app, "comm")
+    app._most_similar_command("comm")
 
 
-@benchmark(type_="most_similar_command", description="Extreme (100 commands, 20 aliases each)")
-def benchmark_extreme_commands() -> float:
+@benchmarks.register(type_="most_similar_command", description="Extreme (100 commands, 20 aliases each)")
+def benchmark_extreme_commands() -> None:
     app = setup_app_with_commands(100, aliases_per_command=20)
-    return get_time_of_most_similar_command(app, "comm")
+    app._most_similar_command("comm")

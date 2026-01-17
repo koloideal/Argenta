@@ -11,13 +11,11 @@ from argenta.command.models import Command
 from argenta.response import Response
 from argenta.router import Router
 
-from ..utils import get_time_of_validate_routers_for_collisions
-
-from ..models import benchmark
+from .entity import benchmarks
 
 
-@benchmark(type_="validate_routers_for_collisions", description="With few routers (3 routers, 1 command each)")
-def benchmark_few_routers() -> float:
+@benchmarks.register(type_="validate_routers_for_collisions", description="With few routers (3 routers, 1 command each)")
+def benchmark_few_routers() -> None:
     app = App(override_system_messages=True)
 
     for i in range(3):
@@ -29,11 +27,12 @@ def benchmark_few_routers() -> float:
 
         app.include_router(router)
 
-    return get_time_of_validate_routers_for_collisions(app)
+    app._setup_system_router()
+    app._validate_routers_for_collisions()
 
 
-@benchmark(type_="validate_routers_for_collisions", description="With many routers (10 routers, 1 command each)")
-def benchmark_many_routers() -> float:
+@benchmarks.register(type_="validate_routers_for_collisions", description="With many routers (10 routers, 1 command each)")
+def benchmark_many_routers() -> None:
     app = App(override_system_messages=True)
 
     for i in range(10):
@@ -45,11 +44,12 @@ def benchmark_many_routers() -> float:
 
         app.include_router(router)
 
-    return get_time_of_validate_routers_for_collisions(app)
+    app._setup_system_router()
+    app._validate_routers_for_collisions()
 
 
-@benchmark(type_="validate_routers_for_collisions", description="With many commands per router (3 routers, 10 commands each)")
-def benchmark_many_commands_per_router() -> float:
+@benchmarks.register(type_="validate_routers_for_collisions", description="With many commands per router (3 routers, 10 commands each)")
+def benchmark_many_commands_per_router() -> None:
     app = App(override_system_messages=True)
 
     for i in range(3):
@@ -62,11 +62,12 @@ def benchmark_many_commands_per_router() -> float:
 
         app.include_router(router)
 
-    return get_time_of_validate_routers_for_collisions(app)
+    app._setup_system_router()
+    app._validate_routers_for_collisions()
 
 
-@benchmark(type_="validate_routers_for_collisions", description="With many aliases (3 routers, 5 commands, 10 aliases each)")
-def benchmark_many_aliases_per_command() -> float:
+@benchmarks.register(type_="validate_routers_for_collisions", description="With many aliases (3 routers, 5 commands, 10 aliases each)")
+def benchmark_many_aliases_per_command() -> None:
     app = App(override_system_messages=True)
 
     for i in range(3):
@@ -79,11 +80,12 @@ def benchmark_many_aliases_per_command() -> float:
 
         app.include_router(router)
 
-    return get_time_of_validate_routers_for_collisions(app)
+    app._setup_system_router()
+    app._validate_routers_for_collisions()
 
 
-@benchmark(type_="validate_routers_for_collisions", description="Extreme (20 routers, 10 commands, 20 aliases each)")
-def benchmark_extreme_routers() -> float:
+@benchmarks.register(type_="validate_routers_for_collisions", description="Extreme (20 routers, 10 commands, 20 aliases each)")
+def benchmark_extreme_routers() -> None:
     app = App(override_system_messages=True)
 
     for i in range(20):
@@ -96,4 +98,5 @@ def benchmark_extreme_routers() -> float:
 
         app.include_router(router)
 
-    return get_time_of_validate_routers_for_collisions(app)
+    app._setup_system_router()
+    app._validate_routers_for_collisions()

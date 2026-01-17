@@ -1,9 +1,12 @@
 __all__ = [
     "Benchmark",
     "Benchmarks",
-    "BenchmarkResult"
+    "BenchmarkResult",
+    "BenchmarkGroupResult"
 ]
 
+import io
+from contextlib import redirect_stdout
 from dataclasses import dataclass
 import time
 import gc
@@ -13,7 +16,8 @@ from typing import Callable, override
 from .exceptions import BenchmarkNotFound, BenchmarksNotFound
 
 
-BenchmarkAsFunc = Callable[[], float]
+FuncForBenchmark = Callable[[], None]
+MILLISECONDS_IN_SECONDS = 1000
 
 
 @dataclass(frozen=True, slots=True)
@@ -37,7 +41,7 @@ class BenchmarkGroupResult:
 class Benchmark:
     def __init__(
             self,
-            func: BenchmarkAsFunc,
+            func: FuncForBenchmark,
             *,
             type_: str,
             name: str,
@@ -53,26 +57,28 @@ class Benchmark:
             was_gc_enabled = gc.isenabled()
             gc.disable()
 
-            start = time.perf_counter()
-            self.func()
-            end = time.perf_counter()
+            with redirect_stdout(io.StringIO()):
+                start = time.perf_counter()
+                self.func()
+                end = time.perf_counter()
 
             if was_gc_enabled:
                 gc.enable()
             gc.collect()
 
-            return end - start
+            return (end - start) * MILLISECONDS_IN_SECONDS
         else:
-            start = time.perf_counter()
-            self.func()
-            end = time.perf_counter()
-            return end - start
+            with redirect_stdout(io.StringIO()):
+                start = time.perf_counter()
+                self.func()
+                end = time.perf_counter()
+            return (end - start) * MILLISECONDS_IN_SECONDS
 
-    def multiple_runs(self, iterations: int, is_gc_disabled: bool = False) -> tuple[float]:
+    def multiple_runs(self, iterations: int, is_gc_disabled: bool = False) -> tuple[float, ...]:
         run_attempts: list[float] = []
         for _ in range(iterations):
             run_attempts.append(self.single_run(is_gc_disabled))
-        return tuple(*run_attempts)
+        return tuple(run_attempts)
 
     @override
     def __repr__(self) -> str:
@@ -93,8 +99,8 @@ class Benchmarks:
             self,
             type_: str,
             description: str = ""
-    ) -> Callable[[BenchmarkAsFunc], BenchmarkAsFunc]:
-        def decorator(func: BenchmarkAsFunc) -> BenchmarkAsFunc:
+    ) -> Callable[[FuncForBenchmark], FuncForBenchmark]:
+        def decorator(func: FuncForBenchmark) -> FuncForBenchmark:
             benchmark = Benchmark(
                 func,
                 type_=type_,
@@ -102,7 +108,7 @@ class Benchmarks:
                 description=description or f'description for {func.__name__} with type {type_}',
             )
             self._benchmarks.append(benchmark)
-            self._benchmarks_paired_by_name[type_] = benchmark
+            self._benchmarks_paired_by_name[func.__name__] = benchmark
             self._benchmarks_grouped_by_type.setdefault(type_, []).append(benchmark)
             return func
         return decorator
@@ -111,11 +117,11 @@ class Benchmarks:
         benchmark = self.get_benchmark_by_name(name)
         if not benchmark:
             raise BenchmarkNotFound(name)
-        run_attempts: tuple[float] = benchmark.multiple_runs(iterations, is_gc_disables)
+        run_attempts: tuple[float, ...] = benchmark.multiple_runs(iterations, is_gc_disables)
 
-        avg = statistics.mean(run_attempts)
-        median = statistics.median(run_attempts)
-        std_dev = statistics.stdev(run_attempts) if len(run_attempts) > 1 else 0
+        avg = round(statistics.mean(run_attempts), 4)
+        median = round(statistics.median(run_attempts), 4)
+        std_dev = round(statistics.stdev(run_attempts) if len(run_attempts) > 1 else 0, 4)
 
         return BenchmarkResult(
             type_=benchmark.type_,
@@ -141,6 +147,12 @@ class Benchmarks:
             type_=type_,
             benchmark_results=benchmark_results
         )
+
+    def run_benchmarks_grouped_by_type(self) -> list[BenchmarkGroupResult]:
+        results: list[BenchmarkGroupResult] = []
+        for type_, benchmarks in self._benchmarks_grouped_by_type.items():
+            results.append(self.run_benchmarks_by_type(type_))
+        return results
 
     def get_benchmarks_by_type(self, type_: str) -> list[Benchmark]:
         return self._benchmarks_grouped_by_type.get(type_, [])
