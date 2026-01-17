@@ -10,7 +10,7 @@ from argenta.command.models import Command
 from argenta.response import Response
 from argenta.router import Router
 from .benchmarks.models import BenchmarkResult
-from .benchmarks.utils import run_all_benchmarks, get_kernel_version
+from .benchmarks.utils import run_all_benchmarks, get_kernel_version, get_gpu_info
 
 console = Console()
 router = Router(title="Metrics commands:")
@@ -19,6 +19,7 @@ router = Router(title="Metrics commands:")
 @router.command(Command("all-print", description="Print all benchmarks results"))
 def all_print_handler(_: Response) -> None:
     cpu_info = cpuinfo.get_cpu_info()
+    gpu_info = get_gpu_info()
     os_info = get_kernel_version()
 
     table = Table(show_header=True, header_style="bold cyan", border_style="blue", show_lines=True)
@@ -29,7 +30,8 @@ def all_print_handler(_: Response) -> None:
     table.add_row("OS Name", os_info['product_name'])
     table.add_row("OS Kernel Version", os_info['kernel_version'])
     table.add_row("Architecture", cpu_info['arch'])
-    table.add_row("Processor", cpu_info['brand_raw'])
+    table.add_row("CPU", cpu_info['brand_raw'])
+    table.add_row("GPU", gpu_info)
     table.add_row("Python Version", cpu_info['python_version'])
     table.add_row("Python Implementation", platform.python_implementation())
 

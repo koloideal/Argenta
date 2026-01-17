@@ -36,6 +36,7 @@ tests = [
     "pytest-mock>=3.15.1",
 ]
 metrics = [
+    "nvidia-ml-py>=13.590.44",
     "py-cpuinfo>=9.0.0",
 ]
 

@@ -3,10 +3,8 @@ __all__ = [
     "get_time_of_validate_routers_for_collisions",
     "get_time_of_most_similar_command",
     "get_time_of_finds_appropriate_handler",
-    "attempts_to_average",
-    "run_benchmark",
-    "run_all_benchmarks",
-    "get_kernel_version"
+    "get_kernel_version",
+    "get_gpu_info"
 ]
 
 import io
@@ -17,6 +15,8 @@ import time
 from concurrent.futures import ProcessPoolExecutor
 from contextlib import redirect_stdout
 from decimal import ROUND_HALF_UP, Decimal
+
+import pynvml
 
 from argenta import App
 from argenta.router import Router
@@ -48,7 +48,7 @@ def get_time_of_most_similar_command(app: App, unknown_command: str) -> float:
     return (end - start) * 1000
 
 
-def get_time_of_finds_appropriate_handler(router: "Router", input_command: "InputCommand") -> float:
+def get_time_of_finds_appropriate_handler(router: Router, input_command: InputCommand) -> float:
     start = time.perf_counter()
     with redirect_stdout(io.StringIO()):
         router.finds_appropriate_handler(input_command)
@@ -90,29 +90,21 @@ def get_kernel_version() -> dict[str, str]:
             'product_name': platform.system(),
         }
 
+def get_gpu_info() -> str:
+    try:
+        pynvml.nvmlInit()
+        device_count = pynvml.nvmlDeviceGetCount()
+        if device_count == 0:
+            return "N/A"
 
-def attempts_to_average(bench_attempts: list[float], iterations: int) -> Decimal:
-    return Decimal(sum(bench_attempts) / iterations).quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
+        handle = pynvml.nvmlDeviceGetHandleByIndex(0)
+        name = pynvml.nvmlDeviceGetName(handle)
 
+        if isinstance(name, bytes):
+            name = name.decode("utf-8")
 
-def run_all_benchmarks() -> dict[str, list[BenchmarkResult]]:
-    all_benchmarks: list[Benchmark] = Benchmarks.get_benchmarks()
+        pynvml.nvmlShutdown()
+        return name
+    except pynvml.NVMLError:
+        return "N/A"
 
-    workers = os.cpu_count() or 1
-    with ProcessPoolExecutor(max_workers=workers) as executor:
-        results = executor.map(run_benchmark, all_benchmarks)
-
-    type_paired_benchmarks: dict[str, list[BenchmarkResult]] = {}
-
-    for result in results:
-        type_paired_benchmarks.setdefault(result.type_, []).append(result)
-
-    return type_paired_benchmarks
-
-
-def run_benchmark(benchmark: Benchmark) -> BenchmarkResult:
-    bench_attempts: list[float] = []
-    for _ in range(benchmark.iterations):
-        bench_attempts.append(benchmark.run())
-    avg = attempts_to_average(bench_attempts, benchmark.iterations)
-    return BenchmarkResult(benchmark.type_, benchmark.name, benchmark.description, benchmark.iterations, avg)
