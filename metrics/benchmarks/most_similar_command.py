@@ -29,8 +29,6 @@ def setup_app_with_commands(command_count: int, aliases_per_command: int = 0) ->
             pass
 
     app.include_router(router)
-    with redirect_stdout(io.StringIO()):
-        app._pre_cycle_setup()  # pyright: ignore[reportPrivateUsage]
     return app
 
 

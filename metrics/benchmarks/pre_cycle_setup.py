@@ -1,6 +1,6 @@
 __all__ = [
     "benchmark_no_aliases",
-    "benchmark_many_aliases",
+    "benchmark_with_many_aliases",
     "benchmark_few_aliases",
     "benchmark_extreme_aliases",
     "benchmark_very_many_aliases"
@@ -57,7 +57,7 @@ def benchmark_few_aliases() -> None:
 
 
 @benchmarks.register(type_="pre_cycle_setup", description="With many aliases (15 total)")
-def benchmark_many_aliases() -> None:
+def benchmark_with_many_aliases() -> None:
     app = App(override_system_messages=True)
     router = Router()
 
