@@ -1,13 +1,10 @@
 __all__ = [
     "benchmark_few_commands",
-    "benchmark_many_commands",
+    "benchmark_many_commands_most_similar",
     "benchmark_many_aliases",
     "benchmark_partial_match",
     "benchmark_extreme_commands"
 ]
-
-import io
-from contextlib import redirect_stdout
 
 from argenta import App
 from argenta.command.models import Command
@@ -39,7 +36,7 @@ def benchmark_few_commands() -> None:
 
 
 @benchmarks.register(type_="most_similar_command", description="Many commands (50 commands, no match)")
-def benchmark_many_commands() -> None:
+def benchmark_many_commands_most_similar() -> None:
     app = setup_app_with_commands(50)
     app._most_similar_command("unknown")
 

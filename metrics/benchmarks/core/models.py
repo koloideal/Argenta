@@ -13,8 +13,7 @@ import gc
 import statistics
 from typing import Callable, override
 
-from .exceptions import BenchmarkNotFound, BenchmarksNotFound
-
+from .exceptions import BenchmarkNotFound, BenchmarksNotFound, BenchmarksWithSameNameAlreadyExists
 
 FuncForBenchmark = Callable[[], None]
 MILLISECONDS_IN_SECONDS = 1000
@@ -35,6 +34,8 @@ class BenchmarkResult:
 @dataclass(frozen=True, slots=True)
 class BenchmarkGroupResult:
     type_: str
+    iterations: int
+    is_gc_disabled: bool
     benchmark_results: list[BenchmarkResult]
 
 
@@ -107,8 +108,11 @@ class Benchmarks:
                 name=func.__name__,
                 description=description or f'description for {func.__name__} with type {type_}',
             )
-            self._benchmarks.append(benchmark)
+            if self._benchmarks_paired_by_name.get(func.__name__):
+                raise BenchmarksWithSameNameAlreadyExists(func.__name__)
+
             self._benchmarks_paired_by_name[func.__name__] = benchmark
+            self._benchmarks.append(benchmark)
             self._benchmarks_grouped_by_type.setdefault(type_, []).append(benchmark)
             return func
         return decorator
@@ -145,6 +149,8 @@ class Benchmarks:
 
         return BenchmarkGroupResult(
             type_=type_,
+            iterations=iterations,
+            is_gc_disabled=is_gc_disabled,
             benchmark_results=benchmark_results
         )
 

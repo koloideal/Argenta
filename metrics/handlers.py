@@ -11,7 +11,6 @@ from argenta.response import Response
 from argenta.router import Router
 from .benchmarks.core.models import BenchmarkGroupResult
 from .benchmarks.entity import benchmarks as registered_benchmarks
-from .utils import get_kernel_version, get_gpu_info
 
 console = Console()
 router = Router(title="Metrics commands:")
@@ -43,22 +42,18 @@ def all_print_handler(_: Response) -> None:
     type_grouped_benchmarks: list[BenchmarkGroupResult] = registered_benchmarks.run_benchmarks_grouped_by_type()
 
     for results in type_grouped_benchmarks:
-        header_text = Text(f"TYPE: {results.type_.upper()}", style="bold magenta")
+        header_text = Text(f"TYPE: {results.type_.upper()} ; ITERATIONS: {results.iterations} ; ALL TIME IN MS", style="bold magenta")
         console.print(Panel(header_text, expand=False, border_style="magenta"))
 
         table = Table(show_header=True, header_style="bold cyan", border_style="blue", show_lines=True)
-        table.add_column("Name", style="green")
         table.add_column("Description", style="dim")
-        table.add_column("Iterations", justify="right")
-        table.add_column("Avg Time (ms)", justify="right", style="bold yellow")
-        table.add_column("Median Time (ms)", justify="right", style="bold yellow")
-        table.add_column("Stdev (ms)", justify="right", style="bold yellow")
+        table.add_column("Avg Time", justify="right", style="bold yellow")
+        table.add_column("Median Time", justify="right", style="bold yellow")
+        table.add_column("Stdev", justify="right", style="bold yellow")
 
         for benchmark in results.benchmark_results:
             table.add_row(
-                benchmark.name,
                 benchmark.description,
-                str(benchmark.iterations),
                 str(benchmark.avg_time),
                 str(benchmark.median_time),
                 str(benchmark.std_dev),
