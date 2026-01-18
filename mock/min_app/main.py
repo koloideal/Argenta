@@ -4,7 +4,7 @@ from argenta.app import DynamicDividingLine
 
 from .routers import router
 
-app: App = App(prompt='>>> ', dividing_line=DynamicDividingLine('~'))
+app: App = App(prompt='>>> ', dividing_line=None)
 orchestrator: Orchestrator = Orchestrator()
 
 def main() -> None:

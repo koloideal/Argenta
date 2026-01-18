@@ -36,6 +36,7 @@ class ReportGenerator:
     def generate_benchmark_table_header(benchmark_group_result: BenchmarkGroupResult) -> Panel:
         header_text = Text(f"TYPE: {benchmark_group_result.type_.upper()} ; "
                            f"ITERATIONS: {benchmark_group_result.iterations} ; "
+                           f"GC {"DISABLED" if benchmark_group_result.is_gc_disabled else "ENABLED"} ; "
                            f"ALL TIME IN MS",
                            style="bold magenta")
         return Panel(header_text, expand=False, border_style="magenta")
@@ -55,8 +56,6 @@ class ReportGenerator:
         table.add_row("CPU Physical Cores", str(self.system_info.cpu_info.physical_cores))
         table.add_row("CPU Logical Cores", str(self.system_info.cpu_info.logical_cores))
         table.add_row("CPU Max Frequency", str(self.system_info.cpu_info.max_frequency) + ' GHz')
-        table.add_row("CPU Min Frequency", str(self.system_info.cpu_info.min_frequency) + ' GHz')
-        table.add_row("CPU Current Frequency", str(self.system_info.cpu_info.current_frequency) + ' GHz')
         table.add_row("Total RAM", str(self.system_info.memory_info.total_ram) + ' GB')
         table.add_row("Used RAM", str(self.system_info.memory_info.used_ram) + ' GB')
         table.add_row("Available RAM", str(self.system_info.memory_info.available_ram) + ' GB')

@@ -30,8 +30,6 @@ class CPUInfo:
     physical_cores: int
     logical_cores: int
     max_frequency: float
-    min_frequency: float
-    current_frequency: float
 
 @dataclass(frozen=True, slots=True)
 class MemoryInfo:
@@ -93,8 +91,6 @@ def get_cpu_info() -> CPUInfo:
     cpu_logical_cores = psutil.cpu_count(logical=True)
 
     cpu_freq = psutil.cpu_freq() or "N/A"
-    cpu_current_frequency = cpu_freq.current
-    cpu_min_frequency = cpu_freq.min
     cpu_max_frequency = cpu_freq.max
 
     return CPUInfo(
@@ -102,8 +98,6 @@ def get_cpu_info() -> CPUInfo:
         architecture=cpu_architecture,
         physical_cores=cpu_physical_cores,
         logical_cores=cpu_logical_cores,
-        current_frequency=cpu_current_frequency,
-        min_frequency=cpu_min_frequency,
         max_frequency=cpu_max_frequency
     )
 

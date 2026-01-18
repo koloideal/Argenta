@@ -1,5 +1,6 @@
 from rich.console import Console
 
+from argenta.command import Flag, PossibleValues
 from argenta.command.models import Command
 from argenta.response import Response
 from argenta.router import Router
@@ -12,13 +13,19 @@ console = Console()
 router = Router(title="Metrics commands:")
 
 
-@router.command(Command("all-print", description="Print all benchmarks results"))
+@router.command(
+    Command(
+        "all-print",
+        description="Print all benchmarks results",
+        flags=Flag('without-gc', possible_values=PossibleValues.NEITHER)
+    )
+)
 def all_print_handler(_: Response) -> None:
     report_generator = ReportGenerator(get_system_info())
     console.print(report_generator.generate_system_info_header())
     console.print(report_generator.generate_system_info_table())
-    return
-    type_grouped_benchmarks: list[BenchmarkGroupResult] = registered_benchmarks.run_benchmarks_grouped_by_type()
+    is_gc_disabled = _.input_flags.get_flag_by_name("without-gc")
+    type_grouped_benchmarks: list[BenchmarkGroupResult] = registered_benchmarks.run_benchmarks_grouped_by_type(is_gc_disabled=is_gc_disabled)
     for benchmark_group_result in type_grouped_benchmarks:
         console.print(report_generator.generate_benchmark_table_header(benchmark_group_result))
         console.print(report_generator.generate_benchmark_report_table(benchmark_group_result))

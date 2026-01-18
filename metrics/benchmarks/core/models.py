@@ -154,10 +154,10 @@ class Benchmarks:
             benchmark_results=benchmark_results
         )
 
-    def run_benchmarks_grouped_by_type(self) -> list[BenchmarkGroupResult]:
+    def run_benchmarks_grouped_by_type(self, iterations: int = 100, is_gc_disabled: bool = False) -> list[BenchmarkGroupResult]:
         results: list[BenchmarkGroupResult] = []
         for type_, benchmarks in self._benchmarks_grouped_by_type.items():
-            results.append(self.run_benchmarks_by_type(type_))
+            results.append(self.run_benchmarks_by_type(type_, iterations, is_gc_disabled))
         return results
 
     def get_benchmarks_by_type(self, type_: str) -> list[Benchmark]:

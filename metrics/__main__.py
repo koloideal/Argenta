@@ -3,7 +3,7 @@ from argenta.app import StaticDividingLine
 
 from .handlers import router
 
-app = App(initial_message="metrics", prompt=">>> ", dividing_line=StaticDividingLine('~', length=70))
+app = App(initial_message="metrics", prompt=">>> ", dividing_line=None)
 orchestrator = Orchestrator()
 
 

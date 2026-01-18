@@ -42,7 +42,7 @@ class BaseApp:
         farewell_message: str,
         exit_command: Command,
         system_router_title: str,
-        dividing_line: StaticDividingLine | DynamicDividingLine,
+        dividing_line: StaticDividingLine | DynamicDividingLine | None,
         repeat_command_groups_printing: bool,
         override_system_messages: bool,
         autocompleter: AutoCompleter,
@@ -198,7 +198,8 @@ class BaseApp:
                     is_override=self._override_system_messages
                 )
             )
-
+        elif self._dividing_line is None:
+            print('\n' + text.strip("\n") + '\n')
         else:
             raise NotImplementedError
 
@@ -408,7 +409,7 @@ class App(BaseApp):
         farewell_message: str = "\nSee you\n",
         exit_command: Command = DEFAULT_EXIT_COMMAND,
         system_router_title: str = "System points:",
-        dividing_line: AVAILABLE_DIVIDING_LINES = DEFAULT_DIVIDING_LINE,
+        dividing_line: AVAILABLE_DIVIDING_LINES | None = DEFAULT_DIVIDING_LINE,
         repeat_command_groups_printing: bool = False,
         override_system_messages: bool = False,
         autocompleter: AutoCompleter = DEFAULT_AUTOCOMPLETER,
