@@ -41,14 +41,6 @@ metrics = [
 ]
 
 [tool.ruff]
-exclude = [
-    ".idea",
-    "venv",
-    ".git",
-    "poetry.lock",
-    ".__pycache__",
-    "tests"
-]
 line-length=90
 
 [tool.pyright]
@@ -79,5 +71,5 @@ disable_error_code = "import-untyped"
 line_length=90
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build"]
+build-backend = "uv_build"

@@ -1,13 +1,11 @@
 __all__ = [
     "SystemInfo",
-    "SystemInfoGetter",
     "get_system_info"
 ]
 
 from dataclasses import dataclass
 import platform
 import sys
-from typing import Protocol
 
 import cpuinfo
 import psutil
@@ -18,72 +16,46 @@ class SystemInfo:
     os_info: OSInfo
     cpu_info: CPUInfo
     memory_info: MemoryInfo
-    python_version: str
-    python_implementation: str
-
+    python_info: PythonInfo
 
 @dataclass(frozen=True, slots=True)
 class OSInfo:
-    os_name: str
+    name: str
     kernel_version: str
-
 
 @dataclass(frozen=True, slots=True)
 class CPUInfo:
-    cpu_name: str
-    cpu_architecture: str
-    cpu_physical_cores: int
-    cpu_logical_cores: int
-    cpu_max_frequency: float
-    cpu_base_frequency: float
-
+    name: str
+    architecture: str
+    physical_cores: int
+    logical_cores: int
+    max_frequency: float
+    min_frequency: float
+    current_frequency: float
 
 @dataclass(frozen=True, slots=True)
 class MemoryInfo:
     total_ram: float # in GB
+    used_ram: float # in GB
     available_ram: float # in GB
-    l1_cache: float
-    l2_cache: float
-    l3_cache: float
 
-    
 @dataclass(frozen=True, slots=True)
 class PythonInfo:
-    python_version: str
-    python_implementation: str
-    python_compiler: str
-
-
-class SystemInfoGetter(Protocol):
-    def __call__(self) -> SystemInfo:
-        raise NotImplementedError
+    version: str
+    implementation: str
+    compiler: str
 
 
 def get_system_info() -> SystemInfo:
     os_info = get_os_info()
-    os_name = os_info.os_name
-    os_kernel_version = os_info.kernel_version
-
-    cpu_info = cpuinfo.get_cpu_info()
-    cpu_architecture = cpu_info["arch"]
-    cpu_name = cpu_info["brand_raw"]
-
-    gpu_name = get_gpu_name()
-
-    total_ram = psutil.virtual_memory().total / (1024 ** 3)
-
-    python_version = platform.python_version()
-    python_implementation = platform.python_implementation()
-
+    cpu_info = get_cpu_info()
+    memory_info = get_memory_info()
+    python_info = get_python_info()
     return SystemInfo(
-        os_name=os_name,
-        kernel_version=os_kernel_version,
-        cpu_architecture=cpu_architecture,
-        cpu_name=cpu_name,
-        gpu_name=gpu_name,
-        total_ram=total_ram,
-        python_version=python_version,
-        python_implementation=python_implementation,
+        os_info=os_info,
+        cpu_info=cpu_info,
+        memory_info=memory_info,
+        python_info=python_info,
     )
 
 def get_os_info() -> OSInfo:
@@ -99,16 +71,62 @@ def get_os_info() -> OSInfo:
             product_name = "Windows 10"
 
         return OSInfo(
-            os_name=product_name,
+            name=product_name,
             kernel_version=kernel_version,
         )
     elif system == "Darwin":
         return OSInfo(
             kernel_version=platform.release(),
-            os_name=f"macOS {platform.mac_ver()[0]}"
+            name=f"macOS {platform.mac_ver()[0]}"
         )
     else:
         return OSInfo(
             kernel_version=platform.release(),
-            os_name=platform.system()
+            name=platform.system()
         )
+
+def get_cpu_info() -> CPUInfo:
+    cpu_info = cpuinfo.get_cpu_info()
+    cpu_name = cpu_info["brand_raw"]
+    cpu_architecture = cpu_info["arch"]
+    cpu_physical_cores = psutil.cpu_count(logical=False)
+    cpu_logical_cores = psutil.cpu_count(logical=True)
+
+    cpu_freq = psutil.cpu_freq() or "N/A"
+    cpu_current_frequency = cpu_freq.current
+    cpu_min_frequency = cpu_freq.min
+    cpu_max_frequency = cpu_freq.max
+
+    return CPUInfo(
+        name=cpu_name,
+        architecture=cpu_architecture,
+        physical_cores=cpu_physical_cores,
+        logical_cores=cpu_logical_cores,
+        current_frequency=cpu_current_frequency,
+        min_frequency=cpu_min_frequency,
+        max_frequency=cpu_max_frequency
+    )
+
+def get_memory_info() -> MemoryInfo:
+    mem = psutil.virtual_memory()
+    total_ram = round(mem.total / (1024**3), 2)
+    used_ram = round(mem.used / (1024**3), 2)
+    available_ram = round(mem.available / (1024**3), 2)
+
+    return MemoryInfo(
+        total_ram=total_ram,
+        used_ram=used_ram,
+        available_ram=available_ram,
+    )
+
+def get_python_info() -> PythonInfo:
+    python_version = platform.python_version()
+    python_implementation = platform.python_implementation()
+    python_compiler = platform.python_compiler()
+    return PythonInfo(
+        version=python_version,
+        implementation=python_implementation,
+        compiler=python_compiler
+    )
+
+
