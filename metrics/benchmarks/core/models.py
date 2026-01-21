@@ -53,33 +53,28 @@ class Benchmark:
         self.name = name
         self.description = description
 
-    def single_run(self, is_gc_disabled: bool = False) -> float:
-        if is_gc_disabled:
-            was_gc_enabled = gc.isenabled()
-            gc.disable()
-
-            with redirect_stdout(io.StringIO()):
-                start = time.perf_counter()
-                self.func()
-                end = time.perf_counter()
-
-            if was_gc_enabled:
-                gc.enable()
-            gc.collect()
-
-            return (end - start) * MILLISECONDS_IN_SECONDS
-        else:
-            with redirect_stdout(io.StringIO()):
-                start = time.perf_counter()
-                self.func()
-                end = time.perf_counter()
-            return (end - start) * MILLISECONDS_IN_SECONDS
+    def single_run(self) -> float:
+        with redirect_stdout(io.StringIO()):
+            start = time.perf_counter()
+            self.func()
+            end = time.perf_counter()
+        return (end - start) * MILLISECONDS_IN_SECONDS
 
     def multiple_runs(self, iterations: int, is_gc_disabled: bool = False) -> tuple[float, ...]:
         run_attempts: list[float] = []
-        for _ in range(iterations):
-            run_attempts.append(self.single_run(is_gc_disabled))
-        return tuple(run_attempts)
+        if is_gc_disabled:
+            was_gc_enabled = gc.isenabled()
+            gc.disable()
+            for _ in range(iterations):
+                run_attempts.append(self.single_run())
+            if was_gc_enabled:
+                gc.enable()
+            gc.collect()
+            return tuple(run_attempts)
+        else:
+            for _ in range(iterations):
+                run_attempts.append(self.single_run())
+            return tuple(run_attempts)
 
     @override
     def __repr__(self) -> str:
