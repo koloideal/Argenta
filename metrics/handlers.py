@@ -80,7 +80,7 @@ def run_type_handler(response: Response) -> None:
     console.print(report_generator.generate_system_info_header())
     console.print(report_generator.generate_system_info_table())
     
-    is_gc_disabled = response.input_flags.get_flag_by_name("without-gc", with_status=ValidationStatus.VALID)
+    is_gc_disabled = response.input_flags.get_flag_by_name("without-gc", with_status=ValidationStatus.VALID, default=False)
     benchmark_group_result = registered_benchmarks.run_benchmarks_by_type(benchmark_type, is_gc_disabled=is_gc_disabled)
     
     console.print(report_generator.generate_benchmark_table_header(benchmark_group_result))
