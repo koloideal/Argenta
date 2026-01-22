@@ -1,9 +1,8 @@
 from argenta import App, Orchestrator
-from argenta.app import StaticDividingLine
-
 from .handlers import router
 
-app = App(initial_message="metrics", prompt=">>> ", dividing_line=None)
+
+app = App(initial_message="metrics")
 orchestrator = Orchestrator()
 
 

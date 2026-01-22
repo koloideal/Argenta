@@ -2,7 +2,7 @@ from datetime import date, datetime
 
 import pytest
 
-from argenta.command.flag.flags.models import InputFlags
+from argenta.command import InputFlags
 from argenta.command.flag.models import InputFlag
 from argenta.data_bridge import DataBridge
 from argenta.response.entity import EMPTY_INPUT_FLAGS, Response

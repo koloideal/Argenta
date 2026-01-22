@@ -8,7 +8,7 @@ from argenta.command.exceptions import (
     RepeatedInputFlagsException,
     UnprocessedInputFlagException,
 )
-from argenta.command.flag.flags.models import Flags, InputFlags
+from argenta.command import Flags, InputFlags
 from argenta.command.flag.models import Flag, InputFlag, ValidationStatus
 
 ParseFlagsResult = tuple[InputFlags, str | None, str | None]

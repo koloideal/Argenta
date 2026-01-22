@@ -1,7 +1,8 @@
 from typing import cast
 
 from argenta import Command, Response, Router
-from argenta.command.flag import Flag, Flags, ValidationStatus
+from argenta.command.flag import Flag, ValidationStatus
+from argenta.command import Flags
 from argenta.di import FromDishka
 
 from .repository import Priority, Task, TaskRepository

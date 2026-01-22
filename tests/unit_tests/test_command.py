@@ -8,7 +8,7 @@ from argenta.command.exceptions import (
     UnprocessedInputFlagException,
 )
 from argenta.command.flag import Flag, InputFlag
-from argenta.command.flag.flags import Flags
+from argenta.command import Flags
 from argenta.command.flag.models import PossibleValues, ValidationStatus
 from argenta.command.models import Command, InputCommand
 

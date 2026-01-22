@@ -2,7 +2,7 @@ __all__ = ["Response"]
 
 from dishka import Container
 
-from argenta.command.flag.flags.models import InputFlags
+from argenta.command import InputFlags
 from argenta.response.status import ResponseStatus
 
 EMPTY_INPUT_FLAGS: InputFlags = InputFlags()

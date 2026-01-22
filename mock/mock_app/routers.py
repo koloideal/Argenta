@@ -6,7 +6,7 @@ work_router: Router = Router(title="Base points:", disable_redirect_stdout=True)
 
 @work_router.command(
     Command(
-        "hello", 
+        "hello",
         flags=Flags([
             Flag("test")
         ]),

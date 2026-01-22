@@ -3,7 +3,7 @@ import re
 import pytest
 
 from argenta.command.flag import Flag, InputFlag, PossibleValues
-from argenta.command.flag.flags import Flags, InputFlags
+from argenta.command import Flags, InputFlags
 
 
 # ============================================================================

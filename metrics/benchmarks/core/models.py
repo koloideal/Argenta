@@ -160,3 +160,6 @@ class Benchmarks:
 
     def get_benchmark_by_name(self, name: str) -> Benchmark | None:
         return self._benchmarks_paired_by_name.get(name)
+
+    def get_types(self) -> set[str]:
+        return set(self._benchmarks_grouped_by_type.keys())

@@ -187,7 +187,7 @@ class BaseApp:
                 )
             )
 
-        elif isinstance(self._dividing_line, StaticDividingLine):  # pyright: ignore[reportUnnecessaryIsInstance]
+        elif isinstance(self._dividing_line, StaticDividingLine):
             self._print_func(
                 self._dividing_line.get_full_static_line(
                     is_override=self._override_system_messages
@@ -374,18 +374,7 @@ class BaseApp:
             raise RuntimeError(f"Router for '{input_command.trigger}' not found. Panic!")
 
         if processing_router.disable_redirect_stdout:
-            dividing_line_unit_part: str = self._dividing_line.get_unit_part()
-            self._print_func(
-                StaticDividingLine(dividing_line_unit_part).get_full_static_line(
-                    is_override=self._override_system_messages
-                )
-            )
             processing_router.finds_appropriate_handler(input_command)
-            self._print_func(
-                StaticDividingLine(dividing_line_unit_part).get_full_static_line(
-                    is_override=self._override_system_messages
-                )
-            )
         else:
             stdout_result = self._capture_stdout(
                 lambda: processing_router.finds_appropriate_handler(input_command)
@@ -394,10 +383,7 @@ class BaseApp:
 
 
 AVAILABLE_DIVIDING_LINES: TypeAlias = StaticDividingLine | DynamicDividingLine
-DEFAULT_DIVIDING_LINE: StaticDividingLine = StaticDividingLine()
-
 DEFAULT_PRINT_FUNC: Printer = Console().print
-DEFAULT_AUTOCOMPLETER: AutoCompleter = AutoCompleter()
 DEFAULT_EXIT_COMMAND: Command = Command("q", description="Exit command")
 
 
@@ -410,10 +396,10 @@ class App(BaseApp):
         farewell_message: str = "\nSee you\n",
         exit_command: Command = DEFAULT_EXIT_COMMAND,
         system_router_title: str = "System points:",
-        dividing_line: AVAILABLE_DIVIDING_LINES | None = DEFAULT_DIVIDING_LINE,
+        dividing_line: AVAILABLE_DIVIDING_LINES | None = None,
         repeat_command_groups_printing: bool = False,
         override_system_messages: bool = False,
-        autocompleter: AutoCompleter = DEFAULT_AUTOCOMPLETER,
+        autocompleter: AutoCompleter | None = None,
         print_func: Printer = DEFAULT_PRINT_FUNC,
     ) -> None:
         """
@@ -440,7 +426,7 @@ class App(BaseApp):
             dividing_line=dividing_line,
             repeat_command_groups_printing=repeat_command_groups_printing,
             override_system_messages=override_system_messages,
-            autocompleter=autocompleter,
+            autocompleter=autocompleter or AutoCompleter(),
             print_func=print_func,
         )
         if not self._override_system_messages:

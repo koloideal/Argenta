@@ -6,9 +6,8 @@ from typing import Callable
 from rich.console import Console
 
 from argenta.app.protocols import HandlerFunc
-from argenta.command import Command, InputCommand
+from argenta.command import Command, InputCommand, InputFlags
 from argenta.command.flag import ValidationStatus
-from argenta.command.flag.flags import InputFlags
 from argenta.response import Response, ResponseStatus
 from argenta.router.command_handler.entity import CommandHandler, CommandHandlers
 from argenta.router.exceptions import (RepeatedAliasNameException,

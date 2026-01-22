@@ -3,9 +3,8 @@ import re
 import pytest
 from pytest import CaptureFixture
 
-from argenta.command import Command, InputCommand
+from argenta.command import Command, InputCommand, Flags, InputFlags
 from argenta.command.flag import Flag, InputFlag
-from argenta.command.flag.flags import Flags, InputFlags
 from argenta.command.flag.models import PossibleValues, ValidationStatus
 from argenta.response.entity import Response
 from argenta.router import Router

@@ -5,9 +5,8 @@ from collections.abc import Iterator
 import pytest
 
 from argenta import App, Orchestrator, Router
-from argenta.command import Command, PredefinedFlags
+from argenta.command import Command, PredefinedFlags, Flags
 from argenta.command.flag import Flag
-from argenta.command.flag.flags import Flags
 from argenta.command.flag.models import PossibleValues, ValidationStatus
 from argenta.response import Response
 
