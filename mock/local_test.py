@@ -1,61 +1,102 @@
-import math
+__all__ = ["AutoCompleter"]
+
+from prompt_toolkit import PromptSession, HTML
+from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.document import Document
+from prompt_toolkit.history import History, ThreadedHistory, FileHistory, InMemoryHistory
+from prompt_toolkit.key_binding import KeyBindings
 
 
-def estimate_nth_prime_upper_bound(n: int):
-    if n < 6:
-        return 15
-    
-    log_n = math.log(n)
-    log_log_n = math.log(log_n)
-    
-    if n < 100:
-        return int(n * (log_n + log_log_n) * 1.5)
-    elif n < 1000:
-        return int(n * (log_n + log_log_n) * 1.3)
-    elif n >= 8009824:
-        return int(n * (log_n + log_log_n - 1 + 1.8 * log_log_n / log_n))
-    else:
-        return int(n * (log_n + log_log_n - 1 + 2.0 * log_log_n / log_n))
+class HistoryCompleter(Completer):
+    def __init__(self, history_container: History, static_commands: set[str]) -> None:
+        self.history_container: History = history_container
+        self.static_commands: set[str] = static_commands
+
+    def get_completions(self, document: Document, complete_event):
+        text: str = document.text_before_cursor
+        history_items: set[str] = set(self.history_container.load_history_strings())
+        all_candidates: set[str] = history_items.union(self.static_commands)
+        matches: list[str] = sorted(cmd for cmd in all_candidates if cmd.startswith(text))
+
+        if not matches:
+            return
+
+        for match in matches:
+            yield Completion(
+                match,
+                start_position=-len(text),
+                display=match
+            )
+
+    @staticmethod
+    def _find_common_prefix(matches: list[str]) -> str:
+        if not matches:
+            return ""
+        common: str = matches[0]
+        for match in matches[1:]:
+            i: int = 0
+            while i < len(common) and i < len(match) and common[i] == match[i]:
+                i += 1
+            common = common[:i]
+        return common
 
 
-def odd_dig_primes(n: int) -> list[int]: 
-    nums = {k: True for k in range(2, n+1)}
-    
-    for num, is_checkable in nums.items():
-        if not is_checkable:
-            continue
-            
-        if nums[2]: 
-            nums[2] = False
-        
-        for x in range(num * num, n, num):
-            nums[x] = False
-    
-    primes = len([x for x in nums.items() if x[1]])
-    max_prime = max([x[0] for x in nums.items() if x[1]])
-    
-    upper_bound = estimate_nth_prime_upper_bound(primes+1)
-    print(upper_bound)
-    nums2 = {k: True for k in range(2, upper_bound)}
+class AutoCompleter:
+    def __init__(
+            self,
+            history_filename: str | None = None,
+            autocomplete_button: str = "tab"
+    ) -> None:
+        self.history_filename: str | None = history_filename
+        self.autocomplete_button: str = autocomplete_button
+        self._session: PromptSession | None = None
 
-    for num, is_checkable in nums2.items():
-        if not is_checkable:
-            continue
-            
-        if nums2[2]: 
-            nums2[2] = False
-        
-        for x in range(num * num, upper_bound, num):
-            nums2[x] = False
-            
-    print([x for x in nums2.items() if x[1]])
+    def initial_setup(self, all_commands: set[str]) -> None:
+        kb = KeyBindings()
 
-    next_prime_after_max = [x[0] for x in nums2.items() if x[1]][-1]
+        def _(event):
+            buff = event.app.current_buffer
 
-    return [
-        primes, 
-        max_prime, 
-        next_prime_after_max
-    ]
-            
-print(odd_dig_primes(13))
+            if buff.complete_state:
+                buff.complete_next()
+            else:
+                completions = list(buff.completer.get_completions(buff.document, None))
+                if len(completions) == 1:
+                    buff.apply_completion(completions[0])
+                else:
+                    buff.start_completion(select_first=False)
+
+        kb.add(self.autocomplete_button)(_)
+
+        if self.history_filename:
+            history = FileHistory(self.history_filename)
+            history = ThreadedHistory(history)
+        else:
+            history = InMemoryHistory()
+
+        self._session = PromptSession(
+            history=history,
+            completer=HistoryCompleter(history, all_commands),
+            complete_while_typing=False,
+            key_bindings=kb,
+        )
+
+    def prompt(self, prompt_text: str | HTML = ">>> ") -> str:
+        if self._session is None:
+            raise RuntimeError("Call initial_setup() before using prompt()")
+        return self._session.prompt(
+            HTML(f"<b><gray>{prompt_text}</gray></b>") if isinstance(prompt_text, str) else prompt_text
+        )
+
+
+if __name__ == "__main__":
+    test_commands: set[str] = {"start", "qwertyu", "stop", "exit"}
+    hist_file: str = "history.txt"
+
+    ac: AutoCompleter = AutoCompleter(autocomplete_button='tab')
+    ac.initial_setup(test_commands)
+
+    while True:
+        inp: str = ac.prompt(">>> ").strip()
+        if inp == "exit":
+            break

@@ -11,6 +11,7 @@ dependencies = [
     "art (>=6.4,<7.0)",
     "pyreadline3>=3.5.4; sys_platform == 'win32'",
     "dishka>=1.7.2",
+    "prompt-toolkit>=3.0.52",
 ]
 
 [dependency-groups]
