@@ -1,14 +1,15 @@
 __all__ = ["AutoCompleter"]
 
 import sys
+from typing import Callable, Iterable
 
 from prompt_toolkit import PromptSession, HTML
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
-from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.completion import Completer, Completion, CompleteEvent
 from prompt_toolkit.document import Document
 from prompt_toolkit.formatted_text import StyleAndTextTuples
 from prompt_toolkit.history import History, ThreadedHistory, FileHistory, InMemoryHistory
-from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.key_binding import KeyBindings, KeyPressEvent
 from prompt_toolkit.lexers import Lexer
 from prompt_toolkit.styles import Style
 
@@ -17,7 +18,7 @@ class CommandLexer(Lexer):
     def __init__(self, valid_commands: set[str]) -> None:
         self.valid_commands: set[str] = valid_commands
 
-    def lex_document(self, document):
+    def lex_document(self, document: Document) -> Callable[[int], StyleAndTextTuples]:
         def get_line_tokens(lineno: int) -> StyleAndTextTuples:
             if lineno >= len(document.lines):
                 return []
@@ -42,7 +43,7 @@ class HistoryCompleter(Completer):
         self.history_container: History = history_container
         self.static_commands: set[str] = static_commands
 
-    def get_completions(self, document: Document, complete_event):
+    def get_completions(self, document: Document, complete_event: CompleteEvent) -> Iterable[Completion]:
         text: str = document.text_before_cursor
         history_items: set[str] = set(self.history_container.load_history_strings())
         all_candidates: set[str] = history_items.union(self.static_commands)
@@ -83,7 +84,7 @@ class AutoCompleter:
         self.autocomplete_button: str = autocomplete_button
         self.command_highlighting: bool = command_highlighting
         self.auto_suggestions: bool = auto_suggestions
-        self._session: PromptSession | None = None
+        self._session: PromptSession[str] | None = None
         self._fallback_mode: bool = False
 
     def initial_setup(self, all_commands: set[str]) -> None:
@@ -94,13 +95,13 @@ class AutoCompleter:
 
         kb = KeyBindings()
 
-        def _(event):
+        def _(event: KeyPressEvent) -> None:
             buff = event.app.current_buffer
 
             if buff.complete_state:
                 buff.complete_next()
             else:
-                completions = list(buff.completer.get_completions(buff.document, None))
+                completions = list(buff.completer.get_completions(buff.document, CompleteEvent()))
                 if len(completions) == 1:
                     buff.apply_completion(completions[0])
                 else:
@@ -108,9 +109,10 @@ class AutoCompleter:
 
         kb.add(self.autocomplete_button)(_)
 
+        history: InMemoryHistory | ThreadedHistory
+
         if self.history_filename:
-            history = FileHistory(self.history_filename)
-            history = ThreadedHistory(history)
+            history = ThreadedHistory(FileHistory(self.history_filename))
         else:
             history = InMemoryHistory()
 

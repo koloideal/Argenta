@@ -38,7 +38,7 @@ class BaseApp:
     def __init__(
         self,
         *,
-        prompt: str,
+        prompt: str | HTML,
         initial_message: str,
         farewell_message: str,
         exit_command: Command,
@@ -49,7 +49,7 @@ class BaseApp:
         autocompleter: AutoCompleter,
         print_func: Printer,
     ) -> None:
-        self._prompt: str = prompt
+        self._prompt: str | HTML = prompt
         self._print_func: Printer = print_func
         self._exit_command: Command = exit_command
         self._dividing_line: StaticDividingLine | DynamicDividingLine = dividing_line
