@@ -45,7 +45,6 @@ dependencies = [
     { name = "art" },
     { name = "dishka" },
     { name = "prompt-toolkit" },
-    { name = "pyreadline3", marker = "sys_platform == 'win32'" },
     { name = "rich" },
 ]
 
@@ -77,7 +76,6 @@ requires-dist = [
     { name = "art", specifier = ">=6.4,<7.0" },
     { name = "dishka", specifier = ">=1.7.2" },
     { name = "prompt-toolkit", specifier = ">=3.0.52" },
-    { name = "pyreadline3", marker = "sys_platform == 'win32'", specifier = ">=3.5.4" },
     { name = "rich", specifier = ">=14.0.0,<15.0.0" },
 ]
 
@@ -663,15 +661,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/66/78/091f2760489400d8f42a231b9b7331ffff63c2c7f99c0fce6f09bbf1ff69/pygments_styles-0.2.0.tar.gz", hash = "sha256:49727d051518ea46cc2d78c329c6985311bf27e1826f524c229a40b32cf00cff", size = 14266, upload-time = "2025-09-26T08:39:03.68Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e6/3d/8888e7ca0c6b093b52aa5c6693b0022e66d5958adcc685ed7a6a8ae615e8/pygments_styles-0.2.0-py3-none-any.whl", hash = "sha256:40fb7f1d34ce2b2792aecabc8d3877ca364eb04bb3b7f7747cfc9a7f0569bae9", size = 34200, upload-time = "2025-09-26T08:39:02.262Z" },
-]
-
-[[package]]
-name = "pyreadline3"
-version = "3.5.4"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/0f/49/4cea918a08f02817aabae639e3d0ac046fef9f9180518a3ad394e22da148/pyreadline3-3.5.4.tar.gz", hash = "sha256:8d57d53039a1c75adba8e50dd3d992b28143480816187ea5efbd5c78e6c885b7", size = 99839, upload-time = "2024-09-19T02:40:10.062Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/5a/dc/491b7661614ab97483abf2056be1deee4dc2490ecbf7bff9ab5cdbac86e1/pyreadline3-3.5.4-py3-none-any.whl", hash = "sha256:eaf8e6cc3c49bcccf145fc6067ba8643d1df34d604a1ec0eccbf7a18e6d3fae6", size = 83178, upload-time = "2024-09-19T02:40:08.598Z" },
 ]
 
 [[package]]
