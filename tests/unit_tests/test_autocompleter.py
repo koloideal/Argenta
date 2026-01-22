@@ -1,192 +1,162 @@
-import os
-from typing import Any
-
 import pytest
-from pyfakefs.fake_filesystem import FakeFilesystem
-from pytest_mock import MockerFixture
+from prompt_toolkit.document import Document
+from prompt_toolkit.history import InMemoryHistory
 
 from argenta.app.autocompleter.entity import (
     AutoCompleter,
-    _get_history_items
+    CommandLexer,
+    HistoryCompleter
 )
 
 
-HISTORY_FILE: str = "test_history.txt"
 COMMANDS: set[str] = {"start", "stop", "status"}
 
 
-# ============================================================================
-# Fixtures
-# ============================================================================
-
-
-@pytest.fixture
-def mock_readline(mocker: MockerFixture) -> Any:
-    _history: list[str] = []
-
-    def add_history(item: str) -> None:
-        _history.append(item)
-
-    def get_history_item(index: int) -> str | None:
-        if 1 <= index <= len(_history):
-            return _history[index - 1]
-        return None
-
-    def get_current_history_length() -> int:
-        return len(_history)
-
-    def clear_history() -> None:
-        _history.clear()
-
-    mock: Any = mocker.MagicMock()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
-    mocker.patch('argenta.app.autocompleter.entity.readline', mock)  # pyright: ignore[reportUnknownArgumentType]
-
-    mock.reset_mock()  # pyright: ignore[reportUnknownMemberType]
-    clear_history()
-
-    mock.add_history.side_effect = add_history  # pyright: ignore[reportUnknownMemberType]
-    mock.get_history_item.side_effect = get_history_item  # pyright: ignore[reportUnknownMemberType]
-    mock.get_current_history_length.side_effect = get_current_history_length  # pyright: ignore[reportUnknownMemberType]
-    mock.get_completer_delims.return_value = " "  # pyright: ignore[reportUnknownMemberType]
-
-    return mock  # pyright: ignore[reportReturnType, reportUnknownVariableType]
-
-
-# ============================================================================
-# Tests for AutoCompleter initialization
-# ============================================================================
-
-
-def test_autocompleter_initializes_with_history_file_and_button() -> None:
-    completer: AutoCompleter = AutoCompleter(history_filename=HISTORY_FILE, autocomplete_button="tab")
-    assert completer.history_filename == HISTORY_FILE
+def test_autocompleter_initializes_with_default_params() -> None:
+    completer = AutoCompleter()
+    assert completer.history_filename is None
     assert completer.autocomplete_button == "tab"
+    assert completer.command_highlighting is True
+    assert completer.auto_suggestions is True
 
 
-# ============================================================================
-# Tests for initial setup
-# ============================================================================
+def test_autocompleter_initializes_with_custom_params() -> None:
+    completer = AutoCompleter(
+        history_filename="test.txt",
+        autocomplete_button="c-space",
+        command_highlighting=False,
+        auto_suggestions=False
+    )
+    assert completer.history_filename == "test.txt"
+    assert completer.autocomplete_button == "c-space"
+    assert completer.command_highlighting is False
+    assert completer.auto_suggestions is False
 
 
-def test_initial_setup_creates_history_when_file_does_not_exist(fs: FakeFilesystem, mock_readline: Any) -> None:
-    if os.path.exists(HISTORY_FILE):
-        os.remove(HISTORY_FILE)
-
-    completer: AutoCompleter = AutoCompleter(history_filename=HISTORY_FILE)
-    completer.initial_setup(COMMANDS)
-
-    mock_readline.read_history_file.assert_not_called()
-    assert mock_readline.add_history.call_count == len(COMMANDS)
-
-    mock_readline.set_completer.assert_called_with(completer._complete)
-    mock_readline.parse_and_bind.assert_called_with("tab: complete")
+def test_prompt_raises_error_without_initial_setup() -> None:
+    completer = AutoCompleter()
+    with pytest.raises(RuntimeError, match="Call initial_setup"):
+        completer.prompt(">>> ")
 
 
-def test_initial_setup_reads_existing_history_file(fs: FakeFilesystem, mock_readline: Any) -> None:
-    fs.create_file(HISTORY_FILE, contents="previous_command\n")  # pyright: ignore[reportUnknownMemberType]
-
-    completer: AutoCompleter = AutoCompleter(history_filename=HISTORY_FILE)
-    completer.initial_setup(COMMANDS)
-
-    mock_readline.read_history_file.assert_called_once_with(HISTORY_FILE)
-    mock_readline.add_history.assert_not_called()
-    mock_readline.set_completer.assert_called_once()
-    mock_readline.parse_and_bind.assert_called_once()
+def test_command_lexer_highlights_valid_command() -> None:
+    lexer = CommandLexer({"start", "stop"})
+    doc = Document("start server")
+    tokens = lexer.lex_document(doc)(0)
+    assert tokens == [("class:valid", "start server")]
 
 
-def test_initial_setup_works_without_history_filename(mock_readline: Any) -> None:
-    completer: AutoCompleter = AutoCompleter(history_filename=None)
-    completer.initial_setup(COMMANDS)
-
-    mock_readline.read_history_file.assert_not_called()
-    assert mock_readline.add_history.call_count == len(COMMANDS)
-
-
-# ============================================================================
-# Tests for exit setup and history filtering
-# ============================================================================
+def test_command_lexer_highlights_invalid_command() -> None:
+    lexer = CommandLexer({"start", "stop"})
+    doc = Document("invalid command")
+    tokens = lexer.lex_document(doc)(0)
+    assert tokens == [("class:invalid", "invalid command")]
 
 
-def test_exit_setup_writes_and_filters_duplicate_commands(fs: FakeFilesystem, mock_readline: Any) -> None:
-    mock_readline.add_history.side_effect = None
-    mock_readline.add_history("start server")
-    mock_readline.add_history("stop client")
-    mock_readline.add_history("invalid command")
-    mock_readline.add_history("start server")
-
-    raw_history_content: str = "\n".join(["start server", "stop client", "invalid command", "start server"])
-    fs.create_file(HISTORY_FILE, contents=raw_history_content)  # pyright: ignore[reportUnknownMemberType]
-
-    completer: AutoCompleter = AutoCompleter(history_filename=HISTORY_FILE)
-    completer.exit_setup(all_commands={"start", "stop"})
-
-    mock_readline.write_history_file.assert_called_once_with(HISTORY_FILE)
-
-    with open(HISTORY_FILE) as f:
-        content: str = f.read()
-        lines: list[str] = sorted(content.strip().split("\n"))
-        assert lines == ["start server", "stop client"]
+def test_command_lexer_handles_empty_line() -> None:
+    lexer = CommandLexer({"start", "stop"})
+    doc = Document("")
+    tokens = lexer.lex_document(doc)(0)
+    assert tokens == [("", "")]
 
 
-def test_exit_setup_skips_writing_when_no_history_filename(mock_readline: Any) -> None:
-    completer: AutoCompleter = AutoCompleter(history_filename=None)
-    completer.exit_setup(all_commands=COMMANDS)
-    mock_readline.write_history_file.assert_not_called()
+def test_command_lexer_handles_whitespace_only() -> None:
+    lexer = CommandLexer({"start", "stop"})
+    doc = Document("   ")
+    tokens = lexer.lex_document(doc)(0)
+    assert tokens == [("", "   ")]
 
 
-# ============================================================================
-# Tests for autocomplete functionality
-# ============================================================================
+def test_history_completer_returns_matching_commands() -> None:
+    history = InMemoryHistory()
+    history.append_string("start server")
+    history.append_string("stop server")
+    
+    completer = HistoryCompleter(history, {"status"})
+    doc = Document("sta")
+    
+    completions = list(completer.get_completions(doc, None))
+    completion_texts = [c.text for c in completions]
+    
+    assert "start server" in completion_texts
+    assert "status" in completion_texts
+    assert "stop server" not in completion_texts
 
 
-def test_complete_returns_none_when_no_matches_found(mock_readline: Any) -> None:
-    cmd: str
-    for cmd in ["start", "stop"]:
-        mock_readline.add_history(cmd)
-
-    completer: AutoCompleter = AutoCompleter()
-    assert completer._complete("run", 0) is None
-    assert completer._complete("run", 1) is None
-
-
-def test_complete_returns_single_match(mock_readline: Any) -> None:
-    mock_readline.add_history("start server")
-    mock_readline.add_history("stop server")
-
-    completer: AutoCompleter = AutoCompleter()
-    assert completer._complete("start", 0) == "start server"
-    assert completer._complete("start", 1) is None
+def test_history_completer_returns_all_when_empty_input() -> None:
+    history = InMemoryHistory()
+    history.append_string("start")
+    history.append_string("stop")
+    
+    completer = HistoryCompleter(history, {"status"})
+    doc = Document("")
+    
+    completions = list(completer.get_completions(doc, None))
+    completion_texts = [c.text for c in completions]
+    
+    assert len(completion_texts) == 3
+    assert "start" in completion_texts
+    assert "stop" in completion_texts
+    assert "status" in completion_texts
 
 
-def test_complete_inserts_common_prefix_for_multiple_matches(mock_readline: Any) -> None:
-    mock_readline.add_history("status client")
-    mock_readline.add_history("status server")
-    mock_readline.add_history("stop")
-
-    completer: AutoCompleter = AutoCompleter()
-
-    result: str | None = completer._complete("stat", 0)
-    assert result is None
-    mock_readline.insert_text.assert_called_once_with("us ")
-    mock_readline.redisplay.assert_called_once()
-
-    mock_readline.reset_mock()
-    result_state_1: str | None = completer._complete("stat", 1)
-    assert result_state_1 is None
-    mock_readline.insert_text.assert_not_called()
+def test_history_completer_returns_empty_when_no_matches() -> None:
+    history = InMemoryHistory()
+    history.append_string("start")
+    
+    completer = HistoryCompleter(history, {"stop"})
+    doc = Document("xyz")
+    
+    completions = list(completer.get_completions(doc, None))
+    assert len(completions) == 0
 
 
-# ============================================================================
-# Tests for helper functions
-# ============================================================================
+def test_history_completer_deduplicates_commands() -> None:
+    history = InMemoryHistory()
+    history.append_string("start")
+    history.append_string("start")
+    
+    completer = HistoryCompleter(history, {"start"})
+    doc = Document("sta")
+    
+    completions = list(completer.get_completions(doc, None))
+    assert len(completions) == 1
 
 
-def test_get_history_items_returns_empty_list_initially(mock_readline: Any) -> None:
-    assert _get_history_items() == []
+def test_history_completer_sorts_results() -> None:
+    history = InMemoryHistory()
+    history.append_string("stop")
+    history.append_string("start")
+    history.append_string("status")
+    
+    completer = HistoryCompleter(history, set())
+    doc = Document("st")
+    
+    completions = list(completer.get_completions(doc, None))
+    completion_texts = [c.text for c in completions]
+    
+    assert completion_texts == ["start", "status", "stop"]
 
 
-def test_get_history_items_returns_all_added_items(mock_readline: Any) -> None:
-    mock_readline.add_history("first item")
-    mock_readline.add_history("second item")
+def test_find_common_prefix_with_multiple_matches() -> None:
+    matches = ["start server", "start client", "start process"]
+    prefix = HistoryCompleter._find_common_prefix(matches)
+    assert prefix == "start "
 
-    assert _get_history_items() == ["first item", "second item"]
+
+def test_find_common_prefix_with_no_common() -> None:
+    matches = ["start", "stop", "status"]
+    prefix = HistoryCompleter._find_common_prefix(matches)
+    assert prefix == "st"
+
+
+def test_find_common_prefix_with_single_match() -> None:
+    matches = ["start"]
+    prefix = HistoryCompleter._find_common_prefix(matches)
+    assert prefix == "start"
+
+
+def test_find_common_prefix_with_empty_list() -> None:
+    matches: list[str] = []
+    prefix = HistoryCompleter._find_common_prefix(matches)
+    assert prefix == ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Argenta \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-02 22:27+0300\n"
+"POT-Creation-Date: 2026-01-22 04:26+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -29,92 +29,107 @@ msgid ""
 "подсказки и завершая ввод на основе истории команд, что ускоряет работу и"
 " снижает вероятность опечаток."
 msgstr ""
-"``AutoCompleter`` is a component responsible for interactive command autocompletion. "
-"It improves user experience by offering suggestions and completing input based on "
-"command history, which speeds up work and reduces the likelihood of typos."
+"``AutoCompleter`` is a component responsible for interactive command "
+"autocompletion. It improves user experience by offering suggestions and "
+"completing input based on command history, which speeds up work and "
+"reduces the likelihood of typos."
 
 #: ../../root/api/app/autocompleter.rst:11
 msgid "Инициализация"
 msgstr "Initialization"
 
-#: ../../root/api/app/autocompleter.rst:18
+#: ../../root/api/app/autocompleter.rst:21
 msgid "Создаёт и настраивает экземпляр ``AutoCompleter``."
 msgstr "Creates and configures an ``AutoCompleter`` instance."
 
-#: ../../root/api/app/autocompleter.rst:20
+#: ../../root/api/app/autocompleter.rst:23
 msgid ""
 "``history_filename``: Имя файла для сохранения истории команд. Если "
 "указано, история будет сохраняться между сессиями. При значении ``None`` "
 "история хранится только в контексте сессии."
 msgstr ""
-"``history_filename``: Filename for saving command history. If specified, history "
-"will be saved between sessions. When set to ``None``, history is stored only within "
-"the session context."
+"``history_filename``: Filename for saving command history. If specified, "
+"history will be saved between sessions. When set to ``None``, history is "
+"stored only within the session context."
 
-#: ../../root/api/app/autocompleter.rst:21
+#: ../../root/api/app/autocompleter.rst:24
 msgid ""
 "``autocomplete_button``: Клавиша, активирующая автодополнение. По "
 "умолчанию — **Tab**."
 msgstr ""
-"``autocomplete_button``: Key that activates autocompletion. Defaults to **Tab**."
+"``autocomplete_button``: Key that activates autocompletion. Defaults to "
+"**Tab**."
+
+#: ../../root/api/app/autocompleter.rst:25
+msgid ""
+"``command_highlighting``: Если True, то в реальном времени при вводе "
+"команды она будет подсвечиваться: зелёным, если такой триггер существует "
+"и красный, если нет."
+msgstr ""
+"``command_highlighting``: If True, then in real time, when entering a "
+" command, it will be highlighted: green if such a trigger exists "
+"and red if not."
 
 #: ../../root/api/app/autocompleter.rst:26
+msgid ""
+"``auto_suggestions``: Если True, то дополнение до раннее введённой "
+"команды будет сразу отображаться светло-серым в строке ввода."
+msgstr ""
+"``auto_suggestions``: If True, the addition to the previously entered "
+" command will immediately be displayed in light gray in the input line."
+
+#: ../../root/api/app/autocompleter.rst:31
 msgid "Назначение и возможности"
 msgstr "Purpose and Features"
 
-#: ../../root/api/app/autocompleter.rst:28
+#: ../../root/api/app/autocompleter.rst:33
 msgid "Основные возможности ``AutoCompleter``:"
 msgstr "Main features of ``AutoCompleter``:"
 
-#: ../../root/api/app/autocompleter.rst:30
+#: ../../root/api/app/autocompleter.rst:35
 msgid ""
 "**Автодополнение по истории**: При нажатии клавиши автодополнения (по "
 "умолчанию **Tab**) система ищет в истории команды, начинающиеся с уже "
 "введённого текста."
 msgstr ""
-"**History-based autocompletion**: When the autocompletion key is pressed (by default **Tab**), "
-"the system searches history for commands starting with the already entered text."
+"**History-based autocompletion**: When the autocompletion key is pressed "
+"(by default **Tab**), the system searches history for commands starting "
+"with the already entered text."
 
-#: ../../root/api/app/autocompleter.rst:32
+#: ../../root/api/app/autocompleter.rst:37
 msgid ""
 "**Общий префикс**: Если найдено несколько команд с общим префиксом, будет"
 " подставлена только общая часть. Например, для команд ``show_users`` и "
 "``show_profile`` при вводе ``sho`` и нажатии **Tab** ввод дополнится до "
 "``show_``."
 msgstr ""
-"**Common prefix**: If multiple commands with a common prefix are found, only the common "
-"part will be inserted. For example, for commands ``show_users`` and ``show_profile``, "
-"when entering ``sho`` and pressing **Tab**, the input will be completed to ``show_``."
+"**Common prefix**: If multiple commands with a common prefix are found, "
+"only the common part will be inserted. For example, for commands "
+"``show_users`` and ``show_profile``, when entering ``sho`` and pressing "
+"**Tab**, the input will be completed to ``show_``."
 
-#: ../../root/api/app/autocompleter.rst:34
+#: ../../root/api/app/autocompleter.rst:39
 msgid ""
 "**Постоянная история**: Если указан ``history_filename``, история команд "
 "сохраняется в файл при выходе и загружается при следующем запуске. Это "
 "делает автодополнение со временем «умнее»."
 msgstr ""
-"**Persistent history**: If ``history_filename`` is specified, command history is saved "
-"to a file on exit and loaded on the next startup. This makes autocompletion \"smarter\" over time."
+"**Persistent history**: If ``history_filename`` is specified, command "
+"history is saved to a file on exit and loaded on the next startup. This "
+"makes autocompletion \"smarter\" over time."
 
-#: ../../root/api/app/autocompleter.rst:36
-msgid ""
-"**Очистка истории**: При сохранении ``AutoCompleter`` удаляет дубликаты и"
-" несуществующие команды, поддерживая историю в актуальном состоянии."
-msgstr ""
-"**History cleanup**: When saving, ``AutoCompleter`` removes duplicates and non-existent "
-"commands, keeping the history up to date."
-
-#: ../../root/api/app/autocompleter.rst:38
+#: ../../root/api/app/autocompleter.rst:41
 msgid ""
 "**Настройка клавиши**: Клавишу автодополнения можно изменить с помощью "
 "параметра ``autocomplete_button``."
 msgstr ""
-"**Key customization**: The autocompletion key can be changed using the ``autocomplete_button`` parameter."
+"**Key customization**: The autocompletion key can be changed using the "
+"``autocomplete_button`` parameter."
 
-#: ../../root/api/app/autocompleter.rst:43
+#: ../../root/api/app/autocompleter.rst:46
 msgid "Пример использования"
 msgstr "Usage Example"
 
-#: ../../root/api/app/autocompleter.rst:45
+#: ../../root/api/app/autocompleter.rst:48
 msgid "``AutoCompleter`` передаётся как аргумент при инициализации `App`."
 msgstr "``AutoCompleter`` is passed as an argument when initializing `App`."
-

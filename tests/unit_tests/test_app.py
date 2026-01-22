@@ -361,7 +361,7 @@ def test_set_exit_command_handler_stores_handler() -> None:
 
 def test_setup_default_view_formats_prompt() -> None:
     app = App(prompt='>>')
-    assert app._prompt == '[italic dim bold]>>[/italic dim bold]'
+    assert app._prompt == '<gray><b>>></b></gray>'
 
 
 def test_setup_default_view_sets_default_unknown_command_handler() -> None:
