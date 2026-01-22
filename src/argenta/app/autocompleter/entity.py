@@ -1,10 +1,40 @@
 __all__ = ["AutoCompleter"]
 
+import sys
+
 from prompt_toolkit import PromptSession, HTML
+from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.document import Document
+from prompt_toolkit.formatted_text import StyleAndTextTuples
 from prompt_toolkit.history import History, ThreadedHistory, FileHistory, InMemoryHistory
 from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.lexers import Lexer
+from prompt_toolkit.styles import Style
+
+
+class CommandLexer(Lexer):
+    def __init__(self, valid_commands: set[str]) -> None:
+        self.valid_commands: set[str] = valid_commands
+
+    def lex_document(self, document):
+        def get_line_tokens(lineno: int) -> StyleAndTextTuples:
+            if lineno >= len(document.lines):
+                return []
+
+            line_text: str = document.lines[lineno]
+
+            if not line_text.strip():
+                return [("", line_text)]
+
+            first_word: str = line_text.split()[0] if line_text.split() else ""
+
+            if first_word in self.valid_commands:
+                return [("class:valid", line_text)]
+            else:
+                return [("class:invalid", line_text)]
+
+        return get_line_tokens
 
 
 class HistoryCompleter(Completer):
@@ -45,13 +75,23 @@ class AutoCompleter:
     def __init__(
             self,
             history_filename: str | None = None,
-            autocomplete_button: str = "tab"
+            autocomplete_button: str = "tab",
+            command_highlighting: bool = True,
+            auto_suggestions: bool = True,
     ) -> None:
         self.history_filename: str | None = history_filename
         self.autocomplete_button: str = autocomplete_button
+        self.command_highlighting: bool = command_highlighting
+        self.auto_suggestions: bool = auto_suggestions
         self._session: PromptSession | None = None
+        self._fallback_mode: bool = False
 
     def initial_setup(self, all_commands: set[str]) -> None:
+        if not sys.stdin.isatty():
+            self._session = None
+            self._fallback_mode = True
+            return
+
         kb = KeyBindings()
 
         def _(event):
@@ -74,16 +114,23 @@ class AutoCompleter:
         else:
             history = InMemoryHistory()
 
+        style = Style.from_dict({'valid': '#00ff00', 'invalid': '#ff0000'})
+
         self._session = PromptSession(
             history=history,
             completer=HistoryCompleter(history, all_commands),
             complete_while_typing=False,
             key_bindings=kb,
+            auto_suggest=AutoSuggestFromHistory() if self.auto_suggestions else None,
+            style=style if self.command_highlighting else style,
+            lexer=CommandLexer(all_commands) if self.command_highlighting else None,
         )
 
     def prompt(self, prompt_text: str | HTML = ">>> ") -> str:
+        if self._fallback_mode:
+            return input(prompt_text if isinstance(prompt_text, str) else ">>> ")
         if self._session is None:
             raise RuntimeError("Call initial_setup() before using prompt()")
         return self._session.prompt(
-            HTML(f"<b><gray>{prompt_text}</gray></b>") if isinstance(prompt_text, str) else prompt_text
+            HTML(prompt_text) if isinstance(prompt_text, str) else prompt_text
         )

@@ -6,6 +6,7 @@ from contextlib import redirect_stdout
 from typing import Callable, Never, TypeAlias
 
 from art import text2art
+from prompt_toolkit import HTML
 from rich.console import Console
 from rich.markup import escape
 
@@ -306,7 +307,7 @@ class BaseApp:
         Private. Sets up default app view
         :return: None
         """
-        self._prompt = f"[italic dim bold]{self._prompt}"
+        self._prompt = f"<gray><b>{self._prompt}</b></gray>"
         self._initial_message = (
             "\n" + f"[bold red]{text2art(self._initial_message, font='tarty1')}" + "\n"
         )
@@ -403,7 +404,7 @@ class App(BaseApp):
     def __init__(
         self,
         *,
-        prompt: str = "What do you want to do?\n\n",
+        prompt: str | HTML = ">>> ",
         initial_message: str = "Argenta\n",
         farewell_message: str = "\nSee you\n",
         exit_command: Command = DEFAULT_EXIT_COMMAND,
@@ -454,7 +455,7 @@ class App(BaseApp):
             if self._repeat_command_groups_printing:
                 self._print_command_group_description()
 
-            raw_command: str = Console().input(self._prompt)
+            raw_command: str = self._autocompleter.prompt(self._prompt)
 
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
@@ -467,7 +468,6 @@ class App(BaseApp):
 
             if self._is_exit_command(input_command):
                 self.system_router.finds_appropriate_handler(input_command)
-                self._autocompleter.exit_setup(self.registered_routers.get_triggers())
                 return
 
             if self._is_unknown_command(input_command):
