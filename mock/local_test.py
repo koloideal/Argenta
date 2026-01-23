@@ -1,8 +1,4 @@
-from importlib.metadata import version, PackageNotFoundError
+from argenta import App
 
-try:
-    __version__ = version("argenta")
-except PackageNotFoundError:
-    __version__ = "unknown"
-
-print("__version__ = {}".format(__version__))
+app = App()
+app._autocompleter.initial_setup(set())

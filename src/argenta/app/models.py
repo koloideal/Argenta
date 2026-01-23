@@ -147,7 +147,7 @@ class BaseApp:
         :return: None
         """
         for registered_router in self.registered_routers:
-            self._print_func(registered_router.title)
+            self._print_func('\n'+registered_router.title)
             for command_handler in registered_router.command_handlers:
                 handled_command = command_handler.handled_command
                 self._print_func(
@@ -156,7 +156,6 @@ class BaseApp:
                         handled_command.description,
                     )
                 )
-            self._print_func("")
 
     def _print_framed_text(self, text: str) -> None:
         """
@@ -308,9 +307,9 @@ class BaseApp:
         Private. Sets up default app view
         :return: None
         """
-        self._prompt = f"<gray><b>{self._prompt}</b></gray>"
+        self._prompt = f"\n<gray><b>{self._prompt}</b></gray>"
         self._initial_message = (
-            "\n" + f"[bold red]{text2art(self._initial_message, font='tarty1')}" + "\n"
+            "\n" + f"[bold red]{text2art(self._initial_message, font='tarty1')}"
         )
         self._farewell_message = (
             "[bold red]\n\n"
@@ -443,6 +442,7 @@ class App(BaseApp):
                 self._print_command_group_description()
 
             raw_command: str = self._autocompleter.prompt(self._prompt)
+            print() # post-prompt gap
 
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)

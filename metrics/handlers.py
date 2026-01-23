@@ -1,3 +1,7 @@
+import re
+from datetime import datetime
+from pathlib import Path
+
 from rich.console import Console
 
 from argenta.command import Flag, PossibleValues, Flags
@@ -9,9 +13,12 @@ from .benchmarks.core.models import BenchmarkGroupResult
 from .benchmarks.entity import benchmarks as registered_benchmarks
 from .services.report_generator import ReportGenerator
 from .services.system_info_reader import get_system_info
+from .services.diagram_generator import DiagramGenerator
 
 console = Console()
-router = Router(title="Metrics commands:")
+router = Router(title="Metrics commands:", disable_redirect_stdout=True)
+
+POSITIVE_INTEGER_PATTERN = re.compile(r"^[1-9]\d*$")
 
 
 @router.command(
@@ -102,6 +109,48 @@ def release_generate_handler(_: Response) -> None:
     console.print("[yellow]Release report generation not implemented yet[/yellow]")
 
 
-@router.command(Command("diagrams-generate", description="Generate diagrams"))
-def diagrams_generate_handler(_: Response) -> None:
-    console.print("[yellow]Diagrams generation not implemented yet[/yellow]")
+@router.command(
+    Command(
+        "diagrams-generate",
+        description="Generate diagrams for all benchmarks",
+        flags=Flags([
+            Flag('without-gc', possible_values=PossibleValues.NEITHER),
+            Flag('iterations', possible_values=POSITIVE_INTEGER_PATTERN)
+        ])
+    )
+)
+def diagrams_generate_handler(response: Response) -> None:
+    iterations = 100
+    iterations_flag = response.input_flags.get_flag_by_name("iterations", with_status=ValidationStatus.VALID)
+    if iterations_flag:
+        iterations = int(iterations_flag.input_value)
+    
+    is_gc_disabled = bool(response.input_flags.get_flag_by_name("without-gc", with_status=ValidationStatus.VALID))
+    
+    console.print("[cyan]Running all benchmarks...[/cyan]")
+    console.print(f"[dim]Iterations: {iterations}, GC Disabled: {is_gc_disabled}[/dim]\n")
+    
+    type_grouped_benchmarks: list[BenchmarkGroupResult] = registered_benchmarks.run_benchmarks_grouped_by_type(
+        iterations=iterations,
+        is_gc_disabled=is_gc_disabled
+    )
+
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    output_dir = Path("metrics/reports/diagrams") / timestamp
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    diagram_generator = DiagramGenerator(output_dir)
+    
+    console.print(f"[green]✓[/green] Benchmarks completed. Generating diagrams...\n")
+    
+    generated_count = 0
+    
+    for benchmark_group in type_grouped_benchmarks:
+        console.print(f"[cyan]Generating diagram for:[/cyan] [bold]{benchmark_group.type_}[/bold]")
+        
+        comparison_path = diagram_generator.generate_comparison_diagram(benchmark_group)
+        generated_count += 1
+        console.print(f"  [green]✓[/green] {comparison_path.name}\n")
+    
+    console.print(f"[bold green]✓ Successfully generated {generated_count} diagrams[/bold green]")
+    console.print(f"[cyan]Output directory:[/cyan] [bold]{output_dir}[/bold]")
