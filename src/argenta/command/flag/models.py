@@ -35,7 +35,7 @@ class Flag:
         """
         self.name: str = name
         self.prefix: PREFIX_TYPE = prefix
-        self.possible_values: list[str] | Pattern[str] | PossibleValues = possible_values
+        self.possible_values: Container[str] | Pattern[str] | PossibleValues = possible_values
 
     def validate_input_flag_value(self, input_flag_value: str) -> bool:
         """

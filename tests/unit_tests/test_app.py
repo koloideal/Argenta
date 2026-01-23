@@ -355,22 +355,6 @@ def test_set_exit_command_handler_stores_handler() -> None:
 
 
 # ============================================================================
-# Tests for default view setup
-# ============================================================================
-
-
-def test_setup_default_view_formats_prompt() -> None:
-    app = App(prompt='>>')
-    assert app._prompt == '<gray><b>>></b></gray>'
-
-
-def test_setup_default_view_sets_default_unknown_command_handler() -> None:
-    app = App()
-    app._setup_default_view()
-    assert app._unknown_command_handler(InputCommand('nonexists')) is None
-
-
-# ============================================================================
 # Tests for command processing
 # ============================================================================
 

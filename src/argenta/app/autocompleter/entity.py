@@ -100,7 +100,7 @@ class AutoCompleter:
             if buff.complete_state:
                 buff.complete_next()
                 return
-            comps_gen = buff.completer.get_completions(buff.document, CompleteEvent())
+            comps_gen = iter(buff.completer.get_completions(buff.document, CompleteEvent()))
             try:
                 first = next(comps_gen)
             except StopIteration:
