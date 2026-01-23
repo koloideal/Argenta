@@ -18,16 +18,22 @@ router = Router(title="Metrics commands:")
     Command(
         "run-all",
         description="Print all benchmarks results",
-        flags=Flag('without-gc', possible_values=PossibleValues.NEITHER)
+        flags=Flags([
+            Flag('without-gc', possible_values=PossibleValues.NEITHER),
+            Flag('without-system-info', possible_values=PossibleValues.NEITHER)
+        ])
     )
 )
 def all_print_handler(response: Response) -> None:
     report_generator = ReportGenerator(get_system_info())
-    console.print(report_generator.generate_system_info_header())
-    console.print(report_generator.generate_system_info_table())
+    
+    without_system_info = response.input_flags.get_flag_by_name("without-system-info", with_status=ValidationStatus.VALID)
+    if not without_system_info:
+        console.print(report_generator.generate_system_info_header())
+        console.print(report_generator.generate_system_info_table())
 
     is_gc_disabled = response.input_flags.get_flag_by_name("without-gc", with_status=ValidationStatus.VALID)
-    type_grouped_benchmarks: list[BenchmarkGroupResult] = registered_benchmarks.run_benchmarks_grouped_by_type(is_gc_disabled=is_gc_disabled)
+    type_grouped_benchmarks: list[BenchmarkGroupResult] = registered_benchmarks.run_benchmarks_grouped_by_type(is_gc_disabled=bool(is_gc_disabled))
 
     for benchmark_group_result in type_grouped_benchmarks:
         console.print(report_generator.generate_benchmark_table_header(benchmark_group_result))
@@ -54,7 +60,8 @@ def list_types_handler(_: Response) -> None:
         description="Run benchmarks by specific type",
         flags=Flags([
             Flag('type', possible_values=registered_benchmarks.get_types()),
-            Flag('without-gc', possible_values=PossibleValues.NEITHER)
+            Flag('without-gc', possible_values=PossibleValues.NEITHER),
+            Flag('without-system-info', possible_values=PossibleValues.NEITHER)
         ])
     )
 )
@@ -77,11 +84,14 @@ def run_type_handler(response: Response) -> None:
         return
     
     report_generator = ReportGenerator(get_system_info())
-    console.print(report_generator.generate_system_info_header())
-    console.print(report_generator.generate_system_info_table())
+    
+    without_system_info = response.input_flags.get_flag_by_name("without-system-info", with_status=ValidationStatus.VALID)
+    if not without_system_info:
+        console.print(report_generator.generate_system_info_header())
+        console.print(report_generator.generate_system_info_table())
     
     is_gc_disabled = response.input_flags.get_flag_by_name("without-gc", with_status=ValidationStatus.VALID, default=False)
-    benchmark_group_result = registered_benchmarks.run_benchmarks_by_type(benchmark_type, is_gc_disabled=is_gc_disabled)
+    benchmark_group_result = registered_benchmarks.run_benchmarks_by_type(benchmark_type, is_gc_disabled=bool(is_gc_disabled))
     
     console.print(report_generator.generate_benchmark_table_header(benchmark_group_result))
     console.print(report_generator.generate_benchmark_report_table(benchmark_group_result))

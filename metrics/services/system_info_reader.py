@@ -90,7 +90,7 @@ def get_cpu_info() -> CPUInfo:
     cpu_physical_cores = psutil.cpu_count(logical=False)
     cpu_logical_cores = psutil.cpu_count(logical=True)
 
-    cpu_freq = psutil.cpu_freq() or "N/A"
+    cpu_freq = psutil.cpu_freq()
     cpu_max_frequency = cpu_freq.max
 
     return CPUInfo(

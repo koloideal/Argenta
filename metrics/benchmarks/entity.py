@@ -1,3 +1,3 @@
-from metrics.benchmarks.core.models import Benchmarks
+from .core.models import Benchmarks
 
 benchmarks = Benchmarks()

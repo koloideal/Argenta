@@ -52,7 +52,7 @@ class BaseApp:
         self._prompt: str | HTML = prompt
         self._print_func: Printer = print_func
         self._exit_command: Command = exit_command
-        self._dividing_line: StaticDividingLine | DynamicDividingLine = dividing_line
+        self._dividing_line: StaticDividingLine | DynamicDividingLine | None = dividing_line
         self._repeat_command_groups_printing: bool = repeat_command_groups_printing
         self._override_system_messages: bool = override_system_messages
         self._autocompleter: AutoCompleter = autocompleter

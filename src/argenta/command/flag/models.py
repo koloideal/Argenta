@@ -2,7 +2,7 @@ __all__ = ["PossibleValues", "ValidationStatus", "Flag", "InputFlag", "InputFlag
 
 from enum import Enum
 from re import Pattern
-from typing import Literal, override, TypeVar, Generic, Iterator, Any
+from typing import Literal, override, TypeVar, Generic, Iterator, Any, Container
 
 PREFIX_TYPE = Literal["-", "--", "---"]
 
@@ -24,7 +24,7 @@ class Flag:
         name: str,
         *,
         prefix: PREFIX_TYPE = "--",
-        possible_values: list[str] | Pattern[str] | PossibleValues = PossibleValues.ALL,
+        possible_values: Container[str] | Pattern[str] | PossibleValues = PossibleValues.ALL,
     ) -> None:
         """
         Public. The entity of the flag being registered for subsequent processing
