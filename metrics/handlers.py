@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from importlib.metadata import version
 from pathlib import Path
 
 from rich.console import Console
@@ -14,6 +15,7 @@ from .benchmarks.entity import benchmarks as registered_benchmarks
 from .services.report_generator import ReportGenerator
 from .services.system_info_reader import get_system_info
 from .services.diagram_generator import DiagramGenerator
+from .services.release_generator import ReleaseGenerator
 
 console = Console()
 router = Router(title="Metrics commands:", disable_redirect_stdout=True)
@@ -106,7 +108,28 @@ def run_type_handler(response: Response) -> None:
 
 @router.command(Command("release-generate", description="Generate release report"))
 def release_generate_handler(_: Response) -> None:
-    console.print("[yellow]Release report generation not implemented yet[/yellow]")
+    lib_version = version("argenta")
+    
+    console.print(f"[cyan]Generating release report for version:[/cyan] [bold]{lib_version}[/bold]")
+    console.print("[dim]Running benchmarks (1000 iterations, GC disabled)...[/dim]\n")
+    
+    type_grouped_benchmarks: list[BenchmarkGroupResult] = registered_benchmarks.run_benchmarks_grouped_by_type(
+        iterations=1000,
+        is_gc_disabled=True
+    )
+    
+    release_generator = ReleaseGenerator(lib_version)
+    output_dir = release_generator.generate_release(type_grouped_benchmarks)
+    
+    console.print(f"[green]✓[/green] Benchmarks completed. Generating release report...\n")
+    
+    for benchmark_group in type_grouped_benchmarks:
+        console.print(f"[cyan]Generated for:[/cyan] [bold]{benchmark_group.type_}[/bold]")
+        console.print(f"  [green]✓[/green] {benchmark_group.type_}_comparison.png")
+        console.print(f"  [green]✓[/green] {benchmark_group.type_}.json\n")
+    
+    console.print(f"[bold green]✓ Release report generated successfully[/bold green]")
+    console.print(f"[cyan]Output directory:[/cyan] [bold]{output_dir}[/bold]")
 
 
 @router.command(

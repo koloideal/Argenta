@@ -1,0 +1,42 @@
+{
+  "type": "validate_routers_for_collisions",
+  "iterations": 1000,
+  "gc_disabled": true,
+  "benchmarks": [
+    {
+      "name": "benchmark_few_routers",
+      "description": "With few routers (3 routers, 1 command each)",
+      "avg_time": 0.0912,
+      "median_time": 0.0901,
+      "std_dev": 0.0051
+    },
+    {
+      "name": "benchmark_many_routers",
+      "description": "With many routers (10 routers, 1 command each)",
+      "avg_time": 0.2433,
+      "median_time": 0.2382,
+      "std_dev": 0.0292
+    },
+    {
+      "name": "benchmark_many_commands_per_router",
+      "description": "With many commands per router (3 routers, 10 commands each)",
+      "avg_time": 0.6157,
+      "median_time": 0.6132,
+      "std_dev": 0.0199
+    },
+    {
+      "name": "benchmark_many_aliases_per_command",
+      "description": "With many aliases (3 routers, 5 commands, 10 aliases each)",
+      "avg_time": 0.516,
+      "median_time": 0.5082,
+      "std_dev": 0.0403
+    },
+    {
+      "name": "benchmark_extreme_routers",
+      "description": "Extreme (20 routers, 10 commands, 20 aliases each)",
+      "avg_time": 10.8103,
+      "median_time": 10.7871,
+      "std_dev": 0.2788
+    }
+  ]
+}

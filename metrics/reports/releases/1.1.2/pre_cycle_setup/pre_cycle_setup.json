@@ -1,0 +1,42 @@
+{
+  "type": "pre_cycle_setup",
+  "iterations": 1000,
+  "gc_disabled": true,
+  "benchmarks": [
+    {
+      "name": "benchmark_no_aliases",
+      "description": "With no aliases",
+      "avg_time": 8.9994,
+      "median_time": 8.9559,
+      "std_dev": 0.242
+    },
+    {
+      "name": "benchmark_few_aliases",
+      "description": "With few aliases (6 total)",
+      "avg_time": 8.957,
+      "median_time": 8.936,
+      "std_dev": 0.2296
+    },
+    {
+      "name": "benchmark_with_many_aliases",
+      "description": "With many aliases (15 total)",
+      "avg_time": 8.9953,
+      "median_time": 8.9721,
+      "std_dev": 0.2243
+    },
+    {
+      "name": "benchmark_very_many_aliases",
+      "description": "With very many aliases (60 total)",
+      "avg_time": 9.0155,
+      "median_time": 8.9992,
+      "std_dev": 0.2433
+    },
+    {
+      "name": "benchmark_extreme_aliases",
+      "description": "With extreme aliases (300 total)",
+      "avg_time": 9.2977,
+      "median_time": 9.255,
+      "std_dev": 0.3884
+    }
+  ]
+}

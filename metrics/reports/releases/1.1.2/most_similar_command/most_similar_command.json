@@ -1,0 +1,42 @@
+{
+  "type": "most_similar_command",
+  "iterations": 1000,
+  "gc_disabled": true,
+  "benchmarks": [
+    {
+      "name": "benchmark_few_commands",
+      "description": "Few commands (10 commands, no match)",
+      "avg_time": 0.207,
+      "median_time": 0.2051,
+      "std_dev": 0.01
+    },
+    {
+      "name": "benchmark_many_commands_most_similar",
+      "description": "Many commands (50 commands, no match)",
+      "avg_time": 1.0116,
+      "median_time": 1.0074,
+      "std_dev": 0.0306
+    },
+    {
+      "name": "benchmark_many_aliases",
+      "description": "Many aliases (20 commands, 10 aliases each)",
+      "avg_time": 0.6857,
+      "median_time": 0.6672,
+      "std_dev": 0.0811
+    },
+    {
+      "name": "benchmark_partial_match",
+      "description": "Partial match (50 commands, prefix match)",
+      "avg_time": 1.0218,
+      "median_time": 1.0192,
+      "std_dev": 0.0232
+    },
+    {
+      "name": "benchmark_extreme_commands",
+      "description": "Extreme (100 commands, 20 aliases each)",
+      "avg_time": 6.4118,
+      "median_time": 6.4225,
+      "std_dev": 0.2008
+    }
+  ]
+}
