@@ -6,7 +6,7 @@ from ..benchmarks.core.models import BenchmarkGroupResult
 from metrics.services.system_info_reader import SystemInfo
 
 
-class ReportGenerator:
+class ReportTableGenerator:
     def __init__(self, system_info: SystemInfo):
         self.system_info = system_info
         self._cached_benchmark_tables: dict[int, Table] = {}

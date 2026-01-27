@@ -1,10 +1,13 @@
+from prompt_toolkit import HTML
+
 from argenta import App, Orchestrator
-from argenta.app import PredefinedMessages
+from argenta.app import PredefinedMessages, StaticDividingLine, AutoCompleter
 from argenta.app.dividing_line.models import DynamicDividingLine
 from mock.mock_app.routers import work_router
 
 app: App = App(
-    dividing_line=DynamicDividingLine('^'),
+    dividing_line=StaticDividingLine('~'),
+    prompt=HTML('\n<blink>>>></blink>')
 )
 orchestrator: Orchestrator = Orchestrator()
 

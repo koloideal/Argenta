@@ -12,7 +12,7 @@ from argenta.response import Response
 from argenta.router import Router
 from .benchmarks.core.models import BenchmarkGroupResult
 from .benchmarks.entity import benchmarks as registered_benchmarks
-from .services.report_generator import ReportGenerator
+from .services.report_table_generator import ReportTableGenerator
 from .services.system_info_reader import get_system_info
 from .services.diagram_generator import DiagramGenerator
 from .services.release_generator import ReleaseGenerator
@@ -34,7 +34,7 @@ POSITIVE_INTEGER_PATTERN = re.compile(r"^[1-9]\d*$")
     )
 )
 def all_print_handler(response: Response) -> None:
-    report_generator = ReportGenerator(get_system_info())
+    report_generator = ReportTableGenerator(get_system_info())
     
     without_system_info = response.input_flags.get_flag_by_name("without-system-info", with_status=ValidationStatus.VALID)
     if not without_system_info:
@@ -92,7 +92,7 @@ def run_type_handler(response: Response) -> None:
             console.print(f"  • {t}")
         return
     
-    report_generator = ReportGenerator(get_system_info())
+    report_generator = ReportTableGenerator(get_system_info())
     
     without_system_info = response.input_flags.get_flag_by_name("without-system-info", with_status=ValidationStatus.VALID)
     if not without_system_info:

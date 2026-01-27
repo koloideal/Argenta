@@ -6,6 +6,7 @@ from typing import Callable, Iterable
 from prompt_toolkit import PromptSession, HTML
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import Completer, Completion, CompleteEvent, ThreadedCompleter
+from prompt_toolkit.cursor_shapes import CursorShape
 from prompt_toolkit.document import Document
 from prompt_toolkit.formatted_text import StyleAndTextTuples
 from prompt_toolkit.history import History, ThreadedHistory, FileHistory, InMemoryHistory
@@ -136,5 +137,6 @@ class AutoCompleter:
         if self._session is None:
             raise RuntimeError("Call initial_setup() before using prompt()")
         return self._session.prompt(
-            HTML(prompt_text) if isinstance(prompt_text, str) else prompt_text
+            HTML(prompt_text) if isinstance(prompt_text, str) else prompt_text,
+            cursor=CursorShape.BLINKING_BEAM
         )

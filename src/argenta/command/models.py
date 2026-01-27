@@ -90,7 +90,14 @@ class InputCommand:
         :param raw_command: raw input command
         :return: model of the input command, after parsing as InputCommand
         """
-        tokens = shlex.split(raw_command)
+        lexer = shlex.shlex(raw_command, posix=True)
+        lexer.whitespace_split = True
+        lexer.commenters = ""
+
+        try:
+            tokens = list(lexer)
+        except ValueError as e:
+            raise UnprocessedInputFlagException from e
 
         if not tokens:
             raise EmptyInputCommandException
