@@ -157,14 +157,26 @@ class BaseApp:
                     )
                 )
 
-    def _print_framed_text(self, text: str) -> None:
+    def _print_static_framed_text(self, text: str) -> None:
         """
         Private. Outputs text by framing it in a static or dynamic split strip
         :param text: framed text
         :return: None
         """
         match self._dividing_line:
-            case (StaticDividingLine() as dividing_line) | (DynamicDividingLine() as dividing_line):
+            case StaticDividingLine() as dividing_line:
+                self._print_func(
+                    dividing_line.get_full_static_line(
+                        is_override=self._override_system_messages
+                    )
+                )
+                print(text.strip("\n"))
+                self._print_func(
+                    dividing_line.get_full_static_line(
+                        is_override=self._override_system_messages
+                    )
+                )
+            case DynamicDividingLine() as dividing_line:
                 self._print_func(
                     StaticDividingLine(dividing_line.get_unit_part()).get_full_static_line(
                         is_override=self._override_system_messages
@@ -460,7 +472,7 @@ class App(BaseApp):
                 stderr_result = self._capture_stdout(
                     lambda: self._error_handler(error, raw_command) # noqa F821 
                 )
-                self._print_framed_text(stderr_result)
+                self._print_static_framed_text(stderr_result)
                 continue
 
             if self._is_exit_command(input_command):
@@ -471,7 +483,7 @@ class App(BaseApp):
                 stdout_res = self._capture_stdout(
                     lambda: self._unknown_command_handler(input_command)
                 )
-                self._print_framed_text(stdout_res)
+                self._print_static_framed_text(stdout_res)
                 continue
 
             self._process_exist_and_valid_command(input_command)

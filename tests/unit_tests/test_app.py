@@ -297,30 +297,30 @@ def test_pre_cycle_setup_prints_startup_messages(capsys: CaptureFixture[str]) ->
 
 
 def test_print_framed_text_with_static_dividing_line(capsys: CaptureFixture[str]) -> None:
-    app = App(override_system_messages=True, dividing_line=StaticDividingLine(length=5))
-    app._print_framed_text('test')
+    app = App(override_system_messages=True, dividing_line=StaticDividingLine(unit_part='!', length=5))
+    app._print_static_framed_text('test')
 
     captured = capsys.readouterr()
 
-    assert '\n-----\n\ntest\n\n-----\n' in captured.out
+    assert '\n' + '!'*5 + '\n\ntest\n\n' + '!'*5 + '\n' in captured.out
 
 
 def test_print_framed_text_with_dynamic_dividing_line_short_text(capsys: CaptureFixture[str]) -> None:
-    app = App(override_system_messages=True, dividing_line=DynamicDividingLine())
-    app._print_framed_text('some long test')
+    app = App(override_system_messages=True, dividing_line=DynamicDividingLine('+'))
+    app._print_static_framed_text('some long test')
 
     captured = capsys.readouterr()
 
-    assert '\n--------------\n\nsome long test\n\n--------------\n' in captured.out
+    assert '\n' + '+'*25 + '\n\nsome long test\n\n' + '+'*25 + '\n' in captured.out
 
 
 def test_print_framed_text_with_dynamic_dividing_line_long_text(capsys: CaptureFixture[str]) -> None:
-    app = App(override_system_messages=True, dividing_line=DynamicDividingLine())
-    app._print_framed_text('test as test as test')
+    app = App(override_system_messages=True, dividing_line=DynamicDividingLine('`'))
+    app._print_static_framed_text('test as test as test')
 
     captured = capsys.readouterr()
 
-    assert '\n' + '-'*20 + '\n\ntest as test as test\n\n' + '-'*20 + '\n' in captured.out
+    assert '\n' + '`'*25 + '\n\ntest as test as test\n\n' + '`'*25 + '\n' in captured.out
 
 
 def test_print_framed_text_with_unsupported_dividing_line_raises_error() -> None:
@@ -330,7 +330,7 @@ def test_print_framed_text_with_unsupported_dividing_line_raises_error() -> None
     app = App(override_system_messages=True, dividing_line=OtherDividingLine())  # pyright: ignore[reportArgumentType]
     
     with pytest.raises(NotImplementedError):
-        app._print_framed_text('some long test')
+        app._print_static_framed_text('some long test')
 
 
 # ============================================================================
