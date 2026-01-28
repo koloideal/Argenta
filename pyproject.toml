@@ -42,7 +42,7 @@ metrics = [
 ]
 
 [tool.ruff]
-line-length=90
+line-length=100
 
 [tool.pyright]
 typeCheckingMode = "strict"

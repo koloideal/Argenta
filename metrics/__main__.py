@@ -2,7 +2,7 @@ from argenta import App, Orchestrator
 from .handlers import router
 
 
-app = App(initial_message="metrics")
+app = App(initial_message="metrics", override_system_messages=False)
 orchestrator = Orchestrator()
 
 

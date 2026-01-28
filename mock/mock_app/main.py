@@ -6,8 +6,7 @@ from argenta.app.dividing_line.models import DynamicDividingLine
 from mock.mock_app.routers import work_router
 
 app: App = App(
-    dividing_line=StaticDividingLine('~'),
-    prompt=HTML('\n<blink>>>></blink>')
+    dividing_line=StaticDividingLine('~')
 )
 orchestrator: Orchestrator = Orchestrator()
 
