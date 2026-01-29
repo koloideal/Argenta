@@ -8,7 +8,7 @@ from typing import Callable, Never, TypeAlias
 from rich.console import Console
 
 from argenta.app.autocompleter import AutoCompleter
-from argenta.app.view_renderer.entity import PlainRenderer, RichRenderer, ViewRenderer
+from argenta.app.presentation.renderers import PlainRenderer, RichRenderer, Renderer
 from argenta.app.dividing_line.models import DynamicDividingLine, StaticDividingLine
 from argenta.app.protocols import (
     DescriptionMessageGenerator,
@@ -26,6 +26,7 @@ from argenta.router.exceptions import RepeatedAliasNameException, RepeatedTrigge
 from argenta.command.models import Command, InputCommand
 from argenta.response import Response
 from argenta.router import Router
+
 
 Matches: TypeAlias = list[str] | list[Never]
 _ANSI_ESCAPE_RE: re.Pattern[str] = re.compile(r"\u001b\[[0-9;]*m")
@@ -60,12 +61,12 @@ class BaseApp:
         self._messages_on_startup: list[str] = []
 
         if self._override_system_messages:
-            self.view: ViewRenderer = PlainRenderer(
+            self.view: Renderer = PlainRenderer(
                 print_func=self._print_func,
                 most_similar_command_getter=self._most_similar_command
             )
         else:
-            self.view: ViewRenderer = RichRenderer(
+            self.view: Renderer = RichRenderer(
                 print_func=self._print_func,
                 most_similar_command_getter=self._most_similar_command
             )
