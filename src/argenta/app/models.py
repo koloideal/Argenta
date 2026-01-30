@@ -8,8 +8,10 @@ from typing import Callable, Never, TypeAlias
 from rich.console import Console
 
 from argenta.app.autocompleter import AutoCompleter
+from argenta.app.behavior_handlers.entity import BehaviorHandlersFabric
 from argenta.app.presentation.renderers import PlainRenderer, RichRenderer, Renderer
 from argenta.app.dividing_line.models import DynamicDividingLine, StaticDividingLine
+from argenta.app.presentation.viewers import Viewer
 from argenta.app.protocols import (
     DescriptionMessageGenerator,
     EmptyCommandHandler,
@@ -61,24 +63,25 @@ class BaseApp:
         self._messages_on_startup: list[str] = []
 
         if self._override_system_messages:
-            self.view: Renderer = PlainRenderer(
-                print_func=self._print_func,
-                most_similar_command_getter=self._most_similar_command
-            )
+            self._renderer: Renderer = PlainRenderer()
         else:
-            self.view: Renderer = RichRenderer(
-                print_func=self._print_func,
-                most_similar_command_getter=self._most_similar_command
-            )
+            self._renderer: Renderer = RichRenderer()
 
-        self._initial_message: str = self.view.render_initial_message(initial_message)
-        self._farewell_message: str = self.view.render_farewell_message(farewell_message)
-        self._description_message_gen: DescriptionMessageGenerator = self.view.generate_formatted_description_message_gen()
-        self._incorrect_input_syntax_handler: NonStandardBehaviorHandler[str] = self.view.generate_formatted_incorrect_input_syntax_handler()
-        self._repeated_input_flags_handler: NonStandardBehaviorHandler[str] = self.view.generate_formatted_repeated_input_flags_handler()
-        self._empty_input_command_handler: EmptyCommandHandler = self.view.generate_formatted_empty_input_command_handler()
-        self._unknown_command_handler: NonStandardBehaviorHandler[InputCommand] = self.view.generate_formatted_unknown_command_handler()
-        self._exit_command_handler: NonStandardBehaviorHandler[Response] = self.view.generate_formatted_exit_command_handler(self._farewell_message)
+        self._viewer: Viewer = Viewer(self._print_func, self._renderer)
+        self._handlers_fabric: BehaviorHandlersFabric = BehaviorHandlersFabric(
+            self._print_func,
+            self._renderer,
+            self._most_similar_command
+        )
+
+        self._initial_message: str = self._renderer.render_initial_message(initial_message)
+        self._farewell_message: str = self._renderer.render_farewell_message(farewell_message)
+        self._description_message_generator: DescriptionMessageGenerator = self._handlers_fabric.generate_description_message_generator()
+        self._incorrect_input_syntax_handler: NonStandardBehaviorHandler[str] = self._handlers_fabric.generate_incorrect_input_syntax_handler()
+        self._repeated_input_flags_handler: NonStandardBehaviorHandler[str] = self._handlers_fabric.generate_repeated_input_flags_handler()
+        self._empty_input_command_handler: EmptyCommandHandler = self._handlers_fabric.generate_empty_input_command_handler()
+        self._unknown_command_handler: NonStandardBehaviorHandler[InputCommand] = self._handlers_fabric.generate_unknown_command_handler()
+        self._exit_command_handler: NonStandardBehaviorHandler[Response] = self._handlers_fabric.generate_exit_command_handler(self._farewell_message)
 
     def set_description_message_pattern(self, _: DescriptionMessageGenerator, /) -> None:
         """
@@ -86,7 +89,7 @@ class BaseApp:
         :param _: output pattern of the available commands
         :return: None
         """
-        self._description_message_gen = _
+        self._description_message_generator = _
 
     def set_incorrect_input_syntax_handler(self, _: NonStandardBehaviorHandler[str], /) -> None:
         """
@@ -127,22 +130,6 @@ class BaseApp:
         :return: None
         """
         self._exit_command_handler = _
-
-    def _print_command_group_description(self) -> None:
-        """
-        Private. Prints the description of the available commands
-        :return: None
-        """
-        for registered_router in self.registered_routers:
-            self._print_func("\n" + registered_router.title)
-            for command_handler in registered_router.command_handlers:
-                handled_command = command_handler.handled_command
-                self._print_func(
-                    self._description_message_gen(
-                        handled_command.trigger,
-                        handled_command.description,
-                    )
-                )
 
     def _print_static_framed_text(self, text: str) -> None:
         """
@@ -278,10 +265,10 @@ class BaseApp:
         self._autocompleter.initial_setup(self.registered_routers.get_triggers())
 
         if self._messages_on_startup:
-            self._print_func()
+            self._viewer.view_messages_on_startup(self._messages_on_startup)
 
         if not self._repeat_command_groups_printing:
-            self._print_command_group_description()
+            self._viewer.view_command_groups_description(self._description_message_generator, self.registered_routers)
 
     def _process_exist_and_valid_command(self, input_command: InputCommand) -> None:
         processing_router = self.registered_routers.get_router_by_trigger(input_command.trigger.lower())
@@ -290,6 +277,8 @@ class BaseApp:
             raise RuntimeError(f"Router for '{input_command.trigger}' not found. Panic!")
 
         match (self._dividing_line, processing_router.disable_redirect_stdout):
+            case (None, bool()):
+                processing_router.finds_appropriate_handler(input_command)
             case (DynamicDividingLine(), False):
                 stdout_result = self._capture_stdout(lambda: processing_router.finds_appropriate_handler(input_command))
                 clear_text = _ANSI_ESCAPE_RE.sub("", stdout_result)
@@ -321,8 +310,6 @@ class BaseApp:
                         is_override=self._override_system_messages
                     )
                 )
-            case (None, bool()):
-                processing_router.finds_appropriate_handler(input_command)
             case _:
                 raise NotImplementedError(f"Dividing line with type {self._dividing_line} is not implemented")
 
@@ -384,10 +371,10 @@ class App(BaseApp):
         self._pre_cycle_setup()
         while True:
             if self._repeat_command_groups_printing:
-                self._print_command_group_description()
+                self._viewer.view_command_groups_description(self._description_message_generator, self.registered_routers)
 
             print()  # pre-prompt gap
-            raw_command: str = self._autocompleter.prompt(self.view.render_prompt(self._prompt))
+            raw_command: str = self._autocompleter.prompt(self._renderer.render_prompt(self._prompt))
             print()  # post-prompt gap
 
             try:

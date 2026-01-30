@@ -343,7 +343,7 @@ def test_set_description_message_pattern_stores_generator() -> None:
     descr_gen: DescriptionMessageGenerator = lambda command, description: command + '-+-' + description
     app.set_description_message_pattern(descr_gen)
     
-    assert app._description_message_gen is descr_gen
+    assert app._description_message_generator is descr_gen
 
 
 def test_set_exit_command_handler_stores_handler() -> None:
