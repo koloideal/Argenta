@@ -115,7 +115,7 @@ class RichRenderer(Renderer):
     ) -> str:
         return (
             f"[red]Unknown command:[/red] [blue]{command_trigger}[/blue]"
-            + (f"[red], most similar:[/red][blue]{most_similar_command_trigger}[/blue]"
+            + (f"[red], most similar:[/red] [blue]{most_similar_command_trigger}[/blue]"
             if most_similar_command_trigger else "")
         )
 

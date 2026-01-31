@@ -1,20 +1,19 @@
 __all__ = ["App"]
 
 from typing import Never, TypeAlias
+import difflib
 
 from rich.console import Console
 
 from argenta.app.autocompleter import AutoCompleter
-from argenta.app.behavior_handlers.entity import BehaviorHandlersFabric
+from argenta.app.behavior_handlers.models import (
+    BehaviorHandlersFabric,
+    BehaviorHandlersSettersMixin,
+)
 from argenta.app.presentation.renderers import PlainRenderer, RichRenderer, Renderer
 from argenta.app.dividing_line.models import DynamicDividingLine, StaticDividingLine
 from argenta.app.presentation.viewers import Viewer
-from argenta.app.protocols import (
-    DescriptionMessageGenerator,
-    EmptyCommandHandler,
-    NonStandardBehaviorHandler,
-    Printer,
-)
+from argenta.app.protocols import Printer
 from argenta.app.registered_routers.entity import RegisteredRouters
 from argenta.command.exceptions import (
     InputCommandException,
@@ -30,7 +29,7 @@ from argenta.router import Router
 Matches: TypeAlias = list[str] | list[Never]
 
 
-class BaseApp:
+class BaseApp(BehaviorHandlersSettersMixin):
     def __init__(
         self,
         *,
@@ -76,74 +75,20 @@ class BaseApp:
 
         self._initial_message: str = self._renderer.render_initial_message(initial_message)
         self._farewell_message: str = self._renderer.render_farewell_message(farewell_message)
-        self._description_message_generator: DescriptionMessageGenerator = self._handlers_fabric.generate_description_message_generator()
-        self._incorrect_input_syntax_handler: NonStandardBehaviorHandler[str] = self._handlers_fabric.generate_incorrect_input_syntax_handler()
-        self._repeated_input_flags_handler: NonStandardBehaviorHandler[str] = self._handlers_fabric.generate_repeated_input_flags_handler()
-        self._empty_input_command_handler: EmptyCommandHandler = self._handlers_fabric.generate_empty_input_command_handler()
-        self._unknown_command_handler: NonStandardBehaviorHandler[InputCommand] = self._handlers_fabric.generate_unknown_command_handler()
-        self._exit_command_handler: NonStandardBehaviorHandler[Response] = self._handlers_fabric.generate_exit_command_handler(self._farewell_message)
 
-    def set_description_message_pattern(self, _: DescriptionMessageGenerator, /) -> None:
-        """
-        Public. Sets the output pattern of the available commands
-        :param _: output pattern of the available commands
-        :return: None
-        """
-        self._description_message_generator = _
-
-    def set_incorrect_input_syntax_handler(self, _: NonStandardBehaviorHandler[str], /) -> None:
-        """
-        Public. Sets the handler for incorrect flags when entering a command
-        :param _: handler for incorrect flags when entering a command
-        :return: None
-        """
-        self._incorrect_input_syntax_handler = _
-
-    def set_repeated_input_flags_handler(self, _: NonStandardBehaviorHandler[str], /) -> None:
-        """
-        Public. Sets the handler for repeated flags when entering a command
-        :param _: handler for repeated flags when entering a command
-        :return: None
-        """
-        self._repeated_input_flags_handler = _
-
-    def set_unknown_command_handler(self, _: NonStandardBehaviorHandler[InputCommand], /) -> None:
-        """
-        Public. Sets the handler for unknown commands when entering a command
-        :param _: handler for unknown commands when entering a command
-        :return: None
-        """
-        self._unknown_command_handler = _
-
-    def set_empty_command_handler(self, _: EmptyCommandHandler, /) -> None:
-        """
-        Public. Sets the handler for empty commands when entering a command
-        :param _: handler for empty commands when entering a command
-        :return: None
-        """
-        self._empty_input_command_handler = _
-
-    def set_exit_command_handler(self, _: NonStandardBehaviorHandler[Response], /) -> None:
-        """
-        Public. Sets the handler for exit command when entering a command
-        :param _: handler for exit command when entering a command
-        :return: None
-        """
-        self._exit_command_handler = _
+        super().__init__(
+            description_message_generator = self._handlers_fabric.generate_description_message_generator(),
+            incorrect_input_syntax_handler = self._handlers_fabric.generate_incorrect_input_syntax_handler(),
+            repeated_input_flags_handler = self._handlers_fabric.generate_repeated_input_flags_handler(),
+            empty_input_command_handler = self._handlers_fabric.generate_empty_input_command_handler(),
+            unknown_command_handler = self._handlers_fabric.generate_unknown_command_handler(),
+            exit_command_handler = self._handlers_fabric.generate_exit_command_handler(self._farewell_message)
+        )
 
     def _is_exit_command(self, command: InputCommand) -> bool:
-        """
-        Private. Checks if the given command is an exit command
-        :param command: command to check
-        :return: is it an exit command or not as bool
-        """
-        trigger = command.trigger
-        exit_trigger = self._exit_command.trigger
-        if trigger.lower() == exit_trigger.lower():
-            return True
-        elif trigger.lower() in [x.lower() for x in self._exit_command.aliases]:
-            return True
-        return False
+        if not self._system_router.command_handlers.get_command_handler_by_trigger(command.trigger.lower()):
+            return False
+        return True
 
     def _is_unknown_command(self, input_command: InputCommand) -> bool:
         if not self.registered_routers.get_router_by_trigger(input_command.trigger.lower()):
@@ -151,12 +96,6 @@ class BaseApp:
         return False
 
     def _error_handler(self, error: InputCommandException, raw_command: str) -> None:
-        """
-        Private. Handles parsing errors of the entered command
-        :param error: error being handled
-        :param raw_command: the raw input command
-        :return: None
-        """
         if isinstance(error, UnprocessedInputFlagException):
             self._incorrect_input_syntax_handler(raw_command)
         elif isinstance(error, RepeatedInputFlagsException):
@@ -164,62 +103,33 @@ class BaseApp:
         else:
             self._empty_input_command_handler()
 
+    def _validate_routers_for_collisions(self) -> None:
+        seen_names: set[str] = set()
+
+        for router_entity in self.registered_routers:
+            if not seen_names.isdisjoint(router_entity.triggers):
+                raise RepeatedTriggerNameException()
+
+            alias_collisions = seen_names.intersection(router_entity.aliases)
+            if alias_collisions:
+                raise RepeatedAliasNameException(alias_collisions)
+
+            seen_names.update(router_entity.triggers)
+            seen_names.update(router_entity.aliases)
+
+    def _most_similar_command(self, unknown_command: str) -> str | None:
+        all_commands = self.registered_routers.get_triggers()
+        matches = difflib.get_close_matches(unknown_command, all_commands, n=1)
+        return matches[0] if matches else None
+
     def _setup_system_router(self) -> None:
-        """
-        Private. Sets up system router
-        :return: None
-        """
         @self._system_router.command(self._exit_command)
         def _(response: Response) -> None:
             self._exit_command_handler(response)
 
         self.registered_routers.add_registered_router(self._system_router)
 
-    def _validate_routers_for_collisions(self) -> None:
-        """
-        Private. Validates that there are no trigger/alias collisions between routers
-        :return: None
-        :raises: RepeatedTriggerNameException or RepeatedAliasNameException if collision detected
-        """
-
-        all_triggers: set[str] = set()
-        all_aliases: set[str] = set()
-
-        for router_entity in self.registered_routers:
-            union_units: set[str] = all_triggers | all_aliases
-            trigger_collisions: set[str] = union_units & router_entity.triggers
-            if trigger_collisions:
-                raise RepeatedTriggerNameException()
-
-            alias_collisions: set[str] = union_units & router_entity.aliases
-            if alias_collisions:
-                raise RepeatedAliasNameException(alias_collisions)
-
-            all_triggers.update(router_entity.triggers)
-            all_aliases.update(router_entity.aliases)
-
-    def _most_similar_command(self, unknown_command: str) -> str | None:
-        all_commands = self.registered_routers.get_triggers()
-
-        matches_startswith_unknown_command: Matches = sorted(
-            cmd for cmd in all_commands if cmd.startswith(unknown_command)
-        )
-        matches_startswith_cmd: Matches = sorted(cmd for cmd in all_commands if unknown_command.startswith(cmd))
-
-        matches: Matches = matches_startswith_unknown_command or matches_startswith_cmd
-
-        if len(matches) == 1:
-            return matches[0]
-        elif len(matches) > 1:
-            return sorted(matches, key=lambda cmd: len(cmd))[0]
-        else:
-            return None
-
     def _pre_cycle_setup(self) -> None:
-        """
-        Private. Configures various aspects of the application before the start of the cycle
-        :return: None
-        """
         self._setup_system_router()
         self._validate_routers_for_collisions()
         self._autocompleter.initial_setup(self.registered_routers.get_triggers())
@@ -241,10 +151,36 @@ class BaseApp:
             is_stdout_redirected_by_router=processing_router.is_redirect_stdout_disabled
         )
 
+    def _run_polling(self) -> None:
+        self._viewer.view_initial_message(self._initial_message)
+        self._pre_cycle_setup()
+        while True:
+            if self._repeat_command_groups_printing:
+                self._viewer.view_command_groups_description(self._description_message_generator, self.registered_routers)
 
-AVAILABLE_DIVIDING_LINES: TypeAlias = StaticDividingLine | DynamicDividingLine | None
-DEFAULT_PRINTER: Printer = Console().print
-DEFAULT_EXIT_COMMAND: Command = Command("q", description="Exit command")
+            print()  # pre-prompt gap
+            raw_command: str = self._autocompleter.prompt(self._renderer.render_prompt(self._prompt))
+            print()  # post-prompt gap
+
+            try:
+                input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
+            except InputCommandException as error:  # noqa F841
+                self._viewer.view_framed_text_from_generator(
+                    output_text_generator=lambda: self._error_handler(error, raw_command)
+                )
+                continue
+
+            if self._is_unknown_command(input_command):
+                self._viewer.view_framed_text_from_generator(
+                    output_text_generator=lambda: self._unknown_command_handler(input_command)
+                )
+                continue
+
+            if self._is_exit_command(input_command):
+                self._system_router.finds_appropriate_handler(input_command)
+                return
+
+            self._process_exist_and_valid_command(input_command)
 
 
 class App(BaseApp):
@@ -254,13 +190,13 @@ class App(BaseApp):
         prompt: str = ">>> ",
         initial_message: str = "Argenta",
         farewell_message: str = "See you",
-        exit_command: Command = DEFAULT_EXIT_COMMAND,
+        exit_command: Command = Command("q", description="Exit command"),
         system_router_title: str = "System points:",
-        dividing_line: AVAILABLE_DIVIDING_LINES = None,
+        dividing_line: StaticDividingLine | DynamicDividingLine | None = None,
         repeat_command_groups_printing: bool = False,
         override_system_messages: bool = False,
         autocompleter: AutoCompleter | None = None,
-        printer: Printer = DEFAULT_PRINTER,
+        printer: Printer = Console().print,
     ) -> None:
         """
         Public. The essence of the application itself.
@@ -289,41 +225,6 @@ class App(BaseApp):
             autocompleter=autocompleter or AutoCompleter(),
             printer=printer,
         )
-
-    def run_polling(self) -> None:
-        """
-        Private. Starts the user input processing cycle
-        :return: None
-        """
-        self._viewer.view_initial_message(self._initial_message)
-        self._pre_cycle_setup()
-        while True:
-            if self._repeat_command_groups_printing:
-                self._viewer.view_command_groups_description(self._description_message_generator, self.registered_routers)
-
-            print()  # pre-prompt gap
-            raw_command: str = self._autocompleter.prompt(self._renderer.render_prompt(self._prompt))
-            print()  # post-prompt gap
-
-            try:
-                input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
-            except InputCommandException as error:  # noqa F841
-                self._viewer.view_framed_text_from_generator(
-                    output_text_generator=lambda: self._error_handler(error, raw_command)
-                )
-                continue
-
-            if self._is_exit_command(input_command):
-                self._system_router.finds_appropriate_handler(input_command)
-                return
-
-            if self._is_unknown_command(input_command):
-                self._viewer.view_framed_text_from_generator(
-                    output_text_generator=lambda: self._unknown_command_handler(input_command)
-                )
-                continue
-
-            self._process_exist_and_valid_command(input_command)
 
     def include_router(self, router: Router) -> None:
         """

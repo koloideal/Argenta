@@ -1,9 +1,9 @@
-from argenta import App, Orchestrator
+from argenta import App, Orchestrator, Command
 from argenta.app import DynamicDividingLine
 from .handlers import router
 
 
-app = App(initial_message="metrics", dividing_line=DynamicDividingLine('~'), override_system_messages=True)
+app = App(initial_message="metrics", exit_command=Command('exit', aliases=['quit']))
 orchestrator = Orchestrator()
 
 
