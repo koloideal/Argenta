@@ -36,7 +36,7 @@ def test_simple_command_executes_successfully(monkeypatch: pytest.MonkeyPatch, c
     def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
         print('test command')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     orchestrator.start_polling(app)
 
@@ -60,7 +60,7 @@ def test_two_commands_execute_sequentially(monkeypatch: pytest.MonkeyPatch, caps
     def test2(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
         print('some command')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     orchestrator.start_polling(app)
 
@@ -88,7 +88,7 @@ def test_three_commands_execute_sequentially(monkeypatch: pytest.MonkeyPatch, ca
     def test2(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
         print('more command')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     orchestrator.start_polling(app)
 
@@ -116,7 +116,7 @@ def test_custom_flag_without_value_is_recognized(monkeypatch: pytest.MonkeyPatch
         if valid_flag and valid_flag.status == ValidationStatus.VALID:
             print(f'\nhelp for {valid_flag.name} flag\n')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     orchestrator.start_polling(app)
 
@@ -139,7 +139,7 @@ def test_custom_flag_with_regex_validation_accepts_valid_value(monkeypatch: pyte
         if valid_flag and valid_flag.status == ValidationStatus.VALID:
             print(f'flag value for {valid_flag.name} flag : {valid_flag.input_value}')
 
-    app = App(override_system_messages=True, repeat_command_groups_printing=True, print_func=print)
+    app = App(override_system_messages=True, repeat_command_groups_printing=True, printer=print)
     app.include_router(router)
     orchestrator.start_polling(app)
 
@@ -167,7 +167,7 @@ def test_predefined_short_help_flag_is_recognized(monkeypatch: pytest.MonkeyPatc
         if valid_flag and valid_flag.status == ValidationStatus.VALID:
             print(f'help for {valid_flag.name} flag')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     orchestrator.start_polling(app)
 
@@ -190,7 +190,7 @@ def test_predefined_info_flag_is_recognized(monkeypatch: pytest.MonkeyPatch, cap
         if valid_flag and valid_flag.status == ValidationStatus.VALID:
             print('info about test command')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     orchestrator.start_polling(app)
 
@@ -213,7 +213,7 @@ def test_predefined_host_flag_with_value_is_recognized(monkeypatch: pytest.Monke
         if valid_flag and valid_flag.status == ValidationStatus.VALID:
             print(f'connecting to host {valid_flag.input_value}')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     orchestrator.start_polling(app)
 
@@ -242,7 +242,7 @@ def test_two_predefined_flags_are_recognized_together(monkeypatch: pytest.Monkey
         if (host_flag and host_flag.status == ValidationStatus.VALID) and (port_flag and port_flag.status == ValidationStatus.VALID):
             print(f'connecting to host {host_flag.input_value} and port {port_flag.input_value}')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     orchestrator.start_polling(app)
 

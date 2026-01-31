@@ -1,9 +1,6 @@
 __all__ = ["App"]
 
-import io
-import re
-from contextlib import redirect_stdout
-from typing import Callable, Never, TypeAlias
+from typing import Never, TypeAlias
 
 from rich.console import Console
 
@@ -31,7 +28,6 @@ from argenta.router import Router
 
 
 Matches: TypeAlias = list[str] | list[Never]
-_ANSI_ESCAPE_RE: re.Pattern[str] = re.compile(r"\u001b\[[0-9;]*m")
 
 
 class BaseApp:
@@ -47,10 +43,10 @@ class BaseApp:
         repeat_command_groups_printing: bool,
         override_system_messages: bool,
         autocompleter: AutoCompleter,
-        print_func: Printer,
+        printer: Printer,
     ) -> None:
         self._prompt: str = prompt
-        self._print_func: Printer = print_func
+        self._printer: Printer = printer
         self._exit_command: Command = exit_command
         self._dividing_line: StaticDividingLine | DynamicDividingLine | None = dividing_line
         self._repeat_command_groups_printing: bool = repeat_command_groups_printing
@@ -58,7 +54,6 @@ class BaseApp:
         self._autocompleter: AutoCompleter = autocompleter
         self._system_router: Router = Router(title=system_router_title)
 
-        self._stdout_buffer: io.StringIO = io.StringIO()
         self.registered_routers: RegisteredRouters = RegisteredRouters()
         self._messages_on_startup: list[str] = []
 
@@ -67,11 +62,16 @@ class BaseApp:
         else:
             self._renderer: Renderer = RichRenderer()
 
-        self._viewer: Viewer = Viewer(self._print_func, self._renderer)
+        self._viewer: Viewer = Viewer(
+            printer=self._printer,
+            renderer=self._renderer,
+            dividing_line=self._dividing_line,
+            override_system_messages=self._override_system_messages,
+        )
         self._handlers_fabric: BehaviorHandlersFabric = BehaviorHandlersFabric(
-            self._print_func,
-            self._renderer,
-            self._most_similar_command
+            printer=self._printer,
+            renderer=self._renderer,
+            most_similar_command_getter=self._most_similar_command
         )
 
         self._initial_message: str = self._renderer.render_initial_message(initial_message)
@@ -131,34 +131,6 @@ class BaseApp:
         """
         self._exit_command_handler = _
 
-    def _print_static_framed_text(self, text: str) -> None:
-        """
-        Private. Outputs text by framing it in a static or dynamic split strip
-        :param text: framed text
-        :return: None
-        """
-        match self._dividing_line:
-            case StaticDividingLine() as dividing_line:
-                self._print_func(dividing_line.get_full_static_line(is_override=self._override_system_messages))
-                print(text.strip("\n"))
-                self._print_func(dividing_line.get_full_static_line(is_override=self._override_system_messages))
-            case DynamicDividingLine() as dividing_line:
-                self._print_func(
-                    StaticDividingLine(dividing_line.get_unit_part()).get_full_static_line(
-                        is_override=self._override_system_messages
-                    )
-                )
-                print(text.strip("\n"))
-                self._print_func(
-                    StaticDividingLine(dividing_line.get_unit_part()).get_full_static_line(
-                        is_override=self._override_system_messages
-                    )
-                )
-            case None:
-                print("\n" + text.strip("\n") + "\n")
-            case _:
-                raise NotImplementedError(f"Dividing line with type {self._dividing_line} is not implemented")
-
     def _is_exit_command(self, command: InputCommand) -> bool:
         """
         Private. Checks if the given command is an exit command
@@ -177,18 +149,6 @@ class BaseApp:
         if not self.registered_routers.get_router_by_trigger(input_command.trigger.lower()):
             return True
         return False
-
-    def _capture_stdout(self, func: Callable[[], None]) -> str:
-        """
-        Private. Captures stdout from a function call using a reusable buffer
-        :param func: function to execute with captured stdout
-        :return: captured stdout as string
-        """
-        self._stdout_buffer.seek(0)
-        self._stdout_buffer.truncate(0)
-        with redirect_stdout(self._stdout_buffer):
-            func()
-        return self._stdout_buffer.getvalue()
 
     def _error_handler(self, error: InputCommandException, raw_command: str) -> None:
         """
@@ -276,46 +236,14 @@ class BaseApp:
         if not processing_router:
             raise RuntimeError(f"Router for '{input_command.trigger}' not found. Panic!")
 
-        match (self._dividing_line, processing_router.disable_redirect_stdout):
-            case (None, bool()):
-                processing_router.finds_appropriate_handler(input_command)
-            case (DynamicDividingLine(), False):
-                stdout_result = self._capture_stdout(lambda: processing_router.finds_appropriate_handler(input_command))
-                clear_text = _ANSI_ESCAPE_RE.sub("", stdout_result)
-                max_length_line = max([len(line) for line in clear_text.split("\n")])
-                max_length_line = (
-                    max_length_line if 10 <= max_length_line <= 100 else 100 if max_length_line > 100 else 10
-                )
-
-                self._print_func(
-                    self._dividing_line.get_full_dynamic_line(
-                        length=max_length_line, is_override=self._override_system_messages
-                    )
-                )
-                print(clear_text.strip("\n"))
-                self._print_func(
-                    self._dividing_line.get_full_dynamic_line(
-                        length=max_length_line, is_override=self._override_system_messages
-                    )
-                )
-            case (StaticDividingLine() as dividing_line, bool()) | (DynamicDividingLine() as dividing_line, True):
-                self._print_func(
-                    StaticDividingLine(dividing_line.get_unit_part()).get_full_static_line(
-                        is_override=self._override_system_messages
-                    )
-                )
-                processing_router.finds_appropriate_handler(input_command)
-                self._print_func(
-                    StaticDividingLine(dividing_line.get_unit_part()).get_full_static_line(
-                        is_override=self._override_system_messages
-                    )
-                )
-            case _:
-                raise NotImplementedError(f"Dividing line with type {self._dividing_line} is not implemented")
+        self._viewer.view_framed_text_from_generator(
+            output_text_generator=lambda: processing_router.finds_appropriate_handler(input_command),
+            is_stdout_redirected_by_router=processing_router.is_redirect_stdout_disabled
+        )
 
 
-AVAILABLE_DIVIDING_LINES: TypeAlias = StaticDividingLine | DynamicDividingLine
-DEFAULT_PRINT_FUNC: Printer = Console().print
+AVAILABLE_DIVIDING_LINES: TypeAlias = StaticDividingLine | DynamicDividingLine | None
+DEFAULT_PRINTER: Printer = Console().print
 DEFAULT_EXIT_COMMAND: Command = Command("q", description="Exit command")
 
 
@@ -328,11 +256,11 @@ class App(BaseApp):
         farewell_message: str = "See you",
         exit_command: Command = DEFAULT_EXIT_COMMAND,
         system_router_title: str = "System points:",
-        dividing_line: AVAILABLE_DIVIDING_LINES | None = None,
+        dividing_line: AVAILABLE_DIVIDING_LINES = None,
         repeat_command_groups_printing: bool = False,
         override_system_messages: bool = False,
         autocompleter: AutoCompleter | None = None,
-        print_func: Printer = DEFAULT_PRINT_FUNC,
+        printer: Printer = DEFAULT_PRINTER,
     ) -> None:
         """
         Public. The essence of the application itself.
@@ -346,7 +274,7 @@ class App(BaseApp):
         :param repeat_command_groups_printing: whether to repeat the available commands and their description
         :param override_system_messages: whether to redefine the default formatting of system messages
         :param autocompleter: the entity of the autocompleter
-        :param print_func: system messages text output function
+        :param printer: system messages text output function
         :return: None
         """
         super().__init__(
@@ -359,7 +287,7 @@ class App(BaseApp):
             repeat_command_groups_printing=repeat_command_groups_printing,
             override_system_messages=override_system_messages,
             autocompleter=autocompleter or AutoCompleter(),
-            print_func=print_func,
+            printer=printer,
         )
 
     def run_polling(self) -> None:
@@ -367,7 +295,7 @@ class App(BaseApp):
         Private. Starts the user input processing cycle
         :return: None
         """
-        self._print_func(self._initial_message)
+        self._viewer.view_initial_message(self._initial_message)
         self._pre_cycle_setup()
         while True:
             if self._repeat_command_groups_printing:
@@ -380,10 +308,9 @@ class App(BaseApp):
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
             except InputCommandException as error:  # noqa F841
-                stderr_result = self._capture_stdout(
-                    lambda: self._error_handler(error, raw_command)  # noqa F821
+                self._viewer.view_framed_text_from_generator(
+                    output_text_generator=lambda: self._error_handler(error, raw_command)
                 )
-                self._print_static_framed_text(stderr_result)
                 continue
 
             if self._is_exit_command(input_command):
@@ -391,8 +318,9 @@ class App(BaseApp):
                 return
 
             if self._is_unknown_command(input_command):
-                stdout_res = self._capture_stdout(lambda: self._unknown_command_handler(input_command))
-                self._print_static_framed_text(stdout_res)
+                self._viewer.view_framed_text_from_generator(
+                    output_text_generator=lambda: self._unknown_command_handler(input_command)
+                )
                 continue
 
             self._process_exist_and_valid_command(input_command)

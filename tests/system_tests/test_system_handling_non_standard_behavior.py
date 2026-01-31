@@ -35,7 +35,7 @@ def test_empty_input_triggers_empty_command_handler(monkeypatch: pytest.MonkeyPa
     def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
         print('test command')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     app.set_empty_command_handler(lambda: print('Empty input command'))
     orchestrator.start_polling(app)
@@ -61,7 +61,7 @@ def test_unknown_command_triggers_unknown_command_handler(monkeypatch: pytest.Mo
     def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
         print('test command')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
     orchestrator.start_polling(app)
@@ -82,7 +82,7 @@ def test_mixed_valid_and_unknown_commands_handled_correctly(monkeypatch: pytest.
     def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
         print('test command')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
     orchestrator.start_polling(app)
@@ -107,7 +107,7 @@ def test_multiple_commands_with_unknown_command_in_between(monkeypatch: pytest.M
     def test1(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
         print('more command')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
     orchestrator.start_polling(app)
@@ -135,7 +135,7 @@ def test_unregistered_flag_without_value_is_accessible(monkeypatch: pytest.Monke
         if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
             print(f'test command with undefined flag: {undefined_flag.string_entity}')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     orchestrator.start_polling(app)
 
@@ -159,7 +159,7 @@ def test_unregistered_flag_with_value_is_accessible(monkeypatch: pytest.MonkeyPa
         else:
             raise
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     orchestrator.start_polling(app)
 
@@ -182,7 +182,7 @@ def test_registered_and_unregistered_flags_coexist(monkeypatch: pytest.MonkeyPat
         if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
             print(f'connecting to host with flag: {undefined_flag.string_entity} {undefined_flag.input_value}')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     orchestrator.start_polling(app)
 
@@ -207,7 +207,7 @@ def test_flag_without_value_triggers_incorrect_syntax_handler(monkeypatch: pytes
     def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
         print('test command')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     app.set_incorrect_input_syntax_handler(lambda command: print(f'Incorrect flag syntax: "{command}"'))
     orchestrator.start_polling(app)
@@ -233,7 +233,7 @@ def test_repeated_flags_trigger_repeated_flags_handler(monkeypatch: pytest.Monke
     def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
         print('test command')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     app.set_repeated_input_flags_handler(lambda command: print(f'Repeated input flags: "{command}"'))
     orchestrator.start_polling(app)

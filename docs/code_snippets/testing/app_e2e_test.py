@@ -19,7 +19,7 @@ def test_input_incorrect_command(capsys: CaptureFixture[str]):
     def test(response: Response) -> None:
         print('test command')
 
-    app = App(override_system_messages=True, print_func=print)
+    app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     app.set_unknown_command_handler(
         lambda command: print(f'Unknown command: {command.trigger}')

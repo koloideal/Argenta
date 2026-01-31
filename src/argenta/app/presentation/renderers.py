@@ -78,7 +78,7 @@ class RichRenderer(Renderer):
 
     @staticmethod
     def render_messages_on_startup(messages: Iterable[str]) -> str:
-        return "\n".join(messages)
+        return "\n" + "\n".join(messages)
 
     @staticmethod
     def render_command_groups_description(
@@ -87,10 +87,10 @@ class RichRenderer(Renderer):
     ) -> str:
         command_groups_description = ""
         for registered_router in registered_routers:
-            command_groups_description += "\n" + registered_router.title
+            command_groups_description += "\n\n" + registered_router.title
             for command_handler in registered_router.command_handlers:
                 handled_command = command_handler.handled_command
-                command_groups_description += description_message_generator(
+                command_groups_description += '\n' + description_message_generator(
                     handled_command.trigger,
                     handled_command.description,
                 )
@@ -114,7 +114,7 @@ class RichRenderer(Renderer):
         most_similar_command_trigger: str | None
     ) -> str:
         return (
-            f"[red]Unknown command:[/red][blue]{command_trigger}[/blue]"
+            f"[red]Unknown command:[/red] [blue]{command_trigger}[/blue]"
             + (f"[red], most similar:[/red][blue]{most_similar_command_trigger}[/blue]"
             if most_similar_command_trigger else "")
         )
@@ -131,14 +131,14 @@ class PlainRenderer(Renderer):
 
     @staticmethod
     def render_farewell_message(text: str) -> str:
-        return f"{text} | [https://github.com/koloideal/Argenta](https://github.com/koloideal/Argenta) | made by kolo"
+        return f"\n{text} | https://github.com/koloideal/Argenta | made by kolo"
 
     @staticmethod
     def render_text_for_description_message_generator(command: str, description: str) -> str:
         return f"{command} *=*=* {description}"
 
     def render_messages_on_startup(self, messages: Iterable[str]) -> str:
-        return "\n".join(messages)
+        return "\n" + "\n".join(messages)
 
     @staticmethod
     def render_command_groups_description(
@@ -147,10 +147,10 @@ class PlainRenderer(Renderer):
     ) -> str:
         command_groups_description = ""
         for registered_router in registered_routers:
-            command_groups_description += "\n" + registered_router.title
+            command_groups_description += "\n\n" + registered_router.title
             for command_handler in registered_router.command_handlers:
                 handled_command = command_handler.handled_command
-                command_groups_description += description_message_generator(
+                command_groups_description += "\n" + description_message_generator(
                     handled_command.trigger,
                     handled_command.description,
                 )
@@ -175,7 +175,7 @@ class PlainRenderer(Renderer):
     ) -> str:
         return (
             f"Unknown command: {command_trigger}"
-            + (f", most similar:{most_similar_command_trigger}"
+            + (f", most similar: {most_similar_command_trigger}"
             if most_similar_command_trigger else "")
         )
 

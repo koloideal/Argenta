@@ -1,6 +1,6 @@
 from rich.markup import escape
 
-from argenta import Response
+from argenta.response.entity import Response
 from argenta.app.presentation.renderers import Renderer
 from argenta.app.protocols import (
     NonStandardBehaviorHandler,
@@ -53,7 +53,7 @@ class BehaviorHandlersFabric:
         return unknown_command_handler
 
     def generate_exit_command_handler(self, farewell_message: str) -> NonStandardBehaviorHandler[Response]:
-        return lambda _: self._printer(self._renderer.render_farewell_message(farewell_message))
+        return lambda _: self._printer(farewell_message)
 
     def generate_description_message_generator(self) -> DescriptionMessageGenerator:
         return lambda command, description: self._renderer.render_text_for_description_message_generator(
