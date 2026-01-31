@@ -1,0 +1,145 @@
+from pytest_mock import MockerFixture
+
+from argenta.app.presentation.viewers import Viewer
+from argenta.app.presentation.renderers import PlainRenderer
+from argenta.app.dividing_line.models import StaticDividingLine, DynamicDividingLine
+from argenta.app.registered_routers.entity import RegisteredRouters
+from argenta.command.models import Command
+from argenta.response import Response
+from argenta.router import Router
+
+
+class TestViewer:
+    def test_viewer_initialization(self, mocker: MockerFixture):
+        printer = mocker.Mock()
+        renderer = PlainRenderer()
+        dividing_line = StaticDividingLine()
+        
+        viewer = Viewer(printer, renderer, dividing_line, False)
+        
+        assert viewer._printer == printer
+        assert viewer._renderer == renderer
+        assert viewer._dividing_line == dividing_line
+        assert viewer._override_system_messages is False
+
+    def test_view_initial_message(self, mocker: MockerFixture):
+        printer = mocker.Mock()
+        renderer = PlainRenderer()
+        viewer = Viewer(printer, renderer, None, False)
+        
+        viewer.view_initial_message("Welcome")
+        
+        printer.assert_called_once_with("Welcome")
+
+    def test_view_messages_on_startup(self, mocker: MockerFixture):
+        printer = mocker.Mock()
+        renderer = PlainRenderer()
+        viewer = Viewer(printer, renderer, None, False)
+        
+        messages = ["Message 1", "Message 2"]
+        viewer.view_messages_on_startup(messages)
+        
+        printer.assert_called_once()
+        call_arg = printer.call_args[0][0]
+        assert "Message 1" in call_arg
+        assert "Message 2" in call_arg
+
+    def test_view_command_groups_description(self, mocker: MockerFixture):
+        printer = mocker.Mock()
+        renderer = PlainRenderer()
+        viewer = Viewer(printer, renderer, None, False)
+        
+        router = Router(title="Test Router")
+        
+        @router.command(Command("test", description="Test command"))
+        def handler(_: Response):
+            pass
+        
+        registered_routers = RegisteredRouters()
+        registered_routers.add_registered_router(router)
+        
+        def desc_gen(cmd: str, desc: str) -> str:
+            return f"{cmd}: {desc}"
+        
+        viewer.view_command_groups_description(desc_gen, registered_routers)
+        
+        printer.assert_called_once()
+        call_arg = printer.call_args[0][0]
+        assert "Test Router" in call_arg
+        assert "test: Test command" in call_arg
+
+    def test_view_framed_text_with_no_dividing_line(self, mocker: MockerFixture):
+        printer = mocker.Mock()
+        renderer = PlainRenderer()
+        viewer = Viewer(printer, renderer, None, False)
+        
+        output_generator = mocker.Mock()
+        viewer.view_framed_text_from_generator(output_generator)
+        
+        output_generator.assert_called_once()
+
+    def test_view_framed_text_with_static_dividing_line(self, mocker: MockerFixture):
+        printer = mocker.Mock()
+        renderer = PlainRenderer()
+        dividing_line = StaticDividingLine("=")
+        viewer = Viewer(printer, renderer, dividing_line, False)
+        
+        output_generator = mocker.Mock()
+        viewer.view_framed_text_from_generator(output_generator)
+        
+        output_generator.assert_called_once()
+        assert printer.call_count >= 2
+
+    def test_capture_stdout(self, mocker: MockerFixture):
+        printer = mocker.Mock()
+        renderer = PlainRenderer()
+        viewer = Viewer(printer, renderer, None, False)
+        
+        def test_func():
+            print("test output")
+        
+        result = viewer._capture_stdout(test_func)
+        assert "test output" in result
+
+    def test_capture_stdout_reuses_buffer(self, mocker: MockerFixture):
+        printer = mocker.Mock()
+        renderer = PlainRenderer()
+        viewer = Viewer(printer, renderer, None, False)
+        
+        def test_func1():
+            print("output 1")
+        
+        def test_func2():
+            print("output 2")
+        
+        result1 = viewer._capture_stdout(test_func1)
+        result2 = viewer._capture_stdout(test_func2)
+        
+        assert "output 1" in result1
+        assert "output 1" not in result2
+        assert "output 2" in result2
+
+    def test_view_framed_text_with_dynamic_dividing_line(self, mocker: MockerFixture):
+        printer = mocker.Mock()
+        renderer = PlainRenderer()
+        dividing_line = DynamicDividingLine("=")
+        viewer = Viewer(printer, renderer, dividing_line, False)
+        
+        def output_generator():
+            print("test output")
+        
+        viewer.view_framed_text_from_generator(output_generator)
+        
+        assert printer.call_count >= 2
+
+    def test_view_framed_text_with_router_stdout_redirect(self, mocker: MockerFixture):
+        printer = mocker.Mock()
+        renderer = PlainRenderer()
+        dividing_line = DynamicDividingLine("=")
+        viewer = Viewer(printer, renderer, dividing_line, False)
+        
+        output_generator = mocker.Mock()
+        viewer.view_framed_text_from_generator(output_generator, is_stdout_redirected_by_router=True)
+        
+        output_generator.assert_called_once()
+        assert printer.call_count >= 2

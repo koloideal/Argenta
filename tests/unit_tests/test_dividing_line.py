@@ -13,7 +13,7 @@ def test_static_dividing_line_generates_default_length_with_override() -> None:
 
 def test_static_dividing_line_generates_custom_length_with_formatting() -> None:
     line = StaticDividingLine('-', length=5)
-    assert line.get_full_static_line(is_override=False) == '\n[dim]-----[/dim]\n'
+    assert line.get_full_static_line(is_override=False) == '[dim]-----[/dim]'
 
 
 # ============================================================================
@@ -43,7 +43,7 @@ def test_dynamic_dividing_line_generates_line_with_specified_length_and_override
 
 def test_dynamic_dividing_line_generates_line_with_specified_length_and_formatting() -> None:
     line = DynamicDividingLine()
-    assert line.get_full_dynamic_line(length=5, is_override=False) == '\n[dim]-----[/dim]\n'
+    assert line.get_full_dynamic_line(length=5, is_override=False) == '[dim]-----[/dim]'
 
 
 # ============================================================================

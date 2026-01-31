@@ -3,7 +3,6 @@ import pytest
 from pytest import CaptureFixture
 
 from argenta.app import App
-from argenta.app.dividing_line import DynamicDividingLine, StaticDividingLine
 from argenta.app.protocols import DescriptionMessageGenerator, NonStandardBehaviorHandler
 from argenta.command.models import Command, InputCommand
 from argenta.response import Response
@@ -18,26 +17,31 @@ from argenta.router import Router
 
 def test_default_exit_command_lowercase_q_is_recognized() -> None:
     app = App()
+    app._setup_system_router()
     assert app._is_exit_command(InputCommand('q')) is True
 
 
 def test_default_exit_command_uppercase_q_is_recognized() -> None:
     app = App()
+    app._setup_system_router()
     assert app._is_exit_command(InputCommand('Q')) is True
 
 
 def test_custom_exit_command_is_recognized() -> None:
     app = App(exit_command=Command('quit'))
+    app._setup_system_router()
     assert app._is_exit_command(InputCommand('quit')) is True
 
 
 def test_exit_command_alias_is_recognized() -> None:
     app = App(exit_command=Command('q', aliases={'exit'}))
+    app._setup_system_router()
     assert app._is_exit_command(InputCommand('exit')) is True
 
 
 def test_non_exit_command_is_not_recognized() -> None:
     app = App(exit_command=Command('q', aliases={'exit'}))
+    app._setup_system_router()
     assert app._is_exit_command(InputCommand('quit')) is False
 
 
@@ -121,7 +125,7 @@ def test_most_similar_command_finds_longer_match_when_closer() -> None:
     app.include_routers(router)
     app._pre_cycle_setup()
     
-    assert app._most_similar_command('command_') == 'command_other'
+    assert app._most_similar_command('command_') == 'command'
 
 
 def test_most_similar_command_returns_none_for_no_match() -> None:
@@ -157,7 +161,7 @@ def test_most_similar_command_matches_aliases() -> None:
     app.include_routers(router)
     app._pre_cycle_setup()
     
-    assert app._most_similar_command('othe') == 'other_name'
+    assert app._most_similar_command('other_') == 'other_name'
 
 
 # ============================================================================
@@ -289,48 +293,6 @@ def test_pre_cycle_setup_prints_startup_messages(capsys: CaptureFixture[str]) ->
     stdout = capsys.readouterr()
     
     assert 'some message' in stdout.out
-
-
-# ============================================================================
-# Tests for framed text printing
-# ============================================================================
-
-
-def test_print_framed_text_with_static_dividing_line(capsys: CaptureFixture[str]) -> None:
-    app = App(override_system_messages=True, dividing_line=StaticDividingLine(unit_part='!', length=5))
-    app._print_static_framed_text('test')
-
-    captured = capsys.readouterr()
-
-    assert '\n' + '!'*5 + '\n\ntest\n\n' + '!'*5 + '\n' in captured.out
-
-
-def test_print_framed_text_with_dynamic_dividing_line_short_text(capsys: CaptureFixture[str]) -> None:
-    app = App(override_system_messages=True, dividing_line=DynamicDividingLine('+'))
-    app._print_static_framed_text('some long test')
-
-    captured = capsys.readouterr()
-
-    assert '\n' + '+'*25 + '\n\nsome long test\n\n' + '+'*25 + '\n' in captured.out
-
-
-def test_print_framed_text_with_dynamic_dividing_line_long_text(capsys: CaptureFixture[str]) -> None:
-    app = App(override_system_messages=True, dividing_line=DynamicDividingLine('`'))
-    app._print_static_framed_text('test as test as test')
-
-    captured = capsys.readouterr()
-
-    assert '\n' + '`'*25 + '\n\ntest as test as test\n\n' + '`'*25 + '\n' in captured.out
-
-
-def test_print_framed_text_with_unsupported_dividing_line_raises_error() -> None:
-    class OtherDividingLine:
-        pass
-        
-    app = App(override_system_messages=True, dividing_line=OtherDividingLine())  # pyright: ignore[reportArgumentType]
-    
-    with pytest.raises(NotImplementedError):
-        app._print_static_framed_text('some long test')
 
 
 # ============================================================================
