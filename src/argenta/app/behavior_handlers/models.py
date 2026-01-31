@@ -80,35 +80,15 @@ class BehaviorHandlersSettersMixin:
         self._exit_command_handler: NonStandardBehaviorHandler[Response] = exit_command_handler
 
     def set_description_message_pattern(self, _: DescriptionMessageGenerator, /) -> None:
-        """
-        Public. Sets the output pattern of the available commands
-        :param _: output pattern of the available commands
-        :return: None
-        """
         self._description_message_generator = _
 
     def set_incorrect_input_syntax_handler(self, _: NonStandardBehaviorHandler[str], /) -> None:
-        """
-        Public. Sets the handler for incorrect flags when entering a command
-        :param _: handler for incorrect flags when entering a command
-        :return: None
-        """
         self._incorrect_input_syntax_handler = _
 
     def set_repeated_input_flags_handler(self, _: NonStandardBehaviorHandler[str], /) -> None:
-        """
-        Public. Sets the handler for repeated flags when entering a command
-        :param _: handler for repeated flags when entering a command
-        :return: None
-        """
         self._repeated_input_flags_handler = _
 
     def set_unknown_command_handler(self, _: NonStandardBehaviorHandler[InputCommand], /) -> None:
-        """
-        Public. Sets the handler for unknown commands when entering a command
-        :param _: handler for unknown commands when entering a command
-        :return: None
-        """
         self._unknown_command_handler = _
 
     def set_empty_command_handler(self, _: EmptyCommandHandler, /) -> None:
