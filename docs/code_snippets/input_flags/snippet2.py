@@ -8,11 +8,7 @@ router = Router(title="Get Flag Example")
     Command(
         "config",
         description="Configure settings",
-        flags=Flags([
-            Flag("host"), 
-            Flag("port"),
-            Flag("debug")
-        ]),
+        flags=Flags([Flag("host"), Flag("port"), Flag("debug")]),
     )
 )
 def config_handler(response: Response):

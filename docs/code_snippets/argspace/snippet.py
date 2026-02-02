@@ -6,11 +6,7 @@ arguments = [
     ValueArgument("port", help="Server port", is_required=True),
 ]
 
-argparser = ArgParser(
-    processed_args=arguments, 
-    name="WebServer", 
-    description="Simple web server"
-)
+argparser = ArgParser(processed_args=arguments, name="WebServer", description="Simple web server")
 
 app = App()
 orchestrator = Orchestrator(argparser)

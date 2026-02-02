@@ -5,10 +5,7 @@ from argenta.command.flag import ValidationStatus
 router = Router()
 
 
-@router.command(Command(
-    "deploy", 
-    flags=Flag("verbose", possible_values=PossibleValues.NEITHER)
-))
+@router.command(Command("deploy", flags=Flag("verbose", possible_values=PossibleValues.NEITHER)))
 def deploy_handler(response: Response):
     # Check for toggle flag presence
     verbose_flag = response.input_flags.get_flag_by_name("verbose")

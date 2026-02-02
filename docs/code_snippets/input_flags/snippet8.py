@@ -26,12 +26,8 @@ flags3 = InputFlags(
 )
 
 print(f"flags1 == flags2: {flags1 == flags2}")  # True (same names)
-print(
-    f"flags1 == flags3: {flags1 == flags3}"
-)  # True (same names, values are not considered)
+print(f"flags1 == flags3: {flags1 == flags3}")  # True (same names, values are not considered)
 
 # Different collections
-flags4 = InputFlags(
-    [InputFlag(name="flag3", input_value="value3", status=ValidationStatus.VALID)]
-)
+flags4 = InputFlags([InputFlag(name="flag3", input_value="value3", status=ValidationStatus.VALID)])
 print(f"flags1 == flags4: {flags1 == flags4}")  # False (different flags)

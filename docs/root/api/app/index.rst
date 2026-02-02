@@ -11,28 +11,22 @@ App
 -------------
 
 .. code-block:: python
-   :linenos:
-
-    AVAILABLE_DIVIDING_LINES: TypeAlias = StaticDividingLine | DynamicDividingLine
-    DEFAULT_DIVIDING_LINE: StaticDividingLine = StaticDividingLine()
-    
-    DEFAULT_PRINT_FUNC: Printer = Console().print
-    DEFAULT_AUTOCOMPLETER: AutoCompleter = AutoCompleter()
-    DEFAULT_EXIT_COMMAND: Command = Command("Q", description="Exit command")
-
-.. code-block:: python
     :linenos:
     
-    def __init__(self, *, prompt: str = "What do you want to do?\n\n", 
-                initial_message: str = "Argenta\n", 
-                farewell_message: str = "\nSee you\n", 
-                exit_command: Command = DEFAULT_EXIT_COMMAND, 
-                system_router_title: str | None = "System points:", 
-                dividing_line: AVAILABLE_DIVIDING_LINES = DEFAULT_DIVIDING_LINE, 
-                repeat_command_groups_printing: bool = False, 
-                override_system_messages: bool = False, 
-                autocompleter: AutoCompleter = DEFAULT_AUTOCOMPLETER, 
-                print_func: Printer = DEFAULT_PRINT_FUNC) -> None
+    def __init__(
+        self,
+        *,
+        prompt: str = ">>> ",
+        initial_message: str = "Argenta",
+        farewell_message: str = "See you",
+        exit_command: Command = Command("q", description="Exit command"),
+        system_router_title: str = "System points:",
+        dividing_line: StaticDividingLine | DynamicDividingLine | None = None,
+        repeat_command_groups_printing: bool = False,
+        override_system_messages: bool = False,
+        autocompleter: AutoCompleter | None = None,
+        printer: Printer = Console().print,
+    ) -> None:
 
 Создаёт и настраивает экземпляр приложения.
 
@@ -45,7 +39,7 @@ App
     * ``repeat_command_groups_printing``: Если ``True``, список доступных команд выводится перед каждым вводом.
     * ``override_system_messages``: Если ``True``, стандартное форматирование (цвета, ASCII-арт) отключается.
     * ``autocompleter``: Экземпляр класса :ref:`AutoCompleter <root_api_app_autocompleter>`, отвечающий за автодополнение команд.
-    * ``print_func``: Функция для вывода всех системных сообщений (по умолчанию ``rich.Console().print``).
+    * ``printer``: Функция для вывода всех системных сообщений.
 
 -----
 

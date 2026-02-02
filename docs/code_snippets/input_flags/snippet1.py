@@ -8,10 +8,7 @@ router = Router(title="Example")
     Command(
         "example",
         description="Example command with flags",
-        flags=Flags([
-            Flag("name"), 
-            Flag("age")
-        ]),
+        flags=Flags([Flag("name"), Flag("age")]),
     )
 )
 def example_handler(response: Response):
