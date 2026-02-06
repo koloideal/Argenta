@@ -3,15 +3,14 @@ __all__ = ["Viewer"]
 import re
 from contextlib import redirect_stdout
 from io import StringIO
-from typing import Iterable, Callable, TypeAlias
+from typing import Callable, Iterable, TypeAlias
 
 from rich.text import Text
 
-from argenta.app import StaticDividingLine, DynamicDividingLine
+from argenta.app import DynamicDividingLine, StaticDividingLine
 from argenta.app.presentation.renderers import Renderer
-from argenta.app.protocols import Printer, DescriptionMessageGenerator
+from argenta.app.protocols import DescriptionMessageGenerator, Printer
 from argenta.app.registered_routers.entity import RegisteredRouters
-
 
 AVAILABLE_DIVIDING_LINES: TypeAlias = StaticDividingLine | DynamicDividingLine | None
 

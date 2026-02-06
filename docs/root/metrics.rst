@@ -164,17 +164,9 @@ release-generate
 
 Вы можете реализовать свои бенчмарки для тестирования специфичных юнитов библиотеки. Новые бенчмарки добавляются через декоратор ``@benchmarks.register``:
 
-.. code-block:: python
-
-   from metrics.benchmarks.entity import benchmarks
-
-   @benchmarks.register(
-       type_="my_category",
-       description="Description of what is being measured"
-   )
-   def benchmark_my_operation() -> None:
-       # Код, производительность которого измеряется
-       pass
+.. literalinclude:: ../code_snippets/metrics/add_new_benchmark.py
+   :language: python
+   :linenos:
 
 .. important::
 

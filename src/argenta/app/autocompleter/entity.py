@@ -3,13 +3,14 @@ __all__ = ["AutoCompleter"]
 import sys
 from typing import Callable, Iterable
 
-from prompt_toolkit import PromptSession, HTML
+from prompt_toolkit import HTML, PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
-from prompt_toolkit.completion import Completer, Completion, CompleteEvent, ThreadedCompleter
+from prompt_toolkit.completion import (CompleteEvent, Completer, Completion,
+                                       ThreadedCompleter)
 from prompt_toolkit.cursor_shapes import CursorShape
 from prompt_toolkit.document import Document
 from prompt_toolkit.formatted_text import StyleAndTextTuples
-from prompt_toolkit.history import History, ThreadedHistory, FileHistory, InMemoryHistory
+from prompt_toolkit.history import FileHistory, History, InMemoryHistory, ThreadedHistory
 from prompt_toolkit.key_binding import KeyBindings, KeyPressEvent
 from prompt_toolkit.lexers import Lexer
 from prompt_toolkit.styles import Style

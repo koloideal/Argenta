@@ -1,14 +1,12 @@
 __all__ = ["Command", "InputCommand"]
 
 import shlex
-from typing import Literal, Never, Self, cast, Iterable
+from typing import Iterable, Literal, Never, Self, cast
 
-from argenta.command.exceptions import (
-    EmptyInputCommandException,
-    RepeatedInputFlagsException,
-    UnprocessedInputFlagException,
-)
 from argenta.command import Flags, InputFlags
+from argenta.command.exceptions import (EmptyInputCommandException,
+                                        RepeatedInputFlagsException,
+                                        UnprocessedInputFlagException)
 from argenta.command.flag.models import Flag, InputFlag, ValidationStatus
 
 ParseFlagsResult = tuple[InputFlags, str | None, str | None]

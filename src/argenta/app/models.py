@@ -1,30 +1,26 @@
 __all__ = ["App"]
 
-from typing import Never, TypeAlias
 import difflib
+from typing import Never, TypeAlias
 
 from rich.console import Console
 
 from argenta.app.autocompleter import AutoCompleter
-from argenta.app.behavior_handlers.models import (
-    BehaviorHandlersFabric,
-    BehaviorHandlersSettersMixin,
-)
-from argenta.app.presentation.renderers import PlainRenderer, RichRenderer, Renderer
+from argenta.app.behavior_handlers.models import (BehaviorHandlersFabric,
+                                                  BehaviorHandlersSettersMixin)
 from argenta.app.dividing_line.models import DynamicDividingLine, StaticDividingLine
+from argenta.app.presentation.renderers import PlainRenderer, Renderer, RichRenderer
 from argenta.app.presentation.viewers import Viewer
 from argenta.app.protocols import Printer
 from argenta.app.registered_routers.entity import RegisteredRouters
-from argenta.command.exceptions import (
-    InputCommandException,
-    RepeatedInputFlagsException,
-    UnprocessedInputFlagException,
-)
-from argenta.router.exceptions import RepeatedAliasNameException, RepeatedTriggerNameException
+from argenta.command.exceptions import (InputCommandException,
+                                        RepeatedInputFlagsException,
+                                        UnprocessedInputFlagException)
 from argenta.command.models import Command, InputCommand
 from argenta.response import Response
 from argenta.router import Router
-
+from argenta.router.exceptions import (RepeatedAliasNameException,
+                                       RepeatedTriggerNameException)
 
 Matches: TypeAlias = list[str] | list[Never]
 

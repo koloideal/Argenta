@@ -2,7 +2,7 @@ __all__ = ["PossibleValues", "ValidationStatus", "Flag", "InputFlag", "InputFlag
 
 from enum import Enum
 from re import Pattern
-from typing import Literal, override, TypeVar, Generic, Iterator, Any, Container
+from typing import Any, Container, Generic, Iterator, Literal, TypeVar, override
 
 PREFIX_TYPE = Literal["-", "--", "---"]
 

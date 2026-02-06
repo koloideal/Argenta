@@ -1,15 +1,11 @@
 from rich.markup import escape
 
-from argenta.response.entity import Response
 from argenta.app.presentation.renderers import Renderer
-from argenta.app.protocols import (
-    NonStandardBehaviorHandler,
-    EmptyCommandHandler,
-    Printer,
-    MostSimilarCommandGetter,
-    DescriptionMessageGenerator,
-)
+from argenta.app.protocols import (DescriptionMessageGenerator, EmptyCommandHandler,
+                                   MostSimilarCommandGetter, NonStandardBehaviorHandler,
+                                   Printer)
 from argenta.command import InputCommand
+from argenta.response.entity import Response
 
 
 class BehaviorHandlersFabric:
