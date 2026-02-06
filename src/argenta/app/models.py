@@ -159,7 +159,7 @@ class BaseApp(BehaviorHandlersSettersMixin):
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
             except InputCommandException as error:  # noqa F841
                 self._viewer.view_framed_text_from_generator(
-                    output_text_generator=lambda: self._error_handler(error, raw_command)
+                    output_text_generator=lambda: self._error_handler(error, raw_command) # noqa
                 )
                 continue
 
