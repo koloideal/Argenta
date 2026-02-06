@@ -618,11 +618,17 @@ def test_app_handlers_work_with_multiple_routers() -> None:
     
     app.set_unknown_command_handler(custom_handler)
     
-    # Both commands should be known
     assert not app._is_unknown_command(InputCommand('cmd1'))
     assert not app._is_unknown_command(InputCommand('cmd2'))
     
-    # Unknown command should trigger handler
     assert app._is_unknown_command(InputCommand('unknown'))
     app._unknown_command_handler(InputCommand('unknown'))
     assert call_tracker['called']
+
+
+def test_process_exist_and_valid_command_raises_runtime_error_when_router_not_found() -> None:
+    app = App()
+    app._pre_cycle_setup()
+    
+    with pytest.raises(RuntimeError, match="Router for 'nonexistent' not found. Panic!"):
+        app._process_exist_and_valid_command(InputCommand('nonexistent'))

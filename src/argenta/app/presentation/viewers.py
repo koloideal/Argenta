@@ -77,19 +77,19 @@ class Viewer:
                     if max_length_line > 100
                     else 10
                 )
-                dividing_line_as_str: str = self._dividing_line.get_full_dynamic_line(
+                dynamic_dividing_line_as_str: str = self._dividing_line.get_full_dynamic_line(
                     length=max_length_line, is_override=self._override_system_messages
                 )
-                self._printer(dividing_line_as_str + "\n")
+                self._printer(dynamic_dividing_line_as_str + "\n")
                 self._printer(Text.from_ansi(stdout_result.strip("\n")).markup)
-                self._printer('\n' + dividing_line_as_str)
+                self._printer('\n' + dynamic_dividing_line_as_str)
 
             case (StaticDividingLine() as dividing_line, bool()) | (DynamicDividingLine() as dividing_line, True):
-                dividing_line_as_str: str = StaticDividingLine(dividing_line.get_unit_part()).get_full_static_line(
+                static_dividing_line_as_str: str = StaticDividingLine(dividing_line.get_unit_part()).get_full_static_line(
                     is_override=self._override_system_messages
                 )
-                self._printer(dividing_line_as_str + '\n')
+                self._printer(static_dividing_line_as_str + '\n')
                 output_text_generator()
-                self._printer('\n' + dividing_line_as_str)
+                self._printer('\n' + static_dividing_line_as_str)
             case _:
                 raise NotImplementedError(f"Dividing line with type {self._dividing_line} is not implemented")

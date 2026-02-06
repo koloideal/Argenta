@@ -248,6 +248,17 @@ def test_finds_appropriate_handler_executes_handler_with_flags_by_alias(capsys: 
     assert "Hello World!" in output.out
 
 
+def test_finds_appropriate_handler_raises_runtime_error_when_handler_not_found() -> None:
+    router = Router()
+
+    @router.command('hello')
+    def handler(_res: Response) -> None:
+        pass
+
+    with pytest.raises(RuntimeError, match="Handler for 'unknown' command not found. Panic!"):
+        router.finds_appropriate_handler(InputCommand('unknown'))
+
+
 # ============================================================================
 # Tests for alias and trigger collision detection
 # ============================================================================

@@ -58,6 +58,11 @@ def test_parse_raises_error_for_empty_command() -> None:
     with pytest.raises(EmptyInputCommandException):
         InputCommand.parse('')
 
+    
+def test_parse_raises_error_slash_on_the_end() -> None:
+    with pytest.raises(UnprocessedInputFlagException):
+        InputCommand.parse('ssh --host 192.168.0.3\\')
+
 
 # ============================================================================
 # Tests for flag validation - valid flags

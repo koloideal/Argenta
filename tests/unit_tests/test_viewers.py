@@ -141,3 +141,15 @@ class TestViewer:
         
         mock_output_generator.assert_called_once()
         assert mock_printer.call_count >= 2
+
+    def test_view_framed_text_with_unimplemented_dividing_line(self, mock_printer: Mock, mock_output_generator: Mock):
+        class NotImplementedDividingLine:
+            pass
+
+        renderer = PlainRenderer()
+        dividing_line = NotImplementedDividingLine()
+        viewer = Viewer(mock_printer, renderer, dividing_line, False)
+        
+        with pytest.raises(NotImplementedError):
+            viewer.view_framed_text_from_generator(mock_output_generator, is_stdout_redirected_by_router=True)
+        

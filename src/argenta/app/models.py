@@ -52,10 +52,7 @@ class BaseApp(BehaviorHandlersSettersMixin):
         self.registered_routers: RegisteredRouters = RegisteredRouters()
         self._messages_on_startup: list[str] = []
 
-        if self._override_system_messages:
-            self._renderer: Renderer = PlainRenderer()
-        else:
-            self._renderer: Renderer = RichRenderer()
+        self._renderer: Renderer = PlainRenderer() if self._override_system_messages else RichRenderer()
 
         self._viewer: Viewer = Viewer(
             printer=self._printer,

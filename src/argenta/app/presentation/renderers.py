@@ -137,7 +137,8 @@ class PlainRenderer(Renderer):
     def render_text_for_description_message_generator(command: str, description: str) -> str:
         return f"{command} *=*=* {description}"
 
-    def render_messages_on_startup(self, messages: Iterable[str]) -> str:
+    @staticmethod
+    def render_messages_on_startup(messages: Iterable[str]) -> str:
         return "\n" + "\n".join(messages)
 
     @staticmethod
