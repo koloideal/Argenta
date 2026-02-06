@@ -8,7 +8,7 @@ from argenta.command.exceptions import (
     UnprocessedInputFlagException,
 )
 from argenta.command.flag import Flag, InputFlag
-from argenta.command.flag.flags import Flags
+from argenta.command import Flags
 from argenta.command.flag.models import PossibleValues, ValidationStatus
 from argenta.command.models import Command, InputCommand
 
@@ -57,6 +57,11 @@ def test_parse_raises_error_for_unprocessed_entity_after_flags() -> None:
 def test_parse_raises_error_for_empty_command() -> None:
     with pytest.raises(EmptyInputCommandException):
         InputCommand.parse('')
+
+    
+def test_parse_raises_error_slash_on_the_end() -> None:
+    with pytest.raises(UnprocessedInputFlagException):
+        InputCommand.parse('ssh --host 192.168.0.3\\')
 
 
 # ============================================================================

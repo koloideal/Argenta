@@ -3,12 +3,14 @@ __all__ = ["AutoCompleter"]
 import sys
 from typing import Callable, Iterable
 
-from prompt_toolkit import PromptSession, HTML
+from prompt_toolkit import HTML, PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
-from prompt_toolkit.completion import Completer, Completion, CompleteEvent
+from prompt_toolkit.completion import (CompleteEvent, Completer, Completion,
+                                       ThreadedCompleter)
+from prompt_toolkit.cursor_shapes import CursorShape
 from prompt_toolkit.document import Document
 from prompt_toolkit.formatted_text import StyleAndTextTuples
-from prompt_toolkit.history import History, ThreadedHistory, FileHistory, InMemoryHistory
+from prompt_toolkit.history import FileHistory, History, InMemoryHistory, ThreadedHistory
 from prompt_toolkit.key_binding import KeyBindings, KeyPressEvent
 from prompt_toolkit.lexers import Lexer
 from prompt_toolkit.styles import Style
@@ -97,34 +99,36 @@ class AutoCompleter:
 
         def _(event: KeyPressEvent) -> None:
             buff = event.app.current_buffer
-
             if buff.complete_state:
                 buff.complete_next()
-            else:
-                completions = list(buff.completer.get_completions(buff.document, CompleteEvent()))
-                if len(completions) == 1:
-                    buff.apply_completion(completions[0])
-                else:
-                    buff.start_completion(select_first=False)
+                return
+            comps_gen = iter(buff.completer.get_completions(buff.document, CompleteEvent()))
+            try:
+                first = next(comps_gen)
+            except StopIteration:
+                return
+            try:
+                _ = next(comps_gen)
+                buff.start_completion(select_first=False)
+            except StopIteration:
+                buff.apply_completion(first)
 
         kb.add(self.autocomplete_button)(_)
 
         history: InMemoryHistory | ThreadedHistory
-
         if self.history_filename:
             history = ThreadedHistory(FileHistory(self.history_filename))
         else:
             history = InMemoryHistory()
 
         style = Style.from_dict({'valid': '#00ff00', 'invalid': '#ff0000'})
-
         self._session = PromptSession(
             history=history,
-            completer=HistoryCompleter(history, all_commands),
+            completer=ThreadedCompleter(HistoryCompleter(history, all_commands)),
             complete_while_typing=False,
             key_bindings=kb,
             auto_suggest=AutoSuggestFromHistory() if self.auto_suggestions else None,
-            style=style if self.command_highlighting else style,
+            style=style if self.command_highlighting else None,
             lexer=CommandLexer(all_commands) if self.command_highlighting else None,
         )
 
@@ -134,5 +138,6 @@ class AutoCompleter:
         if self._session is None:
             raise RuntimeError("Call initial_setup() before using prompt()")
         return self._session.prompt(
-            HTML(prompt_text) if isinstance(prompt_text, str) else prompt_text
+            HTML(prompt_text) if isinstance(prompt_text, str) else prompt_text,
+            cursor=CursorShape.BLINKING_BEAM
         )

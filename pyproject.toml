@@ -1,9 +1,9 @@
 [project]
 name = "argenta"
-version = "1.1.2"
+version = "1.2.0"
 description = "Python library for building modular CLI applications"
 authors = [{ name = "kolo", email = "kolo.is.main@gmail.com" }]
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.15"
 readme = "README.md"
 license = { text = "MIT" }
 dependencies = [
@@ -14,6 +14,13 @@ dependencies = [
 ]
 
 [dependency-groups]
+dev = [
+    {include-group = "linters"},
+    {include-group = "typecheckers"},
+    {include-group = "docs"},
+    {include-group = "tests"},
+    "scriv>=1.8.0",
+]
 linters = [
     "isort>=7.0.0",
     "ruff>=0.12.12",
@@ -35,17 +42,14 @@ tests = [
     "pytest-cov>=7.0.0",
     "pytest-mock>=3.15.1",
 ]
+metrics = [
+    "matplotlib>=3.10.8",
+    "psutil>=7.2.1",
+    "py-cpuinfo>=9.0.0",
+]
 
 [tool.ruff]
-exclude = [
-    ".idea",
-    "venv",
-    ".git",
-    "poetry.lock",
-    ".__pycache__",
-    "tests"
-]
-line-length=90
+line-length=100
 
 [tool.pyright]
 typeCheckingMode = "strict"
@@ -68,6 +72,19 @@ omit = [
     "src/argenta/metrics/*"
 ]
 
+[tool.scriv]
+format = "md"
+output_file = "CHANGELOG.md"
+fragment_directory = "changelog.d"
+categories = [
+    "Added",
+    "Changed",
+    "Deprecated",
+    "Removed",
+    "Fixed",
+]
+md_header_level = "2"
+
 [tool.mypy]
 disable_error_code = "import-untyped"
 
@@ -75,5 +92,5 @@ disable_error_code = "import-untyped"
 line_length=90
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build"]
+build-backend = "uv_build"

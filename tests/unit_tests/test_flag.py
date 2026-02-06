@@ -3,7 +3,7 @@ import re
 import pytest
 
 from argenta.command.flag import Flag, InputFlag, PossibleValues
-from argenta.command.flag.flags import Flags, InputFlags
+from argenta.command import Flags, InputFlags
 
 
 # ============================================================================
@@ -162,6 +162,49 @@ def test_input_flags_get_by_name_returns_none_for_missing_flag() -> None:
     flag2 = InputFlag(name='some', input_value='', status=None)
     input_flags = InputFlags([flag, flag2])
     assert input_flags.get_flag_by_name('case') is None
+
+
+def test_input_flags_get_by_name_with_status_finds_matching_flag() -> None:
+    from argenta.command.flag import ValidationStatus
+    
+    flag1 = InputFlag(name='test', input_value='valid', status=ValidationStatus.VALID)
+    flag2 = InputFlag(name='other', input_value='invalid', status=ValidationStatus.INVALID)
+    input_flags = InputFlags([flag1, flag2])
+    
+    result = input_flags.get_flag_by_name('test', with_status=ValidationStatus.VALID)
+    assert result == flag1
+
+
+def test_input_flags_get_by_name_with_status_returns_none_when_status_mismatch() -> None:
+    from argenta.command.flag import ValidationStatus
+    
+    flag = InputFlag(name='test', input_value='value', status=ValidationStatus.VALID)
+    input_flags = InputFlags([flag])
+    
+    result = input_flags.get_flag_by_name('test', with_status=ValidationStatus.INVALID)
+    assert result is None
+
+
+def test_input_flags_get_by_name_with_status_returns_default_when_not_found() -> None:
+    from argenta.command.flag import ValidationStatus
+    
+    flag = InputFlag(name='test', input_value='value', status=ValidationStatus.VALID)
+    input_flags = InputFlags([flag])
+    
+    result = input_flags.get_flag_by_name('missing', with_status=ValidationStatus.VALID, default='default_value')
+    assert result == 'default_value'
+
+
+def test_input_flags_get_by_name_with_status_filters_by_both_name_and_status() -> None:
+    from argenta.command.flag import ValidationStatus
+    
+    flag1 = InputFlag(name='test', input_value='value1', status=ValidationStatus.VALID)
+    flag2 = InputFlag(name='test', input_value='value2', status=ValidationStatus.INVALID)
+    flag3 = InputFlag(name='other', input_value='value3', status=ValidationStatus.VALID)
+    input_flags = InputFlags([flag1, flag2, flag3])
+    
+    result = input_flags.get_flag_by_name('test', with_status=ValidationStatus.INVALID)
+    assert result == flag2
 
 
 # ============================================================================

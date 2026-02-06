@@ -579,7 +579,7 @@ msgstr ""
 msgid ""
 "Откройте `127.0.0.1:8000` в браузере, чтобы просмотреть сгенерированную "
 "документацию."
-msgstr "Open `127.0.0.1:8000` in your browser to view the generated documentation."
+msgstr "Open `127.0.0.1:8000` in your browser to presentation the generated documentation."
 
 #: ../../root/contributing.rst:233
 msgid ""

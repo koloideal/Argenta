@@ -84,3 +84,8 @@ ArgParser
 
     $ python app.py --old-param value
     Warning: argument --old-param is deprecated
+
+.. warning::
+
+    Параметр поддерживается начиная с версии CPython 3.13, если версия ниже, то параметр будет игнорироваться.
+

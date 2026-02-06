@@ -7,6 +7,7 @@ from argenta.command import InputCommand
 
 router = Router(title="Demo")
 
+
 @router.command(Command("PING", description="Ping command"))
 def ping(response: Response):
     print("PONG")

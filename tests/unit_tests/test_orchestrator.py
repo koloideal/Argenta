@@ -99,7 +99,7 @@ def test_start_polling_creates_dishka_container(
     """Test that start_polling creates a dishka container"""
     mock_make_container = mocker.patch('argenta.orchestrator.entity.make_container')
     _mock_setup_dishka = mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mocker.patch.object(sample_app, 'run_polling')
+    mocker.patch.object(sample_app, '_run_polling')
     
     orchestrator = Orchestrator(arg_parser=mock_argparser)
     orchestrator.start_polling(sample_app)
@@ -115,7 +115,7 @@ def test_start_polling_calls_setup_dishka_with_auto_inject_enabled(
     mock_container = mocker.MagicMock()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
     mocker.patch('argenta.orchestrator.entity.make_container', return_value=mock_container)
     mock_setup_dishka = mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mocker.patch.object(sample_app, 'run_polling')
+    mocker.patch.object(sample_app, '_run_polling')
     
     orchestrator = Orchestrator(arg_parser=mock_argparser, auto_inject_handlers=True)
     orchestrator.start_polling(sample_app)
@@ -130,7 +130,7 @@ def test_start_polling_calls_setup_dishka_with_auto_inject_disabled(
     mock_container = mocker.MagicMock()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
     mocker.patch('argenta.orchestrator.entity.make_container', return_value=mock_container)
     mock_setup_dishka = mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mocker.patch.object(sample_app, 'run_polling')
+    mocker.patch.object(sample_app, '_run_polling')
     
     orchestrator = Orchestrator(arg_parser=mock_argparser, auto_inject_handlers=False)
     orchestrator.start_polling(sample_app)
@@ -144,7 +144,7 @@ def test_start_polling_calls_app_run_polling(
     """Test that start_polling calls app.run_polling()"""
     mocker.patch('argenta.orchestrator.entity.make_container')
     mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mock_run_polling = mocker.patch.object(sample_app, 'run_polling')
+    mock_run_polling = mocker.patch.object(sample_app, '_run_polling')
     
     orchestrator = Orchestrator(arg_parser=mock_argparser)
     orchestrator.start_polling(sample_app)
@@ -159,7 +159,7 @@ def test_start_polling_includes_custom_providers_in_container(
     custom_provider = Provider()
     mock_make_container = mocker.patch('argenta.orchestrator.entity.make_container')
     mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mocker.patch.object(sample_app, 'run_polling')
+    mocker.patch.object(sample_app, '_run_polling')
     
     orchestrator = Orchestrator(arg_parser=mock_argparser, custom_providers=[custom_provider])
     orchestrator.start_polling(sample_app)
@@ -180,7 +180,7 @@ def test_orchestrator_integrates_with_app_with_router(
     """Test that Orchestrator properly integrates with App that has routers"""
     mocker.patch('argenta.orchestrator.entity.make_container')
     mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mock_run_polling = mocker.patch.object(sample_app, 'run_polling')
+    mock_run_polling = mocker.patch.object(sample_app, '_run_polling')
     
     sample_app.include_router(sample_router)
     
@@ -202,7 +202,7 @@ def test_orchestrator_passes_argparser_to_container_context(
     """Test that Orchestrator passes ArgParser instance to container context"""
     mock_make_container = mocker.patch('argenta.orchestrator.entity.make_container')
     mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mocker.patch.object(sample_app, 'run_polling')
+    mocker.patch.object(sample_app, '_run_polling')
     
     orchestrator = Orchestrator(arg_parser=mock_argparser)
     orchestrator.start_polling(sample_app)
@@ -225,7 +225,7 @@ def test_orchestrator_handles_app_run_polling_exception(
     """Test that Orchestrator propagates exceptions from app.run_polling()"""
     mocker.patch('argenta.orchestrator.entity.make_container')
     mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mocker.patch.object(sample_app, 'run_polling', side_effect=RuntimeError("Test error"))
+    mocker.patch.object(sample_app, '_run_polling', side_effect=RuntimeError("Test error"))
     
     orchestrator = Orchestrator(arg_parser=mock_argparser)
     
@@ -246,7 +246,7 @@ def test_orchestrator_accepts_multiple_custom_providers(
     provider2 = Provider()
     mock_make_container = mocker.patch('argenta.orchestrator.entity.make_container')
     mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mocker.patch.object(sample_app, 'run_polling')
+    mocker.patch.object(sample_app, '_run_polling')
     
     orchestrator = Orchestrator(
         arg_parser=mock_argparser,

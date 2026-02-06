@@ -4,6 +4,7 @@ from argenta.di import FromDishka
 
 router = Router(title="Authentication")
 
+
 def authenticate_user(username: str) -> str:
     return f"token_for_{username}"
 

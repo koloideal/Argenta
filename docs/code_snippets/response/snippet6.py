@@ -10,10 +10,7 @@ router = Router(title="Flags Example")
     Command(
         "process",
         description="Process with flags",
-        flags=Flags([
-            Flag("format", possible_values=["json", "xml"]), 
-            Flag("verbose")
-        ]),
+        flags=Flags([Flag("format", possible_values=["json", "xml"]), Flag("verbose")]),
     )
 )
 def process_handler(response: Response):

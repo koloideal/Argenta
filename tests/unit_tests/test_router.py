@@ -3,13 +3,11 @@ import re
 import pytest
 from pytest import CaptureFixture
 
-from argenta.command import Command, InputCommand
+from argenta.command import Command, InputCommand, Flags, InputFlags
 from argenta.command.flag import Flag, InputFlag
-from argenta.command.flag.flags import Flags, InputFlags
 from argenta.command.flag.models import PossibleValues, ValidationStatus
 from argenta.response.entity import Response
 from argenta.router import Router
-from argenta.router.entity import _structuring_input_flags, _validate_func_args
 from argenta.router.exceptions import (
     RepeatedAliasNameException,
     RepeatedFlagNameException,
@@ -58,7 +56,7 @@ def test_validate_func_args_raises_error_for_missing_response_parameter() -> Non
     def handler() -> None:
         pass
     with pytest.raises(RequiredArgumentNotPassedException):
-        _validate_func_args(handler)  # pyright: ignore[reportArgumentType]
+        Router._validate_func_args(handler)  # pyright: ignore[reportArgumentType]
 
 
 def test_validate_func_args_prints_warning_for_wrong_type_hint(capsys: CaptureFixture[str]) -> None:
@@ -68,7 +66,7 @@ def test_validate_func_args_prints_warning_for_wrong_type_hint(capsys: CaptureFi
     def func(_response: NotResponse) -> None:
         pass
 
-    _validate_func_args(func)
+    Router._validate_func_args(func)
 
     output = capsys.readouterr()
 
@@ -78,7 +76,7 @@ def test_validate_func_args_prints_warning_for_wrong_type_hint(capsys: CaptureFi
 def test_validate_func_args_accepts_missing_type_hint(capsys: CaptureFixture[str]) -> None:
     def func(response) -> None:  # pyright: ignore[reportMissingParameterType, reportUnknownParameterType]
         pass
-    _validate_func_args(func)  # pyright: ignore[reportUnknownArgumentType]
+    Router._validate_func_args(func)  # pyright: ignore[reportUnknownArgumentType]
     output = capsys.readouterr()
     assert output.out == ''
 
@@ -91,19 +89,19 @@ def test_validate_func_args_accepts_missing_type_hint(capsys: CaptureFixture[str
 def test_structuring_input_flags_marks_unregistered_flag_as_undefined() -> None:
     cmd = Command('cmd')
     input_flags = InputFlags([InputFlag('ssh', input_value='', status=None)])
-    assert _structuring_input_flags(cmd, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='', status=ValidationStatus.UNDEFINED)])
+    assert Router._structuring_input_flags(cmd, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='', status=ValidationStatus.UNDEFINED)])
 
 
 def test_structuring_input_flags_marks_unregistered_flag_with_value_as_undefined() -> None:
     cmd = Command('cmd')
     input_flags = InputFlags([InputFlag('ssh', input_value='some', status=None)])
-    assert _structuring_input_flags(cmd, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='some', status=ValidationStatus.UNDEFINED)])
+    assert Router._structuring_input_flags(cmd, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='some', status=ValidationStatus.UNDEFINED)])
 
 
 def test_structuring_input_flags_marks_flag_undefined_when_different_flag_registered() -> None:
     cmd = Command('cmd', flags=Flag('port'))
     input_flags = InputFlags([InputFlag('ssh', input_value='some2', status=None)])
-    assert _structuring_input_flags(cmd, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='some2', status=ValidationStatus.UNDEFINED)])
+    assert Router._structuring_input_flags(cmd, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='some2', status=ValidationStatus.UNDEFINED)])
 
 
 # ============================================================================
@@ -114,19 +112,19 @@ def test_structuring_input_flags_marks_flag_undefined_when_different_flag_regist
 def test_structuring_input_flags_marks_flag_invalid_when_value_provided_for_neither() -> None:
     command = Command('cmd', flags=Flag('ssh', possible_values=PossibleValues.NEITHER))
     input_flags = InputFlags([InputFlag('ssh', input_value='some3', status=None)])
-    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='some3', status=ValidationStatus.INVALID)])
+    assert Router._structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='some3', status=ValidationStatus.INVALID)])
 
 
 def test_structuring_input_flags_marks_flag_invalid_when_value_not_matching_regex() -> None:
     command = Command('cmd', flags=Flag('ssh', possible_values=re.compile(r'some[1-5]$')))
     input_flags = InputFlags([InputFlag('ssh', input_value='some40', status=None)])
-    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='some40', status=ValidationStatus.INVALID)])
+    assert Router._structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='some40', status=ValidationStatus.INVALID)])
 
 
 def test_structuring_input_flags_marks_flag_invalid_when_value_not_in_list() -> None:
     command = Command('cmd', flags=Flag('ssh', possible_values=['example']))
     input_flags = InputFlags([InputFlag('ssh', input_value='example2', status=None)])
-    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='example2', status=ValidationStatus.INVALID)])
+    assert Router._structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='example2', status=ValidationStatus.INVALID)])
 
 
 # ============================================================================
@@ -137,25 +135,25 @@ def test_structuring_input_flags_marks_flag_invalid_when_value_not_in_list() -> 
 def test_structuring_input_flags_marks_registered_flag_as_valid() -> None:
     command = Command('cmd', flags=Flag('port'))
     input_flags = InputFlags([InputFlag('port', input_value='some2', status=None)])
-    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('port', input_value='some2', status=ValidationStatus.VALID)])
+    assert Router._structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('port', input_value='some2', status=ValidationStatus.VALID)])
 
 
 def test_structuring_input_flags_marks_flag_valid_when_value_in_list() -> None:
     command = Command('cmd', flags=Flag('port', possible_values=['some2', 'some3']))
     input_flags = InputFlags([InputFlag('port', input_value='some2', status=None)])
-    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('port', input_value='some2', status=ValidationStatus.VALID)])
+    assert Router._structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('port', input_value='some2', status=ValidationStatus.VALID)])
 
 
 def test_structuring_input_flags_marks_flag_valid_when_value_matches_regex() -> None:
     command = Command('cmd', flags=Flag('ssh', possible_values=re.compile(r'more[1-5]$')))
     input_flags = InputFlags([InputFlag('ssh', input_value='more5', status=None)])
-    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='more5', status=ValidationStatus.VALID)])
+    assert Router._structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='more5', status=ValidationStatus.VALID)])
 
 
 def test_structuring_input_flags_marks_flag_valid_when_empty_value_for_neither() -> None:
     command = Command('cmd', flags=Flag('ssh', possible_values=PossibleValues.NEITHER))
     input_flags = InputFlags([InputFlag('ssh', input_value='', status=None)])
-    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='', status=ValidationStatus.VALID)])
+    assert Router._structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='', status=ValidationStatus.VALID)])
 
 
 # ============================================================================
@@ -248,6 +246,17 @@ def test_finds_appropriate_handler_executes_handler_with_flags_by_alias(capsys: 
     output = capsys.readouterr()
 
     assert "Hello World!" in output.out
+
+
+def test_finds_appropriate_handler_raises_runtime_error_when_handler_not_found() -> None:
+    router = Router()
+
+    @router.command('hello')
+    def handler(_res: Response) -> None:
+        pass
+
+    with pytest.raises(RuntimeError, match="Handler for 'unknown' command not found. Panic!"):
+        router.finds_appropriate_handler(InputCommand('unknown'))
 
 
 # ============================================================================

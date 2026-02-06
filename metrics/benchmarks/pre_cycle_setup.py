@@ -1,22 +1,21 @@
 __all__ = [
     "benchmark_no_aliases",
-    "benchmark_many_aliases",
+    "benchmark_with_many_aliases",
     "benchmark_few_aliases",
     "benchmark_extreme_aliases",
     "benchmark_very_many_aliases"
 ]
 
 from argenta import App
-from argenta.router import Router
 from argenta.command.models import Command
 from argenta.response import Response
+from argenta.router import Router
 
-from ..utils import get_time_of_pre_cycle_setup
-from ..registry import benchmark
+from .entity import benchmarks
 
 
-@benchmark(type_="pre_cycle_setup", description="With no aliases")
-def benchmark_no_aliases() -> float:
+@benchmarks.register(type_="pre_cycle_setup", description="With no aliases")
+def benchmark_no_aliases() -> None:
     app = App(override_system_messages=True)
     router = Router()
 
@@ -33,12 +32,11 @@ def benchmark_no_aliases() -> float:
         pass
 
     app.include_router(router)
-    execution_time = get_time_of_pre_cycle_setup(app)
-    return execution_time
+    app._pre_cycle_setup()
 
 
-@benchmark(type_="pre_cycle_setup", description="With few aliases (6 total)")
-def benchmark_few_aliases() -> float:
+@benchmarks.register(type_="pre_cycle_setup", description="With few aliases (6 total)")
+def benchmark_few_aliases() -> None:
     app = App(override_system_messages=True)
     router = Router()
 
@@ -55,12 +53,11 @@ def benchmark_few_aliases() -> float:
         pass
 
     app.include_router(router)
-    execution_time = get_time_of_pre_cycle_setup(app)
-    return execution_time
+    app._pre_cycle_setup()
 
 
-@benchmark(type_="pre_cycle_setup", description="With many aliases (15 total)")
-def benchmark_many_aliases() -> float:
+@benchmarks.register(type_="pre_cycle_setup", description="With many aliases (15 total)")
+def benchmark_with_many_aliases() -> None:
     app = App(override_system_messages=True)
     router = Router()
 
@@ -77,12 +74,11 @@ def benchmark_many_aliases() -> float:
         pass
 
     app.include_router(router)
-    execution_time = get_time_of_pre_cycle_setup(app)
-    return execution_time
+    app._pre_cycle_setup()
 
 
-@benchmark(type_="pre_cycle_setup", description="With very many aliases (60 total)")
-def benchmark_very_many_aliases() -> float:
+@benchmarks.register(type_="pre_cycle_setup", description="With very many aliases (60 total)")
+def benchmark_very_many_aliases() -> None:
     app = App(override_system_messages=True)
     router = Router()
 
@@ -99,12 +95,11 @@ def benchmark_very_many_aliases() -> float:
         pass
 
     app.include_router(router)
-    execution_time = get_time_of_pre_cycle_setup(app)
-    return execution_time
+    app._pre_cycle_setup()
 
 
-@benchmark(type_="pre_cycle_setup", description="With extreme aliases (300 total)")
-def benchmark_extreme_aliases() -> float:
+@benchmarks.register(type_="pre_cycle_setup", description="With extreme aliases (300 total)")
+def benchmark_extreme_aliases() -> None:
     app = App(override_system_messages=True)
     router = Router()
 
@@ -121,5 +116,4 @@ def benchmark_extreme_aliases() -> float:
         pass
 
     app.include_router(router)
-    execution_time = get_time_of_pre_cycle_setup(app)
-    return execution_time
+    app._pre_cycle_setup()

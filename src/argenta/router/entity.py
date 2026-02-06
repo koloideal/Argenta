@@ -6,9 +6,8 @@ from typing import Callable
 from rich.console import Console
 
 from argenta.app.protocols import HandlerFunc
-from argenta.command import Command, InputCommand
+from argenta.command import Command, InputCommand, InputFlags
 from argenta.command.flag import ValidationStatus
-from argenta.command.flag.flags import InputFlags
 from argenta.response import Response, ResponseStatus
 from argenta.router.command_handler.entity import CommandHandler, CommandHandlers
 from argenta.router.exceptions import (RepeatedAliasNameException,
@@ -36,7 +35,7 @@ class Router:
         :return: None
         """
         self.title: str = title
-        self.disable_redirect_stdout: bool = disable_redirect_stdout
+        self.is_redirect_stdout_disabled: bool = disable_redirect_stdout
 
         self.command_handlers: CommandHandlers = CommandHandlers()
         self.aliases: set[str] = set()
@@ -57,7 +56,7 @@ class Router:
         self._update_routing_keys(redefined_command)
         
         def decorator(func: HandlerFunc) -> HandlerFunc:
-            _validate_func_args(func)
+            self._validate_func_args(func)
             self.command_handlers.add_handler(CommandHandler(func, redefined_command))
             return func
 
@@ -117,7 +116,7 @@ class Router:
         handle_command = command_handler.handled_command
         if handle_command.registered_flags.flags:
             if input_command_flags.flags:
-                response: Response = _structuring_input_flags(handle_command, input_command_flags)
+                response: Response = self._structuring_input_flags(handle_command, input_command_flags)
                 command_handler.handling(response)
             else:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
@@ -134,53 +133,53 @@ class Router:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
                 command_handler.handling(response)
 
+    @staticmethod
+    def _structuring_input_flags(handled_command: Command, input_flags: InputFlags) -> Response:
+        """
+        Private. Validates flags of input command
+        :param handled_command: entity of the handled command
+        :param input_flags:
+        :return: entity of response as Response
+        """
+        invalid_value_flags, undefined_flags = False, False
 
-def _structuring_input_flags(handled_command: Command, input_flags: InputFlags) -> Response:
-    """
-    Private. Validates flags of input command
-    :param handled_command: entity of the handled command
-    :param input_flags:
-    :return: entity of response as Response
-    """
-    invalid_value_flags, undefined_flags = False, False
+        for flag in input_flags:
+            flag_status: ValidationStatus = handled_command.validate_input_flag(flag)
+            flag.status = flag_status
+            if flag_status == ValidationStatus.INVALID:
+                invalid_value_flags = True
+            elif flag_status == ValidationStatus.UNDEFINED:
+                undefined_flags = True
 
-    for flag in input_flags:
-        flag_status: ValidationStatus = handled_command.validate_input_flag(flag)
-        flag.status = flag_status
-        if flag_status == ValidationStatus.INVALID:
-            invalid_value_flags = True
-        elif flag_status == ValidationStatus.UNDEFINED:
-            undefined_flags = True
-
-    status = ResponseStatus.from_flags(
-        has_invalid_value_flags=invalid_value_flags, 
-        has_undefined_flags=undefined_flags
-    )
-
-    return Response(status=status, input_flags=input_flags)
-
-
-def _validate_func_args(func: HandlerFunc) -> None:
-    """
-    Private. Validates the arguments of the handler
-    :param func: entity of the handler func
-    :return: None if func is valid else raise exception
-    """
-    transferred_args = getfullargspec(func).args
-    if len(transferred_args) == 0:
-        raise RequiredArgumentNotPassedException()
-
-    response_arg: str = transferred_args[0]
-    func_annotations: dict[str, None] = get_annotations(func)
-
-    response_arg_annotation = func_annotations.get(response_arg)
-
-    if response_arg_annotation is not None and response_arg_annotation is not Response:
-        source_line: int = getsourcelines(func)[1]
-        Console().print(
-            f'\nFile "{getsourcefile(func)}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
-            + f"of argument([green]{response_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue],"
-            + f" [i]but[/i] [bold blue]{response_arg_annotation}[/bold blue] [i]is specified[/i]",
-            highlight=False,
+        status = ResponseStatus.from_flags(
+            has_invalid_value_flags=invalid_value_flags,
+            has_undefined_flags=undefined_flags
         )
+
+        return Response(status=status, input_flags=input_flags)
+
+    @staticmethod
+    def _validate_func_args(func: HandlerFunc) -> None:
+        """
+        Private. Validates the arguments of the handler
+        :param func: entity of the handler func
+        :return: None if func is valid else raise exception
+        """
+        transferred_args = getfullargspec(func).args
+        if len(transferred_args) == 0:
+            raise RequiredArgumentNotPassedException()
+
+        response_arg: str = transferred_args[0]
+        func_annotations: dict[str, None] = get_annotations(func)
+
+        response_arg_annotation = func_annotations.get(response_arg)
+
+        if response_arg_annotation is not None and response_arg_annotation is not Response:
+            source_line: int = getsourcelines(func)[1]
+            Console().print(
+                f'\nFile "{getsourcefile(func)}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
+                + f"of argument([green]{response_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue],"
+                + f" [i]but[/i] [bold blue]{response_arg_annotation}[/bold blue] [i]is specified[/i]",
+                highlight=False,
+            )
     

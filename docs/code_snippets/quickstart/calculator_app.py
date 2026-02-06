@@ -8,11 +8,8 @@ from argenta.response.status import ResponseStatus
 
 router = Router("Calculator")
 
-operations = {
-    'mul': operator.mul,
-    'sub': operator.sub,
-    'add': operator.add
-}
+operations = {"mul": operator.mul, "sub": operator.sub, "add": operator.add}
+
 
 @router.command(
     Command(
@@ -22,7 +19,9 @@ operations = {
             [
                 Flag("a", possible_values=re.compile(r"^\d{,5}$")),  # First number
                 Flag("b", possible_values=re.compile(r"^\d{,5}$")),  # Second number
-                Flag("operation", possible_values=["add", "sub", "mul"]),  # Operation: add, sub, mul
+                Flag(
+                    "operation", possible_values=["add", "sub", "mul"]
+                ),  # Operation: add, sub, mul
             ]
         ),
     )

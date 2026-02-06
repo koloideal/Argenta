@@ -1,0 +1,42 @@
+{
+  "type": "finds_appropriate_handler",
+  "iterations": 1000,
+  "gc_disabled": true,
+  "benchmarks": [
+    {
+      "name": "benchmark_simple_command",
+      "description": "Simple command (no flags)",
+      "avg_time": 0.036,
+      "median_time": 0.0354,
+      "std_dev": 0.0087
+    },
+    {
+      "name": "benchmark_command_with_flags",
+      "description": "Command with flags (3 flags)",
+      "avg_time": 0.0557,
+      "median_time": 0.0545,
+      "std_dev": 0.0171
+    },
+    {
+      "name": "benchmark_many_commands",
+      "description": "Many commands (50 commands)",
+      "avg_time": 1.0453,
+      "median_time": 1.0388,
+      "std_dev": 0.0322
+    },
+    {
+      "name": "benchmark_command_with_many_flags",
+      "description": "Command with many flags (20 flags)",
+      "avg_time": 0.1322,
+      "median_time": 0.131,
+      "std_dev": 0.0045
+    },
+    {
+      "name": "benchmark_extreme_router",
+      "description": "Extreme (100 commands, 10 flags each)",
+      "avg_time": 3.2471,
+      "median_time": 3.235,
+      "std_dev": 0.0814
+    }
+  ]
+}

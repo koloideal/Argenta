@@ -1,14 +1,18 @@
-from argenta.app import AutoCompleter
+from argenta import App, Command, Response, Router
 
 
-if __name__ == "__main__":
-    test_commands: set[str] = {"start", "qwertyu", "stop", "exit"}
-    hist_file: str = "history.txt"
+app = App(override_system_messages=True)
+router = Router()
 
-    ac: AutoCompleter = AutoCompleter(autocomplete_button='tab')
-    ac.initial_setup(test_commands)
+@router.command(Command('command'))
+def handler(_res: Response) -> None:
+    pass
 
-    while True:
-        inp: str = ac.prompt(">>> ").strip()
-        if inp == "exit":
-            break
+@router.command(Command('command_other'))
+def handler2(_res: Response) -> None:
+    pass
+
+app.include_routers(router)
+app._pre_cycle_setup()
+
+assert app._most_similar_command('command_') == 'command'

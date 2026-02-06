@@ -1,0 +1,293 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-06 23:44+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/metrics.rst:2
+msgid "Метрики"
+msgstr "Metrics"
+
+#: ../../root/metrics.rst:4
+msgid ""
+"Система метрик ``Argenta`` предоставляет инструменты для измерения "
+"производительности ключевых компонентов библиотеки. Это позволяет "
+"отслеживать регрессию/прогрессию производительности между релизами и "
+"оптимизировать критические участки кода."
+msgstr ""
+"The ``Argenta`` metrics system provides tools for measuring the performance "
+"of key library components. This allows tracking performance regression/progression "
+"between releases and optimizing critical code sections."
+
+#: ../../root/metrics.rst:9
+msgid "Запуск метрик"
+msgstr "Running Metrics"
+
+#: ../../root/metrics.rst:11
+msgid ""
+"Для работы с метриками необходимо склонировать репозиторий и установить "
+"зависимости:"
+msgstr ""
+"To work with metrics, you need to clone the repository and install "
+"dependencies:"
+
+#: ../../root/metrics.rst:19
+msgid "Запуск системы метрик:"
+msgstr "Running the metrics system:"
+
+#: ../../root/metrics.rst:25
+msgid ""
+"После запуска откроется интерактивная сессия с доступными командами для "
+"работы с бенчмарками."
+msgstr ""
+"After launch, an interactive session will open with available commands for "
+"working with benchmarks."
+
+#: ../../root/metrics.rst:30
+msgid "Доступные команды"
+msgstr "Available Commands"
+
+#: ../../root/metrics.rst:33
+msgid "run-all"
+msgstr "run-all"
+
+#: ../../root/metrics.rst:35
+msgid ""
+"Запускает все зарегистрированные бенчмарки и выводит результаты в виде "
+"таблиц."
+msgstr ""
+"Runs all registered benchmarks and outputs results as tables."
+
+#: ../../root/metrics.rst:37 ../../root/metrics.rst:55
+#: ../../root/metrics.rst:78 ../../root/metrics.rst:97
+#: ../../root/metrics.rst:117
+msgid "**Синтаксис:**"
+msgstr "**Syntax:**"
+
+#: ../../root/metrics.rst:43 ../../root/metrics.rst:84
+#: ../../root/metrics.rst:103
+msgid "**Флаги:**"
+msgstr "**Flags:**"
+
+#: ../../root/metrics.rst:45
+msgid ""
+"``--without-gc`` — отключает сборщик мусора во время выполнения "
+"бенчмарков для более стабильных результатов"
+msgstr ""
+"``--without-gc`` — disables garbage collector during benchmark execution "
+"for more stable results"
+
+#: ../../root/metrics.rst:46
+msgid "``--without-system-info`` — скрывает информацию о системе в выводе"
+msgstr "``--without-system-info`` — hides system information in output"
+
+#: ../../root/metrics.rst:51
+msgid "list-types"
+msgstr "list-types"
+
+#: ../../root/metrics.rst:53
+msgid ""
+"Выводит список всех доступных типов бенчмарков с количеством тестов в "
+"каждой категории."
+msgstr ""
+"Displays a list of all available benchmark types with the number of tests "
+"in each category."
+
+#: ../../root/metrics.rst:61
+msgid "**Пример вывода:**"
+msgstr "**Example output:**"
+
+#: ../../root/metrics.rst:74
+msgid "run-type"
+msgstr "run-type"
+
+#: ../../root/metrics.rst:76
+msgid "Запускает бенчмарки определённого типа."
+msgstr "Runs benchmarks of a specific type."
+
+#: ../../root/metrics.rst:86
+msgid "``--type`` — тип бенчмарков для запуска (обязательный)"
+msgstr "``--type`` — benchmark type to run (required)"
+
+#: ../../root/metrics.rst:87 ../../root/metrics.rst:106
+msgid "``--without-gc`` — отключает сборщик мусора"
+msgstr "``--without-gc`` — disables garbage collector"
+
+#: ../../root/metrics.rst:88
+msgid "``--without-system-info`` — скрывает информацию о системе"
+msgstr "``--without-system-info`` — hides system information"
+
+#: ../../root/metrics.rst:93
+msgid "diagrams-generate"
+msgstr "diagrams-generate"
+
+#: ../../root/metrics.rst:95
+msgid ""
+"Генерирует визуальные диаграммы сравнения производительности для всех "
+"бенчмарков."
+msgstr ""
+"Generates visual performance comparison diagrams for all benchmarks."
+
+#: ../../root/metrics.rst:105
+msgid ""
+"``--iterations`` — количество итераций для каждого бенчмарка (по "
+"умолчанию 100)"
+msgstr ""
+"``--iterations`` — number of iterations for each benchmark (default 100)"
+
+#: ../../root/metrics.rst:108
+msgid ""
+"Диаграммы сохраняются в директорию "
+"``metrics/reports/diagrams/<timestamp>/``."
+msgstr ""
+"Diagrams are saved to the ``metrics/reports/diagrams/<timestamp>/`` directory."
+
+#: ../../root/metrics.rst:113
+msgid "release-generate"
+msgstr "release-generate"
+
+#: ../../root/metrics.rst:115
+msgid ""
+"Генерирует полный отчёт о производительности для текущей версии "
+"библиотеки. Используется при подготовке релизов."
+msgstr ""
+"Generates a complete performance report for the current library version. "
+"Used when preparing releases."
+
+#: ../../root/metrics.rst:123
+msgid "Команда автоматически:"
+msgstr "The command automatically:"
+
+#: ../../root/metrics.rst:125
+msgid "Определяет текущую версию библиотеки"
+msgstr "Determines the current library version"
+
+#: ../../root/metrics.rst:126
+msgid "Запускает все бенчмарки с 1000 итераций и отключённым GC"
+msgstr "Runs all benchmarks with 1000 iterations and disabled GC"
+
+#: ../../root/metrics.rst:127
+msgid "Генерирует JSON-отчёты и диаграммы сравнения"
+msgstr "Generates JSON reports and comparison diagrams"
+
+#: ../../root/metrics.rst:128
+msgid "Сохраняет результаты в ``metrics/reports/releases/<version>/``"
+msgstr "Saves results to ``metrics/reports/releases/<version>/``"
+
+#: ../../root/metrics.rst:133
+msgid "Интерпретация результатов"
+msgstr "Interpreting Results"
+
+#: ../../root/metrics.rst:135
+msgid "Результаты бенчмарков включают следующие метрики:"
+msgstr "Benchmark results include the following metrics:"
+
+#: ../../root/metrics.rst:137
+msgid "**Среднее время (mean)**"
+msgstr "**Mean time (mean)**"
+
+#: ../../root/metrics.rst:138
+msgid ""
+"Среднее время выполнения операции. Основная метрика для сравнения "
+"производительности."
+msgstr ""
+"Average operation execution time. The primary metric for performance comparison."
+
+#: ../../root/metrics.rst:140
+msgid "**Медиана (median)**"
+msgstr "**Median (median)**"
+
+#: ../../root/metrics.rst:141
+msgid ""
+"Медианное значение времени выполнения. Менее чувствительна к выбросам, "
+"чем среднее."
+msgstr ""
+"Median execution time value. Less sensitive to outliers than the mean."
+
+#: ../../root/metrics.rst:143
+msgid "**Стандартное отклонение (std)**"
+msgstr "**Standard deviation (std)**"
+
+#: ../../root/metrics.rst:144
+msgid ""
+"Показывает стабильность измерений. Меньшее значение означает более "
+"предсказуемую производительность."
+msgstr ""
+"Shows measurement stability. A lower value means more predictable performance."
+
+#: ../../root/metrics.rst:149
+msgid "Рекомендации по использованию"
+msgstr "Usage Recommendations"
+
+#: ../../root/metrics.rst:151
+msgid "**Для оптимизации**"
+msgstr "**For optimization**"
+
+#: ../../root/metrics.rst:152
+msgid ""
+"Используйте ``run-type`` для фокусировки на конкретной области и "
+"``--without-gc`` для более точных измерений."
+msgstr ""
+"Use ``run-type`` to focus on a specific area and ``--without-gc`` for more "
+"accurate measurements."
+
+#: ../../root/metrics.rst:154
+msgid "**Для визуализации**"
+msgstr "**For visualization**"
+
+#: ../../root/metrics.rst:155
+msgid ""
+"Команда ``diagrams-generate`` создаёт наглядные графики, удобные для "
+"презентаций и документации."
+msgstr ""
+"The ``diagrams-generate`` command creates clear charts suitable for "
+"presentations and documentation."
+
+#: ../../root/metrics.rst:157
+msgid "**Для стабильных результатов**"
+msgstr "**For stable results**"
+
+#: ../../root/metrics.rst:158
+msgid ""
+"Закройте ресурсоёмкие приложения, используйте флаг ``--without-gc`` и "
+"увеличивайте количество итераций через ``--iterations``."
+msgstr ""
+"Close resource-intensive applications, use the ``--without-gc`` flag, and "
+"increase the number of iterations via ``--iterations``."
+
+#: ../../root/metrics.rst:163
+msgid "Добавление новых бенчмарков"
+msgstr "Adding New Benchmarks"
+
+#: ../../root/metrics.rst:165
+msgid ""
+"Вы можете реализовать свои бенчмарки для тестирования специфичных юнитов "
+"библиотеки. Новые бенчмарки добавляются через декоратор "
+"``@benchmarks.register``:"
+msgstr ""
+"You can implement your own benchmarks to test specific library units. "
+"New benchmarks are added via the ``@benchmarks.register`` decorator:"
+
+#: ../../root/metrics.rst:173
+msgid ""
+"Бенчмарк должен быть импортирован в ``metrics/benchmarks/__init__.py`` "
+"для автоматической регистрации."
+msgstr ""
+"The benchmark must be imported in ``metrics/benchmarks/__init__.py`` for "
+"automatic registration."
+

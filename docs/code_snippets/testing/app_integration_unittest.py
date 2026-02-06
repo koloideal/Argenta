@@ -17,5 +17,5 @@ def test_simple_app() -> None:
 
     with redirect_stdout(io.StringIO()) as stdout:
         router.finds_appropriate_handler(InputCommand.parse("HELP"))
-        
+
     assert "Available commands:" in stdout.getvalue()

@@ -39,4 +39,4 @@ class Orchestrator:
         )
         setup_dishka(app, container, auto_inject=self._auto_inject_handlers)
 
-        app.run_polling()
+        app._run_polling()

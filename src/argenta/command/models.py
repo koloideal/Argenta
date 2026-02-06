@@ -1,14 +1,12 @@
 __all__ = ["Command", "InputCommand"]
 
 import shlex
-from typing import Literal, Never, Self, cast
+from typing import Iterable, Literal, Never, Self, cast
 
-from argenta.command.exceptions import (
-    EmptyInputCommandException,
-    RepeatedInputFlagsException,
-    UnprocessedInputFlagException,
-)
-from argenta.command.flag.flags.models import Flags, InputFlags
+from argenta.command import Flags, InputFlags
+from argenta.command.exceptions import (EmptyInputCommandException,
+                                        RepeatedInputFlagsException,
+                                        UnprocessedInputFlagException)
 from argenta.command.flag.models import Flag, InputFlag, ValidationStatus
 
 ParseFlagsResult = tuple[InputFlags, str | None, str | None]
@@ -16,10 +14,6 @@ ParseResult = tuple[str, InputFlags]
 
 MIN_FLAG_PREFIX: str = "-"
 PREFIX_TYPE = Literal["-", "--", "---"]
-DEFAULT_WITHOUT_FLAGS: Flags = Flags()
-DEFAULT_WITHOUT_ALIASES: set[Never] = set()
-
-DEFAULT_WITHOUT_INPUT_FLAGS: InputFlags = InputFlags()
 
 
 class Command:
@@ -28,8 +22,8 @@ class Command:
         trigger: str,
         *,
         description: str = "Some useful command",
-        flags: Flag | Flags = DEFAULT_WITHOUT_FLAGS,
-        aliases: set[str] | set[Never] = DEFAULT_WITHOUT_ALIASES,
+        flags: Flag | Flags | None = None,
+        aliases: Iterable[str] | None = None,
     ):
         """
         Public. The command that can and should be registered in the Router
@@ -38,11 +32,16 @@ class Command:
         :param flags: processed commands
         :param aliases: string synonyms for the main trigger
         """
-        pretty_flags = flags if isinstance(flags, Flags) else Flags([flags])
+        pretty_flags: Flags = (
+            flags if isinstance(flags, Flags)
+            else Flags([flags])
+            if flags is not None
+            else Flags()
+        )
         self.registered_flags: Flags = pretty_flags
         self.trigger: str = trigger
         self.description: str = description
-        self.aliases: set[str] | set[Never] = aliases
+        self.aliases: Iterable[str] | Iterable[Never] = aliases or set()
 
         self._paired_string_entity_flag: dict[str, Flag] = {
             flag.string_entity: flag for flag in pretty_flags
@@ -68,7 +67,7 @@ class InputCommand:
         self,
         trigger: str,
         *,
-        input_flags: InputFlag | InputFlags = DEFAULT_WITHOUT_INPUT_FLAGS,
+        input_flags: InputFlag | InputFlags | None = None,
     ):
         """
         Private. The model of the input command, after parsing
@@ -81,6 +80,8 @@ class InputCommand:
             input_flags
             if isinstance(input_flags, InputFlags)
             else InputFlags([input_flags])
+            if input_flags is not None
+            else InputFlags()
         )
 
     @classmethod
@@ -90,7 +91,14 @@ class InputCommand:
         :param raw_command: raw input command
         :return: model of the input command, after parsing as InputCommand
         """
-        tokens = shlex.split(raw_command)
+        lexer = shlex.shlex(raw_command, posix=True)
+        lexer.whitespace_split = True
+        lexer.commenters = ""
+
+        try:
+            tokens = list(lexer)
+        except ValueError as e:
+            raise UnprocessedInputFlagException from e
 
         if not tokens:
             raise EmptyInputCommandException

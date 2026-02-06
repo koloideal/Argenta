@@ -41,9 +41,9 @@ class StaticDividingLine(BaseDividingLine):
         :return: full line of dividing line as str
         """
         if is_override:
-            return f"\n{self.length * self.get_unit_part()}\n"
+            return self.length * self.get_unit_part()
         else:
-            return f"\n[dim]{self.length * self.get_unit_part()}[/dim]\n"
+            return f"[dim]{self.length * self.get_unit_part()}[/dim]"
 
 
 class DynamicDividingLine(BaseDividingLine):
@@ -63,6 +63,6 @@ class DynamicDividingLine(BaseDividingLine):
         :return: full line of dividing line as str
         """
         if is_override:
-            return f"\n{length * self.get_unit_part()}\n"
+            return length * self.get_unit_part()
         else:
-            return f"\n[dim]{self.get_unit_part() * length}[/dim]\n"
+            return f"[dim]{self.get_unit_part() * length}[/dim]"

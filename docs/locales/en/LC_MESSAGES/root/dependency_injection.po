@@ -109,7 +109,7 @@ msgstr "How Does It Work?"
 
 #: ../../root/dependency_injection.rst:51
 msgid "В основе DI в Argenta лежат **провайдеры** и **контейнер**."
-msgstr "At the core of DI in Argenta are **providers** and a **container**."
+msgstr "At the implementations of DI in Argenta are **providers** and a **container**."
 
 #: ../../root/dependency_injection.rst:53
 msgid ""

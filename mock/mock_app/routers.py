@@ -1,17 +1,18 @@
 from argenta import Command, Response, Router
 from argenta.command import Flag, Flags
+from argenta.command.flag import ValidationStatus
 
-work_router: Router = Router(title="Base points:", disable_redirect_stdout=True)
+work_router: Router = Router(title="Base points:")
 
 
 @work_router.command(
     Command(
-        "hello", 
+        "hello",
         flags=Flags([
             Flag("test")
         ]),
         description="Hello, world!")
 )
 def command_help(response: Response):
-    c = input("Enter your name: ")
-    print(f"Hello, {c}!")
+    n = input('sfgdheth')
+    print(f"Hello,{n} {response.input_flags.get_flag_by_name('test', with_status=ValidationStatus.VALID)}")

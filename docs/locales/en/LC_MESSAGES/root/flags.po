@@ -49,7 +49,7 @@ msgstr ""
 "The main purpose of flags is to provide a way to change the command's "
 "logic without reworking it. A command can operate in several modes: "
 "standard, verbose, debug, or simplified. Flags switch these modes on user"
-" demand, keeping the core functionality unchanged."
+" demand, keeping the implementations functionality unchanged."
 
 #: ../../root/flags.rst:17
 msgid "Опциональность и удобство"
