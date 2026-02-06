@@ -119,7 +119,6 @@ class BaseApp(BehaviorHandlersSettersMixin):
 
     def _most_similar_command(self, unknown_command: str) -> str | None:
         all_commands = self.registered_routers.get_triggers()
-        print(all_commands)
         matches = difflib.get_close_matches(unknown_command, all_commands, n=1)
         return matches[0] if matches else None
 

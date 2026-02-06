@@ -6,37 +6,37 @@
     {
       "name": "benchmark_few_routers",
       "description": "With few routers (3 routers, 1 command each)",
-      "avg_time": 0.0912,
-      "median_time": 0.0901,
-      "std_dev": 0.0051
+      "avg_time": 0.0959,
+      "median_time": 0.0944,
+      "std_dev": 0.0097
     },
     {
       "name": "benchmark_many_routers",
       "description": "With many routers (10 routers, 1 command each)",
-      "avg_time": 0.2433,
-      "median_time": 0.2382,
-      "std_dev": 0.0292
+      "avg_time": 0.2488,
+      "median_time": 0.2467,
+      "std_dev": 0.0081
     },
     {
       "name": "benchmark_many_commands_per_router",
       "description": "With many commands per router (3 routers, 10 commands each)",
-      "avg_time": 0.6157,
-      "median_time": 0.6132,
-      "std_dev": 0.0199
+      "avg_time": 0.6474,
+      "median_time": 0.6401,
+      "std_dev": 0.0304
     },
     {
       "name": "benchmark_many_aliases_per_command",
       "description": "With many aliases (3 routers, 5 commands, 10 aliases each)",
-      "avg_time": 0.516,
-      "median_time": 0.5082,
-      "std_dev": 0.0403
+      "avg_time": 0.5261,
+      "median_time": 0.5156,
+      "std_dev": 0.0475
     },
     {
       "name": "benchmark_extreme_routers",
       "description": "Extreme (20 routers, 10 commands, 20 aliases each)",
-      "avg_time": 10.8103,
-      "median_time": 10.7871,
-      "std_dev": 0.2788
+      "avg_time": 9.9128,
+      "median_time": 9.9518,
+      "std_dev": 0.2373
     }
   ]
 }

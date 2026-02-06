@@ -6,51 +6,51 @@
     {
       "name": "benchmark_parse_simple_command",
       "description": "Simple command (no flags)",
-      "avg_time": 0.0099,
-      "median_time": 0.0098,
-      "std_dev": 0.0014
+      "avg_time": 0.0096,
+      "median_time": 0.0095,
+      "std_dev": 0.0012
     },
     {
       "name": "benchmark_command_with_few_flags",
       "description": "Command with few flags (3 flags)",
-      "avg_time": 0.0214,
-      "median_time": 0.0211,
-      "std_dev": 0.003
+      "avg_time": 0.0216,
+      "median_time": 0.0213,
+      "std_dev": 0.0021
     },
     {
       "name": "benchmark_command_with_flags_and_values",
       "description": "Command with flags and values (5 flags)",
-      "avg_time": 0.0598,
-      "median_time": 0.0591,
-      "std_dev": 0.0041
+      "avg_time": 0.06,
+      "median_time": 0.0595,
+      "std_dev": 0.0025
     },
     {
       "name": "benchmark_command_with_mixed_prefixes",
       "description": "Command with mixed prefixes (-, --, ---)",
-      "avg_time": 0.0545,
-      "median_time": 0.0541,
-      "std_dev": 0.0024
+      "avg_time": 0.0542,
+      "median_time": 0.0538,
+      "std_dev": 0.0028
     },
     {
       "name": "benchmark_command_with_long_values",
       "description": "Command with long values (10 flags)",
-      "avg_time": 0.2114,
-      "median_time": 0.2103,
-      "std_dev": 0.0068
+      "avg_time": 0.2092,
+      "median_time": 0.2082,
+      "std_dev": 0.0067
     },
     {
       "name": "benchmark_command_with_quoted_values",
       "description": "Command with quoted values (5 flags)",
-      "avg_time": 0.0489,
-      "median_time": 0.0488,
-      "std_dev": 0.0019
+      "avg_time": 0.0481,
+      "median_time": 0.0477,
+      "std_dev": 0.0023
     },
     {
       "name": "benchmark_extreme_many_flags",
       "description": "Extreme (50 flags with values)",
-      "avg_time": 0.8057,
-      "median_time": 0.7997,
-      "std_dev": 0.024
+      "avg_time": 0.7907,
+      "median_time": 0.7884,
+      "std_dev": 0.0417
     }
   ]
 }

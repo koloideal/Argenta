@@ -64,6 +64,7 @@ Argenta предназначена для создания приложений,
 
     root/contributing
     root/code_of_conduct
+    root/metrics
 
 .. toctree::
     :hidden:

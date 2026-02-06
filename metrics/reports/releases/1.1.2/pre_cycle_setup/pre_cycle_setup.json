@@ -6,37 +6,37 @@
     {
       "name": "benchmark_no_aliases",
       "description": "With no aliases",
-      "avg_time": 8.9994,
-      "median_time": 8.9559,
-      "std_dev": 0.242
+      "avg_time": 7.4799,
+      "median_time": 7.4576,
+      "std_dev": 0.1645
     },
     {
       "name": "benchmark_few_aliases",
       "description": "With few aliases (6 total)",
-      "avg_time": 8.957,
-      "median_time": 8.936,
-      "std_dev": 0.2296
+      "avg_time": 7.4135,
+      "median_time": 7.4061,
+      "std_dev": 0.1709
     },
     {
       "name": "benchmark_with_many_aliases",
       "description": "With many aliases (15 total)",
-      "avg_time": 8.9953,
-      "median_time": 8.9721,
-      "std_dev": 0.2243
+      "avg_time": 7.4018,
+      "median_time": 7.3943,
+      "std_dev": 0.1589
     },
     {
       "name": "benchmark_very_many_aliases",
       "description": "With very many aliases (60 total)",
-      "avg_time": 9.0155,
-      "median_time": 8.9992,
-      "std_dev": 0.2433
+      "avg_time": 7.476,
+      "median_time": 7.4575,
+      "std_dev": 0.2156
     },
     {
       "name": "benchmark_extreme_aliases",
       "description": "With extreme aliases (300 total)",
-      "avg_time": 9.2977,
-      "median_time": 9.255,
-      "std_dev": 0.3884
+      "avg_time": 7.7167,
+      "median_time": 7.706,
+      "std_dev": 0.2052
     }
   ]
 }

@@ -6,9 +6,9 @@
     {
       "name": "benchmark_validate_all_single_flag",
       "description": "Single flag with PossibleValues.ALL",
-      "avg_time": 0.0009,
-      "median_time": 0.0009,
-      "std_dev": 0.0003
+      "avg_time": 0.0008,
+      "median_time": 0.0008,
+      "std_dev": 0.0002
     },
     {
       "name": "benchmark_validate_neither_single_flag",
@@ -21,50 +21,50 @@
       "name": "benchmark_validate_list_small",
       "description": "List validation (5 possible values)",
       "avg_time": 0.001,
-      "median_time": 0.001,
-      "std_dev": 0.0003
+      "median_time": 0.0009,
+      "std_dev": 0.0007
     },
     {
       "name": "benchmark_validate_list_large",
       "description": "List validation (50 possible values)",
       "avg_time": 0.0079,
       "median_time": 0.0078,
-      "std_dev": 0.0007
+      "std_dev": 0.0021
     },
     {
       "name": "benchmark_validate_regex_simple",
       "description": "Regex validation (simple pattern)",
-      "avg_time": 0.0019,
+      "avg_time": 0.0017,
       "median_time": 0.0016,
-      "std_dev": 0.0073
+      "std_dev": 0.0028
     },
     {
       "name": "benchmark_validate_regex_complex",
       "description": "Regex validation (complex pattern)",
       "avg_time": 0.0018,
-      "median_time": 0.0017,
+      "median_time": 0.0016,
       "std_dev": 0.0051
     },
     {
       "name": "benchmark_validate_multiple_flags_10",
       "description": "Multiple flags validation (10 flags)",
-      "avg_time": 0.0147,
-      "median_time": 0.0146,
+      "avg_time": 0.0145,
+      "median_time": 0.0144,
       "std_dev": 0.0013
     },
     {
       "name": "benchmark_validate_multiple_flags_50",
       "description": "Multiple flags validation (50 flags)",
-      "avg_time": 0.0669,
-      "median_time": 0.0661,
-      "std_dev": 0.0025
+      "avg_time": 0.0661,
+      "median_time": 0.0658,
+      "std_dev": 0.0024
     },
     {
       "name": "benchmark_validate_extreme_100_flags",
       "description": "Extreme (100 flags with regex validation)",
-      "avg_time": 0.1626,
-      "median_time": 0.1609,
-      "std_dev": 0.007
+      "avg_time": 0.1599,
+      "median_time": 0.1589,
+      "std_dev": 0.0065
     }
   ]
 }
