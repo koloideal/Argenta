@@ -1,5 +1,7 @@
 __all__ = ["Orchestrator"]
 
+import os
+
 from dishka import Provider, make_container
 
 from argenta.app import App
@@ -7,7 +9,6 @@ from argenta.di.integration import setup_dishka
 from argenta.di.providers import SystemProvider
 from argenta.orchestrator.argparser import ArgParser
 
-DEFAULT_ARGPARSER: ArgParser = ArgParser(processed_args=[])
 
 
 class Orchestrator:
@@ -22,7 +23,7 @@ class Orchestrator:
         :param arg_parser: Cmd argument parser and configurator at startup
         :return: None
         """
-        self._arg_parser: ArgParser | None = arg_parser
+        self._arg_parser: ArgParser | None = arg_parser if not os.getenv('RUN_AS_ARGENTA_APPLICATION') else None
         self._custom_providers: list[Provider] = custom_providers or []
         self._auto_inject_handlers: bool = auto_inject_handlers
 
