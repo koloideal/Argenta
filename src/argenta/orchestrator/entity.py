@@ -13,7 +13,7 @@ DEFAULT_ARGPARSER: ArgParser = ArgParser(processed_args=[])
 class Orchestrator:
     def __init__(
         self,
-        arg_parser: ArgParser = DEFAULT_ARGPARSER,
+        arg_parser: ArgParser | None = None,
         custom_providers: list[Provider] | None = None,
         auto_inject_handlers: bool = True,
     ):
@@ -22,11 +22,12 @@ class Orchestrator:
         :param arg_parser: Cmd argument parser and configurator at startup
         :return: None
         """
-        self._arg_parser: ArgParser = arg_parser
+        self._arg_parser: ArgParser | None = arg_parser
         self._custom_providers: list[Provider] = custom_providers or []
         self._auto_inject_handlers: bool = auto_inject_handlers
 
-        self._arg_parser._parse_args()  # pyright: ignore[reportPrivateUsage]
+        if self._arg_parser is not None:
+            self._arg_parser._parse_args()
 
     def start_polling(self, app: App) -> None:
         """
