@@ -1,7 +1,9 @@
-__all__ = ["init_handler"]
+__all__ = ["new_handler"]
 
+import sys
 from pathlib import Path
 from typing import Literal
+
 
 GITIGNORE_CONTENT = """
 __pycache__/
@@ -70,7 +72,6 @@ from argenta import Response
 
 def hello_handler(response: Response) -> None:
     print("Hello world!")
-
 """
 
 
@@ -82,26 +83,33 @@ def create_file(path: Path, content: str) -> None:
         print(f"Skipped: {path} (already exists)")
 
 
-def init_handler(with_arch: Literal["flat", "src"] = "flat") -> None:
-    cwd = Path.cwd()
-    project_name = cwd.name.lower().replace(" ", "_")
+def new_handler(project_name: str, with_arch: Literal["flat", "src"] = "flat") -> None:
+    base_dir = Path.cwd() / project_name
 
-    create_file(cwd / ".gitignore", GITIGNORE_CONTENT)
+    if base_dir.exists():
+        print(f"Error: Directory '{project_name}' already exists.")
+        sys.exit(1)
+
+    base_dir.mkdir(parents=True)
+    print(f"Initialized project directory: {base_dir}")
+
+    create_file(base_dir / ".gitignore", GITIGNORE_CONTENT)
 
     if with_arch == "flat":
-        create_file(cwd / "main.py", FLAT_MAIN_TEMPLATE)
-        create_file(cwd / "handlers.py", FLAT_HANDLERS_TEMPLATE)
+        create_file(base_dir / "main.py", FLAT_MAIN_TEMPLATE)
+        create_file(base_dir / "handlers.py", FLAT_HANDLERS_TEMPLATE)
 
     elif with_arch == "src":
-        base_pkg = cwd / "src" / project_name / "application"
+        pkg_name = project_name.lower().replace(" ", "_").replace("-", "_")
+        app_pkg = base_dir / "src" / pkg_name / "application"
 
-        create_file(base_pkg / "__main__.py", SRC_MAIN_TEMPLATE)
-        create_file(base_pkg / "routers.py", SRC_ROUTERS_TEMPLATE)
-        create_file(base_pkg / "handlers" / "hello_world_handler.py", SRC_HANDLER_TEMPLATE)
+        create_file(app_pkg / "__main__.py", SRC_MAIN_TEMPLATE)
+        create_file(app_pkg / "routers.py", SRC_ROUTERS_TEMPLATE)
+        create_file(app_pkg / "handlers" / "hello_world_handler.py", SRC_HANDLER_TEMPLATE)
 
-        create_file(cwd / "src" / "__init__.py", "")
-        create_file(cwd / "src" / project_name / "__init__.py", "")
-        create_file(base_pkg / "__init__.py", "")
-        create_file(base_pkg / "handlers" / "__init__.py", "")
+        create_file(base_dir / "src" / "__init__.py", "")
+        create_file(base_dir / "src" / pkg_name / "__init__.py", "")
+        create_file(app_pkg / "__init__.py", "")
+        create_file(app_pkg / "handlers" / "__init__.py", "")
 
-    print("\nInitialization complete.")
+    print(f"\nProject '{project_name}' created successfully! 🚀")
