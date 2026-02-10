@@ -15,4 +15,4 @@ app.include_router(router)
 
 # 3. Start polling via orchestrator
 if __name__ == "__main__":
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)

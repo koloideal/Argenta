@@ -12,7 +12,7 @@ def main() -> None:
     app.set_description_message_pattern(
         lambda command, description: f'[bold cyan]▸[/bold cyan] [bold white]{command}[/bold white] [dim]│[/dim] [yellow italic]{description}[/yellow italic]'
     )
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
 
 if __name__ == "__main__":

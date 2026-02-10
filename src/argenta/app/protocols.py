@@ -9,7 +9,6 @@ __all__ = [
 
 from typing import Any, Protocol, TypeVar, Callable
 
-from argenta.response import Response
 
 T = TypeVar("T", contravariant=True)
 

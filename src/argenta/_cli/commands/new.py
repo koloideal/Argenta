@@ -24,7 +24,7 @@ def main():
     app.include_router(router)
 
     orchestrator = Orchestrator()
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
 if __name__ == "__main__":
     main()
@@ -51,7 +51,7 @@ def main():
     app.include_router(router)
 
     orchestrator = Orchestrator()
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
 if __name__ == "__main__":
     main()

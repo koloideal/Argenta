@@ -30,7 +30,7 @@ class Orchestrator:
         if self._arg_parser is not None:
             self._arg_parser._parse_args()
 
-    def start_polling(self, app: App) -> None:
+    def run_repl(self, app: App) -> None:
         """
         Public. Starting the user input processing cycle
         :param app: a running application
@@ -41,4 +41,4 @@ class Orchestrator:
         )
         setup_dishka(app, container, auto_inject=self._auto_inject_handlers)
 
-        app._run_polling()
+        app._run_repl()
