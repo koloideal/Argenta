@@ -1,5 +1,4 @@
-from argenta import App, Command, Response, Router
-
+from argenta import App, Command, Response, Router, Orchestrator
 
 app = App(override_system_messages=True)
 router = Router()
@@ -12,7 +11,4 @@ def handler(_res: Response) -> None:
 def handler2(_res: Response) -> None:
     pass
 
-app.include_routers(router)
-app._pre_cycle_setup()
-
-assert app._most_similar_command('command_') == 'command'
+orch = Orchestrator()

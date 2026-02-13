@@ -1,5 +1,7 @@
 __all__ = ["Orchestrator"]
 
+import os
+
 from dishka import Provider, make_container
 
 from argenta.app import App
@@ -7,13 +9,12 @@ from argenta.di.integration import setup_dishka
 from argenta.di.providers import SystemProvider
 from argenta.orchestrator.argparser import ArgParser
 
-DEFAULT_ARGPARSER: ArgParser = ArgParser(processed_args=[])
 
 
 class Orchestrator:
     def __init__(
         self,
-        arg_parser: ArgParser = DEFAULT_ARGPARSER,
+        arg_parser: ArgParser | None = None,
         custom_providers: list[Provider] | None = None,
         auto_inject_handlers: bool = True,
     ):
@@ -22,13 +23,14 @@ class Orchestrator:
         :param arg_parser: Cmd argument parser and configurator at startup
         :return: None
         """
-        self._arg_parser: ArgParser = arg_parser
+        self._arg_parser: ArgParser | None = arg_parser if not os.getenv('RUN_AS_ARGENTA_APPLICATION') else None
         self._custom_providers: list[Provider] = custom_providers or []
         self._auto_inject_handlers: bool = auto_inject_handlers
 
-        self._arg_parser._parse_args()  # pyright: ignore[reportPrivateUsage]
+        if self._arg_parser is not None:
+            self._arg_parser._parse_args()
 
-    def start_polling(self, app: App) -> None:
+    def run_repl(self, app: App) -> None:
         """
         Public. Starting the user input processing cycle
         :param app: a running application
@@ -39,4 +41,4 @@ class Orchestrator:
         )
         setup_dishka(app, container, auto_inject=self._auto_inject_handlers)
 
-        app._run_polling()
+        app._run_repl()

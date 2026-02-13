@@ -36,7 +36,7 @@ Orchestrator
 Основные методы
 ----------------
 
-.. py:method:: start_polling(self, app: App) -> None
+.. py:method:: run_repl(self, app: App) -> None
 
    Это главный метод, который запускает приложение. Он запускает бесконечный цикл ввода -> вывода.
 

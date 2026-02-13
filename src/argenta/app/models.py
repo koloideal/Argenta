@@ -144,7 +144,7 @@ class BaseApp(BehaviorHandlersSettersMixin):
             is_stdout_redirected_by_router=processing_router.is_redirect_stdout_disabled
         )
 
-    def _run_polling(self) -> None:
+    def _run_repl(self) -> None:
         self._viewer.view_initial_message(self._initial_message)
         self._pre_cycle_setup()
         while True:

@@ -13,6 +13,11 @@ dependencies = [
     "prompt-toolkit>=3.0.52",
 ]
 
+[project.optional-dependencies]
+cli = [
+    "typer>=0.9,!=0.12,<=0.21.1",
+]
+
 [dependency-groups]
 dev = [
     {include-group = "linters"},
@@ -47,12 +52,21 @@ metrics = [
     "psutil>=7.2.1",
     "py-cpuinfo>=9.0.0",
 ]
+in-test = [
+    "cairosvg>=2.8.2",
+    "plotext>=5.3.2",
+    "pygal>=3.1.0",
+]
+
+[project.scripts]
+argenta = "argenta._cli.__main__:main"
 
 [tool.ruff]
 line-length=100
 
 [tool.pyright]
 typeCheckingMode = "strict"
+reportMissingTypeStubs = false
 
 [[tool.pyright.executionEnvironments]]
 root = "tests/"

@@ -22,7 +22,7 @@ def main():
     print(f"  Host: {host.value}")
     print(f"  Port: {port.value}")
 
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
 
 if __name__ == "__main__":

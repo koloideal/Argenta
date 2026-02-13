@@ -24,4 +24,4 @@ orchestrator = Orchestrator(custom_providers=[ConnectionProvider()])
 
 # 4. Start the application
 if __name__ == "__main__":
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
