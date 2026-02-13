@@ -52,6 +52,11 @@ metrics = [
     "psutil>=7.2.1",
     "py-cpuinfo>=9.0.0",
 ]
+in-test = [
+    "cairosvg>=2.8.2",
+    "plotext>=5.3.2",
+    "pygal>=3.1.0",
+]
 
 [project.scripts]
 argenta = "argenta._cli.__main__:main"

@@ -12,7 +12,7 @@ def main() -> None:
         lambda command,
         description: f"[bold cyan]▸[/bold cyan] [bold white]{command}[/bold white] [dim]│[/dim] [yellow italic]{description}[/yellow italic]"
     )
-    # orchestrator.run_repl(app)
+    orchestrator.run_repl(app)
 
 
 if __name__ == "__main__":
