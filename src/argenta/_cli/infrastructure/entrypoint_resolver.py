@@ -52,24 +52,30 @@ class EntrypointResolver:
 
     @overload
     def parse_entrypoint_with_type(
-        self, entrypoint_type: type[CallableEntryPoint]
+        self, 
+        entrypoint_object_name: str,
+        entrypoint_type: type[CallableEntryPoint]
     ) -> EntryPoint[Callable[[], None]]: ...
     @overload
     def parse_entrypoint_with_type(
-        self, entrypoint_type: type[EntryPointAsApp]
+        self, 
+        entrypoint_object_name: str,
+        entrypoint_type: type[EntryPointAsApp]
     ) -> EntryPoint[App]: ...
 
     def parse_entrypoint_with_type(
-        self, entrypoint_type: type[CallableEntryPoint] | type[EntryPointAsApp]
+        self, 
+        entrypoint_object_name: str,
+        entrypoint_type: type[CallableEntryPoint] | type[EntryPointAsApp]
     ) -> EntryPoint[Callable[[], None]] | EntryPoint[App]:
         if entrypoint_type is CallableEntryPoint:
-            return self._parse_callable_entrypoint()
+            return self._parse_callable_entrypoint(entrypoint_object_name)
         elif entrypoint_type is EntryPointAsApp:
-            return self._parse_entrypoint_as_app()
+            return self._parse_entrypoint_as_app(entrypoint_object_name)
         raise NotImplementedError
 
-    def _parse_callable_entrypoint(self) -> CallableEntryPoint:
-        resolved_entrypoint = self._resolve_from_string()
+    def _parse_callable_entrypoint(self, entrypoint_object_name: str) -> CallableEntryPoint:
+        resolved_entrypoint = self._resolve_from_string(entrypoint_object_name)
         instance_object = resolved_entrypoint[1]
         if not callable(instance_object):
             raise EntrypointNotCallableError(repr(instance_object))
@@ -82,20 +88,21 @@ class EntrypointResolver:
         instance_object = cast(Callable[[], None], instance_object)
         return CallableEntryPoint(raw_path=resolved_entrypoint[0], instance_object=instance_object)
 
-    def _parse_entrypoint_as_app(self) -> EntryPointAsApp:
-        resolved_entrypoint = self._resolve_from_string()
+    def _parse_entrypoint_as_app(self, entrypoint_object_name: str) -> EntryPointAsApp:
+        resolved_entrypoint = self._resolve_from_string(entrypoint_object_name)
         instance_object = resolved_entrypoint[1]
         if not isinstance(instance_object, App):
             raise EntrypointNotAppInstanceError(repr(instance_object))
         
         return EntryPointAsApp(raw_path=resolved_entrypoint[0], instance_object=instance_object)
         
-    def _resolve_from_string(self) -> tuple[str, object]:
-        file_path, _, attr_name = self._path_to_entrypoint.partition(":")
+    def _resolve_from_string(self, entrypoint_object_name: str) -> tuple[str, object]:
+        file_path: str = self._path_to_entrypoint
+        attr_name: str = entrypoint_object_name
     
         if not file_path or not attr_name:
             raise ResolveFromStringError(
-                f'"{self._path_to_entrypoint}" must be in format "<path/to/file.py>:<attribute>"'
+                f'"{self._path_to_entrypoint}" must be in format "<path/to/file.py>"'
             )
     
         path = Path(file_path).resolve()

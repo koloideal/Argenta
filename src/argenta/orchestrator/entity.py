@@ -28,7 +28,7 @@ class Orchestrator:
         self._auto_inject_handlers: bool = auto_inject_handlers
 
         if self._arg_parser is not None:
-            self._arg_parser._parse_args()
+            self._arg_parser._parse_args()  # pyright: ignore[reportPrivateUsage]
 
     def run_repl(self, app: App) -> None:
         """
@@ -41,4 +41,4 @@ class Orchestrator:
         )
         setup_dishka(app, container, auto_inject=self._auto_inject_handlers)
 
-        app._run_repl()
+        app._run_repl()  # pyright: ignore[reportPrivateUsage]
