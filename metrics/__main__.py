@@ -9,8 +9,7 @@ orchestrator = Orchestrator()
 def main() -> None:
     app.include_router(router)
     app.set_description_message_pattern(
-        lambda command,
-        description: f"[bold cyan]▸[/bold cyan] [bold white]{command}[/bold white] [dim]│[/dim] [yellow italic]{description}[/yellow italic]"
+        lambda command, description: f"[bold cyan]▸[/bold cyan] [bold white]{command}[/bold white] [dim]│[/dim] [yellow italic]{description}[/yellow italic]"
     )
     orchestrator.run_repl(app)
 

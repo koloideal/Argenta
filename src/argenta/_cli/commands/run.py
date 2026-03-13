@@ -1,47 +1,29 @@
 __all__ = ["run_handler"]
 
-import importlib
 import os
-import sys
 from pathlib import Path
-from typing import Any
+import sys
+
+from ..infrastructure.entrypoint_resolver.entity import (
+    CallableEntryPoint,
+    EntrypointResolver,
+    ResolveFromStringError,
+)
 
 
-class ImportFromStringError(Exception):
-    pass
-
-
-def import_from_string(import_str: str) -> Any:
-    module_str, _, attrs_str = import_str.partition(":")
-    if not module_str or not attrs_str:
-        raise ImportFromStringError(
-            f'Import string "{import_str}" must be in format "<module>:<attribute>".'
-        )
-
-    try:
-        module = importlib.import_module(module_str)
-    except ModuleNotFoundError as exc:
-        raise ImportFromStringError(f'Could not import module "{module_str}".') from exc
-
-    instance = module
-    try:
-        for attr_str in attrs_str.split("."):
-            instance = getattr(instance, attr_str)
-    except AttributeError:
-        raise ImportFromStringError(f'Attribute "{attrs_str}" not found in module "{module_str}".')
-
-    return instance
-
-
-def run_handler(entry_point: str) -> None:
+def run_handler(entrypoint_path: str) -> None:
     os.environ["RUN_FROM_ARGENTA_RUNNER"] = "1"
-
+    entrypoint_path, _, entrypoint_callable_name = entrypoint_path.partition(":")
+    if not entrypoint_callable_name:
+        raise ResolveFromStringError(
+            "Path to callable object that run orchestrator repl must be in the format <path/to/file.py>:<object_name>"
+        )
+        
     if str(Path.cwd()) not in sys.path:
         sys.path.insert(0, str(Path.cwd()))
 
-    runner = import_from_string(entry_point)
+    runner = EntrypointResolver(entrypoint_path).parse_entrypoint_with_type(
+        entrypoint_callable_name, CallableEntryPoint
+    )
 
-    if not callable(runner):
-        raise TypeError(f'"{entry_point}" is not callable')
-
-    runner()
+    runner.instance_object()

@@ -1,30 +1,19 @@
-from dataclasses import dataclass
-import inspect
+__all__ = ['EntrypointResolver', 'EntryPointAsApp', 'CallableEntryPoint']
+
 import importlib.util
+import inspect
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Protocol, cast, overload
 
-from argenta import App
+from argenta.app.models import App
 
-
-class ResolverError(Exception):
-    def __init__(self, entrypoint_as_repr: str) -> None:
-        self.entrypoint_as_repr = entrypoint_as_repr
-
-class ResolveFromStringError(ResolverError):
-    pass
-    
-class EntrypointNotCallableError(ResolverError):
-    def __str__(self):
-        return f'Entrypoint {self.entrypoint_as_repr} is not callable'
-        
-class CallableEntrypointNotMatchRequiredSignatureError(ResolverError):
-    def __str__(self) -> str:
-        return f'Callable entrypoint {self.entrypoint_as_repr} not match with required signature Callable[[], ...]'
-    
-class EntrypointNotAppInstanceError(ResolverError):
-    def __str__(self):
-        return f'Entrypoint {self.entrypoint_as_repr} is not instance of App'
+from .exceptions import (
+    CallableEntrypointNotMatchRequiredSignatureError,
+    EntrypointNotAppInstanceError,
+    EntrypointNotCallableError,
+    ResolveFromStringError,
+)
 
 
 class EntryPoint[T](Protocol):
@@ -52,21 +41,17 @@ class EntrypointResolver:
 
     @overload
     def parse_entrypoint_with_type(
-        self, 
-        entrypoint_object_name: str,
-        entrypoint_type: type[CallableEntryPoint]
+        self, entrypoint_object_name: str, entrypoint_type: type[CallableEntryPoint]
     ) -> EntryPoint[Callable[[], None]]: ...
     @overload
     def parse_entrypoint_with_type(
-        self, 
-        entrypoint_object_name: str,
-        entrypoint_type: type[EntryPointAsApp]
+        self, entrypoint_object_name: str, entrypoint_type: type[EntryPointAsApp]
     ) -> EntryPoint[App]: ...
 
     def parse_entrypoint_with_type(
-        self, 
+        self,
         entrypoint_object_name: str,
-        entrypoint_type: type[CallableEntryPoint] | type[EntryPointAsApp]
+        entrypoint_type: type[CallableEntryPoint] | type[EntryPointAsApp],
     ) -> EntryPoint[Callable[[], None]] | EntryPoint[App]:
         if entrypoint_type is CallableEntryPoint:
             return self._parse_callable_entrypoint(entrypoint_object_name)
@@ -81,10 +66,10 @@ class EntrypointResolver:
             raise EntrypointNotCallableError(repr(instance_object))
         instance_object_signature = inspect.signature(instance_object)
         required_params = instance_object_signature.parameters
-        
+
         if required_params:
             raise CallableEntrypointNotMatchRequiredSignatureError(repr(instance_object))
-        
+
         instance_object = cast(Callable[[], None], instance_object)
         return CallableEntryPoint(raw_path=resolved_entrypoint[0], instance_object=instance_object)
 
@@ -93,32 +78,27 @@ class EntrypointResolver:
         instance_object = resolved_entrypoint[1]
         if not isinstance(instance_object, App):
             raise EntrypointNotAppInstanceError(repr(instance_object))
-        
+
         return EntryPointAsApp(raw_path=resolved_entrypoint[0], instance_object=instance_object)
-        
+
     def _resolve_from_string(self, entrypoint_object_name: str) -> tuple[str, object]:
         file_path: str = self._path_to_entrypoint
         attr_name: str = entrypoint_object_name
-    
-        if not file_path or not attr_name:
-            raise ResolveFromStringError(
-                f'"{self._path_to_entrypoint}" must be in format "<path/to/file.py>"'
-            )
-    
+
         path = Path(file_path).resolve()
         if not path.exists():
             raise ResolveFromStringError(f'File "{file_path}" not found')
-    
+
         spec = importlib.util.spec_from_file_location(path.stem, path)
         if spec is None or spec.loader is None:
             raise ResolveFromStringError(f'Cannot load module from "{file_path}"')
-    
+
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-    
+
         try:
             instance = getattr(module, attr_name)
         except AttributeError:
             raise ResolveFromStringError(f'"{attr_name}" not found in "{file_path}"')
-    
+
         return file_path, instance
