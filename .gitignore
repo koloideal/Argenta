@@ -322,3 +322,4 @@ http-client.private.env.json
 .idea/ApifoxUploaderProjectSetting.xml
 
 .zed
+test.py

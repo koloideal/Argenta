@@ -7,7 +7,7 @@ __all__ = [
     "benchmark_validate_regex_complex",
     "benchmark_validate_multiple_flags_10",
     "benchmark_validate_multiple_flags_50",
-    "benchmark_validate_extreme_100_flags"
+    "benchmark_validate_extreme_100_flags",
 ]
 
 import re
@@ -58,45 +58,29 @@ def benchmark_validate_regex_complex() -> None:
 
 @benchmarks.register(type_="flag_validation", description="Multiple flags validation (10 flags)")
 def benchmark_validate_multiple_flags_10() -> None:
-    flags = [
-        Flag(f"flag{i}", possible_values=PossibleValues.ALL)
-        for i in range(10)
-    ]
-    input_flags = [
-        InputFlag(f"flag{i}", input_value=f"value{i}")
-        for i in range(10)
-    ]
-    
+    flags = [Flag(f"flag{i}", possible_values=PossibleValues.ALL) for i in range(10)]
+    input_flags = [InputFlag(f"flag{i}", input_value=f"value{i}") for i in range(10)]
+
     for flag, input_flag in zip(flags, input_flags):
         flag.validate_input_flag_value(input_flag.input_value)
 
 
 @benchmarks.register(type_="flag_validation", description="Multiple flags validation (50 flags)")
 def benchmark_validate_multiple_flags_50() -> None:
-    flags = [
-        Flag(f"flag{i}", possible_values=PossibleValues.ALL)
-        for i in range(50)
-    ]
-    input_flags = [
-        InputFlag(f"flag{i}", input_value=f"value{i}")
-        for i in range(50)
-    ]
-    
+    flags = [Flag(f"flag{i}", possible_values=PossibleValues.ALL) for i in range(50)]
+    input_flags = [InputFlag(f"flag{i}", input_value=f"value{i}") for i in range(50)]
+
     for flag, input_flag in zip(flags, input_flags):
         flag.validate_input_flag_value(input_flag.input_value)
 
 
-@benchmarks.register(type_="flag_validation", description="Extreme (100 flags with regex validation)")
+@benchmarks.register(
+    type_="flag_validation", description="Extreme (100 flags with regex validation)"
+)
 def benchmark_validate_extreme_100_flags() -> None:
     pattern = re.compile(r"^[a-zA-Z0-9_-]+$")
-    flags = [
-        Flag(f"flag{i}", possible_values=pattern)
-        for i in range(100)
-    ]
-    input_flags = [
-        InputFlag(f"flag{i}", input_value=f"valid_value_{i}")
-        for i in range(100)
-    ]
-    
+    flags = [Flag(f"flag{i}", possible_values=pattern) for i in range(100)]
+    input_flags = [InputFlag(f"flag{i}", input_value=f"valid_value_{i}") for i in range(100)]
+
     for flag, input_flag in zip(flags, input_flags):
         flag.validate_input_flag_value(input_flag.input_value)

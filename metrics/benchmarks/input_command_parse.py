@@ -5,7 +5,7 @@ __all__ = [
     "benchmark_command_with_mixed_prefixes",
     "benchmark_command_with_long_values",
     "benchmark_command_with_quoted_values",
-    "benchmark_extreme_many_flags"
+    "benchmark_extreme_many_flags",
 ]
 
 from argenta.command.models import InputCommand
@@ -23,12 +23,16 @@ def benchmark_command_with_few_flags() -> None:
     InputCommand.parse("start -a -b -c")
 
 
-@benchmarks.register(type_="input_command_parse", description="Command with flags and values (5 flags)")
+@benchmarks.register(
+    type_="input_command_parse", description="Command with flags and values (5 flags)"
+)
 def benchmark_command_with_flags_and_values() -> None:
     InputCommand.parse("start --host localhost --port 8080 --debug --verbose -c config.json")
 
 
-@benchmarks.register(type_="input_command_parse", description="Command with mixed prefixes (-, --, ---)")
+@benchmarks.register(
+    type_="input_command_parse", description="Command with mixed prefixes (-, --, ---)"
+)
 def benchmark_command_with_mixed_prefixes() -> None:
     InputCommand.parse("cmd -a --bb ---ccc -d value --ee value2 ---fff value3")
 
@@ -40,7 +44,9 @@ def benchmark_command_with_long_values() -> None:
     InputCommand.parse(cmd)
 
 
-@benchmarks.register(type_="input_command_parse", description="Command with quoted values (5 flags)")
+@benchmarks.register(
+    type_="input_command_parse", description="Command with quoted values (5 flags)"
+)
 def benchmark_command_with_quoted_values() -> None:
     InputCommand.parse("cmd --text 'hello world' --path '/usr/local/bin' --msg \"test message\"")
 
