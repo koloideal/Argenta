@@ -34,7 +34,7 @@ def import_from_string(import_str: str) -> Any:
 
 
 def run_handler(entry_point: str) -> None:
-    os.environ["RUN_AS_ARGENTA_APPLICATION"] = "1"
+    os.environ["RUN_FROM_ARGENTA_RUNNER"] = "1"
 
     if str(Path.cwd()) not in sys.path:
         sys.path.insert(0, str(Path.cwd()))
