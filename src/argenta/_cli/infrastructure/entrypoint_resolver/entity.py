@@ -73,11 +73,11 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
 
     def _parse_entrypoint_as_app(self, entrypoint_object_name: str) -> EntryPointAsApp:
         resolved_entrypoint = self._resolve_from_string(entrypoint_object_name)
-        instance_object = resolved_entrypoint[1]
+        instance_object = resolved_entrypoint.instance
         if not isinstance(instance_object, App):
             raise EntrypointNotAppInstanceError(repr(instance_object))
 
-        return EntryPointAsApp(raw_path=resolved_entrypoint[0], instance_object=instance_object)
+        return EntryPointAsApp(raw_path=resolved_entrypoint.resolved_source_path, instance_object=instance_object)
 
     def _resolve_from_string(self, entrypoint_object_name: str) -> ResolvedEntrypoint:
         raw_path = self._path_to_entrypoint

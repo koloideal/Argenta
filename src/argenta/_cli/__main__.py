@@ -1,6 +1,6 @@
 from typer import Typer
 
-from .commands import init_handler, new_handler, run_handler
+from .commands import init_handler, new_handler, routes_handler, run_handler
 
 
 def main() -> None:
@@ -25,6 +25,13 @@ def main() -> None:
         short_help="Create a new project with boilerplate",
         epilog="This will create a new directory with the project structure.",
     )(new_handler)
+    
+    app.command(
+        "routes",
+        help="Creates a project and in it flat/src boilerplate architecture",
+        short_help="Create a new project with boilerplate",
+        epilog="This will create a new directory with the project structure.",
+    )(routes_handler)
 
     app()
 

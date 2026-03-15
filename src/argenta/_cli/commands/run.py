@@ -14,7 +14,7 @@ def run_handler(entrypoint_path: str) -> None:
     entrypoint_path, _, entrypoint_callable_name = entrypoint_path.partition(":")
     if not entrypoint_callable_name:
         raise ResolveFromStringError(
-            "Path to callable object that run orchestrator repl must be in the format <path/to/file.py>:<object_name>"
+            "Path to callable object that run orchestrator repl must be in the format <path/to/file.py>:<object_name> or <path.to.module>:<object_name>"
         )
 
     runner = EntrypointResolver[CallableEntryPoint](entrypoint_path).parse_entrypoint_with_type(
