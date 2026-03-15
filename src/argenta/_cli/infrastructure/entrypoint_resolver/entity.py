@@ -1,10 +1,10 @@
 __all__ = ['EntrypointResolver', 'EntryPointAsApp', 'CallableEntryPoint']
 
-import importlib.util
 import inspect
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Protocol, cast, overload
+import sys
+from typing import Callable, Protocol, cast, get_args
 
 from argenta.app.models import App
 
@@ -35,28 +35,18 @@ class EntryPointAsApp:
     instance_object: App
 
 
-class EntrypointResolver:
+class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
     def __init__(self, path_to_entrypoint: str):
         self._path_to_entrypoint = path_to_entrypoint
 
-    @overload
     def parse_entrypoint_with_type(
-        self, entrypoint_object_name: str, entrypoint_type: type[CallableEntryPoint]
-    ) -> EntryPoint[Callable[[], None]]: ...
-    @overload
-    def parse_entrypoint_with_type(
-        self, entrypoint_object_name: str, entrypoint_type: type[EntryPointAsApp]
-    ) -> EntryPoint[App]: ...
-
-    def parse_entrypoint_with_type(
-        self,
-        entrypoint_object_name: str,
-        entrypoint_type: type[CallableEntryPoint] | type[EntryPointAsApp],
-    ) -> EntryPoint[Callable[[], None]] | EntryPoint[App]:
+        self, entrypoint_object_name: str,
+    ) -> T:
+        entrypoint_type: type[T] = get_args(self.__orig_class__)[0]  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType]
         if entrypoint_type is CallableEntryPoint:
-            return self._parse_callable_entrypoint(entrypoint_object_name)
+            return cast(T, self._parse_callable_entrypoint(entrypoint_object_name))
         elif entrypoint_type is EntryPointAsApp:
-            return self._parse_entrypoint_as_app(entrypoint_object_name)
+            return cast(T, self._parse_entrypoint_as_app(entrypoint_object_name))
         raise NotImplementedError
 
     def _parse_callable_entrypoint(self, entrypoint_object_name: str) -> CallableEntryPoint:
@@ -82,23 +72,31 @@ class EntrypointResolver:
         return EntryPointAsApp(raw_path=resolved_entrypoint[0], instance_object=instance_object)
 
     def _resolve_from_string(self, entrypoint_object_name: str) -> tuple[str, object]:
-        file_path: str = self._path_to_entrypoint
-        attr_name: str = entrypoint_object_name
-
-        path = Path(file_path).resolve()
-        if not path.exists():
-            raise ResolveFromStringError(f'File "{file_path}" not found')
-
-        spec = importlib.util.spec_from_file_location(path.stem, path)
-        if spec is None or spec.loader is None:
-            raise ResolveFromStringError(f'Cannot load module from "{file_path}"')
-
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-
+        abs_path = Path(self._path_to_entrypoint).resolve()
+        if not abs_path.exists():
+            raise ResolveFromStringError(f'File "{self._path_to_entrypoint}" not found')
+    
+        package_root = abs_path.parent
+        while (package_root / "__init__.py").exists():
+            package_root = package_root.parent
+    
+        pkg_root_str = str(package_root)
+        if pkg_root_str not in sys.path:
+            sys.path.insert(0, pkg_root_str)
+    
+        module_name = ".".join(abs_path.relative_to(package_root).with_suffix("").parts)
+    
         try:
-            instance = getattr(module, attr_name)
+            module = importlib.import_module(module_name)
+        except ImportError as e:
+            raise ResolveFromStringError(f'Cannot import module "{module_name}": {e}')
+    
+        try:
+            instance = getattr(module, entrypoint_object_name)
         except AttributeError:
-            raise ResolveFromStringError(f'"{attr_name}" not found in "{file_path}"')
+            raise ResolveFromStringError(
+                f'"{entrypoint_object_name}" not found in "{self._path_to_entrypoint}"'
+            )
+            
+        return str(abs_path), instance
 
-        return file_path, instance
