@@ -35,8 +35,8 @@ class CallableEntryPoint:
 class EntryPointAsApp:
     raw_path: str
     instance_object: App
-    
-    
+
+
 @dataclass(frozen=True, slots=True)
 class ResolvedEntrypoint:
     resolved_source_path: str
@@ -60,7 +60,7 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
 
     def _parse_callable_entrypoint(self, entrypoint_object_name: str) -> CallableEntryPoint:
         resolved_entrypoint = self._resolve_from_string(entrypoint_object_name)
-        instance_object = resolved_entrypoint[1]
+        instance_object = resolved_entrypoint.instance
         if not callable(instance_object):
             raise EntrypointNotCallableError(repr(instance_object))
         instance_object_signature = inspect.signature(instance_object)
@@ -69,8 +69,7 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
         if required_params:
             raise CallableEntrypointNotMatchRequiredSignatureError(repr(instance_object))
 
-        instance_object = cast(Callable[[], None], instance_object)
-        return CallableEntryPoint(raw_path=resolved_entrypoint[0], instance_object=instance_object)
+        return CallableEntryPoint(raw_path=resolved_entrypoint.resolved_source_path, instance_object=instance_object)
 
     def _parse_entrypoint_as_app(self, entrypoint_object_name: str) -> EntryPointAsApp:
         resolved_entrypoint = self._resolve_from_string(entrypoint_object_name)
@@ -82,6 +81,11 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
 
     def _resolve_from_string(self, entrypoint_object_name: str) -> ResolvedEntrypoint:
         raw_path = self._path_to_entrypoint
+
+        raw_path_as_dir = Path(raw_path).resolve()
+        if raw_path_as_dir.is_dir() and (raw_path_as_dir / "__main__.py").exists():
+            raw_path = str(raw_path_as_dir / "__main__.py")
+
         is_file_path = bool(re.search(r"[\/\\]|\.py$", raw_path))
 
         if is_file_path:
@@ -102,7 +106,6 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
 
         else:
             module_name = raw_path
-
             cwd_str = str(Path.cwd())
             if cwd_str not in sys.path:
                 sys.path.insert(0, cwd_str)
@@ -112,7 +115,15 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
         try:
             module = importlib.import_module(module_name)
         except ImportError as e:
-            raise ResolveFromStringError(f'Cannot import module "{module_name}": {e}')
+            if not is_file_path and not module_name.endswith(".__main__"):
+                try:
+                    main_module_name = f"{module_name}.__main__"
+                    module = importlib.import_module(main_module_name)
+                    module_name = main_module_name
+                except ImportError:
+                    raise ResolveFromStringError(f'Cannot import module "{module_name}": {e}')
+            else:
+                raise ResolveFromStringError(f'Cannot import module "{module_name}": {e}')
 
         if not is_file_path:
             resolved_source_path = getattr(module, "__file__", resolved_source_path)
