@@ -28,7 +28,6 @@ def routes_handler(entrypoint_path: str) -> None:
     routers = app.registered_routers
 
     console = Console()
-
     stats: dict[str, int] = defaultdict(int)
 
     tree = Tree(f"📦 [bold blue]App object:[/bold blue] {app!r}")
@@ -41,11 +40,34 @@ def routes_handler(entrypoint_path: str) -> None:
             stats["commands"] += 1
             trigger = command.handled_command.trigger
             description = command.handled_command.description
-            router_node.add(f"⚡ [cyan]Command:[/cyan] [bold]{trigger}[/bold] | [cyan]description:[/cyan] [bold]{description}[/bold] ")
+            aliases = list(command.handled_command.aliases)
+            flags = list(command.handled_command.registered_flags)
+
+            cmd_node = router_node.add(f"⚡ [bold cyan]{trigger}[/bold cyan]")
+
+            if description:
+                cmd_node.add(f"📝 [dim]description:[/dim] {description}")
+
+            if aliases:
+                aliases_str = ", ".join(f"[yellow]{a}[/yellow]" for a in aliases)
+                cmd_node.add(f"🔀 [dim]aliases:[/dim] {aliases_str}")
+                stats["aliases"] += len(aliases)
+
+            if flags:
+                flags_node = cmd_node.add(f"🚩 [dim]flags:[/dim] ({len(flags)})")
+                for flag in flags:
+                    possible = flag.possible_values
+                    flags_node.add(
+                        f"[magenta]{flag.prefix}{flag.name}[/magenta]"
+                        f"  [dim]possible_values:[/dim] [italic]{possible!r}[/italic]"
+                    )
+                stats["flags"] += len(flags)
 
     stats_text = (
-        f"📁 [bold]Total Routers:[/bold] {stats['routers']}\n"
-        f"⚡ [bold]Total Commands:[/bold] {stats['commands']}"
+        f"📁 [bold]Total Routers:[/bold]  {stats['routers']}\n"
+        f"⚡ [bold]Total Commands:[/bold] {stats['commands']}\n"
+        f"🔀 [bold]Total Aliases:[/bold]  {stats['aliases']}\n"
+        f"🚩 [bold]Total Flags:[/bold]    {stats['flags']}"
     )
 
     console.print(
