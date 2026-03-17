@@ -1,6 +1,13 @@
 from typer import Typer
 
-from .commands import init_handler, new_handler, routes_handler, run_handler, info_handler
+from .commands import (
+    build_handler,
+    info_handler,
+    init_handler,
+    new_handler,
+    routes_handler,
+    run_handler,
+)
 
 
 def main() -> None:
@@ -25,20 +32,26 @@ def main() -> None:
         short_help="Create a new project with boilerplate",
         epilog="This will create a new directory with the project structure.",
     )(new_handler)
-    
+
     app.command(
         "routes",
         help="Creates a project and in it flat/src boilerplate architecture",
         short_help="Create a new project with boilerplate",
         epilog="This will create a new directory with the project structure.",
     )(routes_handler)
-    
+
     app.command(
         name="info",
         help="Displays information about the installed Argenta package and environment",
         short_help="Show Argenta version and environment info",
         epilog="Uses metadata to retrieve the installed package version.",
     )(info_handler)
+
+    app.command(
+        name="build",
+        help="Compiles the project into a standalone binary using Nuitka",
+        short_help="Build a standalone binary",
+    )(build_handler)
 
     app()
 

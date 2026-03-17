@@ -15,6 +15,7 @@ dependencies = [
 
 [project.optional-dependencies]
 cli = [
+    "nuitka[onefile]>=4.0.5",
     "typer>=0.9,!=0.12,<=0.21.1",
 ]
 

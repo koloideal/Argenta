@@ -1,6 +1,9 @@
 #### joe made this: http://goel.io/joe
 
 metrics/reports/diagrams
+*.dist
+*build
+*.exe
 
 #### python ####
 # Byte-compiled / optimized / DLL files
