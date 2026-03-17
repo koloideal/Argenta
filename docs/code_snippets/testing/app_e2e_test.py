@@ -25,7 +25,7 @@ def test_input_incorrect_command(capsys: CaptureFixture[str]):
     app.set_unknown_command_handler(lambda command: print(f"Unknown command: {command.trigger}"))
 
     with patch("builtins.input", side_effect=["help", "q"]):
-        orchestrator.start_polling(app)
+        orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
     assert "\nUnknown command: help\n" in output

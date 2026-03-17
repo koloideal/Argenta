@@ -7,9 +7,8 @@ __all__ = [
     "HandlerFunc",
 ]
 
-from typing import Any, Protocol, TypeVar
+from typing import Any, Protocol, TypeVar, Callable
 
-from argenta.response import Response
 
 T = TypeVar("T", contravariant=True)
 
@@ -39,6 +38,4 @@ class DescriptionMessageGenerator(Protocol):
         raise NotImplementedError
 
 
-class HandlerFunc(Protocol):
-    def __call__(self, response: Response, /, *args: Any, **kwargs: Any) -> None:
-        raise NotImplementedError
+type HandlerFunc = Callable[..., Any]

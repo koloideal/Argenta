@@ -3,8 +3,6 @@ __all__ = ["Router"]
 from inspect import get_annotations, getfullargspec, getsourcefile, getsourcelines
 from typing import Callable
 
-from rich.console import Console
-
 from argenta.app.protocols import HandlerFunc
 from argenta.command import Command, InputCommand, InputFlags
 from argenta.command.flag import ValidationStatus
@@ -20,7 +18,7 @@ from argenta.router.exceptions import (RepeatedAliasNameException,
 class Router:
     def __init__(
         self,
-        title: str = "Default title",
+        title: str = "Title",
         *,
         disable_redirect_stdout: bool = False,
     ):
@@ -175,6 +173,7 @@ class Router:
         response_arg_annotation = func_annotations.get(response_arg)
 
         if response_arg_annotation is not None and response_arg_annotation is not Response:
+            from rich.console import Console
             source_line: int = getsourcelines(func)[1]
             Console().print(
                 f'\nFile "{getsourcefile(func)}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '

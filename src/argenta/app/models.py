@@ -3,8 +3,6 @@ __all__ = ["App"]
 import difflib
 from typing import Never, TypeAlias
 
-from rich.console import Console
-
 from argenta.app.autocompleter import AutoCompleter
 from argenta.app.behavior_handlers.models import (BehaviorHandlersFabric,
                                                   BehaviorHandlersSettersMixin)
@@ -144,7 +142,7 @@ class BaseApp(BehaviorHandlersSettersMixin):
             is_stdout_redirected_by_router=processing_router.is_redirect_stdout_disabled
         )
 
-    def _run_polling(self) -> None:
+    def _run_repl(self) -> None:
         self._viewer.view_initial_message(self._initial_message)
         self._pre_cycle_setup()
         while True:
@@ -189,7 +187,7 @@ class App(BaseApp):
         repeat_command_groups_printing: bool = False,
         override_system_messages: bool = False,
         autocompleter: AutoCompleter | None = None,
-        printer: Printer = Console().print,
+        printer: Printer | None = None,
     ) -> None:
         """
         Public. The essence of the application itself.
@@ -206,6 +204,7 @@ class App(BaseApp):
         :param printer: system messages text output function
         :return: None
         """
+        from rich.console import Console
         super().__init__(
             prompt=prompt,
             initial_message=initial_message,
@@ -216,7 +215,7 @@ class App(BaseApp):
             repeat_command_groups_printing=repeat_command_groups_printing,
             override_system_messages=override_system_messages,
             autocompleter=autocompleter or AutoCompleter(),
-            printer=printer,
+            printer=printer or Console().print,
         )
 
     def include_router(self, router: Router) -> None:

@@ -1,0 +1,60 @@
+from typer import Typer
+
+from .commands import (
+    build_handler,
+    info_handler,
+    init_handler,
+    new_handler,
+    routes_handler,
+    run_handler,
+)
+
+
+def main() -> None:
+    app = Typer()
+    app.command(
+        "run",
+        help="Command to start the orchestrator repl; the path to the callable object is required",
+        short_help="Start the orchestrator REPL",
+        epilog="Example: run app/main.py:main",
+    )(run_handler)
+
+    app.command(
+        "init",
+        help="Creates a flat/src boilerplate architecture in an existing project",
+        short_help="Initialize architecture in existing project",
+        epilog="Make sure you are in the project root before running this command.",
+    )(init_handler)
+
+    app.command(
+        "new",
+        help="Creates a project and in it flat/src boilerplate architecture",
+        short_help="Create a new project with boilerplate",
+        epilog="This will create a new directory with the project structure.",
+    )(new_handler)
+
+    app.command(
+        "routes",
+        help="Creates a project and in it flat/src boilerplate architecture",
+        short_help="Create a new project with boilerplate",
+        epilog="This will create a new directory with the project structure.",
+    )(routes_handler)
+
+    app.command(
+        name="info",
+        help="Displays information about the installed Argenta package and environment",
+        short_help="Show Argenta version and environment info",
+        epilog="Uses metadata to retrieve the installed package version.",
+    )(info_handler)
+
+    app.command(
+        name="build",
+        help="Compiles the project into a standalone binary using Nuitka",
+        short_help="Build a standalone binary",
+    )(build_handler)
+
+    app()
+
+
+if __name__ == "__main__":
+    main()

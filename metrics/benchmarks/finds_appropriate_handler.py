@@ -3,11 +3,11 @@ __all__ = [
     "benchmark_command_with_flags",
     "benchmark_many_commands",
     "benchmark_command_with_many_flags",
-    "benchmark_extreme_router"
+    "benchmark_extreme_router",
 ]
 
-from argenta.command.models import Command, InputCommand
 from argenta.command import Flag, Flags
+from argenta.command.models import Command, InputCommand
 from argenta.response import Response
 from argenta.router import Router
 
@@ -18,11 +18,11 @@ from .entity import benchmarks
 def benchmark_simple_command() -> None:
     router = Router()
 
-    @router.command(Command('test'))
+    @router.command(Command("test"))
     def handler(_res: Response) -> None:
         pass
 
-    input_cmd = InputCommand.parse('test')
+    input_cmd = InputCommand.parse("test")
     router.finds_appropriate_handler(input_cmd)
 
 
@@ -30,11 +30,11 @@ def benchmark_simple_command() -> None:
 def benchmark_command_with_flags() -> None:
     router = Router()
 
-    @router.command(Command('test', flags=Flags([Flag('a'), Flag('b'), Flag('c')])))
+    @router.command(Command("test", flags=Flags([Flag("a"), Flag("b"), Flag("c")])))
     def handler(_res: Response) -> None:
         pass
 
-    input_cmd = InputCommand.parse('test -a -b -c')
+    input_cmd = InputCommand.parse("test -a -b -c")
     router.finds_appropriate_handler(input_cmd)
 
 
@@ -43,38 +43,43 @@ def benchmark_many_commands() -> None:
     router = Router()
 
     for i in range(50):
-        @router.command(Command(f'cmd{i}'))
+
+        @router.command(Command(f"cmd{i}"))
         def handler(_res: Response) -> None:
             pass
 
-    input_cmd = InputCommand.parse('cmd25')
+    input_cmd = InputCommand.parse("cmd25")
     router.finds_appropriate_handler(input_cmd)
 
 
-@benchmarks.register(type_="finds_appropriate_handler", description="Command with many flags (20 flags)")
+@benchmarks.register(
+    type_="finds_appropriate_handler", description="Command with many flags (20 flags)"
+)
 def benchmark_command_with_many_flags() -> None:
     router = Router()
 
-    flags = Flags([Flag(f'flag{i}') for i in range(20)])
+    flags = Flags([Flag(f"flag{i}") for i in range(20)])
 
-    @router.command(Command('test', flags=flags))
+    @router.command(Command("test", flags=flags))
     def handler(_res: Response) -> None:
         pass
 
-    input_cmd = InputCommand.parse('test ' + ' '.join(f'-flag{i}' for i in range(10)))
+    input_cmd = InputCommand.parse("test " + " ".join(f"-flag{i}" for i in range(10)))
     router.finds_appropriate_handler(input_cmd)
 
 
-@benchmarks.register(type_="finds_appropriate_handler", description="Extreme (100 commands, 10 flags each)")
+@benchmarks.register(
+    type_="finds_appropriate_handler", description="Extreme (100 commands, 10 flags each)"
+)
 def benchmark_extreme_router() -> None:
     router = Router()
 
     for i in range(100):
-        flags = Flags([Flag(f'f{i}_{j}') for j in range(10)])
+        flags = Flags([Flag(f"f{i}_{j}") for j in range(10)])
 
-        @router.command(Command(f'cmd{i}', flags=flags))
+        @router.command(Command(f"cmd{i}", flags=flags))
         def handler(_res: Response) -> None:
             pass
 
-    input_cmd = InputCommand.parse('cmd50 -f50_0 -f50_1 -f50_2')
+    input_cmd = InputCommand.parse("cmd50 -f50_0 -f50_1 -f50_2")
     router.finds_appropriate_handler(input_cmd)
