@@ -31,6 +31,6 @@ def info_handler() -> None:
     table.add_row("Platform", f"{platform.system()} {platform.release()} ({platform.machine()})")
     table.add_row("Docs", "https://argenta.readthedocs.io")
     
-    console.print(f"[bold red]{text2art("Argenta", font='tarty1')}[/bold red]")
+    console.print(f"[bold red]{text2art('Argenta', font='tarty1')}[/bold red]")
     console.print(Padding(table, pad=(2, 5)))
     console.print(Padding("[i]made with ❤ by [b]kolo[/b][/i]", pad=(0, 17)))

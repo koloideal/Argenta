@@ -6,25 +6,53 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.tree import Tree
 
+from argenta.app.models import App
+
 from ..infrastructure.entrypoint_resolver.entity import (
+    CallableEntryPoint,
     EntryPointAsApp,
     EntrypointResolver,
+)
+from ..infrastructure.entrypoint_resolver.exceptions import (
+    EntrypointError,
+    EntrypointNotAppInstanceError,
     ResolveFromStringError,
 )
 
 
 def routes_handler(entrypoint_path: str) -> None:
-    entrypoint_path, _, entrypoint_callable_name = entrypoint_path.partition(":")
-    if not entrypoint_callable_name:
-        raise ResolveFromStringError(
-            "Path to callable object that run orchestrator repl must be in the format <path/to/file.py>:<object_name>"
+    file_path, _, callable_name = entrypoint_path.partition(":")
+    if not callable_name:
+        Console().print(
+            f'[bold red]Error:[/bold red] "{entrypoint_path}" must be in format '
+            f'"<path/to/file.py>:<app_object>" or "<path.to.module>:<app_object>"'
         )
+        raise SystemExit(1)
 
-    app_instance = EntrypointResolver[EntryPointAsApp](entrypoint_path).parse_entrypoint_with_type(
-        entrypoint_callable_name
-    )
-
-    app = app_instance.instance_object
+    try:
+        app_instance = EntrypointResolver[EntryPointAsApp](file_path).parse_entrypoint_with_type(
+            callable_name
+        )
+        app = app_instance.instance_object
+    except EntrypointNotAppInstanceError:
+        try:
+            callable_entrypoint = EntrypointResolver[CallableEntryPoint](
+                file_path
+                ).parse_entrypoint_with_type(
+                callable_name
+            )
+        except (ResolveFromStringError, EntrypointError) as e:
+            Console().print(f"[bold red]Error:[/bold red] {e}")
+            raise SystemExit(1)
+        app = callable_entrypoint.instance_object()
+        if not isinstance(app, App):
+            Console().print(
+                f"[bold red]Error:[/bold red] callable must return an App instance, got {type(app).__name__}"
+            )
+            raise SystemExit(1)
+    except (ResolveFromStringError, EntrypointError) as e:
+        Console().print(f"[bold red]Error:[/bold red] {e}")
+        raise SystemExit(1)
     routers = app.registered_routers
 
     console = Console()

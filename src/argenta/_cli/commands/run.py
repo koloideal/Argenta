@@ -2,23 +2,33 @@ __all__ = ["run_handler"]
 
 import os
 
+from rich.console import Console
+
 from ..infrastructure.entrypoint_resolver.entity import (
     CallableEntryPoint,
     EntrypointResolver,
+)
+from ..infrastructure.entrypoint_resolver.exceptions import (
+    EntrypointError,
     ResolveFromStringError,
 )
 
 
 def run_handler(entrypoint_path: str) -> None:
     os.environ["RUN_FROM_ARGENTA_RUNNER"] = "1"
-    entrypoint_path, _, entrypoint_callable_name = entrypoint_path.partition(":")
-    if not entrypoint_callable_name:
-        raise ResolveFromStringError(
-            "Path to callable object that run orchestrator repl must be in the format <path/to/file.py>:<object_name> or <path.to.module>:<object_name>"
+    file_path, _, callable_name = entrypoint_path.partition(":")
+    if not callable_name:
+        Console().print(
+            f'[bold red]Error:[/bold red] "{entrypoint_path}" must be in format '
+            f'"<path/to/file.py>:<callable>" or "<path.to.module>:<callable>"'
         )
+        raise SystemExit(1)
 
-    runner = EntrypointResolver[CallableEntryPoint](entrypoint_path).parse_entrypoint_with_type(
-        entrypoint_callable_name
-    )
-
-    runner.instance_object()
+    try:
+        runner = EntrypointResolver[CallableEntryPoint](file_path).parse_entrypoint_with_type(
+            callable_name
+        )
+        runner.instance_object()
+    except (ResolveFromStringError, EntrypointError) as e:
+        Console().print(f"[bold red]Error:[/bold red] {e}")
+        raise SystemExit(1)

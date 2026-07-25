@@ -1,0 +1,265 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-25 18:00+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/cli.rst:3
+msgid "Командная строка"
+msgstr "Command Line Interface"
+
+#: ../../root/cli.rst:5
+msgid ""
+"Помимо библиотеки, ``Argenta`` поставляется с собственным CLI-инструментом, "
+"который помогает создавать проекты, запускать приложения, инспектировать "
+"маршруты и собирать бинарники."
+msgstr ""
+"In addition to the library, ``Argenta`` ships with its own CLI tool that "
+"helps scaffold projects, run applications, inspect routes, and build binaries."
+
+#: ../../root/cli.rst:8
+msgid "Установка"
+msgstr "Installation"
+
+#: ../../root/cli.rst:10
+msgid "CLI доступен как опциональная зависимость:"
+msgstr "The CLI is available as an optional dependency:"
+
+#: ../../root/cli.rst:16
+msgid ""
+"После установки команда ``argenta`` доступна в терминале:"
+msgstr ""
+"After installation, the ``argenta`` command is available in the terminal:"
+
+#: ../../root/cli.rst:22
+msgid ""
+"Если вы устанавливали ``argenta`` без extras, CLI-инструмент не будет "
+"доступен. Установите с ``[cli]`` для доступа к команде ``argenta``."
+msgstr ""
+"If you installed ``argenta`` without extras, the CLI tool will not be "
+"available. Install with ``[cli]`` to access the ``argenta`` command."
+
+#: ../../root/cli.rst:25
+msgid "Флаг ``--version``"
+msgstr "The ``--version`` flag"
+
+#: ../../root/cli.rst:27
+msgid "Показать установленную версию ``Argenta``:"
+msgstr "Show the installed ``Argenta`` version:"
+
+#: ../../root/cli.rst:35
+msgid "Создание проектов"
+msgstr "Scaffolding Projects"
+
+#: ../../root/cli.rst:38
+msgid "Команда ``new``"
+msgstr "The ``new`` command"
+
+#: ../../root/cli.rst:40
+msgid "Создаёт новую директорию проекта с boilerplate-кодом."
+msgstr "Creates a new project directory with boilerplate code."
+
+#: ../../root/cli.rst:44
+msgid "``project_name`` — имя директории проекта (обязательный аргумент)."
+msgstr "``project_name`` — project directory name (required argument)."
+
+#: ../../root/cli.rst:45
+msgid "``--with-arch`` — архитектура проекта: ``flat`` (по умолчанию) или ``src``."
+msgstr "``--with-arch`` — project architecture: ``flat`` (default) or ``src``."
+
+#: ../../root/cli.rst:53
+msgid "При архитектуре ``flat`` создаётся следующая структура:"
+msgstr "With the ``flat`` architecture, the following structure is created:"
+
+#: ../../root/cli.rst:59
+msgid "При архитектуре ``src``:"
+msgstr "With the ``src`` architecture:"
+
+#: ../../root/cli.rst:67
+msgid "Команда ``init``"
+msgstr "The ``init`` command"
+
+#: ../../root/cli.rst:69
+msgid ""
+"Инициализирует boilerplate в текущей директории. Удобно, когда проект уже "
+"существует и нужно добавить структуру Argenta."
+msgstr ""
+"Initializes boilerplate in the current directory. Useful when the project "
+"already exists and you need to add Argenta structure."
+
+#: ../../root/cli.rst:75
+msgid ""
+"Команда ``init`` не перезаписывает существующие файлы — они будут пропущены."
+msgstr ""
+"The ``init`` command does not overwrite existing files — they will be skipped."
+
+#: ../../root/cli.rst:80
+msgid "Запуск приложений"
+msgstr "Running Applications"
+
+#: ../../root/cli.rst:83
+msgid "Команда ``run``"
+msgstr "The ``run`` command"
+
+#: ../../root/cli.rst:85
+msgid ""
+"Запускает оркестратор ``Argenta`` из callable-ентрипойнта. Это альтернатива "
+"прямому вызову ``python main.py``, но с автоматической настройкой окружения."
+msgstr ""
+"Starts the ``Argenta`` orchestrator from a callable entrypoint. This is an "
+"alternative to directly calling ``python main.py``, but with automatic "
+"environment setup."
+
+#: ../../root/cli.rst:89
+msgid ""
+"``entrypoint`` — путь к callable в формате "
+"``<path/to/file.py>:<callable>`` или ``<path.to.module>:<callable>``."
+msgstr ""
+"``entrypoint`` — path to a callable in the format "
+"``<path/to/file.py>:<callable>`` or ``<path.to.module>:<callable>``."
+
+#: ../../root/cli.rst:99
+msgid ""
+"Команда ``run`` устанавливает переменную окружения "
+"``RUN_FROM_ARGENTA_RUNNER=1``, что отключает парсинг аргументов командной "
+"строки в ``ArgParser``. Это позволяет запустить REPL без конфликтов с "
+"CLI-аргументами ``argenta``."
+msgstr ""
+"The ``run`` command sets the ``RUN_FROM_ARGENTA_RUNNER=1`` environment "
+"variable, which disables command-line argument parsing in ``ArgParser``. "
+"This allows starting the REPL without conflicts with ``argenta`` CLI arguments."
+
+#: ../../root/cli.rst:104
+msgid "Инспекция маршрутов"
+msgstr "Inspecting Routes"
+
+#: ../../root/cli.rst:107
+msgid "Команда ``routes``"
+msgstr "The ``routes`` command"
+
+#: ../../root/cli.rst:109
+msgid ""
+"Отображает все зарегистрированные роутеры, команды, алиасы и флаги в виде "
+"дерева. Принимает как инстанс ``App``, так и callable, возвращающий ``App``."
+msgstr ""
+"Displays all registered routers, commands, aliases, and flags as a tree. "
+"Accepts either an ``App`` instance or a callable returning ``App``."
+
+#: ../../root/cli.rst:113
+msgid ""
+"``entrypoint`` — путь к ``App`` или callable в формате "
+"``<path/to/file.py>:<app_or_callable>``."
+msgstr ""
+"``entrypoint`` — path to an ``App`` or callable in the format "
+"``<path/to/file.py>:<app_or_callable>``."
+
+#: ../../root/cli.rst:125
+msgid "Если передан инстанс ``App``:"
+msgstr "If an ``App`` instance is passed:"
+
+#: ../../root/cli.rst:131
+msgid ""
+"Если передан callable (фабрика), он будет вызван, и результат будет "
+"использован для отображения маршрутов:"
+msgstr ""
+"If a callable (factory) is passed, it will be called, and the result will "
+"be used to display routes:"
+
+#: ../../root/cli.rst:139
+msgid ""
+"При использовании callable-ентрипойнта (например, ``create_app``) REPL не "
+"запускается — фабрика вызывается, и маршруты считываются из возвращённого "
+"``App``. Это полезно, когда роутеры подключаются внутри функции, а не на "
+"уровне модуля."
+msgstr ""
+"When using a callable entrypoint (e.g., ``create_app``), the REPL is not "
+"started — the factory is called, and routes are read from the returned "
+"``App``. This is useful when routers are registered inside a function "
+"rather than at the module level."
+
+#: ../../root/cli.rst:144
+msgid "Сборка бинарников"
+msgstr "Building Binaries"
+
+#: ../../root/cli.rst:147
+msgid "Команда ``build``"
+msgstr "The ``build`` command"
+
+#: ../../root/cli.rst:149
+msgid "Компилирует проект в standalone-бинарник с помощью `Nuitka <https://nuitka.net/>`_."
+msgstr "Compiles a project into a standalone binary using `Nuitka <https://nuitka.net/>`_."
+
+#: ../../root/cli.rst:153
+msgid ""
+"``entrypoint`` — путь к callable в формате "
+"``<path/to/file.py>:<callable>``."
+msgstr ""
+"``entrypoint`` — path to a callable in the format "
+"``<path/to/file.py>:<callable>``."
+
+#: ../../root/cli.rst:154
+msgid ""
+"``--output`` / ``-o`` — имя выходного бинарника (по умолчанию — имя файла "
+"или пакета)."
+msgstr ""
+"``--output`` / ``-o`` — output binary name (defaults to the file or package name)."
+
+#: ../../root/cli.rst:166
+msgid ""
+"Для использования команды ``build`` необходимо установить ``Nuitka``:"
+msgstr ""
+"To use the ``build`` command, you must install ``Nuitka``:"
+
+#: ../../root/cli.rst:174
+msgid "Информация об окружении"
+msgstr "Environment Information"
+
+#: ../../root/cli.rst:177
+msgid "Команда ``info``"
+msgstr "The ``info`` command"
+
+#: ../../root/cli.rst:179
+msgid ""
+"Отображает версию ``Argenta``, версию Python, платформу и ссылку на "
+"документацию."
+msgstr ""
+"Displays the ``Argenta`` version, Python version, platform, and a link to "
+"the documentation."
+
+#: ../../root/cli.rst:187
+msgid "Формат ентрипойнтов"
+msgstr "Entrypoint Format"
+
+#: ../../root/cli.rst:190
+msgid ""
+"Все команды, принимающие ентрипойнт (``run``, ``routes``, ``build``), "
+"используют единый формат:"
+msgstr ""
+"All commands that accept an entrypoint (``run``, ``routes``, ``build``) "
+"use a unified format:"
+
+#: ../../root/cli.rst:196
+msgid ""
+"Поддерживаются как пути к файлам, так и dotted-модули. Если передан путь к "
+"директории с ``__main__.py``, он будет разрешён автоматически."
+msgstr ""
+"Both file paths and dotted modules are supported. If a directory path "
+"containing ``__main__.py`` is passed, it will be resolved automatically."
+
+#: ../../root/cli.rst:199
+msgid "Примеры валидных ентрипойнтов:"
+msgstr "Examples of valid entrypoints:"

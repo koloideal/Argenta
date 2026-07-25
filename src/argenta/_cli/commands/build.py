@@ -39,7 +39,7 @@ def build_handler(entry_point: str, output_name: str | None = None) -> None:
         "--standalone",
         "--onefile",
         f"--output-filename={name}",
-        f"--jobs={os.cpu_count()}",
+        f"--jobs={os.cpu_count() or 1}",
         "--lto=no",
         "--include-windows-runtime-dlls=no",
     ]

@@ -4,12 +4,12 @@ from argenta import App, Orchestrator
 from argenta.app import PredefinedMessages, StaticDividingLine, AutoCompleter
 from argenta.app.dividing_line.models import DynamicDividingLine
 from argenta.orchestrator import ArgParser
-from mock.mock_app.routers import work_router
+from examples.example_app.routers import work_router
 
 app: App = App(
     dividing_line=StaticDividingLine('~')
 )
-orchestrator: Orchestrator = Orchestrator(arg_parser=ArgParser(processed_args=[]))
+orchestrator: Orchestrator = Orchestrator()
 
 
 def main():
