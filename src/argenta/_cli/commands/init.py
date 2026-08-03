@@ -14,17 +14,17 @@ from ._templates import (
 )
 
 
-def init_handler(with_arch: Literal["flat", "src"] = "flat") -> None:
+def init_handler(arch: Literal["flat", "src"] = "flat") -> None:
     cwd = Path.cwd()
     project_name = cwd.name.lower().replace(" ", "_")
 
     create_file(cwd / ".gitignore", GITIGNORE_CONTENT)
 
-    if with_arch == "flat":
+    if arch == "flat":
         create_file(cwd / "main.py", FLAT_MAIN_TEMPLATE)
         create_file(cwd / "handlers.py", FLAT_HANDLERS_TEMPLATE)
 
-    elif with_arch == "src":
+    elif arch == "src":
         base_pkg = cwd / "src" / project_name / "application"
 
         create_file(base_pkg / "__main__.py", SRC_MAIN_TEMPLATE)

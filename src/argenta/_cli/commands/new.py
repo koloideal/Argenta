@@ -15,7 +15,7 @@ from ._templates import (
 )
 
 
-def new_handler(project_name: str, with_arch: Literal["flat", "src"] = "flat") -> None:
+def new_handler(project_name: str, arch: Literal["flat", "src"] = "flat") -> None:
     base_dir = Path.cwd() / project_name
 
     if base_dir.exists():
@@ -27,11 +27,11 @@ def new_handler(project_name: str, with_arch: Literal["flat", "src"] = "flat") -
 
     create_file(base_dir / ".gitignore", GITIGNORE_CONTENT)
 
-    if with_arch == "flat":
+    if arch == "flat":
         create_file(base_dir / "main.py", FLAT_MAIN_TEMPLATE)
         create_file(base_dir / "handlers.py", FLAT_HANDLERS_TEMPLATE)
 
-    elif with_arch == "src":
+    elif arch == "src":
         pkg_name = project_name.lower().replace(" ", "_").replace("-", "_")
         app_pkg = base_dir / "src" / pkg_name / "application"
 

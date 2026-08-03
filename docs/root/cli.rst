@@ -1,18 +1,24 @@
 .. _root_cli:
 
-Командная строка
-==================
+CLI
+===
 
-Помимо библиотеки, ``Argenta`` поставляется с собственным CLI-инструментом, который помогает создавать проекты, запускать приложения, инспектировать маршруты и собирать бинарники.
+Помимо библиотеки, ``Argenta`` поставляется с собственным CLI-инструментом. Он берёт на себя рутину, которая сопровождает разработку CLI-приложений: создаёт каркас проекта, запускает приложение, инспектирует зарегистрированные маршруты и собирает standalone-бинарник.
+
+CLI поставляется как опциональная зависимость — основная библиотека остаётся лёгкой, а инструмент доступен только тем, кому он нужен.
 
 Установка
 ---------
 
-CLI доступен как опциональная зависимость:
+CLI доступен как опциональная зависимость ``[cli]``:
 
 .. code-block:: shell
 
     pip install argenta[cli]
+
+.. code-block:: shell
+
+    uv add argenta[cli]
 
 После установки команда ``argenta`` доступна в терминале:
 
@@ -20,14 +26,14 @@ CLI доступен как опциональная зависимость:
 
     argenta --help
 
-.. image:: _static/cli/help.png
+.. image:: https://i.ibb.co/p60T7fvh/image.png
    :alt: Argenta CLI help
 
 .. note::
-   Если вы устанавливали ``argenta`` без extras, CLI-инструмент не будет доступен. Установите с ``[cli]`` для доступа к команде ``argenta``.
+   Если ``argenta`` установлена без extras, команда ``argenta`` не будет доступна. Установите с ``[cli]``, чтобы получить доступ к CLI-инструменту.
 
 Флаг ``--version``
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 Показать установленную версию ``Argenta``:
 
@@ -35,9 +41,46 @@ CLI доступен как опциональная зависимость:
 
     argenta --version
 
+Аналогично через короткий флаг:
+
 .. code-block:: shell
 
     argenta -v
+
+-----
+
+.. _cli_entrypoint:
+
+Формат entrypoint
+-----------------
+
+Команды ``run``, ``routes`` и ``build`` принимают **entrypoint** — указатель на объект внутри проекта, который нужно запустить, инспектировать или собрать. Единый формат описан здесь, чтобы не повторяться в каждой команде.
+
+Формат entrypoint:
+
+.. code-block:: text
+
+   <path/to/file.py>:<object_name>
+   <path.to.module>:<object_name>
+
+Поддерживаются два способа адресации:
+
+*   **Путь к файлу** — ``app/main.py:main``. Удобно при работе с конкретным файлом.
+*   **Dotted-модуль** — ``my_project.application:main``. Естественно для установленных пакетов.
+
+Если передан путь к директории с ``__main__.py``, он разрешается автоматически — указывать файл явно не нужно.
+
+**Примеры валидных entrypoint-ов:**
+
+.. code-block:: text
+
+   app/main.py:main
+   app/main.py:app
+   app/main.py:create_app
+   my_project.application:main
+   my_project/application/__main__.py:main
+
+Тип объекта зависит от команды: ``run`` и ``build`` ожидают callable, ``routes`` — инстанс ``App`` или callable, возвращающий ``App``.
 
 -----
 
@@ -47,21 +90,21 @@ CLI доступен как опциональная зависимость:
 Команда ``new``
 ~~~~~~~~~~~~~~~~
 
-Создаёт новую директорию проекта с boilerplate-кодом.
+Создаёт новую директорию проекта с boilerplate-кодом. Это отправная точка: вместо ручной настройки структуры — готовый каркас за одну команду.
 
 .. code-block:: shell
 
-    argenta new <project_name> [--with-arch flat|src]
+    argenta new <project_name> [--arch flat|src]
 
 *   ``project_name`` — имя директории проекта (обязательный аргумент).
-*   ``--with-arch`` — архитектура проекта: ``flat`` (по умолчанию) или ``src``.
+*   ``--arch`` — архитектура проекта: ``flat`` (по умолчанию) или ``src``.
 
 **Примеры:**
 
 .. code-block:: shell
 
     argenta new my-app
-    argenta new my-app --with-arch src
+    argenta new my-app --arch src
 
 При архитектуре ``flat`` создаётся следующая структура:
 
@@ -73,45 +116,45 @@ CLI доступен как опциональная зависимость:
 .. literalinclude:: ../code_snippets/cli/src_structure.txt
    :language: text
 
-.. image:: _static/cli/new_command.png
+.. image:: https://i.ibb.co/gY6zTQd/image.png
    :alt: argenta new command output
 
 Команда ``init``
 ~~~~~~~~~~~~~~~~~
 
-Инициализирует boilerplate в текущей директории. Удобно, когда проект уже существует и нужно добавить структуру Argenta.
+Делает то же, что и ``new``, но в текущей директории. Удобно, когда проект уже существует и нужно добавить структуру Argenta, не создавая лишний уровень вложенности.
 
 .. code-block:: shell
 
-    argenta init [--with-arch flat|src]
+    argenta init [--arch flat|src]
 
-*   ``--with-arch`` — архитектура проекта: ``flat`` (по умолчанию) или ``src``.
+*   ``--arch`` — архитектура проекта: ``flat`` (по умолчанию) или ``src``.
 
 **Примеры:**
 
 .. code-block:: shell
 
     argenta init
-    argenta init --with-arch src
+    argenta init --arch src
 
 .. note::
    Команда ``init`` не перезаписывает существующие файлы — они будут пропущены.
 
 -----
 
-Запуск приложений
+Запуск приложения
 -----------------
 
 Команда ``run``
 ~~~~~~~~~~~~~~~~
 
-Запускает оркестратор ``Argenta`` из callable-ентрипойнта. Это альтернатива прямому вызову ``python main.py``, но с автоматической настройкой окружения.
+Запускает оркестратор ``Argenta`` из callable-entrypoint. Это альтернатива прямому вызову ``python main.py``, но с автоматической настройкой окружения.
 
 .. code-block:: shell
 
     argenta run <entrypoint>
 
-*   ``entrypoint`` — путь к callable в формате ``<path/to/file.py>:<callable>`` или ``<path.to.module>:<callable>``.
+Формат entrypoint — см. :ref:`Формат entrypoint <cli_entrypoint>`.
 
 **Примеры:**
 
@@ -120,11 +163,11 @@ CLI доступен как опциональная зависимость:
     argenta run app/main.py:main
     argenta run my_project.application:main
 
-.. image:: _static/cli/run_command.png
+.. image:: https://i.ibb.co/fVPzxWxp/image.png
    :alt: argenta run command output
 
 .. note::
-   Команда ``run`` устанавливает переменную окружения ``RUN_FROM_ARGENTA_RUNNER=1``, что отключает парсинг аргументов командной строки в ``ArgParser``. Это позволяет запустить REPL без конфликтов с CLI-аргументами ``argenta``.
+   Команда ``run`` устанавливает переменную окружения ``RUN_FROM_ARGENTA_RUNNER=1``. ``ArgParser`` видит этот флаг и пропускает парсинг ``sys.argv``, поэтому аргументы самого ``argenta`` (типа ``--help``, ``--version``) не конфликтуют с аргументами запускаемого приложения. REPL стартует чисто, без ошибок про неизвестные флаги.
 
 -----
 
@@ -140,7 +183,7 @@ CLI доступен как опциональная зависимость:
 
     argenta routes <entrypoint>
 
-*   ``entrypoint`` — путь к ``App`` или callable в формате ``<path/to/file.py>:<app_or_callable>``.
+Формат entrypoint — см. :ref:`Формат entrypoint <cli_entrypoint>`.
 
 **Примеры:**
 
@@ -149,42 +192,62 @@ CLI доступен как опциональная зависимость:
     argenta routes app/main.py:app
     argenta routes app/main.py:create_app
 
-Если передан инстанс ``App``:
+Инстанс ``App`` передаётся напрямую, если роутеры подключены на уровне модуля:
 
 .. literalinclude:: ../code_snippets/cli/app_instance.py
    :language: python
    :linenos:
 
-Если передан callable (фабрика), он будет вызван, и результат будет использован для отображения маршрутов:
+Фабрика ``create_app`` передаётся, если роутеры регистрируются внутри функции — например, зависят от конфига или DI:
 
 .. literalinclude:: ../code_snippets/cli/app_factory.py
    :language: python
    :linenos:
 
-.. image:: _static/cli/routes_command.png
-   :alt: argenta routes command output
-
 .. note::
-   При использовании callable-ентрипойнта (например, ``create_app``) REPL не запускается — фабрика вызывается, и маршруты считываются из возвращённого ``App``. Это полезно, когда роутеры подключаются внутри функции, а не на уровне модуля.
+   При использовании callable-entrypoint REPL не запускается — фабрика вызывается, и маршруты считываются из возвращённого ``App``.
+
+Пример вывода:
+
+.. code-block:: text
+
+    ──────────────────────────────────────────
+       App Stats
+    ──────────────────────────────────────────
+    Total Routers:  1
+    Total Commands: 1
+    Total Aliases:  0
+    Total Flags:    0
+    ──────────────────────────────────────────
+
+    📦 App object: <App>
+    └── 📁 Router: Example
+        └── ⚡ hello
+            📝 description: Say hello
+
+.. image:: https://i.ibb.co/wNFvKcqM/image.png
+   :alt: argenta routes command output
 
 -----
 
-Сборка бинарников
------------------
+Сборка бинарника
+----------------
 
 Команда ``build``
 ~~~~~~~~~~~~~~~~~~
 
-Компилирует проект в standalone-бинарник с помощью `Nuitka <https://nuitka.net/>`_.
+Компилирует проект в standalone-бинарник с помощью `Nuitka <https://nuitka.net/>`_, которая входит в ``[cli]`` extra.
 
 .. code-block:: shell
 
-    argenta build <entrypoint> [--output <name>]
+    argenta build <entrypoint> [--output <name>] [-- <nuitka-flags>...]
 
-*   ``entrypoint`` — путь к callable в формате ``<path/to/file.py>:<callable>``.
+Формат entrypoint — см. :ref:`Формат entrypoint <cli_entrypoint>`.
+
 *   ``--output`` / ``-o`` — имя выходного бинарника (по умолчанию — имя файла или пакета).
+*   ``--`` — разделитель, после которого передаются **произвольные флаги Nuitka**. Они добавляются к вызову Nuitka после аргументов Argenta, поэтому могут переопределять дефолты и добавлять любые опции, которые Nuitka поддерживает.
 
-**Примеры:**
+**Базовые примеры:**
 
 .. code-block:: shell
 
@@ -192,14 +255,52 @@ CLI доступен как опциональная зависимость:
     argenta build app/main.py:main --output myapp
     argenta build app/__main__.py:main -o myapp
 
-.. warning::
-   Для использования команды ``build`` необходимо установить ``Nuitka``:
+**Примеры с флагами Nuitka:**
 
-   .. code-block:: shell
+.. code-block:: shell
 
-       pip install nuitka
+    argenta build app/main.py:main -- --lto=yes
+    argenta build app/main.py:main -- --include-package=numpy
+    argenta build app/main.py:main -o myapp -- --lto=auto --include-data-files=assets/*=assets/
 
-.. image:: _static/cli/build_command.png
+Что делает Argenta по умолчанию
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Команда ``build`` формирует вызов Nuitka со следующими аргументами:
+
+*   ``--standalone --onefile`` — собирает единый бинарник со всеми зависимостями внутри.
+*   ``--output-filename=<name>`` — имя выходного файла (из ``--output`` или имени entrypoint).
+*   ``--jobs=<cpu_count>`` — параллельная компиляция на всех ядрах.
+*   ``--lto=no`` — LTO отключён по умолчанию (быстрее сборка, медленнее запуск).
+*   ``--include-windows-runtime-dlls=no`` — на Windows не включает runtime DLL в бинарник.
+*   ``--python-flag=-m`` — добавляется автоматически, если entrypoint указывает на ``__main__.py``.
+
+Все эти дефолты можно переопределить, передав соответствующий флаг после ``--``. Например, ``-- --lto=yes`` включит LTO, а ``-- --jobs=1`` отключит параллельную сборку.
+
+Основные флаги Nuitka и их нюансы
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Полный список флагов — в `документации Nuitka <https://nuitka.net/user-documentation/user-manual.html>`_. Ниже — те, с которыми чаще всего сталкиваются при сборке CLI-приложений.
+
+``--lto={yes,no,auto}``
+    Link-Time Optimization. ``yes`` — бинарник меньше и быстрее запускается, но сборка длится заметно дольше. ``no`` (дефолт Argenta) — сборка быстрее, бинарник больше. ``auto`` — Nuitka выбирает сам. Для production-сборки имеет смысл ``yes``, для итеративной разработки — ``no``.
+
+``--include-package=<package>``
+    Явно включает пакет в бинарник. Nuitka отслеживает импорты статически, поэтому пакеты, которые импортируются динамически (через ``importlib``, плагины, ``__import__``), в бинарник не попадают — их нужно добавлять вручную. Типичные кандидаты: ``numpy``, ``pandas``, ``rich``, ``prompt_toolkit``.
+
+``--include-data-files=<source>=<dest>``
+    Включает файлы данных (шаблоны, конфиги, ассеты) в бинарник. Формат: ``--include-data-files=assets/logo.png=assets/logo.png``. Для директорий целиком — ``--include-data-dir=assets=assets``. Без этого файлы, которые приложение читает во время выполнения, не будут найдены в собранном бинарнике.
+
+``--enable-plugin=<plugin>``
+    Включает `плагин Nuitka <https://nuitka.net/user-documentation/user-manual.html#plugins>`_ для поддержки фреймворков, требующих специальной обработки. Распространённые: ``anti-bloat`` (вырезает ненужные части тяжёлых пакетов), ``numpy`` (корректная сборка с numpy), ``tk-inter`` (Tkinter GUI), ``triton`` (PyTorch triton kernels).
+
+``--onefile`` / ``--standalone``
+    ``--onefile`` (дефолт Argenta) — единый бинарник, удобный для дистрибуции. При запуске распаковывается во временную директорию, поэтому стартует медленнее. ``--standalone`` — папка с бинарником и зависимостями, стартует быстрее, но дистрибуция — это вся папка целиком. Чтобы переключиться: ``-- --standalone`` (переопределит дефолтный ``--onefile``).
+
+``--jobs=<n>``
+    Количество параллельных процессов компиляции. Дефолт Argenta — все ядра (``os.cpu_count()``). На машинах с малым объёмом памяти имеет смысл ограничить: ``-- --jobs=2``.
+
+.. image:: https://i.ibb.co/VsVXxf7/image.png
    :alt: argenta build command output
 
 -----
@@ -216,29 +317,14 @@ CLI доступен как опциональная зависимость:
 
     argenta info
 
-.. image:: _static/cli/info_command.png
+Пример вывода:
+
+.. code-block:: text
+
+    Argenta 1.2.0
+    Python  3.13.0
+    Platform  Linux-7.1.5-zen1-2-zen-x86_64-with-glibc2.40
+    Docs    https://argenta.readthedocs.io
+
+.. image:: https://i.ibb.co/B5k8Ftyg/image.png
    :alt: argenta info command output
-
------
-
-Формат ентрипойнтов
--------------------
-
-Все команды, принимающие ентрипойнт (``run``, ``routes``, ``build``), используют единый формат:
-
-.. code-block:: text
-
-   <path/to/file.py>:<object_name>
-   <path.to.module>:<object_name>
-
-Поддерживаются как пути к файлам, так и dotted-модули. Если передан путь к директории с ``__main__.py``, он будет разрешён автоматически.
-
-**Примеры валидных ентрипойнтов:**
-
-.. code-block:: text
-
-   app/main.py:main
-   app/main.py:app
-   app/main.py:create_app
-   my_project.application:main
-   my_project/application/__main__.py:main

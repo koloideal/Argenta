@@ -1,7 +1,7 @@
 from importlib.metadata import version
 
 import typer
-from typer import Typer
+from typer import Context, Typer
 
 from .commands import (
     build_handler,
@@ -53,23 +53,23 @@ def _run(entrypoint_path: str = typer.Argument(help="Entrypoint as <path/to/file
     "init",
     help="Scaffold a flat or src boilerplate in the current project directory.",
     short_help="Initialize architecture in existing project",
-    epilog="Run from the project root. Example: argenta init --with-arch src",
+    epilog="Run from the project root. Example: argenta init --arch src",
 )
-def _init(with_arch: str = typer.Option("flat", "--with-arch", help="Architecture: flat or src")) -> None:
-    init_handler(with_arch=with_arch)  # type: ignore[arg-type]
+def _init(arch: str = typer.Option("flat", "--arch", help="Architecture: flat or src")) -> None:
+    init_handler(arch=arch)  # type: ignore[arg-type]
 
 
 @app.command(
     "new",
     help="Create a new project directory with a flat or src boilerplate.",
     short_help="Create a new project with boilerplate",
-    epilog="Example: argenta new my-app --with-arch src",
+    epilog="Example: argenta new my-app --arch src",
 )
 def _new(
     project_name: str = typer.Argument(help="Name of the new project directory"),
-    with_arch: str = typer.Option("flat", "--with-arch", help="Architecture: flat or src"),
+    arch: str = typer.Option("flat", "--arch", help="Architecture: flat or src"),
 ) -> None:
-    new_handler(project_name=project_name, with_arch=with_arch)  # type: ignore[arg-type]
+    new_handler(project_name=project_name, arch=arch)  # type: ignore[arg-type]
 
 
 @app.command(
@@ -93,15 +93,23 @@ def _info() -> None:
 
 @app.command(
     name="build",
-    help="Compile a project entrypoint into a standalone binary using Nuitka.",
+    help="Compile a project entrypoint into a standalone binary using Nuitka. "
+    "Any Nuitka flags can be passed after a `--` separator, e.g. "
+    "`argenta build app/main.py:main -- --lto=yes --include-package=numpy`.",
     short_help="Build a standalone binary",
-    epilog="Example: argenta build app/main.py:main --output myapp",
+    epilog=(
+        "Examples:\n"
+        "  argenta build app/main.py:main --output myapp\n"
+        "  argenta build app/main.py:main -- --lto=yes --include-data-files=assets/*=assets/"
+    ),
+    context_settings={"allow_extra_args": True, "ignore_unknown_options": True},
 )
 def _build(
+    ctx: Context,
     entry_point: str = typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>"),
     output_name: str | None = typer.Option(None, "--output", "-o", help="Output binary name"),
 ) -> None:
-    build_handler(entry_point=entry_point, output_name=output_name)
+    build_handler(entry_point=entry_point, output_name=output_name, extra_nuitka_args=ctx.args)
 
 
 def main() -> None:

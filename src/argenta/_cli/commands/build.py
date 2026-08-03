@@ -8,7 +8,11 @@ from pathlib import Path
 from rich.console import Console
 
 
-def build_handler(entry_point: str, output_name: str | None = None) -> None:
+def build_handler(
+    entry_point: str,
+    output_name: str | None = None,
+    extra_nuitka_args: list[str] | None = None,
+) -> None:
     console = Console()
     file_path, _, callable_name = entry_point.partition(":")
 
@@ -46,6 +50,12 @@ def build_handler(entry_point: str, output_name: str | None = None) -> None:
 
     if is_main_module:
         args.append("--python-flag=-m")
+
+    # User-provided Nuitka flags are appended last, so they can override
+    # Argenta's defaults (e.g. --lto=yes, --jobs=1) and add anything else
+    # Nuitka supports (--include-package, --include-data-files, --enable-plugin, ...).
+    if extra_nuitka_args:
+        args.extend(extra_nuitka_args)
 
     args.append(target)
 
