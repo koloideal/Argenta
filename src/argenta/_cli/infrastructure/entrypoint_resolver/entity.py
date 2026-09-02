@@ -38,9 +38,9 @@ class EntryPointAsApp:
 
 
 @dataclass(frozen=True, slots=True)
-class ResolvedEntrypoint:
+class ResolvedEntrypoint[T: (Callable[[], None], App)]:
     resolved_source_path: str
-    instance: Callable[[], None] | App
+    instance: T
 
 
 class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
@@ -79,7 +79,7 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
 
         return EntryPointAsApp(raw_path=resolved_entrypoint.resolved_source_path, instance_object=instance_object)
 
-    def _resolve_from_string(self, entrypoint_object_name: str) -> ResolvedEntrypoint:
+    def _resolve_from_string[K](self, entrypoint_object_name: str) -> ResolvedEntrypoint[K]:
         raw_path = self._path_to_entrypoint
 
         raw_path_as_dir = Path(raw_path).resolve()

@@ -1,4 +1,5 @@
 from importlib.metadata import version
+from typing import Literal
 
 import typer
 from typer import Context, Typer
@@ -55,8 +56,8 @@ def _run(entrypoint_path: str = typer.Argument(help="Entrypoint as <path/to/file
     short_help="Initialize architecture in existing project",
     epilog="Run from the project root. Example: argenta init --arch src",
 )
-def _init(arch: str = typer.Option("flat", "--arch", help="Architecture: flat or src")) -> None:
-    init_handler(arch=arch)  # type: ignore[arg-type]
+def _init(arch: Literal["flat", "src"] = typer.Option("flat", "--arch", help="Architecture: flat or src")) -> None:
+    init_handler(arch=arch)
 
 
 @app.command(
@@ -67,9 +68,9 @@ def _init(arch: str = typer.Option("flat", "--arch", help="Architecture: flat or
 )
 def _new(
     project_name: str = typer.Argument(help="Name of the new project directory"),
-    arch: str = typer.Option("flat", "--arch", help="Architecture: flat or src"),
+    arch: Literal["flat", "src"] = typer.Option("flat", "--arch", help="Architecture: flat or src"),
 ) -> None:
-    new_handler(project_name=project_name, arch=arch)  # type: ignore[arg-type]
+    new_handler(project_name=project_name, arch=arch)
 
 
 @app.command(

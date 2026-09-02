@@ -12,7 +12,7 @@ class EntrypointError(Exception):
 
 
 class EntrypointNotCallableError(EntrypointError):
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Entrypoint {self.entrypoint_as_repr} is not callable"
 
 
@@ -22,5 +22,5 @@ class CallableEntrypointNotMatchRequiredSignatureError(EntrypointError):
 
 
 class EntrypointNotAppInstanceError(EntrypointError):
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Entrypoint {self.entrypoint_as_repr} is not instance of App"
