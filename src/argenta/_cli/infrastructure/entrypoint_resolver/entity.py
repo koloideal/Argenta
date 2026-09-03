@@ -18,6 +18,9 @@ from .exceptions import (
 )
 
 
+CallableReturnsApp = Callable[[], App]
+
+
 class EntryPoint[T](Protocol):
     @property
     def raw_path(self) -> str: ...
@@ -28,7 +31,7 @@ class EntryPoint[T](Protocol):
 @dataclass(frozen=True, slots=True)
 class CallableEntryPoint:
     raw_path: str
-    instance_object: Callable[[], None]
+    instance_object: CallableReturnsApp
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,7 +41,7 @@ class EntryPointAsApp:
 
 
 @dataclass(frozen=True, slots=True)
-class ResolvedEntrypoint[T: (Callable[[], None], App)]:
+class ResolvedEntrypoint[T: (CallableReturnsApp, App)]:
     resolved_source_path: str
     instance: T
 
@@ -51,6 +54,7 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
         self,
         entrypoint_object_name: str,
     ) -> T:
+        # pyrefly: ignore [missing-attribute]
         entrypoint_type: type[T] = get_args(self.__orig_class__)[0]  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType]
         if entrypoint_type is CallableEntryPoint:
             return cast(T, self._parse_callable_entrypoint(entrypoint_object_name))
@@ -59,7 +63,7 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
         raise NotImplementedError
 
     def _parse_callable_entrypoint(self, entrypoint_object_name: str) -> CallableEntryPoint:
-        resolved_entrypoint = self._resolve_from_string(entrypoint_object_name)
+        resolved_entrypoint: ResolvedEntrypoint[CallableReturnsApp] = self._resolve_from_string(entrypoint_object_name)
         instance_object = resolved_entrypoint.instance
         if not callable(instance_object):
             raise EntrypointNotCallableError(repr(instance_object))
@@ -72,14 +76,14 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
         return CallableEntryPoint(raw_path=resolved_entrypoint.resolved_source_path, instance_object=instance_object)
 
     def _parse_entrypoint_as_app(self, entrypoint_object_name: str) -> EntryPointAsApp:
-        resolved_entrypoint = self._resolve_from_string(entrypoint_object_name)
+        resolved_entrypoint: ResolvedEntrypoint[App] = self._resolve_from_string(entrypoint_object_name)
         instance_object = resolved_entrypoint.instance
         if not isinstance(instance_object, App):
             raise EntrypointNotAppInstanceError(repr(instance_object))
 
         return EntryPointAsApp(raw_path=resolved_entrypoint.resolved_source_path, instance_object=instance_object)
 
-    def _resolve_from_string[K](self, entrypoint_object_name: str) -> ResolvedEntrypoint[K]:
+    def _resolve_from_string[K: (CallableReturnsApp, App)](self, entrypoint_object_name: str) -> ResolvedEntrypoint[K]:
         raw_path = self._path_to_entrypoint
 
         raw_path_as_dir = Path(raw_path).resolve()
@@ -133,4 +137,12 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
         except AttributeError:
             raise ResolveFromStringError(f'"{entrypoint_object_name}" not found in "{raw_path}"')
 
-        return ResolvedEntrypoint(resolved_source_path, instance)
+        match instance:
+            case x if callable(x):
+                result_as_callable: ResolvedEntrypoint[CallableReturnsApp] = ResolvedEntrypoint(resolved_source_path, instance)
+                return cast(ResolvedEntrypoint[K], result_as_callable)
+            case App():
+                result_as_app: ResolvedEntrypoint[App] = ResolvedEntrypoint(resolved_source_path, instance)
+                return cast(ResolvedEntrypoint[K], result_as_app)
+            case _:
+                raise ResolveFromStringError(f'"{entrypoint_object_name}" is not a valid entrypoint')
