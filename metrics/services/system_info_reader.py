@@ -1,27 +1,18 @@
-__all__ = [
-    "SystemInfo",
-    "get_system_info"
-]
+__all__ = ["SystemInfo", "get_system_info"]
 
-from dataclasses import dataclass
 import platform
 import sys
+from dataclasses import dataclass
 
 import cpuinfo
 import psutil
 
 
 @dataclass(frozen=True, slots=True)
-class SystemInfo:
-    os_info: OSInfo
-    cpu_info: CPUInfo
-    memory_info: MemoryInfo
-    python_info: PythonInfo
-
-@dataclass(frozen=True, slots=True)
 class OSInfo:
     name: str
     kernel_version: str
+
 
 @dataclass(frozen=True, slots=True)
 class CPUInfo:
@@ -31,11 +22,13 @@ class CPUInfo:
     logical_cores: int
     max_frequency: float
 
+
 @dataclass(frozen=True, slots=True)
 class MemoryInfo:
-    total_ram: float # in GB
-    used_ram: float # in GB
-    available_ram: float # in GB
+    total_ram: float  # in GB
+    used_ram: float  # in GB
+    available_ram: float  # in GB
+
 
 @dataclass(frozen=True, slots=True)
 class PythonInfo:
@@ -43,18 +36,6 @@ class PythonInfo:
     implementation: str
     compiler: str
 
-
-def get_system_info() -> SystemInfo:
-    os_info = get_os_info()
-    cpu_info = get_cpu_info()
-    memory_info = get_memory_info()
-    python_info = get_python_info()
-    return SystemInfo(
-        os_info=os_info,
-        cpu_info=cpu_info,
-        memory_info=memory_info,
-        python_info=python_info,
-    )
 
 def get_os_info() -> OSInfo:
     system = platform.system()
@@ -73,22 +54,17 @@ def get_os_info() -> OSInfo:
             kernel_version=kernel_version,
         )
     elif system == "Darwin":
-        return OSInfo(
-            kernel_version=platform.release(),
-            name=f"macOS {platform.mac_ver()[0]}"
-        )
+        return OSInfo(kernel_version=platform.release(), name=f"macOS {platform.mac_ver()[0]}")
     else:
-        return OSInfo(
-            kernel_version=platform.release(),
-            name=platform.system()
-        )
+        return OSInfo(kernel_version=platform.release(), name=platform.system())
+
 
 def get_cpu_info() -> CPUInfo:
     cpu_info = cpuinfo.get_cpu_info()
     cpu_name = cpu_info["brand_raw"]
     cpu_architecture = cpu_info["arch"]
-    cpu_physical_cores = psutil.cpu_count(logical=False)
-    cpu_logical_cores = psutil.cpu_count(logical=True)
+    cpu_physical_cores = psutil.cpu_count(logical=False) or 0
+    cpu_logical_cores = psutil.cpu_count(logical=True) or 0
 
     cpu_freq = psutil.cpu_freq()
     cpu_max_frequency = cpu_freq.max
@@ -98,8 +74,9 @@ def get_cpu_info() -> CPUInfo:
         architecture=cpu_architecture,
         physical_cores=cpu_physical_cores,
         logical_cores=cpu_logical_cores,
-        max_frequency=cpu_max_frequency
+        max_frequency=cpu_max_frequency,
     )
+
 
 def get_memory_info() -> MemoryInfo:
     mem = psutil.virtual_memory()
@@ -113,14 +90,32 @@ def get_memory_info() -> MemoryInfo:
         available_ram=available_ram,
     )
 
+
 def get_python_info() -> PythonInfo:
     python_version = platform.python_version()
     python_implementation = platform.python_implementation()
     python_compiler = platform.python_compiler()
     return PythonInfo(
-        version=python_version,
-        implementation=python_implementation,
-        compiler=python_compiler
+        version=python_version, implementation=python_implementation, compiler=python_compiler
     )
 
 
+@dataclass(frozen=True, slots=True)
+class SystemInfo:
+    os_info: OSInfo
+    cpu_info: CPUInfo
+    memory_info: MemoryInfo
+    python_info: PythonInfo
+
+
+def get_system_info() -> SystemInfo:
+    os_info = get_os_info()
+    cpu_info = get_cpu_info()
+    memory_info = get_memory_info()
+    python_info = get_python_info()
+    return SystemInfo(
+        os_info=os_info,
+        cpu_info=cpu_info,
+        memory_info=memory_info,
+        python_info=python_info,
+    )

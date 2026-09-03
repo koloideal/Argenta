@@ -9,7 +9,7 @@ orchestrator: Orchestrator = Orchestrator()
 
 def main() -> None:
     app.include_router(router)
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
 
 if __name__ == "__main__":

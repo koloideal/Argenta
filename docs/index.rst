@@ -56,6 +56,7 @@ Argenta предназначена для создания приложений,
 
     root/redirect_stdout
     root/dependency_injection
+    root/cli
     root/testing
 
 .. toctree::

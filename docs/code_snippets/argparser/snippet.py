@@ -12,6 +12,6 @@ orchestrator = Orchestrator(
 
 if __name__ == "__main__":
     if arg_parser.parsed_argspace.get_by_name("dev"):
-        orchestrator.start_polling(App(initial_message="ArgentaDev"))
+        orchestrator.run_repl(App(initial_message="ArgentaDev"))
     else:
-        orchestrator.start_polling(App())
+        orchestrator.run_repl(App())
