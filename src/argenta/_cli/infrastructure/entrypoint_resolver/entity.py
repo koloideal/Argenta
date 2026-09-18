@@ -54,8 +54,7 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
         self,
         entrypoint_object_name: str,
     ) -> T:
-        # pyrefly: ignore [missing-attribute]
-        entrypoint_type: type[T] = get_args(self.__orig_class__)[0]  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType]
+        entrypoint_type: type[T] = get_args(self.__orig_class__)[0]  # type: ignore
         if entrypoint_type is CallableEntryPoint:
             return cast(T, self._parse_callable_entrypoint(entrypoint_object_name))
         elif entrypoint_type is EntryPointAsApp:
