@@ -1,0 +1,11 @@
+my_project/
+├── src/
+│   └── my_project/
+│       └── application/
+│           ├── __init__.py
+│           ├── __main__.py
+│           ├── routers.py
+│           └── handlers/
+│               ├── __init__.py
+│               └── hello_world_handler.py
+└── .gitignore

@@ -159,7 +159,7 @@ PredefinedMessages
       app.add_message_on_startup(PredefinedMessages.AUTOCOMPLETE)
       app.add_message_on_startup(PredefinedMessages.HELP)
 
-      orchestrator.start_polling(app)
+      orchestrator.run_repl(app)
 
    if __name__ == "__main__":
       main()

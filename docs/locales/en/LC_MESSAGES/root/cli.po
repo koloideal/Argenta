@@ -1,0 +1,600 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, kolo
+# This file is distributed under the same license as the Argenta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Argenta \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-03 18:51+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../root/cli.rst:4
+msgid "CLI"
+msgstr "CLI"
+
+#: ../../root/cli.rst:6
+msgid ""
+"Помимо библиотеки, ``Argenta`` поставляется с собственным "
+"CLI-инструментом. Он берёт на себя рутину, которая сопровождает "
+"разработку CLI-приложений: создаёт каркас проекта, запускает приложение, "
+"инспектирует зарегистрированные маршруты и собирает standalone-бинарник."
+msgstr ""
+"In addition to the library, ``Argenta`` ships with its own CLI tool. It "
+"takes over the routine that surrounds CLI app development: scaffolds a "
+"project, runs the application, inspects registered routes, and builds a "
+"standalone binary."
+
+#: ../../root/cli.rst:8
+msgid ""
+"CLI поставляется как опциональная зависимость — основная библиотека "
+"остаётся лёгкой, а инструмент доступен только тем, кому он нужен."
+msgstr ""
+"The CLI is shipped as an optional dependency — the core library stays "
+"light, and the tool is available only to those who need it."
+
+#: ../../root/cli.rst:11
+msgid "Установка"
+msgstr "Installation"
+
+#: ../../root/cli.rst:13
+msgid "CLI доступен как опциональная зависимость ``[cli]``:"
+msgstr "The CLI is available as the optional ``[cli]`` dependency:"
+
+#: ../../root/cli.rst:23
+msgid "После установки команда ``argenta`` доступна в терминале:"
+msgstr "After installation, the ``argenta`` command is available in the terminal:"
+
+#: ../../root/cli.rst:34
+msgid ""
+"Если ``argenta`` установлена без extras, команда ``argenta`` не будет "
+"доступна. Установите с ``[cli]``, чтобы получить доступ к "
+"CLI-инструменту."
+msgstr ""
+"If ``argenta`` is installed without extras, the ``argenta`` command will "
+"not be available. Install with ``[cli]`` to get access to the CLI tool."
+
+#: ../../root/cli.rst:37
+msgid "Флаг ``--version``"
+msgstr "The ``--version`` flag"
+
+#: ../../root/cli.rst:39
+msgid "Показать установленную версию ``Argenta``:"
+msgstr "Show the installed ``Argenta`` version:"
+
+#: ../../root/cli.rst:45
+msgid "Аналогично через короткий флаг:"
+msgstr "Equivalently, via the short flag:"
+
+#: ../../root/cli.rst:56
+msgid "Формат entrypoint"
+msgstr "Entrypoint format"
+
+#: ../../root/cli.rst:58
+msgid ""
+"Команды ``run``, ``routes`` и ``build`` принимают **entrypoint** — "
+"указатель на объект внутри проекта, который нужно запустить, "
+"инспектировать или собрать. Единый формат описан здесь, чтобы не "
+"повторяться в каждой команде."
+msgstr ""
+"The ``run``, ``routes`` and ``build`` commands accept an **entrypoint** —"
+" a pointer to an object inside the project to run, inspect, or build. The"
+" shared format is documented here once instead of repeating it in each "
+"command."
+
+#: ../../root/cli.rst:60
+msgid "Формат entrypoint:"
+msgstr "Entrypoint format:"
+
+#: ../../root/cli.rst:67
+msgid "Поддерживаются два способа адресации:"
+msgstr "Two addressing styles are supported:"
+
+#: ../../root/cli.rst:69
+msgid ""
+"**Путь к файлу** — ``app/main.py:main``. Удобно при работе с конкретным "
+"файлом."
+msgstr ""
+"**File path** — ``app/main.py:main``. Convenient when working with a "
+"specific file."
+
+#: ../../root/cli.rst:70
+msgid ""
+"**Dotted-модуль** — ``my_project.application:main``. Естественно для "
+"установленных пакетов."
+msgstr ""
+"**Dotted module** — ``my_project.application:main``. Natural for "
+"installed packages."
+
+#: ../../root/cli.rst:72
+msgid ""
+"Если передан путь к директории с ``__main__.py``, он разрешается "
+"автоматически — указывать файл явно не нужно."
+msgstr ""
+"If a directory path containing ``__main__.py`` is passed, it is resolved "
+"automatically — no need to name the file explicitly."
+
+#: ../../root/cli.rst:74
+msgid "**Примеры валидных entrypoint-ов:**"
+msgstr "**Examples of valid entrypoints:**"
+
+#: ../../root/cli.rst:84
+msgid ""
+"Тип объекта зависит от команды: ``run`` и ``build`` ожидают callable, "
+"``routes`` — инстанс ``App`` или callable, возвращающий ``App``."
+msgstr ""
+"The expected object type depends on the command: ``run`` and ``build`` "
+"expect a callable, ``routes`` expects an ``App`` instance or a callable "
+"returning ``App``."
+
+#: ../../root/cli.rst:89
+msgid "Создание проектов"
+msgstr "Scaffolding projects"
+
+#: ../../root/cli.rst:92
+msgid "Команда ``new``"
+msgstr "The ``new`` command"
+
+#: ../../root/cli.rst:94
+msgid ""
+"Создаёт новую директорию проекта с boilerplate-кодом. Это отправная "
+"точка: вместо ручной настройки структуры — готовый каркас за одну "
+"команду."
+msgstr ""
+"Creates a new project directory with boilerplate code. It is the starting"
+" point: instead of setting up the structure by hand, a ready-made "
+"skeleton in a single command."
+
+#: ../../root/cli.rst:100
+msgid "``project_name`` — имя директории проекта (обязательный аргумент)."
+msgstr "``project_name`` — project directory name (required argument)."
+
+#: ../../root/cli.rst:101 ../../root/cli.rst:133
+msgid "``--arch`` — архитектура проекта: ``flat`` (по умолчанию) или ``src``."
+msgstr "``--arch`` — project architecture: ``flat`` (default) or ``src``."
+
+#: ../../root/cli.rst:103 ../../root/cli.rst:135 ../../root/cli.rst:161
+#: ../../root/cli.rst:191
+msgid "**Примеры:**"
+msgstr "**Examples:**"
+
+#: ../../root/cli.rst:110
+msgid "При архитектуре ``flat`` создаётся следующая структура:"
+msgstr "With the ``flat`` architecture, the following structure is created:"
+
+#: ../../root/cli.rst:115
+msgid "При архитектуре ``src``:"
+msgstr "With the ``src`` architecture:"
+
+#: ../../root/cli.rst:125
+msgid "Команда ``init``"
+msgstr "The ``init`` command"
+
+#: ../../root/cli.rst:127
+msgid ""
+"Делает то же, что и ``new``, но в текущей директории. Удобно, когда "
+"проект уже существует и нужно добавить структуру Argenta, не создавая "
+"лишний уровень вложенности."
+msgstr ""
+"Does the same as ``new``, but in the current directory. Convenient when "
+"the project already exists and the Argenta structure needs to be added "
+"without introducing an extra level of nesting."
+
+#: ../../root/cli.rst:143
+msgid ""
+"Команда ``init`` не перезаписывает существующие файлы — они будут "
+"пропущены."
+msgstr "The ``init`` command does not overwrite existing files — they are skipped."
+
+#: ../../root/cli.rst:148
+msgid "Запуск приложения"
+msgstr "Running an application"
+
+#: ../../root/cli.rst:151
+msgid "Команда ``run``"
+msgstr "The ``run`` command"
+
+#: ../../root/cli.rst:153
+msgid ""
+"Запускает оркестратор ``Argenta`` из callable-entrypoint. Это "
+"альтернатива прямому вызову ``python main.py``, но с автоматической "
+"настройкой окружения."
+msgstr ""
+"Starts the ``Argenta`` orchestrator from a callable entrypoint. It is an "
+"alternative to calling ``python main.py`` directly, but with automatic "
+"environment setup."
+
+#: ../../root/cli.rst:159 ../../root/cli.rst:189 ../../root/cli.rst:249
+msgid "Формат entrypoint — см. :ref:`Формат entrypoint <cli_entrypoint>`."
+msgstr "Entrypoint format — see :ref:`Entrypoint format <cli_entrypoint>`."
+
+#: ../../root/cli.rst:173
+msgid ""
+"Команда ``run`` устанавливает переменную окружения "
+"``RUN_FROM_ARGENTA_RUNNER=1``. ``ArgParser`` видит этот флаг и пропускает"
+" парсинг ``sys.argv``, поэтому аргументы самого ``argenta`` (типа "
+"``--help``, ``--version``) не конфликтуют с аргументами запускаемого "
+"приложения. REPL стартует чисто, без ошибок про неизвестные флаги."
+msgstr ""
+"The ``run`` command sets the ``RUN_FROM_ARGENTA_RUNNER=1`` environment "
+"variable. ``ArgParser`` sees this flag and skips parsing ``sys.argv``, so"
+" the ``argenta`` arguments themselves (such as ``--help``, ``--version``)"
+" do not conflict with the arguments of the application being launched. "
+"The REPL starts cleanly, with no errors about unknown flags."
+
+#: ../../root/cli.rst:178
+msgid "Инспекция маршрутов"
+msgstr "Inspecting routes"
+
+#: ../../root/cli.rst:181
+msgid "Команда ``routes``"
+msgstr "The ``routes`` command"
+
+#: ../../root/cli.rst:183
+msgid ""
+"Отображает все зарегистрированные роутеры, команды, алиасы и флаги в виде"
+" дерева. Принимает как инстанс ``App``, так и callable, возвращающий "
+"``App``."
+msgstr ""
+"Displays all registered routers, commands, aliases, and flags as a tree. "
+"Accepts either an ``App`` instance or a callable returning ``App``."
+
+#: ../../root/cli.rst:198
+msgid ""
+"Инстанс ``App`` передаётся напрямую, если роутеры подключены на уровне "
+"модуля:"
+msgstr ""
+"An ``App`` instance is passed directly when routers are registered at the"
+" module level:"
+
+#: ../../root/cli.rst:204
+msgid ""
+"Фабрика ``create_app`` передаётся, если роутеры регистрируются внутри "
+"функции — например, зависят от конфига или DI:"
+msgstr ""
+"A ``create_app`` factory is passed when routers are registered inside a "
+"function — for example, when they depend on config or DI:"
+
+#: ../../root/cli.rst:211
+msgid ""
+"При использовании callable-entrypoint REPL не запускается — фабрика "
+"вызывается, и маршруты считываются из возвращённого ``App``."
+msgstr ""
+"When a callable entrypoint is used, the REPL is not started — the factory"
+" is called, and routes are read from the returned ``App``."
+
+#: ../../root/cli.rst:213 ../../root/cli.rst:325
+msgid "Пример вывода:"
+msgstr "Example output:"
+
+#: ../../root/cli.rst:238
+msgid "Сборка бинарника"
+msgstr "Building a binary"
+
+#: ../../root/cli.rst:241
+msgid "Команда ``build``"
+msgstr "The ``build`` command"
+
+#: ../../root/cli.rst:243
+msgid ""
+"Компилирует проект в standalone-бинарник с помощью `Nuitka "
+"<https://nuitka.net/>`_, которая входит в ``[cli]`` extra."
+msgstr ""
+"Compiles a project into a standalone binary using `Nuitka "
+"<https://nuitka.net/>`_, which is included in the ``[cli]`` extra."
+
+#: ../../root/cli.rst:251
+msgid ""
+"``--output`` / ``-o`` — имя выходного бинарника (по умолчанию — имя файла"
+" или пакета)."
+msgstr ""
+"``--output`` / ``-o`` — output binary name (defaults to the file or "
+"package name)."
+
+#: ../../root/cli.rst:252
+msgid ""
+"``--`` — разделитель, после которого передаются **произвольные флаги "
+"Nuitka**. Они добавляются к вызову Nuitka после аргументов Argenta, "
+"поэтому могут переопределять дефолты и добавлять любые опции, которые "
+"Nuitka поддерживает."
+msgstr ""
+"``--`` — a separator after which **arbitrary Nuitka flags** are passed."
+" They are appended to the Nuitka invocation after Argenta's arguments,"
+" so they can override defaults and add any options Nuitka supports."
+
+#: ../../root/cli.rst:254
+#, fuzzy
+msgid "**Базовые примеры:**"
+msgstr "**Basic examples:**"
+
+#: ../../root/cli.rst:262
+msgid "**Примеры с флагами Nuitka:**"
+msgstr "**Examples with Nuitka flags:**"
+
+#: ../../root/cli.rst:271
+msgid "Что делает Argenta по умолчанию"
+msgstr "What Argenta does by default"
+
+#: ../../root/cli.rst:273
+msgid "Команда ``build`` формирует вызов Nuitka со следующими аргументами:"
+msgstr "The ``build`` command assembles a Nuitka invocation with the following arguments:"
+
+#: ../../root/cli.rst:275
+msgid ""
+"``--standalone --onefile`` — собирает единый бинарник со всеми "
+"зависимостями внутри."
+msgstr ""
+"``--standalone --onefile`` — builds a single binary with all dependencies"
+" bundled inside."
+
+#: ../../root/cli.rst:276
+msgid ""
+"``--output-filename=<name>`` — имя выходного файла (из ``--output`` или "
+"имени entrypoint)."
+msgstr ""
+"``--output-filename=<name>`` — output file name (from ``--output`` or the"
+" entrypoint name)."
+
+#: ../../root/cli.rst:277
+msgid "``--jobs=<cpu_count>`` — параллельная компиляция на всех ядрах."
+msgstr "``--jobs=<cpu_count>`` — parallel compilation across all cores."
+
+#: ../../root/cli.rst:278
+msgid ""
+"``--lto=no`` — LTO отключён по умолчанию (быстрее сборка, медленнее "
+"запуск)."
+msgstr ""
+"``--lto=no`` — LTO is disabled by default (faster build, slower startup)."
+
+#: ../../root/cli.rst:279
+msgid ""
+"``--include-windows-runtime-dlls=no`` — на Windows не включает runtime "
+"DLL в бинарник."
+msgstr ""
+"``--include-windows-runtime-dlls=no`` — on Windows, runtime DLLs are not"
+" bundled into the binary."
+
+#: ../../root/cli.rst:280
+msgid ""
+"``--python-flag=-m`` — добавляется автоматически, если entrypoint "
+"указывает на ``__main__.py``."
+msgstr ""
+"``--python-flag=-m`` — added automatically when the entrypoint points at"
+" a ``__main__.py``."
+
+#: ../../root/cli.rst:282
+msgid ""
+"Все эти дефолты можно переопределить, передав соответствующий флаг после "
+"``--``. Например, ``-- --lto=yes`` включит LTO, а ``-- --jobs=1`` "
+"отключит параллельную сборку."
+msgstr ""
+"Any of these defaults can be overridden by passing the corresponding flag"
+" after ``--``. For example, ``-- --lto=yes`` enables LTO, and ``--"
+" --jobs=1`` disables parallel compilation."
+
+#: ../../root/cli.rst:285
+msgid "Основные флаги Nuitka и их нюансы"
+msgstr "Key Nuitka flags and their trade-offs"
+
+#: ../../root/cli.rst:287
+msgid ""
+"Полный список флагов — в `документации Nuitka <https://nuitka.net/user-"
+"documentation/user-manual.html>`_. Ниже — те, с которыми чаще всего "
+"сталкиваются при сборке CLI-приложений."
+msgstr ""
+"The full flag list is in the `Nuitka documentation <https://nuitka.net"
+"/user-documentation/user-manual.html>`_. Below are the ones most often"
+" encountered when building CLI applications."
+
+#: ../../root/cli.rst:289
+#, python-brace-format
+msgid "``--lto={yes,no,auto}``"
+msgstr "``--lto={yes,no,auto}``"
+
+#: ../../root/cli.rst:290
+msgid ""
+"Link-Time Optimization. ``yes`` — бинарник меньше и быстрее запускается, "
+"но сборка длится заметно дольше. ``no`` (дефолт Argenta) — сборка "
+"быстрее, бинарник больше. ``auto`` — Nuitka выбирает сам. Для "
+"production-сборки имеет смысл ``yes``, для итеративной разработки — "
+"``no``."
+msgstr ""
+"Link-Time Optimization. ``yes`` — the binary is smaller and starts"
+" faster, but the build takes noticeably longer. ``no`` (Argenta's"
+" default) — faster build, larger binary. ``auto`` — Nuitka decides. For"
+" production builds ``yes`` makes sense; for iterative development, ``no``."
+
+#: ../../root/cli.rst:292
+msgid "``--include-package=<package>``"
+msgstr "``--include-package=<package>``"
+
+#: ../../root/cli.rst:293
+msgid ""
+"Явно включает пакет в бинарник. Nuitka отслеживает импорты статически, "
+"поэтому пакеты, которые импортируются динамически (через ``importlib``, "
+"плагины, ``__import__``), в бинарник не попадают — их нужно добавлять "
+"вручную. Типичные кандидаты: ``numpy``, ``pandas``, ``rich``, "
+"``prompt_toolkit``."
+msgstr ""
+"Explicitly includes a package in the binary. Nuitka tracks imports"
+" statically, so packages imported dynamically (via ``importlib``, plugins,"
+" ``__import__``) do not end up in the binary — they must be added by hand."
+" Common candidates: ``numpy``, ``pandas``, ``rich``, ``prompt_toolkit``."
+
+#: ../../root/cli.rst:295
+msgid "``--include-data-files=<source>=<dest>``"
+msgstr "``--include-data-files=<source>=<dest>``"
+
+#: ../../root/cli.rst:296
+msgid ""
+"Включает файлы данных (шаблоны, конфиги, ассеты) в бинарник. Формат: "
+"``--include-data-files=assets/logo.png=assets/logo.png``. Для директорий "
+"целиком — ``--include-data-dir=assets=assets``. Без этого файлы, которые "
+"приложение читает во время выполнения, не будут найдены в собранном "
+"бинарнике."
+msgstr ""
+"Includes data files (templates, configs, assets) into the binary. Format:"
+" ``--include-data-files=assets/logo.png=assets/logo.png``. For whole"
+" directories — ``--include-data-dir=assets=assets``. Without this, files"
+" the application reads at runtime will not be found inside the built binary."
+
+#: ../../root/cli.rst:298
+msgid "``--enable-plugin=<plugin>``"
+msgstr "``--enable-plugin=<plugin>``"
+
+#: ../../root/cli.rst:299
+msgid ""
+"Включает `плагин Nuitka <https://nuitka.net/user-documentation/user-"
+"manual.html#plugins>`_ для поддержки фреймворков, требующих специальной "
+"обработки. Распространённые: ``anti-bloat`` (вырезает ненужные части "
+"тяжёлых пакетов), ``numpy`` (корректная сборка с numpy), ``tk-inter`` "
+"(Tkinter GUI), ``triton`` (PyTorch triton kernels)."
+msgstr ""
+"Enables a `Nuitka plugin <https://nuitka.net/user-documentation/user-"
+"manual.html#plugins>`_ for frameworks that need special handling. Common"
+" ones: ``anti-bloat`` (strips unneeded parts of heavy packages), ``numpy``"
+" (correct numpy bundling), ``tk-inter`` (Tkinter GUI), ``triton`` (PyTorch"
+" triton kernels)."
+
+#: ../../root/cli.rst:301
+msgid "``--onefile`` / ``--standalone``"
+msgstr "``--onefile`` / ``--standalone``"
+
+#: ../../root/cli.rst:302
+msgid ""
+"``--onefile`` (дефолт Argenta) — единый бинарник, удобный для "
+"дистрибуции. При запуске распаковывается во временную директорию, поэтому"
+" стартует медленнее. ``--standalone`` — папка с бинарником и "
+"зависимостями, стартует быстрее, но дистрибуция — это вся папка целиком. "
+"Чтобы переключиться: ``-- --standalone`` (переопределит дефолтный "
+"``--onefile``)."
+msgstr ""
+"``--onefile`` (Argenta's default) — a single binary, convenient for"
+" distribution. It unpacks into a temporary directory on startup, so it"
+" starts slower. ``--standalone`` — a folder with the binary and its"
+" dependencies; starts faster, but distribution means shipping the whole"
+" folder. To switch: ``-- --standalone`` (overrides the default ``--onefile``)."
+
+#: ../../root/cli.rst:304
+msgid "``--jobs=<n>``"
+msgstr "``--jobs=<n>``"
+
+#: ../../root/cli.rst:305
+msgid ""
+"Количество параллельных процессов компиляции. Дефолт Argenta — все ядра "
+"(``os.cpu_count()``). На машинах с малым объёмом памяти имеет смысл "
+"ограничить: ``-- --jobs=2``."
+msgstr ""
+"Number of parallel compilation processes. Argenta's default is all cores"
+" (``os.cpu_count()``). On memory-constrained machines it makes sense to"
+" limit it: ``-- --jobs=2``."
+
+#: ../../root/cli.rst:314
+msgid "Информация об окружении"
+msgstr "Environment information"
+
+#: ../../root/cli.rst:317
+msgid "Команда ``info``"
+msgstr "The ``info`` command"
+
+#: ../../root/cli.rst:319
+msgid ""
+"Отображает версию ``Argenta``, версию Python, платформу и ссылку на "
+"документацию."
+msgstr ""
+"Displays the ``Argenta`` version, Python version, platform, and a link to"
+" the documentation."
+
+#~ msgid "Командная строка"
+#~ msgstr "Command Line Interface"
+
+#~ msgid "Создаёт новую директорию проекта с boilerplate-кодом."
+#~ msgstr "Creates a new project directory with boilerplate code."
+
+#~ msgid ""
+#~ "``entrypoint`` — путь к callable в "
+#~ "формате ``<path/to/file.py>:<callable>`` или "
+#~ "``<path.to.module>:<callable>``."
+#~ msgstr ""
+#~ "``entrypoint`` — path to a callable "
+#~ "in the format ``<path/to/file.py>:<callable>`` "
+#~ "or ``<path.to.module>:<callable>``."
+
+#~ msgid ""
+#~ "Команда ``run`` устанавливает переменную "
+#~ "окружения ``RUN_FROM_ARGENTA_RUNNER=1``, что "
+#~ "отключает парсинг аргументов командной строки"
+#~ " в ``ArgParser``. Это позволяет запустить"
+#~ " REPL без конфликтов с CLI-аргументами "
+#~ "``argenta``."
+#~ msgstr ""
+#~ "The ``run`` command sets the "
+#~ "``RUN_FROM_ARGENTA_RUNNER=1`` environment variable, "
+#~ "which disables command-line argument "
+#~ "parsing in ``ArgParser``. This allows "
+#~ "starting the REPL without conflicts with"
+#~ " ``argenta`` CLI arguments."
+
+#~ msgid ""
+#~ "``entrypoint`` — путь к ``App`` или "
+#~ "callable в формате "
+#~ "``<path/to/file.py>:<app_or_callable>``."
+#~ msgstr ""
+#~ "``entrypoint`` — path to an ``App`` "
+#~ "or callable in the format "
+#~ "``<path/to/file.py>:<app_or_callable>``."
+
+#~ msgid "Если передан инстанс ``App``:"
+#~ msgstr "If an ``App`` instance is passed:"
+
+#~ msgid ""
+#~ "Если передан callable (фабрика), он "
+#~ "будет вызван, и результат будет "
+#~ "использован для отображения маршрутов:"
+#~ msgstr ""
+#~ "If a callable (factory) is passed, "
+#~ "it will be called, and the result"
+#~ " will be used to display routes:"
+
+#~ msgid ""
+#~ "``entrypoint`` — путь к callable в "
+#~ "формате ``<path/to/file.py>:<callable>``."
+#~ msgstr ""
+#~ "``entrypoint`` — path to a callable "
+#~ "in the format ``<path/to/file.py>:<callable>``."
+
+#~ msgid "Для использования команды ``build`` необходимо установить ``Nuitka``:"
+#~ msgstr "To use the ``build`` command, you must install ``Nuitka``:"
+
+#~ msgid "Формат ентрипойнтов"
+#~ msgstr "Entrypoint Format"
+
+#~ msgid ""
+#~ "Все команды, принимающие ентрипойнт (``run``,"
+#~ " ``routes``, ``build``), используют единый "
+#~ "формат:"
+#~ msgstr ""
+#~ "All commands that accept an entrypoint"
+#~ " (``run``, ``routes``, ``build``) use a "
+#~ "unified format:"
+
+#~ msgid ""
+#~ "Поддерживаются как пути к файлам, так"
+#~ " и dotted-модули. Если передан путь к"
+#~ " директории с ``__main__.py``, он будет "
+#~ "разрешён автоматически."
+#~ msgstr ""
+#~ "Both file paths and dotted modules "
+#~ "are supported. If a directory path "
+#~ "containing ``__main__.py`` is passed, it "
+#~ "will be resolved automatically."
+

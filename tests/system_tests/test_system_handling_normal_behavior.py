@@ -38,7 +38,7 @@ def test_simple_command_executes_successfully(monkeypatch: pytest.MonkeyPatch, c
 
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -62,7 +62,7 @@ def test_two_commands_execute_sequentially(monkeypatch: pytest.MonkeyPatch, caps
 
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -90,7 +90,7 @@ def test_three_commands_execute_sequentially(monkeypatch: pytest.MonkeyPatch, ca
 
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -118,7 +118,7 @@ def test_custom_flag_without_value_is_recognized(monkeypatch: pytest.MonkeyPatch
 
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -141,7 +141,7 @@ def test_custom_flag_with_regex_validation_accepts_valid_value(monkeypatch: pyte
 
     app = App(override_system_messages=True, repeat_command_groups_printing=True, printer=print)
     app.include_router(router)
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -169,7 +169,7 @@ def test_predefined_short_help_flag_is_recognized(monkeypatch: pytest.MonkeyPatc
 
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -192,7 +192,7 @@ def test_predefined_info_flag_is_recognized(monkeypatch: pytest.MonkeyPatch, cap
 
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -215,7 +215,7 @@ def test_predefined_host_flag_with_value_is_recognized(monkeypatch: pytest.Monke
 
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -244,7 +244,7 @@ def test_two_predefined_flags_are_recognized_together(monkeypatch: pytest.Monkey
 
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 

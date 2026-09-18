@@ -13,8 +13,10 @@ class BenchmarksNotFound(Exception):
     def __str__(self) -> str:
         return f"Benchmarks with type '{self.type_}' not found"
 
+
 class BenchmarksWithSameNameAlreadyExists(Exception):
     def __init__(self, benchmark_name: str):
         self.benchmark_name = benchmark_name
+
     def __str__(self) -> str:
         return f"Benchmarks with name '{self.benchmark_name}' already exists"

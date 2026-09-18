@@ -5,12 +5,45 @@ description = "Python library for building modular CLI applications"
 authors = [{ name = "kolo", email = "kolo.is.main@gmail.com" }]
 requires-python = ">=3.12,<3.15"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["cli", "cli-app", "command-line", "terminal", "modular", "framework"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: User Interfaces",
+    "Topic :: Terminals",
+    "Environment :: Console",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3 :: Only",
+    "Typing :: Typed",
+]
 dependencies = [
     "rich (>=14.0.0,<15.0.0)",
     "art (>=6.4,<7.0)",
     "dishka>=1.7.2",
     "prompt-toolkit>=3.0.52",
+]
+
+[project.urls]
+Homepage = "https://argenta.readthedocs.io"
+Documentation = "https://argenta.readthedocs.io"
+Repository = "https://github.com/koloideal/Argenta"
+Issues = "https://github.com/koloideal/Argenta/issues"
+Changelog = "https://github.com/koloideal/Argenta/blob/master/CHANGELOG.md"
+
+[project.scripts]
+argenta = "argenta._cli.__main__:main"
+
+[project.optional-dependencies]
+cli = [
+    "nuitka[onefile]>=4.0.5",
+    "typer>=0.9,!=0.12,<=0.21.1",
 ]
 
 [dependency-groups]
@@ -19,6 +52,7 @@ dev = [
     {include-group = "typecheckers"},
     {include-group = "docs"},
     {include-group = "tests"},
+    {include-group = "metrics"},
     "scriv>=1.8.0",
 ]
 linters = [
@@ -46,13 +80,16 @@ metrics = [
     "matplotlib>=3.10.8",
     "psutil>=7.2.1",
     "py-cpuinfo>=9.0.0",
+    "cairosvg>=2.8.2",
+    "pygal>=3.1.0",
 ]
 
 [tool.ruff]
-line-length=100
+line-length = 100
 
 [tool.pyright]
 typeCheckingMode = "strict"
+reportMissingTypeStubs = false
 
 [[tool.pyright.executionEnvironments]]
 root = "tests/"
@@ -89,8 +126,8 @@ md_header_level = "2"
 disable_error_code = "import-untyped"
 
 [tool.isort]
-line_length=90
+line_length = 90
 
 [build-system]
-requires = ["uv_build"]
+requires = ["uv_build>=0.4,<0.12"]
 build-backend = "uv_build"
