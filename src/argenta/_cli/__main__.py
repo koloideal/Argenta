@@ -1,3 +1,4 @@
+# pyright: reportUnknownMemberType=false
 from importlib.metadata import version
 from typing import Literal
 

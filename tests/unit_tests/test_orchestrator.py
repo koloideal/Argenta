@@ -8,7 +8,6 @@ from argenta.orchestrator import Orchestrator
 from argenta.orchestrator.argparser import ArgParser
 from argenta.response import Response
 
-
 # ============================================================================
 # Fixtures
 # ============================================================================

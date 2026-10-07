@@ -1,9 +1,9 @@
 __all__ = [
-    "benchmark_no_aliases",
-    "benchmark_with_many_aliases",
-    "benchmark_few_aliases",
     "benchmark_extreme_aliases",
+    "benchmark_few_aliases",
+    "benchmark_no_aliases",
     "benchmark_very_many_aliases",
+    "benchmark_with_many_aliases",
 ]
 
 from argenta import App

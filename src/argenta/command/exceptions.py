@@ -1,8 +1,8 @@
 __all__ = [
-    "InputCommandException",
-    "UnprocessedInputFlagException",
-    "RepeatedInputFlagsException",
     "EmptyInputCommandException",
+    "InputCommandException",
+    "RepeatedInputFlagsException",
+    "UnprocessedInputFlagException",
 ]
 
 from abc import ABC, abstractmethod

@@ -1,19 +1,17 @@
 __all__ = [
-    "NonStandardBehaviorHandler",
-    "EmptyCommandHandler",
-    "MostSimilarCommandGetter",
-    "Printer",
     "DescriptionMessageGenerator",
+    "EmptyCommandHandler",
     "HandlerFunc",
+    "MostSimilarCommandGetter",
+    "NonStandardBehaviorHandler",
+    "Printer",
 ]
 
-from typing import Any, Protocol, TypeVar, Callable
+from collections.abc import Callable
+from typing import Any, Protocol
 
 
-T = TypeVar("T", contravariant=True)
-
-
-class NonStandardBehaviorHandler(Protocol[T]):
+class NonStandardBehaviorHandler[T](Protocol):
     def __call__(self, _param: T, /) -> None:
         raise NotImplementedError
 

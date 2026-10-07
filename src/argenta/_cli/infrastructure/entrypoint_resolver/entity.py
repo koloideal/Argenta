@@ -33,7 +33,7 @@ class EntryPointAsApp:
 
 
 @dataclass(frozen=True, slots=True)
-class ResolvedEntrypoint[T: (EntrypointCallable, App)]:
+class ResolvedEntrypoint[T]:
     resolved_source_path: str
     instance: T
 
@@ -63,11 +63,9 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
         return cast(T, parsed)
 
     def _parse_callable_entrypoint(self, entrypoint_object_name: str) -> CallableEntryPoint:
-        resolved_entrypoint: ResolvedEntrypoint[EntrypointCallable] = self._resolve_from_string(
-            entrypoint_object_name
-        )
+        resolved_entrypoint = self._resolve_from_string(entrypoint_object_name)
         instance_object = resolved_entrypoint.instance
-        if not callable(instance_object):
+        if isinstance(instance_object, App) or not callable(instance_object):
             raise EntrypointNotCallableError(repr(instance_object))
         try:
             instance_object_signature = inspect.signature(instance_object)
@@ -93,9 +91,7 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
         )
 
     def _parse_entrypoint_as_app(self, entrypoint_object_name: str) -> EntryPointAsApp:
-        resolved_entrypoint: ResolvedEntrypoint[App] = self._resolve_from_string(
-            entrypoint_object_name
-        )
+        resolved_entrypoint = self._resolve_from_string(entrypoint_object_name)
         instance_object = resolved_entrypoint.instance
         if not isinstance(instance_object, App):
             raise EntrypointNotAppInstanceError(repr(instance_object))
@@ -104,9 +100,9 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
             raw_path=resolved_entrypoint.resolved_source_path, instance_object=instance_object
         )
 
-    def _resolve_from_string[K: (EntrypointCallable, App)](
+    def _resolve_from_string(
         self, entrypoint_object_name: str
-    ) -> ResolvedEntrypoint[K]:
+    ) -> ResolvedEntrypoint[EntrypointCallable | App]:
         raw_path = self._path_to_entrypoint
 
         raw_path_as_dir = Path(raw_path).resolve()
@@ -162,13 +158,9 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
 
         match instance:
             case App():
-                return cast(
-                    ResolvedEntrypoint[K], ResolvedEntrypoint(resolved_source_path, instance)
-                )
+                return ResolvedEntrypoint(resolved_source_path, instance)
             case x if callable(x) and not isinstance(x, type):
-                return cast(
-                    ResolvedEntrypoint[K], ResolvedEntrypoint(resolved_source_path, instance)
-                )
+                return ResolvedEntrypoint(resolved_source_path, instance)
             case _:
                 raise ResolveFromStringError(
                     f'"{entrypoint_object_name}" is not a valid entrypoint'

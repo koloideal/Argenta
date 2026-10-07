@@ -127,7 +127,8 @@ md_header_level = "2"
 disable_error_code = "import-untyped"
 
 [tool.isort]
-line_length = 90
+profile = "black"
+line_length = 100
 
 [build-system]
 requires = ["uv_build>=0.4,<0.12"]

@@ -1,9 +1,9 @@
 __all__ = [
-    "benchmark_few_routers",
-    "benchmark_many_routers",
-    "benchmark_many_commands_per_router",
-    "benchmark_many_aliases_per_command",
     "benchmark_extreme_routers",
+    "benchmark_few_routers",
+    "benchmark_many_aliases_per_command",
+    "benchmark_many_commands_per_router",
+    "benchmark_many_routers",
 ]
 
 from argenta import App

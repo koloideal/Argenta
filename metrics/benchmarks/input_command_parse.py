@@ -1,11 +1,11 @@
 __all__ = [
-    "benchmark_parse_simple_command",
     "benchmark_command_with_few_flags",
     "benchmark_command_with_flags_and_values",
-    "benchmark_command_with_mixed_prefixes",
     "benchmark_command_with_long_values",
+    "benchmark_command_with_mixed_prefixes",
     "benchmark_command_with_quoted_values",
     "benchmark_extreme_many_flags",
+    "benchmark_parse_simple_command",
 ]
 
 from argenta.command.models import InputCommand

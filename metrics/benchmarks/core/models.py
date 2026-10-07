@@ -1,12 +1,13 @@
-__all__ = ["Benchmark", "Benchmarks", "BenchmarkResult", "BenchmarkGroupResult"]
+__all__ = ["Benchmark", "BenchmarkGroupResult", "BenchmarkResult", "Benchmarks"]
 
 import gc
 import io
 import statistics
 import time
+from collections.abc import Callable
 from contextlib import redirect_stdout
 from dataclasses import dataclass
-from typing import Callable, override
+from typing import override
 
 from .exceptions import BenchmarkNotFound, BenchmarksNotFound, BenchmarksWithSameNameAlreadyExists
 
@@ -146,7 +147,7 @@ class Benchmarks:
         self, iterations: int = 100, is_gc_disabled: bool = False
     ) -> list[BenchmarkGroupResult]:
         results: list[BenchmarkGroupResult] = []
-        for type_, _ in self._benchmarks_grouped_by_type.items():
+        for type_ in self._benchmarks_grouped_by_type:
             results.append(self.run_benchmarks_by_type(type_, iterations, is_gc_disabled))
         return results
 

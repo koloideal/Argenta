@@ -1,4 +1,4 @@
-from argenta import App, Command, Orchestrator, Router, Response
+from argenta import App, Command, Orchestrator, Response, Router
 from argenta.command import Flag
 
 # 1. Create app and orchestrator instances

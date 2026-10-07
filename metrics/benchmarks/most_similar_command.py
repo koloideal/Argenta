@@ -1,9 +1,9 @@
 __all__ = [
-    "benchmark_few_commands",
-    "benchmark_many_commands_most_similar",
-    "benchmark_many_aliases",
-    "benchmark_partial_match",
     "benchmark_extreme_commands",
+    "benchmark_few_commands",
+    "benchmark_many_aliases",
+    "benchmark_many_commands_most_similar",
+    "benchmark_partial_match",
 ]
 
 from argenta import App

@@ -1,7 +1,7 @@
 import io
 from contextlib import redirect_stdout
 
-from argenta import App, Router, Command, Response
+from argenta import App, Command, Response, Router
 from argenta.command import InputCommand
 
 

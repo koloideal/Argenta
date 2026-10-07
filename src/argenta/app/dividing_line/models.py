@@ -1,4 +1,4 @@
-__all__ = ["StaticDividingLine", "DynamicDividingLine"]
+__all__ = ["DynamicDividingLine", "StaticDividingLine"]
 
 from abc import ABC
 

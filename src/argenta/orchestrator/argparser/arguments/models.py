@@ -1,4 +1,4 @@
-__all__ = ["BooleanArgument", "ValueArgument", "InputArgument"]
+__all__ = ["BooleanArgument", "InputArgument", "ValueArgument"]
 
 from typing import Literal
 
@@ -8,7 +8,9 @@ class BaseArgument:
     Private. Base class for all arguments
     """
 
-    def __init__(self, name: str, *, help: str, is_deprecated: bool, prefix: Literal["-", "--", "---"]):
+    def __init__(
+        self, name: str, *, help: str, is_deprecated: bool, prefix: Literal["-", "--", "---"]
+    ):
         """
         Public. Boolean argument, does not require a value
         :param name: name of the argument
@@ -76,7 +78,9 @@ class BooleanArgument(BaseArgument):
 
 
 class InputArgument:
-    def __init__(self, name: str, value: str | Literal[True], founder_class: type[BaseArgument]) -> None:
+    def __init__(
+        self, name: str, value: str | Literal[True], founder_class: type[BaseArgument]
+    ) -> None:
         self.name: str = name
         self.value: str | Literal[True] = value
         self.founder_class: type[BaseArgument] = founder_class

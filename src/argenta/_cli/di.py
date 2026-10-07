@@ -1,6 +1,6 @@
 __all__ = ["CliProvider", "create_cli_container"]
 
-from dishka import Container, Provider, Scope, make_container, provide
+from dishka import Container, Provider, Scope, make_container, provide  # pyright: ignore[reportUnknownVariableType]
 from rich.console import Console
 
 

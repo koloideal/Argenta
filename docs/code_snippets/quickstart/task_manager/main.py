@@ -1,7 +1,7 @@
 from argenta import App, Orchestrator
 
-from .handlers import router
-from .provider import TaskProvider
+from handlers import router
+from provider import TaskProvider
 
 # 1. Create app and orchestrator instances
 app = App(

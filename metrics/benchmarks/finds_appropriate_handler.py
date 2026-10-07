@@ -1,9 +1,9 @@
 __all__ = [
-    "benchmark_simple_command",
     "benchmark_command_with_flags",
-    "benchmark_many_commands",
     "benchmark_command_with_many_flags",
     "benchmark_extreme_router",
+    "benchmark_many_commands",
+    "benchmark_simple_command",
 ]
 
 from argenta.command import Flag, Flags

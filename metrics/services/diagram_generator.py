@@ -25,7 +25,7 @@ class DiagramGenerator:
             colors=("#2ecc71", "#3498db", "#e74c3c"),
             title_font_size=40,
             legend_font_size=34,
-            label_font_size=32,  #
+            label_font_size=32,
             major_label_font_size=32,
             value_font_size=28,
             value_label_font_size=28,

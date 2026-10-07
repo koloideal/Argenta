@@ -1,13 +1,13 @@
 __all__ = [
     "benchmark_validate_all_single_flag",
-    "benchmark_validate_neither_single_flag",
-    "benchmark_validate_list_small",
+    "benchmark_validate_extreme_100_flags",
     "benchmark_validate_list_large",
-    "benchmark_validate_regex_simple",
-    "benchmark_validate_regex_complex",
+    "benchmark_validate_list_small",
     "benchmark_validate_multiple_flags_10",
     "benchmark_validate_multiple_flags_50",
-    "benchmark_validate_extreme_100_flags",
+    "benchmark_validate_neither_single_flag",
+    "benchmark_validate_regex_complex",
+    "benchmark_validate_regex_simple",
 ]
 
 import re

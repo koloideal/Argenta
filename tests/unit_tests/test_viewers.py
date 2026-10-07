@@ -1,9 +1,10 @@
-import pytest
 from unittest.mock import Mock
 
-from argenta.app.presentation.viewers import Viewer
+import pytest
+
+from argenta.app.dividing_line.models import DynamicDividingLine, StaticDividingLine
 from argenta.app.presentation.renderers import PlainRenderer
-from argenta.app.dividing_line.models import StaticDividingLine, DynamicDividingLine
+from argenta.app.presentation.viewers import Viewer
 from argenta.app.registered_routers.entity import RegisteredRouters
 from argenta.command.models import Command
 from argenta.response import Response

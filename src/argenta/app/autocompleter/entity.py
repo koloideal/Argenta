@@ -6,7 +6,7 @@ import sys
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from prompt_toolkit import PromptSession, HTML
+    from prompt_toolkit import HTML, PromptSession
 
 
 class AutoCompleter:
@@ -29,7 +29,7 @@ class AutoCompleter:
             self._session = None
             self._fallback_mode = True
             return
-            
+
         from ._ext_features_impl import build_session
 
         self._session = build_session(
@@ -37,7 +37,7 @@ class AutoCompleter:
             self.autocomplete_button,
             self.command_highlighting,
             self.auto_suggestions,
-            all_commands
+            all_commands,
         )
 
     def prompt(self, prompt_text: str | HTML = ">>> ") -> str:
@@ -45,7 +45,7 @@ class AutoCompleter:
             return input(prompt_text if isinstance(prompt_text, str) else ">>> ")
         if self._session is None:
             raise RuntimeError("Call initial_setup() before using prompt()")
-            
+
         from ._ext_features_impl import do_prompt
-            
+
         return do_prompt(self._session, prompt_text)

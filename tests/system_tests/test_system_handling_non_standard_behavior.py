@@ -5,7 +5,7 @@ from collections.abc import Iterator
 import pytest
 
 from argenta import App, Orchestrator, Router
-from argenta.command import Command, PredefinedFlags, Flags
+from argenta.command import Command, Flags, PredefinedFlags
 from argenta.command.flag.models import ValidationStatus
 from argenta.response import Response
 
@@ -157,7 +157,7 @@ def test_unregistered_flag_with_value_is_accessible(monkeypatch: pytest.MonkeyPa
         if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
             print(f'test command with undefined flag with value: {undefined_flag.string_entity} {undefined_flag.input_value}')
         else:
-            raise
+            raise AssertionError("expected flag 'port' to be parsed as UNDEFINED")
 
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)

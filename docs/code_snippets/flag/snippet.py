@@ -1,4 +1,5 @@
 import re
+
 from argenta.command import Flag, PossibleValues
 
 # Simple flag with any values

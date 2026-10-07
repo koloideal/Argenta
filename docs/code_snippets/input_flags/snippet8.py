@@ -1,5 +1,5 @@
-from argenta.command.flag import InputFlag, ValidationStatus
 from argenta.command import InputFlags
+from argenta.command.flag import InputFlag, ValidationStatus
 
 # Create first collection
 flags1 = InputFlags(

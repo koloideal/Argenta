@@ -1,6 +1,6 @@
-__all__ = ['build_session', 'do_prompt']
+__all__ = ["build_session", "do_prompt"]
 
-from typing import Callable, Iterable
+from collections.abc import Callable, Iterable
 
 from prompt_toolkit import HTML, PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory

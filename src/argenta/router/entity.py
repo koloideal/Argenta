@@ -1,18 +1,20 @@
 __all__ = ["Router"]
 
+from collections.abc import Callable
 from inspect import get_annotations, getfullargspec, getsourcefile, getsourcelines
-from typing import Callable
 
 from argenta.app.protocols import HandlerFunc
 from argenta.command import Command, InputCommand, InputFlags
 from argenta.command.flag import ValidationStatus
 from argenta.response import Response, ResponseStatus
 from argenta.router.command_handler.entity import CommandHandler, CommandHandlers
-from argenta.router.exceptions import (RepeatedAliasNameException,
-                                       RepeatedFlagNameException,
-                                       RepeatedTriggerNameException,
-                                       RequiredArgumentNotPassedException,
-                                       TriggerContainSpacesException)
+from argenta.router.exceptions import (
+    RepeatedAliasNameException,
+    RepeatedFlagNameException,
+    RepeatedTriggerNameException,
+    RequiredArgumentNotPassedException,
+    TriggerContainSpacesException,
+)
 
 
 class Router:
@@ -52,14 +54,14 @@ class Router:
 
         self._validate_command(redefined_command)
         self._update_routing_keys(redefined_command)
-        
+
         def decorator(func: HandlerFunc) -> HandlerFunc:
             self._validate_func_args(func)
             self.command_handlers.add_handler(CommandHandler(func, redefined_command))
             return func
 
         return decorator
-        
+
     def _validate_command(self, command: Command) -> None:
         """
         Private. Validates the command registered in handler
@@ -69,22 +71,22 @@ class Router:
         command_name: str = command.trigger
         if command_name.find(" ") != -1:
             raise TriggerContainSpacesException()
-            
+
         if command_name.lower() in self.triggers:
             raise RepeatedTriggerNameException()
-        
+
         if command_name.lower() in self.aliases:
             raise RepeatedAliasNameException({command_name.lower()})
-            
-        if overlapping := (self.aliases | self.triggers) & set(map(lambda x: x.lower(), command.aliases)):
+
+        if overlapping := (self.aliases | self.triggers) & {x.lower() for x in command.aliases}:
             raise RepeatedAliasNameException(overlapping)
-            
+
         flags_name: list[str] = [flag.string_entity.lower() for flag in command.registered_flags]
         if len(set(flags_name)) < len(flags_name):
             raise RepeatedFlagNameException()
-        
+
     def _update_routing_keys(self, registered_command: Command) -> None:
-        redefined_command_aliases_in_lower = set(map(lambda x: x.lower(), registered_command.aliases))
+        redefined_command_aliases_in_lower = {x.lower() for x in registered_command.aliases}
         self.aliases.update(redefined_command_aliases_in_lower)
         self.triggers.add(registered_command.trigger.lower())
 
@@ -98,13 +100,15 @@ class Router:
         input_command_flags: InputFlags = input_command.input_flags
 
         command_handler = self.command_handlers.get_command_handler_by_trigger(input_command_name)
-        
+
         if not command_handler:
             raise RuntimeError(f"Handler for '{input_command.trigger}' command not found. Panic!")
         else:
             self.process_input_command(input_command_flags, command_handler)
 
-    def process_input_command(self, input_command_flags: InputFlags, command_handler: CommandHandler) -> None:
+    def process_input_command(
+        self, input_command_flags: InputFlags, command_handler: CommandHandler
+    ) -> None:
         """
         Private. Processes input command with the appropriate handler
         :param input_command_flags: input command flags as InputFlags
@@ -114,7 +118,9 @@ class Router:
         handle_command = command_handler.handled_command
         if handle_command.registered_flags.flags:
             if input_command_flags.flags:
-                response: Response = self._structuring_input_flags(handle_command, input_command_flags)
+                response: Response = self._structuring_input_flags(
+                    handle_command, input_command_flags
+                )
                 command_handler.handling(response)
             else:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
@@ -150,8 +156,7 @@ class Router:
                 undefined_flags = True
 
         status = ResponseStatus.from_flags(
-            has_invalid_value_flags=invalid_value_flags,
-            has_undefined_flags=undefined_flags
+            has_invalid_value_flags=invalid_value_flags, has_undefined_flags=undefined_flags
         )
 
         return Response(status=status, input_flags=input_flags)
@@ -174,6 +179,7 @@ class Router:
 
         if response_arg_annotation is not None and response_arg_annotation is not Response:
             from rich.console import Console
+
             source_line: int = getsourcelines(func)[1]
             Console().print(
                 f'\nFile "{getsourcefile(func)}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
@@ -181,4 +187,3 @@ class Router:
                 + f" [i]but[/i] [bold blue]{response_arg_annotation}[/bold blue] [i]is specified[/i]",
                 highlight=False,
             )
-    

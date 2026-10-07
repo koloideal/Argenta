@@ -1,9 +1,10 @@
 import sys
 from unittest.mock import patch
+
 import pytest
 from pytest import CaptureFixture
 
-from argenta import App, Orchestrator, Router, Command, Response
+from argenta import App, Command, Orchestrator, Response, Router
 
 
 @pytest.fixture(autouse=True)

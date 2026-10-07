@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import UTC, datetime
 from importlib.metadata import version
 from pathlib import Path
 
@@ -95,7 +95,7 @@ def run_type_handler(response: Response) -> None:
 
     benchmark_type = type_flag.input_value
 
-    if not type_flag.status == ValidationStatus.VALID:
+    if type_flag.status != ValidationStatus.VALID:
         console.print(f"[red]Error: No benchmarks found for type '{benchmark_type}'[/red]")
         console.print("\n[yellow]Available types:[/yellow]")
         types = registered_benchmarks.get_types()
@@ -181,7 +181,7 @@ def diagrams_generate_handler(response: Response) -> None:
         )
     )
 
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    timestamp = datetime.now(UTC).strftime("%Y-%m-%d_%H-%M-%S")
     output_dir = Path("metrics/reports/diagrams") / timestamp
     output_dir.mkdir(parents=True, exist_ok=True)
 

@@ -1,4 +1,4 @@
-from argenta.command import Flag, Flags, Command
+from argenta.command import Command, Flag, Flags
 
 # Simple command without flags
 hello_cmd = Command("hello", description="Greet the user")

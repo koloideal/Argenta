@@ -10,7 +10,6 @@ from argenta.di.providers import SystemProvider
 from argenta.orchestrator.argparser import ArgParser
 
 
-
 class Orchestrator:
     def __init__(
         self,
@@ -23,7 +22,9 @@ class Orchestrator:
         :param arg_parser: Cmd argument parser and configurator at startup
         :return: None
         """
-        self._arg_parser: ArgParser | None = arg_parser if not os.getenv('RUN_FROM_ARGENTA_RUNNER') else None
+        self._arg_parser: ArgParser | None = (
+            arg_parser if not os.getenv("RUN_FROM_ARGENTA_RUNNER") else None
+        )
         self._custom_providers: list[Provider] = custom_providers or []
         self._auto_inject_handlers: bool = auto_inject_handlers
 

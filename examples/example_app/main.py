@@ -1,9 +1,6 @@
-from prompt_toolkit import HTML
 
 from argenta import App, Orchestrator
-from argenta.app import PredefinedMessages, StaticDividingLine, AutoCompleter
-from argenta.app.dividing_line.models import DynamicDividingLine
-from argenta.orchestrator import ArgParser
+from argenta.app import PredefinedMessages, StaticDividingLine
 from examples.example_app.routers import work_router
 
 app: App = App(
