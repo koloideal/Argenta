@@ -1,4 +1,25 @@
 
+<a id='changelog-1.3.0'></a>
+## 1.3.0 — 2026-10-07
+
+### Added
+
+- A cli module that implements the ability to launch applications on Argenta, run application benchmarks on Argenta, create a boilerplate for new projects, and much more.
+- A new `info` command has been added to the Argenta CLI, providing a quick overview of the installed package and runtime environment.
+
+- A `release` CI workflow that builds the package with `uv` and publishes it to PyPI via trusted publishing (OIDC) when a GitHub release is published.
+
+### Changed
+
+- Refactoring the initialization order of some modules; heavy imports are now imported only when necessary, which resulted in a boost to importtime.
+
+- Package metadata in `pyproject.toml`: PEP 639 license fields, Trove classifiers, keywords and project URLs added.
+- Dependency bumps: pillow 12.1.0 → 12.2.0, urllib3 2.5.0 → 2.7.0, pygments 2.19.1 → 2.20.0.
+
+### Removed
+
+- The Russian version of the documentation: sources are now English-only and the gettext/`sphinx-intl` pipeline was dropped.
+
 <a id='changelog-1.2.0'></a>
 ## 1.2.0 — 2026-02-07
 
