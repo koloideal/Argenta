@@ -49,7 +49,7 @@ I Have a Question
 
 .. note::
 
-   Before asking a question, please check the `documentation <https://argenta.readthedocs.io>`_.
+   Before asking a question, please check the `documentation <https://argenta.wiki>`_.
 
 Search for an answer in existing `Issues <https://github.com/koloideal/Argenta/issues>`_. If you found a similar question but still need clarification, you can comment on it. We also recommend searching the internet for an answer.
 
@@ -80,7 +80,7 @@ Reporting Bugs
 A good bug report shouldn't require others to extract additional information from you. Please investigate thoroughly, gather information, and describe the problem in detail. This will help us fix it as quickly as possible.
 
 * Make sure you are using the latest version.
-* Make sure the issue is actually a bug and not caused by, for example, using incompatible environment versions. Read the `documentation <https://argenta.readthedocs.io>`_ and, if you need support, check out the :ref:`I Have a Question <i-have-a-question>` section.
+* Make sure the issue is actually a bug and not caused by, for example, using incompatible environment versions. Read the `documentation <https://argenta.wiki>`_ and, if you need support, check out the :ref:`I Have a Question <i-have-a-question>` section.
 * Check if there is already a report about your bug in the `tracker <https://github.com/koloideal/Argenta/issues?q=label%3Abug>`_.
 * Also search the internet (including `Stack Overflow`) to see if the issue has been discussed outside of `GitHub`.
 * Collect information about the bug:
@@ -121,7 +121,7 @@ This section will help you submit an enhancement suggestion for `Argenta`, **inc
 .. rubric:: Before Submitting an Enhancement Suggestion
 
 * Make sure you are using the latest version.
-* Carefully read the `documentation <https://argenta.readthedocs.io>`_ and make sure the proposed functionality is not already implemented (perhaps through configuration).
+* Carefully read the `documentation <https://argenta.wiki>`_ and make sure the proposed functionality is not already implemented (perhaps through configuration).
 * Perform a `search <https://github.com/koloideal/Argenta/issues>`_ to check if this enhancement has been suggested before. If so, add a comment to the existing issue.
 * Determine if your idea fits the scope and goals of the project. You will need to convincingly demonstrate its value. We want to see features that will be useful to most users. If your idea targets a narrow audience, consider creating a plugin.
 
@@ -204,10 +204,6 @@ Improving Documentation
 
 Good documentation is crucial. We use `Sphinx` to generate it from source files in the `docs/` directory. We welcome any improvements: from fixing a typo to writing a new section.
 
-.. note::
-
-   We maintain documentation in two languages: Russian and English.
-   
 .. important::
 
     To encapsulate various commands needed for setting up and running the project, we use ``just``, which also appears in various examples in the documentation, so we recommend you `install it <https://github.com/casey/just#installation>`_
@@ -221,21 +217,14 @@ To improve documentation, you can follow a process similar to contributing code:
 
       cd docs
 
-#. Make changes to the **Russian** version of the documentation (`docs/index.rst` and/or `docs/root/*`).
+#. Make changes to the documentation (`docs/index.rst` and/or `docs/root/*`).
 #. To build the documentation locally in auto-rebuild mode and see the changes, run:
 
    .. code-block:: bash
 
-      just live-ru
+      just live
 
-#. Open `127.0.0.1:8000` in your browser to presentation the generated documentation.
-#. After completing work on the Russian version, you need to create an English translation:
-
-   .. code-block:: bash
-
-      just update-langs
-
-#. After updating the template, update the translation files located in `docs/locales/en/LC_MESSAGES/`.
+#. Open `127.0.0.1:8000` in your browser to preview the generated documentation.
 #. When the changes are ready, commit and open a `Pull Request`. Use the `docs:` prefix in the commit message.
 
 -----

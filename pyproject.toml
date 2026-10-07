@@ -31,8 +31,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://argenta.readthedocs.io"
-Documentation = "https://argenta.readthedocs.io"
+Homepage = "https://argenta.wiki"
+Documentation = "https://argenta.wiki"
 Repository = "https://github.com/koloideal/Argenta"
 Issues = "https://github.com/koloideal/Argenta/issues"
 Changelog = "https://github.com/koloideal/Argenta/blob/master/CHANGELOG.md"

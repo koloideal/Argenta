@@ -324,7 +324,7 @@ Example output:
     Argenta 1.2.0
     Python  3.13.0
     Platform  Linux-7.1.5-zen1-2-zen-x86_64-with-glibc2.40
-    Docs    https://argenta.readthedocs.io
+    Docs    https://argenta.wiki
 
 .. image:: https://i.ibb.co/B5k8Ftyg/image.png
    :alt: argenta info command output

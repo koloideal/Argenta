@@ -4,7 +4,7 @@
 
 Argenta — это **"Самый простой"**, **"Самый модульный"** и **"Самый элегантный"** способ создания интерактивных CLI-приложений на Python. 
 
-📖 **Читайте полную документацию:** [argenta.readthedocs.io](https://argenta.readthedocs.io/)<br>
+📖 **Читайте полную документацию:** [argenta.wiki](https://argenta.wiki/)<br>
 🌍 **Другие языки:** [EN](https://github.com/koloideal/Argenta/blob/main/README.md)
 
 ---
@@ -98,7 +98,7 @@ if __name__ == '__main__':
 
 ## 📚 Документация
 
-Полная документация доступна на [argenta.readthedocs.io](https://argenta.readthedocs.io/)
+Полная документация доступна на [argenta.wiki](https://argenta.wiki/)
 
 ---
 
