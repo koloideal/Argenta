@@ -37,7 +37,7 @@ to .
 
 ## I Have a Question
 
-> If you want to ask a question, we assume that you have read the available [Documentation](https://argenta.readthedocs.io).
+> If you want to ask a question, we assume that you have read the available [Documentation](https://argenta.wiki).
 
 Before you ask a question, it is best to search for existing [Issues](https://github.com/koloideal/Argenta/issues) that might help you. In case you have found a suitable issue and still need clarification, you can write your question in this issue. It is also advisable to search the internet for answers first.
 
@@ -79,7 +79,7 @@ Depending on how large the project is, you may want to outsource the questioning
 A good bug report shouldn't leave others needing to chase you up for more information. Therefore, we ask you to investigate carefully, collect information and describe the issue in detail in your report. Please complete the following steps in advance to help us fix any potential bug as fast as possible.
 
 - Make sure that you are using the latest version.
-- Determine if your bug is really a bug and not an error on your side e.g. using incompatible environment components/versions (Make sure that you have read the [documentation](https://argenta.readthedocs.io). If you are looking for support, you might want to check [this section](#i-have-a-question)).
+- Determine if your bug is really a bug and not an error on your side e.g. using incompatible environment components/versions (Make sure that you have read the [documentation](https://argenta.wiki). If you are looking for support, you might want to check [this section](#i-have-a-question)).
 - To see if other users have experienced (and potentially already solved) the same issue you are having, check if there is not already a bug report existing for your bug or error in the [bug tracker](https://github.com/koloideal/Argenta/issues?q=label%3Abug).
 - Also make sure to search the internet (including Stack Overflow) to see if users outside of the GitHub community have discussed the issue.
 - Collect information about the bug:
@@ -120,7 +120,7 @@ This section guides you through submitting an enhancement suggestion for Argenta
 #### Before Submitting an Enhancement
 
 - Make sure that you are using the latest version.
-- Read the [documentation](https://argenta.readthedocs.io) carefully and find out if the functionality is already covered, maybe by an individual configuration.
+- Read the [documentation](https://argenta.wiki) carefully and find out if the functionality is already covered, maybe by an individual configuration.
 - Perform a [search](https://github.com/koloideal/Argenta/issues) to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
 - Find out whether your idea fits with the scope and aims of the project. It's up to you to make a strong case to convince the project's developers of the merits of this feature. Keep in mind that we want features that will be useful to the majority of our users and not just a small subset. If you're just targeting a minority of users, consider writing an add-on/plugin library.
 
@@ -188,8 +188,6 @@ To get started with your first code contribution, please follow these steps to s
 
 Good documentation is crucial for any project. We use Sphinx to generate our documentation from source files located in the `docs/` directory. We welcome any improvements, from fixing a simple typo to writing a whole new section.
 
-	We support documentation in two languages: Russian and English
-
 To improve the documentation, you can follow a similar workflow as for code contributions:
 
 1.  Ensure your development environment is set up as described in the "Your First Code Contribution" section.
@@ -197,20 +195,13 @@ To improve the documentation, you can follow a similar workflow as for code cont
     ```bash
     cd docs
     ```
-3. Make the necessary changes to the **Russian** version of the documentation - ``docs/index.rst`` and ``docs/root/*``
-4. To build the documentation locally and see your changes, run:
+3.  Make the necessary changes to the documentation - ``docs/index.rst`` and ``docs/root/*``
+4.  To build the documentation locally and see your changes, run:
     ```bash
-    make live-ru
+    just live
     ```
 5.  Open `127.0.0.1:8000` in your web browser to preview the generated documentation.
-6.  Make your desired changes to the `.rst` or `.md` files in the `docs/source` directory.
-7.  After completing the work on the Russian documentation, it is necessary to create an English translation:
-
-	```bash
-	make update-langs
-	```
-8.  After updating the translation template, update the necessary translation files located at ``docs/locales/en/LC_MESSAGES``
-8.  Once you are happy with your changes, commit them and open a Pull Request. Use the `docs:` prefix in your commit message.
+6.  Once you are happy with your changes, commit them and open a Pull Request. Use the `docs:` prefix in your commit message.
 
 ---
 

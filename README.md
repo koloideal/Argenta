@@ -4,7 +4,7 @@
 
 Argenta is the **"Simplest"**, **"Most Modular"**, and **"Most Elegant"** way to build interactive CLI applications in Python.
 
-📖 **Read the full documentation:** [argenta.readthedocs.io](https://argenta.readthedocs.io/)<br>
+📖 **Read the full documentation:** [argenta.wiki](https://argenta.wiki/)<br>
 🌍 **Other languages:** [RU](https://github.com/koloideal/Argenta/blob/main/README.ru.md)
 
 ---
@@ -98,7 +98,7 @@ That's it! You now have a fully functional interactive CLI application.
 
 ## 📚 Documentation
 
-Full documentation is available at [argenta.readthedocs.io](https://argenta.readthedocs.io/)
+Full documentation is available at [argenta.wiki](https://argenta.wiki/)
 
 ---
 
