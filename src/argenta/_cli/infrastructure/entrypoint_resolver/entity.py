@@ -1,37 +1,29 @@
-__all__ = ["EntrypointResolver", "EntryPointAsApp", "CallableEntryPoint"]
+__all__ = ["CallableEntryPoint", "EntryPointAsApp", "EntrypointResolver"]
 
 import importlib
 import inspect
 import re
 import sys
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Protocol, cast, get_args
+from typing import cast, get_args
 
-from argenta.app.models import App
-
-from .exceptions import (
+from argenta._cli.infrastructure.entrypoint_resolver.exceptions import (
     CallableEntrypointNotMatchRequiredSignatureError,
     EntrypointNotAppInstanceError,
     EntrypointNotCallableError,
     ResolveFromStringError,
 )
+from argenta.app.models import App
 
-
-CallableReturnsApp = Callable[[], App]
-
-
-class EntryPoint[T](Protocol):
-    @property
-    def raw_path(self) -> str: ...
-    @property
-    def instance_object(self) -> T: ...
+EntrypointCallable = Callable[[], object]
 
 
 @dataclass(frozen=True, slots=True)
 class CallableEntryPoint:
     raw_path: str
-    instance_object: CallableReturnsApp
+    instance_object: EntrypointCallable
 
 
 @dataclass(frozen=True, slots=True)
@@ -41,7 +33,7 @@ class EntryPointAsApp:
 
 
 @dataclass(frozen=True, slots=True)
-class ResolvedEntrypoint[T: (CallableReturnsApp, App)]:
+class ResolvedEntrypoint[T: (EntrypointCallable, App)]:
     resolved_source_path: str
     instance: T
 
@@ -54,35 +46,67 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
         self,
         entrypoint_object_name: str,
     ) -> T:
-        entrypoint_type: type[T] = get_args(self.__orig_class__)[0]  # type: ignore
+        orig_class = getattr(self, "__orig_class__", None)
+        if orig_class is None:
+            raise ResolveFromStringError(
+                "EntrypointResolver must be parametrized, e.g. "
+                "EntrypointResolver[CallableEntryPoint](path)"
+            )
+        entrypoint_type = get_args(orig_class)[0]
+        parsed: CallableEntryPoint | EntryPointAsApp
         if entrypoint_type is CallableEntryPoint:
-            return cast(T, self._parse_callable_entrypoint(entrypoint_object_name))
+            parsed = self._parse_callable_entrypoint(entrypoint_object_name)
         elif entrypoint_type is EntryPointAsApp:
-            return cast(T, self._parse_entrypoint_as_app(entrypoint_object_name))
-        raise NotImplementedError
+            parsed = self._parse_entrypoint_as_app(entrypoint_object_name)
+        else:
+            raise NotImplementedError
+        return cast(T, parsed)
 
     def _parse_callable_entrypoint(self, entrypoint_object_name: str) -> CallableEntryPoint:
-        resolved_entrypoint: ResolvedEntrypoint[CallableReturnsApp] = self._resolve_from_string(entrypoint_object_name)
+        resolved_entrypoint: ResolvedEntrypoint[EntrypointCallable] = self._resolve_from_string(
+            entrypoint_object_name
+        )
         instance_object = resolved_entrypoint.instance
         if not callable(instance_object):
             raise EntrypointNotCallableError(repr(instance_object))
-        instance_object_signature = inspect.signature(instance_object)
-        required_params = instance_object_signature.parameters
+        try:
+            instance_object_signature = inspect.signature(instance_object)
+        except (TypeError, ValueError):
+            raise CallableEntrypointNotMatchRequiredSignatureError(repr(instance_object))
+        required_params = [
+            param
+            for param in instance_object_signature.parameters.values()
+            if param.default is inspect.Parameter.empty
+            and param.kind
+            in (
+                inspect.Parameter.POSITIONAL_ONLY,
+                inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                inspect.Parameter.KEYWORD_ONLY,
+            )
+        ]
 
         if required_params:
             raise CallableEntrypointNotMatchRequiredSignatureError(repr(instance_object))
 
-        return CallableEntryPoint(raw_path=resolved_entrypoint.resolved_source_path, instance_object=instance_object)
+        return CallableEntryPoint(
+            raw_path=resolved_entrypoint.resolved_source_path, instance_object=instance_object
+        )
 
     def _parse_entrypoint_as_app(self, entrypoint_object_name: str) -> EntryPointAsApp:
-        resolved_entrypoint: ResolvedEntrypoint[App] = self._resolve_from_string(entrypoint_object_name)
+        resolved_entrypoint: ResolvedEntrypoint[App] = self._resolve_from_string(
+            entrypoint_object_name
+        )
         instance_object = resolved_entrypoint.instance
         if not isinstance(instance_object, App):
             raise EntrypointNotAppInstanceError(repr(instance_object))
 
-        return EntryPointAsApp(raw_path=resolved_entrypoint.resolved_source_path, instance_object=instance_object)
+        return EntryPointAsApp(
+            raw_path=resolved_entrypoint.resolved_source_path, instance_object=instance_object
+        )
 
-    def _resolve_from_string[K: (CallableReturnsApp, App)](self, entrypoint_object_name: str) -> ResolvedEntrypoint[K]:
+    def _resolve_from_string[K: (EntrypointCallable, App)](
+        self, entrypoint_object_name: str
+    ) -> ResolvedEntrypoint[K]:
         raw_path = self._path_to_entrypoint
 
         raw_path_as_dir = Path(raw_path).resolve()
@@ -137,11 +161,15 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
             raise ResolveFromStringError(f'"{entrypoint_object_name}" not found in "{raw_path}"')
 
         match instance:
-            case x if callable(x):
-                result_as_callable: ResolvedEntrypoint[CallableReturnsApp] = ResolvedEntrypoint(resolved_source_path, instance)
-                return cast(ResolvedEntrypoint[K], result_as_callable)
             case App():
-                result_as_app: ResolvedEntrypoint[App] = ResolvedEntrypoint(resolved_source_path, instance)
-                return cast(ResolvedEntrypoint[K], result_as_app)
+                return cast(
+                    ResolvedEntrypoint[K], ResolvedEntrypoint(resolved_source_path, instance)
+                )
+            case x if callable(x) and not isinstance(x, type):
+                return cast(
+                    ResolvedEntrypoint[K], ResolvedEntrypoint(resolved_source_path, instance)
+                )
             case _:
-                raise ResolveFromStringError(f'"{entrypoint_object_name}" is not a valid entrypoint')
+                raise ResolveFromStringError(
+                    f'"{entrypoint_object_name}" is not a valid entrypoint'
+                )

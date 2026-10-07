@@ -2,33 +2,35 @@ __all__ = ["routes_handler"]
 
 from collections import defaultdict
 
+from dishka import Container
 from rich.console import Console
 from rich.panel import Panel
 from rich.tree import Tree
 
-from argenta.app.models import App
-
-from ..infrastructure.entrypoint_resolver.entity import (
+from argenta._cli.infrastructure.entrypoint_resolver.entity import (
     CallableEntryPoint,
     EntryPointAsApp,
     EntrypointResolver,
 )
-from ..infrastructure.entrypoint_resolver.exceptions import (
+from argenta._cli.infrastructure.entrypoint_resolver.exceptions import (
     EntrypointError,
     EntrypointNotAppInstanceError,
     ResolveFromStringError,
 )
+from argenta.app.models import App
 
 
-def routes_handler(entrypoint_path: str) -> None:
-    file_path, _, callable_name = entrypoint_path.partition(":")
-    if not callable_name:
-        Console().print(
+def routes_handler(container: Container, entrypoint_path: str) -> None:
+    console = container.get(Console)
+    file_path, sep, callable_name = entrypoint_path.rpartition(":")
+    if not sep or not file_path or not callable_name:
+        console.print(
             f'[bold red]Error:[/bold red] "{entrypoint_path}" must be in format '
             f'"<path/to/file.py>:<app_object>" or "<path.to.module>:<app_object>"'
         )
         raise SystemExit(1)
 
+    app: App
     try:
         app_instance = EntrypointResolver[EntryPointAsApp](file_path).parse_entrypoint_with_type(
             callable_name
@@ -38,24 +40,22 @@ def routes_handler(entrypoint_path: str) -> None:
         try:
             callable_entrypoint = EntrypointResolver[CallableEntryPoint](
                 file_path
-                ).parse_entrypoint_with_type(
-                callable_name
-            )
+            ).parse_entrypoint_with_type(callable_name)
         except (ResolveFromStringError, EntrypointError) as e:
-            Console().print(f"[bold red]Error:[/bold red] {e}")
+            console.print(f"[bold red]Error:[/bold red] {e}")
             raise SystemExit(1)
-        app = callable_entrypoint.instance_object()
-        if not isinstance(app, App):
-            Console().print(
-                f"[bold red]Error:[/bold red] callable must return an App instance, got {type(app).__name__}"
+        resolved = callable_entrypoint.instance_object()
+        if not isinstance(resolved, App):
+            console.print(
+                f"[bold red]Error:[/bold red] callable must return an App instance, got {type(resolved).__name__}"
             )
             raise SystemExit(1)
+        app = resolved
     except (ResolveFromStringError, EntrypointError) as e:
-        Console().print(f"[bold red]Error:[/bold red] {e}")
+        console.print(f"[bold red]Error:[/bold red] {e}")
         raise SystemExit(1)
     routers = app.registered_routers
 
-    console = Console()
     stats: dict[str, int] = defaultdict(int)
 
     tree = Tree(f"📦 [bold blue]App object:[/bold blue] {app!r}")

@@ -1,31 +1,60 @@
 __all__ = ["build_handler"]
 
+import importlib.util
 import os
 import subprocess
 import sys
 from pathlib import Path
 
+from dishka import Container
 from rich.console import Console
+
+from argenta._cli.infrastructure.entrypoint_resolver.entity import (
+    CallableEntryPoint,
+    EntrypointResolver,
+)
+from argenta._cli.infrastructure.entrypoint_resolver.exceptions import (
+    EntrypointError,
+    ResolveFromStringError,
+)
 
 
 def build_handler(
+    container: Container,
     entry_point: str,
     output_name: str | None = None,
     extra_nuitka_args: list[str] | None = None,
 ) -> None:
-    console = Console()
-    file_path, _, callable_name = entry_point.partition(":")
+    console = container.get(Console)
+    file_path, sep, callable_name = entry_point.rpartition(":")
 
-    if not file_path or not callable_name:
+    if not sep or not file_path or not callable_name:
         console.print(
             f'[bold red]Error:[/bold red] "{entry_point}" must be in format "<path/to/file.py>:<callable>"'
         )
         raise SystemExit(1)
 
-    path = Path(file_path).resolve()
+    if importlib.util.find_spec("nuitka") is None:
+        console.print(
+            "[bold red]Error:[/bold red] nuitka is required for the build command. "
+            "Install it via 'pip install argenta[cli]' or 'pip install nuitka[onefile]'"
+        )
+        raise SystemExit(1)
 
-    if not path.exists():
-        console.print(f'[bold red]Error:[/bold red] File "{file_path}" not found')
+    try:
+        runner = EntrypointResolver[CallableEntryPoint](file_path).parse_entrypoint_with_type(
+            callable_name
+        )
+    except (ResolveFromStringError, EntrypointError) as e:
+        console.print(f"[bold red]Error:[/bold red] {e}")
+        raise SystemExit(1)
+
+    path = Path(runner.raw_path)
+
+    if not path.exists() or path.suffix != ".py":
+        console.print(
+            f'[bold red]Error:[/bold red] cannot resolve "{runner.raw_path}" to a Python file'
+        )
         raise SystemExit(1)
 
     is_main_module = path.name == "__main__.py"

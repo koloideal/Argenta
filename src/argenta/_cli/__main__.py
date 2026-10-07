@@ -4,7 +4,7 @@ from typing import Literal
 import typer
 from typer import Context, Typer
 
-from .commands import (
+from argenta._cli.commands import (
     build_handler,
     info_handler,
     init_handler,
@@ -12,6 +12,7 @@ from .commands import (
     routes_handler,
     run_handler,
 )
+from argenta._cli.di import create_cli_container
 
 app = Typer(
     name="argenta",
@@ -28,6 +29,7 @@ def _version_callback(value: bool) -> None:
 
 @app.callback()
 def _root(
+    ctx: Context,
     version_flag: bool = typer.Option(
         None,
         "--version",
@@ -38,6 +40,8 @@ def _root(
     ),
 ) -> None:
     """Argenta CLI — scaffold, run, inspect, and build CLI apps."""
+    if ctx.obj is None:
+        ctx.obj = create_cli_container()
 
 
 @app.command(
@@ -46,8 +50,11 @@ def _root(
     short_help="Start the orchestrator REPL",
     epilog="Example: argenta run app/main.py:main",
 )
-def _run(entrypoint_path: str = typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>")) -> None:
-    run_handler(entrypoint_path)
+def _run(
+    ctx: Context,
+    entrypoint_path: str = typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>"),
+) -> None:
+    run_handler(ctx.obj, entrypoint_path)
 
 
 @app.command(
@@ -56,8 +63,11 @@ def _run(entrypoint_path: str = typer.Argument(help="Entrypoint as <path/to/file
     short_help="Initialize architecture in existing project",
     epilog="Run from the project root. Example: argenta init --arch src",
 )
-def _init(arch: Literal["flat", "src"] = typer.Option("flat", "--arch", help="Architecture: flat or src")) -> None:
-    init_handler(arch=arch)
+def _init(
+    ctx: Context,
+    arch: Literal["flat", "src"] = typer.Option("flat", "--arch", help="Architecture: flat or src"),
+) -> None:
+    init_handler(ctx.obj, arch)
 
 
 @app.command(
@@ -67,10 +77,11 @@ def _init(arch: Literal["flat", "src"] = typer.Option("flat", "--arch", help="Ar
     epilog="Example: argenta new my-app --arch src",
 )
 def _new(
+    ctx: Context,
     project_name: str = typer.Argument(help="Name of the new project directory"),
     arch: Literal["flat", "src"] = typer.Option("flat", "--arch", help="Architecture: flat or src"),
 ) -> None:
-    new_handler(project_name=project_name, arch=arch)
+    new_handler(ctx.obj, project_name, arch)
 
 
 @app.command(
@@ -79,8 +90,11 @@ def _new(
     short_help="Show registered routes and commands",
     epilog="Examples:\n  argenta routes app/main.py:app\n  argenta routes app/main.py:create_app",
 )
-def _routes(entrypoint_path: str = typer.Argument(help="Entrypoint as <path/to/file.py>:<app_or_callable>")) -> None:
-    routes_handler(entrypoint_path)
+def _routes(
+    ctx: Context,
+    entrypoint_path: str = typer.Argument(help="Entrypoint as <path/to/file.py>:<app_or_callable>"),
+) -> None:
+    routes_handler(ctx.obj, entrypoint_path)
 
 
 @app.command(
@@ -88,8 +102,8 @@ def _routes(entrypoint_path: str = typer.Argument(help="Entrypoint as <path/to/f
     help="Display Argenta version, Python version, and platform info.",
     short_help="Show Argenta version and environment info",
 )
-def _info() -> None:
-    info_handler()
+def _info(ctx: Context) -> None:
+    info_handler(ctx.obj)
 
 
 @app.command(
@@ -110,11 +124,12 @@ def _build(
     entry_point: str = typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>"),
     output_name: str | None = typer.Option(None, "--output", "-o", help="Output binary name"),
 ) -> None:
-    build_handler(entry_point=entry_point, output_name=output_name, extra_nuitka_args=ctx.args)
+    build_handler(ctx.obj, entry_point, output_name=output_name, extra_nuitka_args=ctx.args)
 
 
 def main() -> None:
-    app()
+    with create_cli_container() as container:
+        app(obj=container)
 
 
 if __name__ == "__main__":

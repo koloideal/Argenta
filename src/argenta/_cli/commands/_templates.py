@@ -1,14 +1,17 @@
 __all__ = [
-    "GITIGNORE_CONTENT",
-    "FLAT_MAIN_TEMPLATE",
     "FLAT_HANDLERS_TEMPLATE",
+    "FLAT_MAIN_TEMPLATE",
+    "GITIGNORE_CONTENT",
+    "SRC_HANDLER_TEMPLATE",
     "SRC_MAIN_TEMPLATE",
     "SRC_ROUTERS_TEMPLATE",
-    "SRC_HANDLER_TEMPLATE",
     "create_file",
+    "sanitize_package_name",
 ]
 
 from pathlib import Path
+
+from rich.console import Console
 
 GITIGNORE_CONTENT = """
 __pycache__/
@@ -80,9 +83,14 @@ def hello_handler(response: Response) -> None:
 """
 
 
-def create_file(path: Path, content: str) -> None:
-    if not path.exists():
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content.strip(), encoding="utf-8")
-    else:
-        print(f"Skipped: {path} (already exists)")
+def sanitize_package_name(name: str) -> str:
+    return name.lower().replace(" ", "_").replace("-", "_")
+
+
+def create_file(path: Path, content: str, console: Console) -> None:
+    if path.exists():
+        console.print(f"[yellow]Skipped:[/yellow] {path} (already exists)")
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    stripped = content.strip()
+    path.write_text(stripped + "\n" if stripped else "", encoding="utf-8")

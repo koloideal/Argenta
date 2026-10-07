@@ -106,6 +106,7 @@ branch = true
 omit = [
     "src/argenta/app/protocols.py",
     "src/argenta/*/exceptions.py",
+    "src/argenta/_cli/*",
     "src/argenta/metrics/*"
 ]
 
