@@ -1,5 +1,6 @@
 from argenta import App
 
+
 def empty_command_handler():
     print("Empty command handler called")
 

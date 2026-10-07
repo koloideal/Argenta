@@ -1,6 +1,6 @@
 from argenta import Command, Response, Router
-from argenta.command.flag import InputFlag, ValidationStatus
 from argenta.command import InputFlags
+from argenta.command.flag import InputFlag, ValidationStatus
 
 router = Router(title="Add Flag Example")
 

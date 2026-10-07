@@ -11,7 +11,7 @@ print(format_flag.validate_input_flag_value("pdf"))  # False
 
 # Flag without value
 help_flag = Flag(name="help", possible_values=PossibleValues.NEITHER)
-print(help_flag.validate_input_flag_value(None))  # True
+print(help_flag.validate_input_flag_value(""))  # True
 print(help_flag.validate_input_flag_value("value"))  # False
 
 # Flag with regular expression

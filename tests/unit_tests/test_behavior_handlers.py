@@ -1,7 +1,11 @@
-import pytest
 from unittest.mock import Mock
 
-from argenta.app.behavior_handlers.models import BehaviorHandlersFabric, BehaviorHandlersSettersMixin
+import pytest
+
+from argenta.app.behavior_handlers.models import (
+    BehaviorHandlersFabric,
+    BehaviorHandlersSettersMixin,
+)
 from argenta.app.presentation.renderers import PlainRenderer
 from argenta.command.models import InputCommand
 from argenta.response import Response, ResponseStatus

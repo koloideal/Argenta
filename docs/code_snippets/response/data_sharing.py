@@ -1,4 +1,4 @@
-from argenta import Router, Response, Command, DataBridge
+from argenta import Command, DataBridge, Response, Router
 from argenta.command import Flag
 from argenta.di import FromDishka
 

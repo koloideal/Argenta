@@ -5,7 +5,7 @@ from collections.abc import Iterator
 import pytest
 
 from argenta import App, Orchestrator, Router
-from argenta.command import Command, PredefinedFlags, Flags
+from argenta.command import Command, Flags, PredefinedFlags
 from argenta.command.flag.models import ValidationStatus
 from argenta.response import Response
 
@@ -38,7 +38,7 @@ def test_empty_input_triggers_empty_command_handler(monkeypatch: pytest.MonkeyPa
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     app.set_empty_command_handler(lambda: print('Empty input command'))
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -64,7 +64,7 @@ def test_unknown_command_triggers_unknown_command_handler(monkeypatch: pytest.Mo
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -85,7 +85,7 @@ def test_mixed_valid_and_unknown_commands_handled_correctly(monkeypatch: pytest.
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -110,7 +110,7 @@ def test_multiple_commands_with_unknown_command_in_between(monkeypatch: pytest.M
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     app.set_unknown_command_handler(lambda command: print(f'Unknown command: {command.trigger}'))
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -137,7 +137,7 @@ def test_unregistered_flag_without_value_is_accessible(monkeypatch: pytest.Monke
 
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -157,11 +157,11 @@ def test_unregistered_flag_with_value_is_accessible(monkeypatch: pytest.MonkeyPa
         if undefined_flag and undefined_flag.status == ValidationStatus.UNDEFINED:
             print(f'test command with undefined flag with value: {undefined_flag.string_entity} {undefined_flag.input_value}')
         else:
-            raise
+            raise AssertionError("expected flag 'port' to be parsed as UNDEFINED")
 
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -184,7 +184,7 @@ def test_registered_and_unregistered_flags_coexist(monkeypatch: pytest.MonkeyPat
 
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -210,7 +210,7 @@ def test_flag_without_value_triggers_incorrect_syntax_handler(monkeypatch: pytes
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     app.set_incorrect_input_syntax_handler(lambda command: print(f'Incorrect flag syntax: "{command}"'))
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 
@@ -236,7 +236,7 @@ def test_repeated_flags_trigger_repeated_flags_handler(monkeypatch: pytest.Monke
     app = App(override_system_messages=True, printer=print)
     app.include_router(router)
     app.set_repeated_input_flags_handler(lambda command: print(f'Repeated input flags: "{command}"'))
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
     output = capsys.readouterr().out
 

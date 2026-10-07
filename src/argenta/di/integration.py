@@ -1,6 +1,7 @@
-__all__ = ["inject", "setup_dishka", "FromDishka"]
+__all__ = ["FromDishka", "inject", "setup_dishka"]
 
-from typing import Any, Callable, TypeVar
+from collections.abc import Callable
+from typing import Any
 
 from dishka import Container, FromDishka
 from dishka.integrations.base import is_dishka_injected, wrap_injection
@@ -8,10 +9,8 @@ from dishka.integrations.base import is_dishka_injected, wrap_injection
 from argenta.app.models import App
 from argenta.response.entity import Response
 
-T = TypeVar("T")
 
-
-def inject(func: Callable[..., T]) -> Callable[..., T]:
+def inject[T](func: Callable[..., T]) -> Callable[..., T]:
     return wrap_injection(
         func=func,
         is_async=False,

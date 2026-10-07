@@ -1,8 +1,9 @@
-__all__ = ["PossibleValues", "ValidationStatus", "Flag", "InputFlag", "InputFlags", "Flags"]
+__all__ = ["Flag", "Flags", "InputFlag", "InputFlags", "PossibleValues", "ValidationStatus"]
 
+from collections.abc import Container, Iterator
 from enum import Enum
 from re import Pattern
-from typing import Any, Container, Generic, Iterator, Literal, TypeVar, override
+from typing import Any, Literal, override
 
 PREFIX_TYPE = Literal["-", "--", "---"]
 
@@ -42,11 +43,11 @@ class Flag:
         Private. Validates the input flag value
         :param input_flag_value: The input flag value to validate
         :return: whether the entered flag is valid as bool
-        """ 
+        """
         if isinstance(self.possible_values, PossibleValues):
             if self.possible_values == PossibleValues.NEITHER:
-                return input_flag_value == ''
-            return input_flag_value != ''
+                return input_flag_value == ""
+            return input_flag_value != ""
 
         if isinstance(self.possible_values, Pattern):
             return bool(self.possible_values.match(input_flag_value))
@@ -124,10 +125,7 @@ class InputFlag:
             raise NotImplementedError
 
 
-FlagType = TypeVar("FlagType")
-
-
-class BaseFlags(Generic[FlagType]):
+class BaseFlags[FlagType]:
     def __init__(self, flags: list[FlagType] | None = None) -> None:
         """
         Public. A model that combines the registered flags
@@ -197,10 +195,7 @@ class Flags(BaseFlags[Flag]):
 
 class InputFlags(BaseFlags[InputFlag]):
     def get_flag_by_name(
-            self,
-            name: str,
-            with_status: ValidationStatus | None = None,
-            default: Any = None
+        self, name: str, with_status: ValidationStatus | None = None, default: Any = None
     ) -> InputFlag | None:
         """
         Public. Returns the flag entity by its name or None if not found
@@ -212,7 +207,10 @@ class InputFlags(BaseFlags[InputFlag]):
         if with_status is None:
             return next((flag for flag in self.flags if flag.name == name), default)
         else:
-            return next((flag for flag in self.flags if flag.name == name and flag.status == with_status), default)
+            return next(
+                (flag for flag in self.flags if flag.name == name and flag.status == with_status),
+                default,
+            )
 
     @override
     def __eq__(self, other: object) -> bool:

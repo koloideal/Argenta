@@ -1,7 +1,7 @@
 __all__ = [
+    "RepeatedAliasNameException",
     "RepeatedFlagNameException",
     "RepeatedTriggerNameException",
-    "RepeatedAliasNameException",
     "RequiredArgumentNotPassedException",
     "TriggerContainSpacesException",
 ]
@@ -17,7 +17,7 @@ class RepeatedFlagNameException(Exception):
     @override
     def __str__(self) -> str:
         return "Repeated registered flag names in register command"
-        
+
 
 class RepeatedTriggerNameException(Exception):
     """
@@ -27,21 +27,22 @@ class RepeatedTriggerNameException(Exception):
     @override
     def __str__(self) -> str:
         return "Repeated trigger name in registered commands"
-        
+
 
 class RepeatedAliasNameException(Exception):
     """
     Private. Raised when a repeated alias name is registered
     """
+
     @override
-    def __init__(self, repeated_aliases: set[str]) -> None:
+    def __init__(self, repeated_aliases: set[str]) -> None:  # pyrefly: ignore[bad-override]
         self.repeated_aliases = repeated_aliases
         super().__init__()
 
     @override
     def __str__(self) -> str:
         return f"Repeated aliases names: {self.repeated_aliases}"
-        
+
 
 class RequiredArgumentNotPassedException(Exception):
     """

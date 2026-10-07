@@ -1,5 +1,6 @@
 from argenta import App
 
+
 def incorrect_input_syntax_handler(raw_command: str):
     print(f"Incorrect input syntax for command: {raw_command}")
 

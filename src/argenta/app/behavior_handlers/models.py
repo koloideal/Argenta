@@ -1,9 +1,13 @@
 from rich.markup import escape
 
 from argenta.app.presentation.renderers import Renderer
-from argenta.app.protocols import (DescriptionMessageGenerator, EmptyCommandHandler,
-                                   MostSimilarCommandGetter, NonStandardBehaviorHandler,
-                                   Printer)
+from argenta.app.protocols import (
+    DescriptionMessageGenerator,
+    EmptyCommandHandler,
+    MostSimilarCommandGetter,
+    NonStandardBehaviorHandler,
+    Printer,
+)
 from argenta.command import InputCommand
 from argenta.response.entity import Response
 
@@ -39,22 +43,28 @@ class BehaviorHandlersFabric:
     def generate_unknown_command_handler(self) -> NonStandardBehaviorHandler[InputCommand]:
         def unknown_command_handler(command: InputCommand) -> None:
             command_trigger: str = command.trigger
-            most_similar_command_trigger: str | None = self._most_similar_command_getter(command_trigger)
+            most_similar_command_trigger: str | None = self._most_similar_command_getter(
+                command_trigger
+            )
             self._printer(
                 self._renderer.render_text_for_unknown_command_handler(
                     command_trigger=command_trigger,
-                    most_similar_command_trigger=most_similar_command_trigger
+                    most_similar_command_trigger=most_similar_command_trigger,
                 )
             )
+
         return unknown_command_handler
 
-    def generate_exit_command_handler(self, farewell_message: str) -> NonStandardBehaviorHandler[Response]:
+    def generate_exit_command_handler(
+        self, farewell_message: str
+    ) -> NonStandardBehaviorHandler[Response]:
         return lambda _: self._printer(farewell_message)
 
     def generate_description_message_generator(self) -> DescriptionMessageGenerator:
-        return lambda command, description: self._renderer.render_text_for_description_message_generator(
-            command=command,
-            description=description
+        return lambda command, description: (
+            self._renderer.render_text_for_description_message_generator(
+                command=command, description=description
+            )
         )
 
 
@@ -66,13 +76,21 @@ class BehaviorHandlersSettersMixin:
         repeated_input_flags_handler: NonStandardBehaviorHandler[str],
         empty_input_command_handler: EmptyCommandHandler,
         unknown_command_handler: NonStandardBehaviorHandler[InputCommand],
-        exit_command_handler: NonStandardBehaviorHandler[Response]
+        exit_command_handler: NonStandardBehaviorHandler[Response],
     ):
-        self._description_message_generator: DescriptionMessageGenerator = description_message_generator
-        self._incorrect_input_syntax_handler: NonStandardBehaviorHandler[str] = incorrect_input_syntax_handler
-        self._repeated_input_flags_handler: NonStandardBehaviorHandler[str] = repeated_input_flags_handler
+        self._description_message_generator: DescriptionMessageGenerator = (
+            description_message_generator
+        )
+        self._incorrect_input_syntax_handler: NonStandardBehaviorHandler[str] = (
+            incorrect_input_syntax_handler
+        )
+        self._repeated_input_flags_handler: NonStandardBehaviorHandler[str] = (
+            repeated_input_flags_handler
+        )
         self._empty_input_command_handler: EmptyCommandHandler = empty_input_command_handler
-        self._unknown_command_handler: NonStandardBehaviorHandler[InputCommand] = unknown_command_handler
+        self._unknown_command_handler: NonStandardBehaviorHandler[InputCommand] = (
+            unknown_command_handler
+        )
         self._exit_command_handler: NonStandardBehaviorHandler[Response] = exit_command_handler
 
     def set_description_message_pattern(self, _: DescriptionMessageGenerator, /) -> None:

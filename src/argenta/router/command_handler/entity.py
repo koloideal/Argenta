@@ -28,13 +28,17 @@ class CommandHandler:
 
 
 class CommandHandlers:
-    def __init__(self, command_handlers: tuple[CommandHandler] | tuple[Never, ...] = tuple()):
+    def __init__(self, command_handlers: tuple[CommandHandler] | tuple[Never, ...] = ()):
         """
         Private. The model that unites all CommandHandler of the routers
         :param command_handlers: list of CommandHandlers for register
         """
-        self.command_handlers: list[CommandHandler] = list(command_handlers) if command_handlers else []
-        self.paired_command_handler_trigger: dict[str, CommandHandler] = {x.handled_command.trigger: x for x in command_handlers}
+        self.command_handlers: list[CommandHandler] = (
+            list(command_handlers) if command_handlers else []
+        )
+        self.paired_command_handler_trigger: dict[str, CommandHandler] = {
+            x.handled_command.trigger: x for x in command_handlers
+        }
 
     def add_handler(self, command_handler: CommandHandler) -> None:
         """
@@ -43,10 +47,12 @@ class CommandHandlers:
         :return: None
         """
         self.command_handlers.append(command_handler)
-        self.paired_command_handler_trigger[command_handler.handled_command.trigger.lower()] = command_handler
+        self.paired_command_handler_trigger[command_handler.handled_command.trigger.lower()] = (
+            command_handler
+        )
         for alias in command_handler.handled_command.aliases:
             self.paired_command_handler_trigger[alias.lower()] = command_handler
-            
+
     def get_command_handler_by_trigger(self, trigger: str) -> CommandHandler | None:
         return self.paired_command_handler_trigger.get(trigger)
 
