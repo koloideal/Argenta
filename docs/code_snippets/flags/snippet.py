@@ -1,4 +1,5 @@
 import re
+
 from argenta.command import Command, Flag, Flags
 
 flags = Flags(

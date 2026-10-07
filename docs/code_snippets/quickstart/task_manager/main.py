@@ -1,7 +1,7 @@
-from argenta import App, Orchestrator
+from handlers import router
+from provider import TaskProvider
 
-from .handlers import router
-from .provider import TaskProvider
+from argenta import App, Orchestrator
 
 # 1. Create app and orchestrator instances
 app = App(
@@ -15,4 +15,4 @@ app.include_router(router)
 
 # 3. Start polling via orchestrator
 if __name__ == "__main__":
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)

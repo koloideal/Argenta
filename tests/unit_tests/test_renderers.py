@@ -1,4 +1,4 @@
-from argenta.app.presentation.renderers import RichRenderer, PlainRenderer
+from argenta.app.presentation.renderers import PlainRenderer, RichRenderer
 from argenta.app.registered_routers.entity import RegisteredRouters
 from argenta.command.models import Command
 from argenta.response import Response

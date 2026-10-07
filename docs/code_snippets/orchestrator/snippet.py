@@ -1,6 +1,6 @@
 import sqlite3
+from collections.abc import Iterable
 from sqlite3 import Connection
-from typing import Iterable
 
 from dishka import Provider, Scope, provide
 
@@ -24,4 +24,4 @@ orchestrator = Orchestrator(custom_providers=[ConnectionProvider()])
 
 # 4. Start the application
 if __name__ == "__main__":
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)

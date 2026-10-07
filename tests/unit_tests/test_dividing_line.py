@@ -1,6 +1,5 @@
 from argenta.app.dividing_line import DynamicDividingLine, StaticDividingLine
 
-
 # ============================================================================
 # Tests for StaticDividingLine - full line generation
 # ============================================================================

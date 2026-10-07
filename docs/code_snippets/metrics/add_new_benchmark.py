@@ -1,5 +1,6 @@
 from metrics.benchmarks.entity import benchmarks
 
+
 @benchmarks.register(
     type_="my_category",
     description="Description of what is being measured"

@@ -1,12 +1,15 @@
 __all__ = ["Command", "InputCommand"]
 
 import shlex
-from typing import Iterable, Literal, Never, Self, cast
+from collections.abc import Iterable
+from typing import Literal, Never, Self, cast
 
 from argenta.command import Flags, InputFlags
-from argenta.command.exceptions import (EmptyInputCommandException,
-                                        RepeatedInputFlagsException,
-                                        UnprocessedInputFlagException)
+from argenta.command.exceptions import (
+    EmptyInputCommandException,
+    RepeatedInputFlagsException,
+    UnprocessedInputFlagException,
+)
 from argenta.command.flag.models import Flag, InputFlag, ValidationStatus
 
 ParseFlagsResult = tuple[InputFlags, str | None, str | None]
@@ -33,10 +36,7 @@ class Command:
         :param aliases: string synonyms for the main trigger
         """
         pretty_flags: Flags = (
-            flags if isinstance(flags, Flags)
-            else Flags([flags])
-            if flags is not None
-            else Flags()
+            flags if isinstance(flags, Flags) else Flags([flags]) if flags is not None else Flags()
         )
         self.registered_flags: Flags = pretty_flags
         self.trigger: str = trigger

@@ -26,7 +26,7 @@ print(PredefinedFlags.PORT.validate_input_flag_value("99999"))  # True
 print(PredefinedFlags.PORT.validate_input_flag_value("abc"))  # False
 
 # Flags without values
-print(PredefinedFlags.HELP.validate_input_flag_value(None))  # True
+print(PredefinedFlags.HELP.validate_input_flag_value(""))  # True
 print(PredefinedFlags.HELP.validate_input_flag_value("something"))  # False
 
 # Checking string representations

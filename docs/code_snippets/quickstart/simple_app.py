@@ -1,4 +1,4 @@
-from argenta import App, Command, Orchestrator, Router, Response
+from argenta import App, Command, Orchestrator, Response, Router
 from argenta.command import Flag
 
 # 1. Create app and orchestrator instances
@@ -30,4 +30,4 @@ app.include_router(main_router)
 
 # 5. Start application
 if __name__ == "__main__":
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)

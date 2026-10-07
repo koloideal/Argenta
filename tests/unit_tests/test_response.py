@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 
 import pytest
 
@@ -7,7 +7,6 @@ from argenta.command.flag.models import InputFlag
 from argenta.data_bridge import DataBridge
 from argenta.response.entity import EMPTY_INPUT_FLAGS, Response
 from argenta.response.status import ResponseStatus
-
 
 # ============================================================================
 # Fixtures
@@ -34,7 +33,7 @@ def test_databridge_update_stores_basic_data(data_bridge: DataBridge) -> None:
 
 def test_databridge_update_stores_datetime_objects(data_bridge: DataBridge) -> None:
     """Test updating data with datetime objects"""
-    test_datetime = datetime(2024, 1, 15, 10, 30, 45)
+    test_datetime = datetime(2024, 1, 15, 10, 30, 45, tzinfo=UTC)
     test_data = {"created_at": test_datetime, "name": "test"}
     data_bridge.update(test_data)
 

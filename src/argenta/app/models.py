@@ -1,28 +1,32 @@
 __all__ = ["App"]
 
 import difflib
-from typing import Never, TypeAlias
-
-from rich.console import Console
+from functools import partial
+from typing import Never
 
 from argenta.app.autocompleter import AutoCompleter
-from argenta.app.behavior_handlers.models import (BehaviorHandlersFabric,
-                                                  BehaviorHandlersSettersMixin)
+from argenta.app.behavior_handlers.models import (
+    BehaviorHandlersFabric,
+    BehaviorHandlersSettersMixin,
+)
 from argenta.app.dividing_line.models import DynamicDividingLine, StaticDividingLine
 from argenta.app.presentation.renderers import PlainRenderer, Renderer, RichRenderer
 from argenta.app.presentation.viewers import Viewer
 from argenta.app.protocols import Printer
 from argenta.app.registered_routers.entity import RegisteredRouters
-from argenta.command.exceptions import (InputCommandException,
-                                        RepeatedInputFlagsException,
-                                        UnprocessedInputFlagException)
+from argenta.command.exceptions import (
+    InputCommandException,
+    RepeatedInputFlagsException,
+    UnprocessedInputFlagException,
+)
 from argenta.command.models import Command, InputCommand
 from argenta.response import Response
 from argenta.router import Router
-from argenta.router.exceptions import (RepeatedAliasNameException,
-                                       RepeatedTriggerNameException)
+from argenta.router.exceptions import RepeatedAliasNameException, RepeatedTriggerNameException
 
-Matches: TypeAlias = list[str] | list[Never]
+type Matches = list[str] | list[Never]
+
+DEFAULT_EXIT_COMMAND = Command("q", description="Exit command")
 
 
 class BaseApp(BehaviorHandlersSettersMixin):
@@ -52,7 +56,9 @@ class BaseApp(BehaviorHandlersSettersMixin):
         self.registered_routers: RegisteredRouters = RegisteredRouters()
         self._messages_on_startup: list[str] = []
 
-        self._renderer: Renderer = PlainRenderer() if self._override_system_messages else RichRenderer()
+        self._renderer: Renderer = (
+            PlainRenderer() if self._override_system_messages else RichRenderer()
+        )
 
         self._viewer: Viewer = Viewer(
             printer=self._printer,
@@ -63,30 +69,33 @@ class BaseApp(BehaviorHandlersSettersMixin):
         self._handlers_fabric: BehaviorHandlersFabric = BehaviorHandlersFabric(
             printer=self._printer,
             renderer=self._renderer,
-            most_similar_command_getter=self._most_similar_command
+            most_similar_command_getter=self._most_similar_command,
         )
 
         self._initial_message: str = self._renderer.render_initial_message(initial_message)
         self._farewell_message: str = self._renderer.render_farewell_message(farewell_message)
 
         super().__init__(
-            description_message_generator = self._handlers_fabric.generate_description_message_generator(),
-            incorrect_input_syntax_handler = self._handlers_fabric.generate_incorrect_input_syntax_handler(),
-            repeated_input_flags_handler = self._handlers_fabric.generate_repeated_input_flags_handler(),
-            empty_input_command_handler = self._handlers_fabric.generate_empty_input_command_handler(),
-            unknown_command_handler = self._handlers_fabric.generate_unknown_command_handler(),
-            exit_command_handler = self._handlers_fabric.generate_exit_command_handler(self._farewell_message)
+            description_message_generator=self._handlers_fabric.generate_description_message_generator(),
+            incorrect_input_syntax_handler=self._handlers_fabric.generate_incorrect_input_syntax_handler(),
+            repeated_input_flags_handler=self._handlers_fabric.generate_repeated_input_flags_handler(),
+            empty_input_command_handler=self._handlers_fabric.generate_empty_input_command_handler(),
+            unknown_command_handler=self._handlers_fabric.generate_unknown_command_handler(),
+            exit_command_handler=self._handlers_fabric.generate_exit_command_handler(
+                self._farewell_message
+            ),
         )
 
     def _is_exit_command(self, command: InputCommand) -> bool:
-        if not self._system_router.command_handlers.get_command_handler_by_trigger(command.trigger.lower()):
-            return False
-        return True
+        return (
+            self._system_router.command_handlers.get_command_handler_by_trigger(
+                command.trigger.lower()
+            )
+            is not None
+        )
 
     def _is_unknown_command(self, input_command: InputCommand) -> bool:
-        if not self.registered_routers.get_router_by_trigger(input_command.trigger.lower()):
-            return True
-        return False
+        return self.registered_routers.get_router_by_trigger(input_command.trigger.lower()) is None
 
     def _error_handler(self, error: InputCommandException, raw_command: str) -> None:
         if isinstance(error, UnprocessedInputFlagException):
@@ -131,41 +140,51 @@ class BaseApp(BehaviorHandlersSettersMixin):
             self._viewer.view_messages_on_startup(self._messages_on_startup)
 
         if not self._repeat_command_groups_printing:
-            self._viewer.view_command_groups_description(self._description_message_generator, self.registered_routers)
+            self._viewer.view_command_groups_description(
+                self._description_message_generator, self.registered_routers
+            )
 
     def _process_exist_and_valid_command(self, input_command: InputCommand) -> None:
-        processing_router = self.registered_routers.get_router_by_trigger(input_command.trigger.lower())
+        processing_router = self.registered_routers.get_router_by_trigger(
+            input_command.trigger.lower()
+        )
 
         if not processing_router:
             raise RuntimeError(f"Router for '{input_command.trigger}' not found. Panic!")
 
         self._viewer.view_framed_text_from_generator(
-            output_text_generator=lambda: processing_router.finds_appropriate_handler(input_command),
-            is_stdout_redirected_by_router=processing_router.is_redirect_stdout_disabled
+            output_text_generator=lambda: processing_router.finds_appropriate_handler(
+                input_command
+            ),
+            is_stdout_redirected_by_router=processing_router.is_redirect_stdout_disabled,
         )
 
-    def _run_polling(self) -> None:
+    def _run_repl(self) -> None:
         self._viewer.view_initial_message(self._initial_message)
         self._pre_cycle_setup()
         while True:
             if self._repeat_command_groups_printing:
-                self._viewer.view_command_groups_description(self._description_message_generator, self.registered_routers)
+                self._viewer.view_command_groups_description(
+                    self._description_message_generator, self.registered_routers
+                )
 
             print()  # pre-prompt gap
-            raw_command: str = self._autocompleter.prompt(self._renderer.render_prompt(self._prompt))
+            raw_command: str = self._autocompleter.prompt(
+                self._renderer.render_prompt(self._prompt)
+            )
             print()  # post-prompt gap
 
             try:
                 input_command: InputCommand = InputCommand.parse(raw_command=raw_command)
             except InputCommandException as error:  # noqa F841
                 self._viewer.view_framed_text_from_generator(
-                    output_text_generator=lambda: self._error_handler(error, raw_command) # noqa
+                    output_text_generator=lambda: self._error_handler(error, raw_command)  # noqa
                 )
                 continue
 
             if self._is_unknown_command(input_command):
                 self._viewer.view_framed_text_from_generator(
-                    output_text_generator=lambda: self._unknown_command_handler(input_command)
+                    output_text_generator=partial(self._unknown_command_handler, input_command)
                 )
                 continue
 
@@ -183,13 +202,13 @@ class App(BaseApp):
         prompt: str = ">>> ",
         initial_message: str = "Argenta",
         farewell_message: str = "See you",
-        exit_command: Command = Command("q", description="Exit command"),
+        exit_command: Command = DEFAULT_EXIT_COMMAND,
         system_router_title: str = "System points:",
         dividing_line: StaticDividingLine | DynamicDividingLine | None = None,
         repeat_command_groups_printing: bool = False,
         override_system_messages: bool = False,
         autocompleter: AutoCompleter | None = None,
-        printer: Printer = Console().print,
+        printer: Printer | None = None,
     ) -> None:
         """
         Public. The essence of the application itself.
@@ -206,6 +225,8 @@ class App(BaseApp):
         :param printer: system messages text output function
         :return: None
         """
+        from rich.console import Console
+
         super().__init__(
             prompt=prompt,
             initial_message=initial_message,
@@ -216,7 +237,7 @@ class App(BaseApp):
             repeat_command_groups_printing=repeat_command_groups_printing,
             override_system_messages=override_system_messages,
             autocompleter=autocompleter or AutoCompleter(),
-            printer=printer,
+            printer=printer or Console().print,
         )
 
     def include_router(self, router: Router) -> None:

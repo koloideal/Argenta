@@ -2,9 +2,8 @@ import re
 
 import pytest
 
-from argenta.command.flag import Flag, InputFlag, PossibleValues
 from argenta.command import Flags, InputFlags
-
+from argenta.command.flag import Flag, InputFlag, PossibleValues
 
 # ============================================================================
 # Tests for Flag - basic properties
@@ -50,7 +49,7 @@ def test_flag_equality_with_non_flag_raises_error() -> None:
     flag = Flag('two')
     not_flag = object()
     with pytest.raises(NotImplementedError):
-        flag == not_flag  # pyright: ignore[reportUnusedExpression]
+        flag == not_flag  # noqa: B015 # pyright: ignore[reportUnusedExpression]
 
 
 # ============================================================================
@@ -136,7 +135,7 @@ def test_input_flag_equality_with_non_flag_raises_error() -> None:
     flag = InputFlag('two', input_value='')
     not_flag = object()
     with pytest.raises(NotImplementedError):
-        flag == not_flag  # pyright: ignore[reportUnusedExpression]
+        flag == not_flag  # noqa: B015 # pyright: ignore[reportUnusedExpression]
 
 
 # ============================================================================
@@ -243,7 +242,7 @@ def test_input_flags_contains_raises_error_for_non_flag() -> None:
     flags = InputFlags([InputFlag('some', input_value='')])
     not_flag = object
     with pytest.raises(TypeError):
-        not_flag in flags  # pyright: ignore[reportUnusedExpression]
+        not_flag in flags  # noqa: B015 # pyright: ignore[reportUnusedExpression]
 
 
 # ============================================================================
@@ -329,7 +328,7 @@ def test_flags_contains_raises_error_for_non_flag() -> None:
     flags = Flags([Flag('some')])
     not_flag = object
     with pytest.raises(TypeError):
-        not_flag in flags  # pyright: ignore[reportUnusedExpression]
+        not_flag in flags  # noqa: B015 # pyright: ignore[reportUnusedExpression]
 
 
 # ============================================================================

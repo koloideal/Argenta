@@ -33,7 +33,12 @@ def calc_handler(response: Response):
     op_flag = response.input_flags.get_flag_by_name("op")
 
     # Check that all flags are provided
-    if response.status != ResponseStatus.ALL_FLAGS_VALID or not all([a_flag, b_flag, op_flag]):
+    if (
+        response.status != ResponseStatus.ALL_FLAGS_VALID
+        or a_flag is None
+        or b_flag is None
+        or op_flag is None
+    ):
         print("Error: must specify --a, --b and --op")
         return
 
@@ -60,7 +65,7 @@ orchestrator = Orchestrator()
 
 def main():
     app.include_router(router)
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
 
 if __name__ == "__main__":

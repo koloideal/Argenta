@@ -1,11 +1,12 @@
 import io
 from contextlib import redirect_stdout
+from typing import ClassVar
 
+from dishka import Provider, Scope, make_container
+
+from argenta import Response, Router
 from argenta.command import InputCommand
-from dishka import Provider, make_container, Scope
-
-from argenta import Router, Response
-from argenta.di.integration import setup_dishka, FromDishka
+from argenta.di.integration import FromDishka, setup_dishka
 
 
 class Service:
@@ -27,7 +28,7 @@ def hello(response: Response, service: FromDishka[Service]) -> None:
 
 class _FakeApp:
     # Minimal stub for setup_dishka; app object is not used in unit tests
-    registered_routers = [router]
+    registered_routers: ClassVar[list[Router]] = [router]
 
 
 def test_hello_uses_service():

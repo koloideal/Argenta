@@ -1,4 +1,4 @@
-from argenta import Router, Response
+from argenta import Response, Router
 from argenta.command import Command, Flag
 
 router = Router()

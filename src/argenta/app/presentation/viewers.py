@@ -1,9 +1,9 @@
 __all__ = ["Viewer"]
 
 import re
+from collections.abc import Callable, Iterable
 from contextlib import redirect_stdout
 from io import StringIO
-from typing import Callable, Iterable, TypeAlias
 
 from rich.text import Text
 
@@ -12,18 +12,18 @@ from argenta.app.presentation.renderers import Renderer
 from argenta.app.protocols import DescriptionMessageGenerator, Printer
 from argenta.app.registered_routers.entity import RegisteredRouters
 
-AVAILABLE_DIVIDING_LINES: TypeAlias = StaticDividingLine | DynamicDividingLine | None
+type AVAILABLE_DIVIDING_LINES = StaticDividingLine | DynamicDividingLine | None
 
 
 class Viewer:
     ANSI_ESCAPE_RE: re.Pattern[str] = re.compile(r"\u001b\[[0-9;]*m")
 
     def __init__(
-            self,
-            printer: Printer,
-            renderer: Renderer,
-            dividing_line: AVAILABLE_DIVIDING_LINES,
-            override_system_messages: bool
+        self,
+        printer: Printer,
+        renderer: Renderer,
+        dividing_line: AVAILABLE_DIVIDING_LINES,
+        override_system_messages: bool,
     ):
         self._printer = printer
         self._renderer = renderer
@@ -44,12 +44,11 @@ class Viewer:
     def view_command_groups_description(
         self,
         description_message_generator: DescriptionMessageGenerator,
-        registered_routers: RegisteredRouters
+        registered_routers: RegisteredRouters,
     ) -> None:
         self._printer(
             self._renderer.render_command_groups_description(
-                description_message_generator,
-                registered_routers
+                description_message_generator, registered_routers
             )
         )
 
@@ -65,9 +64,7 @@ class Viewer:
             case (None, bool()):
                 output_text_generator()
             case (DynamicDividingLine(), False):
-                stdout_result = self._capture_stdout(
-                    lambda: output_text_generator()
-                )
+                stdout_result = self._capture_stdout(lambda: output_text_generator())
                 clear_text = self.ANSI_ESCAPE_RE.sub("", stdout_result)
                 max_length_line = max([len(line) for line in clear_text.split("\n")])
                 max_length_line = (
@@ -82,14 +79,19 @@ class Viewer:
                 )
                 self._printer(dynamic_dividing_line_as_str + "\n")
                 self._printer(Text.from_ansi(stdout_result.strip("\n")).markup)
-                self._printer('\n' + dynamic_dividing_line_as_str)
+                self._printer("\n" + dynamic_dividing_line_as_str)
 
-            case (StaticDividingLine() as dividing_line, bool()) | (DynamicDividingLine() as dividing_line, True):
-                static_dividing_line_as_str: str = StaticDividingLine(dividing_line.get_unit_part()).get_full_static_line(
-                    is_override=self._override_system_messages
-                )
-                self._printer(static_dividing_line_as_str + '\n')
+            case (StaticDividingLine() as dividing_line, bool()) | (
+                DynamicDividingLine() as dividing_line,
+                True,
+            ):
+                static_dividing_line_as_str: str = StaticDividingLine(
+                    dividing_line.get_unit_part()
+                ).get_full_static_line(is_override=self._override_system_messages)
+                self._printer(static_dividing_line_as_str + "\n")
                 output_text_generator()
-                self._printer('\n' + static_dividing_line_as_str)
+                self._printer("\n" + static_dividing_line_as_str)
             case _:
-                raise NotImplementedError(f"Dividing line with type {self._dividing_line} is not implemented")
+                raise NotImplementedError(
+                    f"Dividing line with type {self._dividing_line} is not implemented"
+                )

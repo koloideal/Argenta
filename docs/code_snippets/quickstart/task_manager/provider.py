@@ -1,6 +1,5 @@
 from dishka import Provider, Scope, provide
-
-from .repository import TaskRepository
+from repository import TaskRepository
 
 
 class TaskProvider(Provider):

@@ -1,4 +1,3 @@
-from argenta.router.exceptions import RepeatedAliasNameException
 import pytest
 from pytest import CaptureFixture
 
@@ -8,7 +7,7 @@ from argenta.command.models import Command, InputCommand
 from argenta.response import Response
 from argenta.response.status import ResponseStatus
 from argenta.router import Router
-
+from argenta.router.exceptions import RepeatedAliasNameException
 
 # ============================================================================
 # Tests for exit command detection

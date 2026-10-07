@@ -1,15 +1,19 @@
 __all__ = [
-    "ArgSpace",
     "ArgParser",
+    "ArgSpace",
 ]
 
 import sys
 from argparse import ArgumentParser, Namespace
+from collections.abc import Sequence
 from typing import Never, Self
 
-from argenta.orchestrator.argparser.arguments.models import (BaseArgument,
-                                                             BooleanArgument,
-                                                             InputArgument, ValueArgument)
+from argenta.orchestrator.argparser.arguments.models import (
+    BaseArgument,
+    BooleanArgument,
+    InputArgument,
+    ValueArgument,
+)
 
 
 class ArgSpace:
@@ -19,16 +23,14 @@ class ArgSpace:
         self._name_object_paired_args: dict[str, InputArgument] = {}
         self._type_object_paired_args: dict[type[BaseArgument], list[InputArgument]] = {
             BooleanArgument: [],
-            ValueArgument: []
+            ValueArgument: [],
         }
 
         self._setup_getters()
 
     @classmethod
     def from_namespace(
-        cls,
-        namespace: Namespace,
-        processed_args: list[ValueArgument | BooleanArgument]
+        cls, namespace: Namespace, processed_args: Sequence[ValueArgument | BooleanArgument]
     ) -> Self:
         name_type_paired_processed_args: dict[str, type[BaseArgument]] = {
             arg.name: type(arg) for arg in processed_args
@@ -38,9 +40,7 @@ class ArgSpace:
         for name, value in vars(namespace).items():
             parsed_arguments.append(
                 InputArgument(
-                    name=name,
-                    value=value,
-                    founder_class=name_type_paired_processed_args[name]
+                    name=name, value=value, founder_class=name_type_paired_processed_args[name]
                 )
             )
 
@@ -63,7 +63,7 @@ class ArgSpace:
 class ArgParser:
     def __init__(
         self,
-        processed_args: list[ValueArgument | BooleanArgument],
+        processed_args: Sequence[ValueArgument | BooleanArgument],
         *,
         name: str = "Argenta",
         description: str = "Argenta available arguments",
@@ -79,11 +79,13 @@ class ArgParser:
         self.name: str = name
         self.description: str = description
         self.epilog: str = epilog
-        self.processed_args: list[ValueArgument | BooleanArgument] = processed_args
+        self.processed_args: Sequence[ValueArgument | BooleanArgument] = processed_args
 
         self.parsed_argspace: ArgSpace = ArgSpace([])
 
-        self._core: ArgumentParser = ArgumentParser(prog=name, description=description, epilog=epilog)
+        self._core: ArgumentParser = ArgumentParser(
+            prog=name, description=description, epilog=epilog
+        )
         self._register_args(processed_args)
 
     def _parse_args(self) -> None:
@@ -91,7 +93,9 @@ class ArgParser:
             namespace=self._core.parse_args(), processed_args=self.processed_args
         )
 
-    def _register_args(self, processed_args: list[ValueArgument | BooleanArgument]) -> None: # pragma: no cover
+    def _register_args(
+        self, processed_args: Sequence[ValueArgument | BooleanArgument]
+    ) -> None:  # pragma: no cover
         if sys.version_info >= (3, 13):
             for arg in processed_args:
                 if isinstance(arg, BooleanArgument):
@@ -99,7 +103,7 @@ class ArgParser:
                         arg.string_entity,
                         action=arg.action,
                         help=arg.help,
-                        deprecated=arg.is_deprecated
+                        deprecated=arg.is_deprecated,
                     )
                 else:
                     _ = self._core.add_argument(
@@ -126,6 +130,5 @@ class ArgParser:
                         help=arg.help,
                         default=arg.default,
                         choices=arg.possible_values,
-                        required=arg.is_required
+                        required=arg.is_required,
                     )
-                

@@ -1,4 +1,4 @@
-from typing import Generator
+from collections.abc import Generator
 
 import pytest
 from dishka import Container, make_container
@@ -14,7 +14,6 @@ from argenta.di.providers import SystemProvider
 from argenta.orchestrator.argparser import ArgParser, ArgSpace
 from argenta.response import ResponseStatus
 from argenta.response.entity import Response
-
 
 # ============================================================================
 # Fixtures

@@ -1,9 +1,8 @@
 import io
 from contextlib import redirect_stdout
 
-from argenta import Router, Command, Response
+from argenta import Command, Response, Router
 from argenta.command import InputCommand
-
 
 router = Router(title="Demo")
 

@@ -1,11 +1,11 @@
 from typing import cast
 
-from argenta import Command, Response, Router
-from argenta.command.flag import Flag, ValidationStatus
-from argenta.command import Flags
-from argenta.di import FromDishka
+from repository import Priority, Task, TaskRepository
 
-from .repository import Priority, Task, TaskRepository
+from argenta import Command, Response, Router
+from argenta.command import Flags
+from argenta.command.flag import Flag, ValidationStatus
+from argenta.di import FromDishka
 
 router = Router(title="Task Manager")
 
@@ -25,7 +25,7 @@ router = Router(title="Task Manager")
 def add_task(response: Response, repo: FromDishka[TaskRepository]):
     description_flag = response.input_flags.get_flag_by_name("description")
 
-    if not description_flag or not description_flag.status == ValidationStatus.VALID:
+    if not description_flag or description_flag.status != ValidationStatus.VALID:
         print("Error: --description flag is required.")
         return
 
