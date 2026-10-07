@@ -38,9 +38,7 @@ class PythonInfo:
 
 
 def get_os_info() -> OSInfo:
-    system = platform.system()
-
-    if system == "Windows":
+    if sys.platform == "win32":
         ver = sys.getwindowsversion()
         kernel_version = f"{ver.major}.{ver.minor}.{ver.build}"
 
@@ -53,7 +51,7 @@ def get_os_info() -> OSInfo:
             name=product_name,
             kernel_version=kernel_version,
         )
-    elif system == "Darwin":
+    elif sys.platform == "darwin":
         return OSInfo(kernel_version=platform.release(), name=f"macOS {platform.mac_ver()[0]}")
     else:
         return OSInfo(kernel_version=platform.release(), name=platform.system())

@@ -37,6 +37,13 @@ Repository = "https://github.com/koloideal/Argenta"
 Issues = "https://github.com/koloideal/Argenta/issues"
 Changelog = "https://github.com/koloideal/Argenta/blob/master/CHANGELOG.md"
 
+[tool.pyrefly]
+project-excludes = ["docs/**"]
+search-path = ["src", "."]
+
+[tool.pyrefly.errors]
+untyped-import = "ignore"
+
 [project.scripts]
 argenta = "argenta._cli.__main__:main"
 

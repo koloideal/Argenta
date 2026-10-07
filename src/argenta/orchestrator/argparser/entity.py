@@ -5,6 +5,7 @@ __all__ = [
 
 import sys
 from argparse import ArgumentParser, Namespace
+from collections.abc import Sequence
 from typing import Never, Self
 
 from argenta.orchestrator.argparser.arguments.models import (
@@ -29,7 +30,7 @@ class ArgSpace:
 
     @classmethod
     def from_namespace(
-        cls, namespace: Namespace, processed_args: list[ValueArgument | BooleanArgument]
+        cls, namespace: Namespace, processed_args: Sequence[ValueArgument | BooleanArgument]
     ) -> Self:
         name_type_paired_processed_args: dict[str, type[BaseArgument]] = {
             arg.name: type(arg) for arg in processed_args
@@ -62,7 +63,7 @@ class ArgSpace:
 class ArgParser:
     def __init__(
         self,
-        processed_args: list[ValueArgument | BooleanArgument],
+        processed_args: Sequence[ValueArgument | BooleanArgument],
         *,
         name: str = "Argenta",
         description: str = "Argenta available arguments",
@@ -78,7 +79,7 @@ class ArgParser:
         self.name: str = name
         self.description: str = description
         self.epilog: str = epilog
-        self.processed_args: list[ValueArgument | BooleanArgument] = processed_args
+        self.processed_args: Sequence[ValueArgument | BooleanArgument] = processed_args
 
         self.parsed_argspace: ArgSpace = ArgSpace([])
 
@@ -93,7 +94,7 @@ class ArgParser:
         )
 
     def _register_args(
-        self, processed_args: list[ValueArgument | BooleanArgument]
+        self, processed_args: Sequence[ValueArgument | BooleanArgument]
     ) -> None:  # pragma: no cover
         if sys.version_info >= (3, 13):
             for arg in processed_args:

@@ -1,3 +1,4 @@
+from typing import cast
 from unittest.mock import Mock
 
 import pytest
@@ -148,7 +149,7 @@ class TestViewer:
             pass
 
         renderer = PlainRenderer()
-        dividing_line = NotImplementedDividingLine()
+        dividing_line = cast(StaticDividingLine, NotImplementedDividingLine())
         viewer = Viewer(mock_printer, renderer, dividing_line, False)
         
         with pytest.raises(NotImplementedError):

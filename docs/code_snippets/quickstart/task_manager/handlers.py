@@ -1,11 +1,11 @@
 from typing import cast
 
+from repository import Priority, Task, TaskRepository
+
 from argenta import Command, Response, Router
 from argenta.command import Flags
 from argenta.command.flag import Flag, ValidationStatus
 from argenta.di import FromDishka
-
-from repository import Priority, Task, TaskRepository
 
 router = Router(title="Task Manager")
 

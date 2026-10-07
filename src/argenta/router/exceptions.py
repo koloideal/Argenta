@@ -35,7 +35,7 @@ class RepeatedAliasNameException(Exception):
     """
 
     @override
-    def __init__(self, repeated_aliases: set[str]) -> None:
+    def __init__(self, repeated_aliases: set[str]) -> None:  # pyrefly: ignore[bad-override]
         self.repeated_aliases = repeated_aliases
         super().__init__()
 

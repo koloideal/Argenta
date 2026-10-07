@@ -1,5 +1,4 @@
-from argenta import App, Orchestrator
-from argenta.command import Command, Response, Router
+from argenta import App, Command, Orchestrator, Response, Router
 
 router = Router(title="Example")
 
