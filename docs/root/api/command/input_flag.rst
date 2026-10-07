@@ -3,44 +3,44 @@
 InputFlag
 =========
 
-Объект ``InputFlag`` представляет собой флаг, введённый пользователем. Он создаётся в результате обработки пользовательского ввода и содержит информацию о распознанном флаге: его имя, префикс, значение и статус валидации.
+The ``InputFlag`` object represents a flag entered by the user. It is created as a result of processing user input and contains information about the recognized flag: its name, prefix, value, and validation status.
 
 .. seealso::
 
-   Документация по :ref:`Flag <root_api_command_flag>` — класс для регистрации флага.
+   Documentation for :ref:`Flag <root_api_command_flag>` — class for registering a flag.
 
-   Документация по :ref:`ValidationStatus <root_api_command_validation_status>` — статусы валидации флагов.
+   Documentation for :ref:`ValidationStatus <root_api_command_validation_status>` — flag validation statuses.
 
 -----
 
 .. warning ::
-   Экземпляры этого класса не предназначены для прямого создания. Они содержатся в объекте :ref:`Response <root_api_response>`.
+   Instances of this class are not intended for direct creation. They are contained in the :ref:`Response <root_api_response>` object.
 
-**Атрибуты:**
+**Attributes:**
 
 .. py:attribute:: name
    :no-index:
 
-   Имя введённого флага.
+   Name of the entered flag.
 
 .. py:attribute:: prefix
    :no-index:
 
-   Префикс флага: ``-``, ``--`` или ``---``.
+   Flag prefix: ``-``, ``--``, or ``---``.
 
 .. py:attribute:: input_value
 
-   Значение, переданное с флагом. Может быть ``''`` (пустой строкой) для флагов без значений.
+   Value passed with the flag. Can be ``''`` (empty string) for flags without values.
 
 .. py:attribute:: status
    :no-index:
 
-   Статус валидации флага: ``ValidationStatus.VALID``, ``ValidationStatus.INVALID`` или ``ValidationStatus.UNDEFINED``.
+   Flag validation status: ``ValidationStatus.VALID``, ``ValidationStatus.INVALID``, or ``ValidationStatus.UNDEFINED``.
 
 -----
 
-Свойства
---------
+Properties
+----------
 
 string_entity
 ~~~~~~~~~~~~~
@@ -51,14 +51,14 @@ string_entity
    @property
    string_entity(self) -> str
 
-Возвращает строковое представление флага в формате ``prefix + name``.
+Returns the string representation of the flag in the format ``prefix + name``.
 
-:return: Строковое представление флага
+:return: String representation of the flag
 
 -----
 
-Магические методы
------------------
+Magic Methods
+-------------
 
 __str__
 ~~~~~~~
@@ -68,11 +68,11 @@ __str__
 
    __str__(self) -> str
 
-Возвращает строковое представление флага вместе с его значением.
+Returns the string representation of the flag along with its value.
 
-:return: Строка в формате ``флаг значение``.
+:return: String in the format ``flag value``.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/input_flag/snippet3.py
    :linenos:
@@ -88,11 +88,11 @@ __repr__
 
    __repr__(self) -> str
 
-Возвращает отладочное представление объекта.
+Returns the debug representation of the object.
 
-:return: Строка в формате ``InputFlag<prefix=..., name=..., value=..., status=...>``.
+:return: String in the format ``InputFlag<prefix=..., name=..., value=..., status=...>``.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/input_flag/snippet4.py
    :linenos:
@@ -108,9 +108,9 @@ __eq__
 
    __eq__(self, other: object) -> bool
 
-Сравнивает два введённых флага на равенство по имени.
+Compares two entered flags for equality by name.
 
-:param other: Объект для сравнения.
-:return: **True**, если имена флагов совпадают, иначе **False**.
+:param other: Object to compare.
+:return: **True** if flag names match, otherwise **False**.
 
-Два введённых флага считаются равными, если их имена совпадают.
+Two entered flags are considered equal if their names match.

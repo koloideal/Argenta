@@ -3,43 +3,43 @@
 InputFlags
 ==========
 
-``InputFlags`` — это коллекция флагов, введённых пользователем. Её основная задача — группировать и управлять набором флагов, переданных вместе с командой. ``InputFlags`` служит контейнером, который позволяет удобно извлекать, итерировать и проверять наличие флагов, а также работать с их значениями и статусами валидации.
+``InputFlags`` is a collection of flags entered by the user. Its main purpose is to group and manage the set of flags passed with a command. ``InputFlags`` serves as a container that allows convenient retrieval, iteration, and checking of flag presence, as well as working with their values and validation statuses.
 
 .. seealso::
 
-   Документация по отдельным флагам (:ref:`Flag <root_api_command_flag>`, :ref:`InputFlag <root_api_command_input_flag>`)
+   Documentation for individual flags (:ref:`Flag <root_api_command_flag>`, :ref:`InputFlag <root_api_command_input_flag>`)
 
-   Документация по :ref:`InputFlags <root_api_command_input_flags>` — коллекция обработанных флагов, введённых пользователем.
+   Documentation for :ref:`InputFlags <root_api_command_input_flags>` — a collection of processed flags entered by the user.
 
-   Документация по :ref:`Response <root_api_response>` — объект ответа, содержащий ``InputFlags``
+   Documentation for :ref:`Response <root_api_response>` — response object containing ``InputFlags``
 
-   :ref:`Общая информация <root_flags>` о флагах и их использовании в приложении ``Argenta``
+   :ref:`General information <root_flags>` about flags and their usage in the ``Argenta`` application
 
 -----
 
-Инициализация
--------------
+Initialization
+--------------
 
 .. code-block:: python
    :linenos:
 
    __init__(self, flags: list[InputFlag] | None = None) -> None
 
-Создаёт новую коллекцию введённых флагов.
+Creates a new collection of entered flags.
 
-* ``flags``: Необязательный список флагов типа ``InputFlag`` для инициализации коллекции. Если не указан, создаётся пустая коллекция.
+* ``flags``: Optional list of flags of type ``InputFlag`` for initializing the collection. If not specified, an empty collection is created.
 
 .. warning ::
-   Экземпляры этого класса обычно не создаются напрямую. Они автоматически формируются системой при обработке пользовательского ввода и доступны через атрибут ``input_flags`` объекта ``Response``.
+   Instances of this class are usually not created directly. They are automatically formed by the system when processing user input and are accessible through the ``input_flags`` attribute of the ``Response`` object.
 
-**Атрибуты:**
+**Attributes:**
 
 .. py:attribute:: flags
    :no-index:
 
-   Список всех введённых флагов типа ``InputFlag``. Пуст, если флаги не были переданы при инициализации или пользователь не ввёл их с командой.
+   List of all entered flags of type ``InputFlag``. Empty if flags were not passed during initialization or the user did not enter them with the command.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/input_flags/snippet1.py
    :linenos:
@@ -47,8 +47,8 @@ InputFlags
 
 -----
 
-Методы
-------
+Methods
+-------
 
 get_flag_by_name
 ~~~~~~~~~~~~~~~~
@@ -58,14 +58,14 @@ get_flag_by_name
 
    get_flag_by_name(self, name: str) -> InputFlag | None
 
-Возвращает флаг по имени.
+Returns a flag by name.
 
-:param name: Имя искомого флага (без префикса).
-:return: Объект ``InputFlag`` или ``None``, если флаг не найден.
+:param name: Name of the flag to search for (without prefix).
+:return: ``InputFlag`` object or ``None`` if the flag is not found.
 
-Метод возвращает первый флаг с соответствующим именем (без учёта префикса).
+The method returns the first flag with the corresponding name (ignoring the prefix).
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/input_flags/snippet2.py
    :linenos:
@@ -81,17 +81,17 @@ add_flag
 
    add_flag(self, flag: InputFlag) -> None
 
-Добавляет введённый флаг в коллекцию.
+Adds an entered flag to the collection.
 
-:param flag: Флаг типа ``InputFlag`` для добавления.
+:param flag: Flag of type ``InputFlag`` to add.
 :return: None.
 
-Метод добавляет флаг в конец списка ``flags``. Используется для динамического расширения коллекции.
+The method adds a flag to the end of the ``flags`` list. Used for dynamically extending the collection.
 
 .. note::
-   Этот метод используется редко, так как `InputFlags` обычно создаётся автоматически. Однако он может быть полезен для тестирования или ручного создания коллекций.
+   This method is rarely used, as `InputFlags` is usually created automatically. However, it can be useful for testing or manual collection creation.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/input_flags/snippet3.py
    :linenos:
@@ -107,14 +107,14 @@ add_flags
 
    add_flags(self, flags: list[InputFlag]) -> None
 
-Добавляет в коллекцию список введённых флагов.
+Adds a list of entered flags to the collection.
 
-:param flags: Список флагов типа ``InputFlag`` для добавления.
+:param flags: List of flags of type ``InputFlag`` to add.
 :return: None.
 
-Метод расширяет коллекцию, добавляя в неё все флаги из переданного списка. Эффективен для пакетного добавления.
+The method extends the collection by adding all flags from the provided list. Efficient for batch addition.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/input_flags/snippet4.py
    :linenos:
@@ -122,13 +122,13 @@ add_flags
 
 -----
 
-Практические примеры
---------------------
+Practical Examples
+------------------
 
-Обработка всех флагов с проверкой статусов
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Processing All Flags with Status Checking
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/input_flags/snippet10.py
    :linenos:

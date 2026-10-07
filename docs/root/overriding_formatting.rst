@@ -1,38 +1,37 @@
 .. _root_overriding_formatting:
 
-Форматирование вывода
-=================================
+Output Formatting
+=================
 
-По умолчанию ``Argenta`` использует библиотеку ``rich`` для вывода текста с расширенным форматированием. Она позволяет применять цвета и стили, создавать таблицы, подсвечивать синтаксис и многое другое, что улучшает визуальное восприятие информации.
+By default, ``Argenta`` uses the ``rich`` library for text output with enhanced formatting. It allows applying colors and styles, creating tables, highlighting syntax, and much more, which improves the visual perception of information.
 
 ------
 
-Управление стандартным форматированием
---------------------------------------
+Managing Standard Formatting
+----------------------------
 
-При создании экземпляра ``App`` можно использовать параметр ``override_system_messages: bool`` (по умолчанию ``False``), который позволяет отключать стандартное форматирование.
+When creating an ``App`` instance, you can use the ``override_system_messages: bool`` parameter (default ``False``), which allows disabling standard formatting.
 
-Если установить его в ``True``, стилизация текста и ASCII-графика будут отключены, а системные сообщения — выводиться в «сыром» виде.
+If set to ``True``, text styling and ASCII graphics will be disabled, and system messages will be output in "raw" form.
 
 -----
 
-Приветственное и прощальное сообщения
---------------------------------------
+Welcome and Farewell Messages
+-----------------------------
 
-Приветственное (``initial_message``) и прощальное (``farewell_message``) сообщения по умолчанию выводятся в виде ASCII-графики.
+Welcome (``initial_message``) and farewell (``farewell_message``) messages are displayed as ASCII art by default.
 
 .. warning::
-   Библиотека ``art`` ориентирована на работу с ASCII-символами и **не поддерживает кириллицу**. Это приводит к искажению символов русского и других кириллических алфавитов. Если ваше сообщение содержит кириллицу, рекомендуется отключить форматирование с помощью ``override_system_messages=True`` или использовать только латинские символы.
+   The ``art`` library is designed to work with ASCII characters and **does not support Cyrillic**. This leads to distortion of Russian and other Cyrillic alphabet characters. If your message contains Cyrillic, it is recommended to disable formatting using ``override_system_messages=True`` or use only Latin characters.
 
 -----
 
-Кастомизация вывода
--------------------
+Output Customization
+--------------------
 
-Для полной замены логики вывода текста в конструкторе ``App`` предусмотрен параметр ``printer``.
+For complete replacement of text output logic, the ``App`` constructor provides the ``printer`` parameter.
 
-*   **printer**: ``Callable[[str], None]``
-    Этот параметр позволяет передать любую вызываемую сущность (например, функцию), которая будет использоваться для вывода всех системных сообщений. По умолчанию это ``rich.console.Console().print``. Вы можете передать сюда свою функцию, чтобы, например, логировать вывод в файл или отправлять его по сети.
+*   **printer**: ``Callable[[str], None]`` This parameter allows passing any callable entity (for example, a function) that will be used to output all system messages. By default, this is ``rich.console.Console().print``. You can pass your own function here to, for example, log output to a file or send it over the network.
 
 .. important::
-   При переопределении функции вывода вам следует убедиться, что она поддерживает разметку ``rich``, иначе системные сообщения будут выводиться в сыром виде, в этом случае рекомендуется переопределить стандартное форматирование с помощью ``override_system_messages=True``.
+   When overriding the output function, you should ensure it supports ``rich`` markup, otherwise system messages will be output in raw form. In this case, it is recommended to override standard formatting using ``override_system_messages=True``.

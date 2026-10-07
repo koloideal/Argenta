@@ -4,20 +4,20 @@
 PossibleValues
 ==============
 
-``PossibleValues`` — это перечисление, которое определяет специальные режимы валидации для значений флагов. ``PossibleValues`` используется в параметре ``possible_values`` класса ``Flag``, чтобы указать, может ли флаг принимать значения и какие ограничения на них накладываются.
+``PossibleValues`` is an enumeration that defines special validation modes for flag values. ``PossibleValues`` is used in the ``possible_values`` parameter of the ``Flag`` class to specify whether a flag can accept values and what restrictions are imposed on them.
 
-``PossibleValues`` содержит два основных значения: ``NEITHER`` (для флагов, которые не могут принимать значения) и ``ALL`` (для флагов, принимающих любые значения). Это перечисление используется вместе со списками строк и регулярными выражениями для создания гибкой системы валидации.
+``PossibleValues`` contains two main values: ``NEITHER`` (for flags that cannot accept values) and ``ALL`` (for flags accepting any values). This enumeration is used together with string lists and regular expressions to create a flexible validation system.
 
 .. note::
-   Результат валидации доступен через атрибут ``status`` у экземпляра ``InputFlag``. Подробнее см. :ref:`здесь <root_api_command_input_flag>`.
+   The validation result is available through the ``status`` attribute of the ``InputFlag`` instance. For more details, see :ref:`here <root_api_command_input_flag>`.
 
 .. seealso::
 
-   Документация по :ref:`Flag <root_api_command_flag>` — класс флага, использующий ``PossibleValues``.
+   Documentation for :ref:`Flag <root_api_command_flag>` — flag class using ``PossibleValues``.
    
-   Документация по :ref:`ValidationStatus <root_api_command_validation_status>` — результат валидации ввёденного флага.
+   Documentation for :ref:`ValidationStatus <root_api_command_validation_status>` — validation result of the entered flag.
    
-   :ref:`Общая информация <root_flags>` о флагах и их использовании в приложении ``Argenta``
+   :ref:`General information <root_flags>` about flags and their usage in the ``Argenta`` application
 
 -----
 
@@ -29,18 +29,18 @@ NEITHER
 
    PossibleValues.NEITHER = 'NEITHER'
 
-Указывает, что флаг **не должен** иметь значения.
+Indicates that the flag **should not** have a value.
 
-Флаги с этим значением работают как булевы переключатели: их наличие в командной строке само по себе является информацией. Попытка передать такому флагу значение приведёт к ошибке валидации.
+Flags with this value work as boolean switches: their presence on the command line is information in itself. Attempting to pass a value to such a flag will result in a validation error.
 
-**Примеры флагов с** ``NEITHER``:
+**Examples of flags with** ``NEITHER``:
 
-* ``--help`` — флаг справки
-* ``--verbose`` — флаг подробного вывода
-* ``--force`` — флаг принудительного выполнения
-* ``-A`` / ``--all`` — флаг выбора всех элементов
+* ``--help`` — help flag
+* ``--verbose`` — verbose output flag
+* ``--force`` — forced execution flag
+* ``-A`` / ``--all`` — select all items flag
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/possible_values/neither.py
    :linenos:
@@ -56,16 +56,16 @@ ALL
 
    PossibleValues.ALL = 'ALL'
 
-Указывает, что флаг может принимать **любое** значение.
+Indicates that the flag can accept **any** value.
 
-Флаги с этим значением универсальны и не накладывают ограничений на передаваемые данные. Валидация всегда будет успешной.
+Flags with this value are universal and do not impose restrictions on the data passed. Validation will always be successful.
 
-**Примеры флагов с** ``ALL``:
+**Examples of flags with** ``ALL``:
 
-* ``--message`` — произвольное текстовое сообщение
-* ``--name`` — произвольное имя
+* ``--message`` — arbitrary text message
+* ``--name`` — arbitrary name
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/possible_values/all.py
    :linenos:
@@ -73,19 +73,19 @@ ALL
 
 -----
 
-Параметр possible_values
-~~~~~~~~~~~~~~~~~~~~~~~~~
+The possible_values Parameter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``PossibleValues`` используется как один из возможных типов для параметра ``possible_values`` при создании экземпляра ``Flag``.
+``PossibleValues`` is used as one of the possible types for the ``possible_values`` parameter when creating a ``Flag`` instance.
 
-**Доступные типы для** ``possible_values``:
+**Available types for** ``possible_values``:
 
-1.  ``PossibleValues.NEITHER``: флаг без значения.
-2.  ``PossibleValues.ALL``: флаг с любым значением (по умолчанию).
-3.  ``list[str]``: флаг с ограниченным набором значений.
-4.  ``Pattern[str]``: флаг со значением, проверяемым по регулярному выражению.
+1.  ``PossibleValues.NEITHER``: flag without a value.
+2.  ``PossibleValues.ALL``: flag with any value (default).
+3.  ``list[str]``: flag with a limited set of values.
+4.  ``Pattern[str]``: flag with a value validated by a regular expression.
 
-**Пример комбинированного использования:**
+**Combined usage example:**
 
 .. literalinclude:: ../../../code_snippets/possible_values/combined.py
    :linenos:

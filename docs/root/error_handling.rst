@@ -1,15 +1,14 @@
 .. _root_error_handling:
 
-Обработка ошибок
-==========================================
+Error Handling
+==============
 
-``Argenta`` выбрасывает исключения в пограничных случаях, связанных с пользовательским вводом.
-По умолчанию они обрабатываются системными обработчиками, но вы можете их переопределить. Это делается с помощью сеттеров экземпляра ``App`` вида ``.set_*_handler()``. Подробнее о каждом из них рассказано :ref:`ниже <possible_errors>`.
+``Argenta`` throws exceptions in edge cases related to user input. By default, they are handled by system handlers, but you can override them. This is done using ``App`` instance setters of the form ``.set_*_handler()``. More details about each of them are described :ref:`below <possible_errors>`.
 
 .. note::
-    Ни одно исключение не остаётся необработанным, так как для каждого случая предусмотрен стандартный обработчик. Поэтому переопределение является опциональным.
+    No exception goes unhandled, as a default handler is provided for each case. Therefore, overriding is optional.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../code_snippets/error_handling/snippet.py
     :language: python
@@ -18,23 +17,23 @@
 
 .. _possible_errors:
 
-Возможные исключения и нестандартное поведение
-----------------------------------------------
+Possible Exceptions and Non-Standard Behavior
+---------------------------------------------
 
-``UnprocessedInputFlagException``: Некорректный синтаксис флагов
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``UnprocessedInputFlagException``: Incorrect Flag Syntax
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Это исключение выбрасывается, когда парсер не может обработать команду из-за некорректного синтаксиса. Чаще всего это связано с ошибкой в синтаксисе флагов. Подробнее о них можно прочитать в разделе :ref:`Flags <root_flags>`.
+This exception is thrown when the parser cannot process a command due to incorrect syntax. Most often this is related to an error in flag syntax. You can read more about them in the :ref:`Flags <root_flags>` section.
 
-Стандартный обработчик выводит в консоль:
+The default handler outputs to the console:
 
 .. code-block::  shell
 
     Incorrect flag syntax: <raw input command>
 
-Для переопределения используется сеттер ``.set_incorrect_input_syntax_handler()``. Он принимает на вход обработчик с сигнатурой ``Callable[[str], None]``, где единственный аргумент — это строка с необработанной командой.
+To override, use the ``.set_incorrect_input_syntax_handler()`` setter. It accepts a handler with the signature ``Callable[[str], None]``, where the only argument is a string with the unprocessed command.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../code_snippets/error_handling/snippet2.py
    :language: python
@@ -42,23 +41,23 @@
 
 ---------------
 
-``RepeatedInputFlagsException``: Повторяющиеся флаги в команде
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``RepeatedInputFlagsException``: Repeated Flags in Command
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Исключение выбрасывается, если пользователь ввёл команду с повторяющимися флагами. Два флага (:ref:`InputFlag <root_api_command_input_flag>`) считаются одинаковыми, если у них совпадают имена. Подробнее о флагах и их синтаксисе — в разделе :ref:`Flags <root_flags>`.
+The exception is thrown if the user entered a command with repeated flags. Two flags (:ref:`InputFlag <root_api_command_input_flag>`) are considered the same if their names match. More about flags and their syntax in the :ref:`Flags <root_flags>` section.
 
 .. note::
-    Сравнение на равенство у регистрируемых флагов (``Flag``) происходит иначе, подробнее в :ref:`Flag <root_flags>`.
+    Equality comparison for registered flags (``Flag``) works differently, see :ref:`Flag <root_flags>` for details.
 
-Стандартный обработчик выводит в консоль:
+The default handler outputs to the console:
 
 .. code-block::  shell
 
     Repeated input flags: <raw input command>
 
-Для переопределения используется сеттер ``.set_repeated_input_flags_handler()``. Он принимает на вход обработчик с сигнатурой ``Callable[[str], None]``, где единственный аргумент — это строка с необработанной командой.
+To override, use the ``.set_repeated_input_flags_handler()`` setter. It accepts a handler with the signature ``Callable[[str], None]``, where the only argument is a string with the unprocessed command.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../code_snippets/error_handling/snippet3.py
    :language: python
@@ -66,20 +65,20 @@
 
 ---------------
 
-``EmptyInputCommandException``: Введена пустая команда
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``EmptyInputCommandException``: Empty Command Entered
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Исключение выбрасывается, если пользователь ввёл пустую строку или строку, состоящую только из пробельных символов (``\n``, ``\t``, пробел и т.д.).
+The exception is thrown if the user entered an empty string or a string consisting only of whitespace characters (``\n``, ``\t``, space, etc.).
 
-Стандартный обработчик выводит в консоль:
+The default handler outputs to the console:
 
 .. code-block::  shell
 
     Empty input command
 
-Для переопределения используется сеттер ``.set_empty_command_handler()``. Он принимает на вход обработчик с сигнатурой ``Callable[[], None]`` (без аргументов).
+To override, use the ``.set_empty_command_handler()`` setter. It accepts a handler with the signature ``Callable[[], None]`` (no arguments).
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../code_snippets/error_handling/snippet4.py
     :language: python
@@ -89,20 +88,20 @@
 
 .. _root_error_handling_unknown_command:
 
-Обработка неизвестной команды
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Handling Unknown Commands
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Это поведение активируется, когда пользователь вводит команду, которая не зарегистрирована ни в одном из роутеров и не является псевдонимом (alias) для существующей команды.
+This behavior is triggered when the user enters a command that is not registered in any of the routers and is not an alias for an existing command.
 
-Стандартный обработчик выводит в консоль:
+The default handler outputs to the console:
 
 .. code-block::  shell
 
     Unknown command: <trigger of the input command>
 
-Для переопределения используется сеттер ``.set_unknown_command_handler()``. Он принимает на вход обработчик с сигнатурой ``Callable[[InputCommand], None]``, где аргумент — объект :ref:`InputCommand <root_api_command_input_command>`.
+To override, use the ``.set_unknown_command_handler()`` setter. It accepts a handler with the signature ``Callable[[InputCommand], None]``, where the argument is an :ref:`InputCommand <root_api_command_input_command>` object.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../code_snippets/error_handling/snippet5.py
     :language: python
@@ -110,20 +109,20 @@
 
 ---------------
 
-Выход из приложения
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Exiting the Application
+~~~~~~~~~~~~~~~~~~~~~~~
 
-Это поведение активируется, когда пользователь вводит команду, помеченную как команда выхода.
+This behavior is triggered when the user enters a command marked as an exit command.
 
-Стандартный обработчик выводит в консоль текст и завершает работу приложения:
+The default handler outputs text to the console and terminates the application:
 
 .. code-block::  shell
 
     See you
 
-Для переопределения используется сеттер ``.set_exit_command_handler()``. Он принимает на вход обработчик с сигнатурой ``Callable[[Response], None]``, где аргумент — объект :ref:`Response <root_api_response>`.
+To override, use the ``.set_exit_command_handler()`` setter. It accepts a handler with the signature ``Callable[[Response], None]``, where the argument is a :ref:`Response <root_api_response>` object.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../code_snippets/error_handling/snippet6.py
     :language: python

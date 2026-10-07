@@ -3,21 +3,21 @@
 ValidationStatus
 ================
 
-``ValidationStatus`` — это перечисление, которое определяет состояние валидации флага. Его задача — предоставить стандартные константы для отображения результата проверки. ``ValidationStatus`` используется в атрибуте ``status`` класса ``InputFlag``.
+``ValidationStatus`` is an enumeration that defines the validation state of a flag. Its purpose is to provide standard constants for displaying the validation result. ``ValidationStatus`` is used in the ``status`` attribute of the ``InputFlag`` class.
 
-``ValidationStatus`` содержит три значения: **VALID** (корректный флаг), **INVALID** (некорректный) и **UNDEFINED** (незарегистрированный).
+``ValidationStatus`` contains three values: **VALID** (valid flag), **INVALID** (invalid), and **UNDEFINED** (unregistered).
 
 .. note::
 
-   Статус валидации устанавливается автоматически при создании экземпляра ``InputFlag`` на основе правил, заданных в соответствующем ``Flag``.
+   The validation status is set automatically when creating an ``InputFlag`` instance based on the rules defined in the corresponding ``Flag``.
 
 .. seealso::
 
-   Документация по :ref:`InputFlag <root_api_command_input_flag>` — класс введённого флага, использующий ``ValidationStatus``.
+   Documentation for :ref:`InputFlag <root_api_command_input_flag>` — entered flag class using ``ValidationStatus``.
    
-   Документация по :ref:`Flag <root_api_command_flag>` — класс флага с правилами валидации.
+   Documentation for :ref:`Flag <root_api_command_flag>` — flag class with validation rules.
    
-   Документация по :ref:`PossibleValues <root_api_command_possible_values>` — типы допустимых значений.
+   Documentation for :ref:`PossibleValues <root_api_command_possible_values>` — types of allowed values.
 
 -----
 
@@ -29,16 +29,16 @@ VALID
 
    ValidationStatus.VALID = 'VALID'
 
-Указывает, что флаг и его значение **прошли** валидацию.
+Indicates that the flag and its value **passed** validation.
 
-Флаги с этим статусом соответствуют правилам, заданным в ``possible_values`` соответствующего ``Flag``. Их можно безопасно использовать в логике приложения без дополнительных проверок.
+Flags with this status comply with the rules defined in the ``possible_values`` of the corresponding ``Flag``. They can be safely used in application logic without additional checks.
 
-**Условия получения статуса** ``VALID``:
+**Conditions for receiving** ``VALID`` **status:**
 
-*   Флаг с ``PossibleValues.NEITHER`` передан без значения.
-*   Флаг с ``PossibleValues.ALL`` передан с любым значением или без него.
-*   Значение флага входит в список разрешённых.
-*   Значение флага соответствует регулярному выражению.
+*   Flag with ``PossibleValues.NEITHER`` passed without a value.
+*   Flag with ``PossibleValues.ALL`` passed with any value or without one.
+*   Flag value is in the list of allowed values.
+*   Flag value matches the regular expression.
 
 -----
 
@@ -50,16 +50,16 @@ INVALID
 
    ValidationStatus.INVALID = 'INVALID'
 
-Указывает, что флаг или его значение **не прошли** валидацию.
+Indicates that the flag or its value **did not pass** validation.
 
-Флаги с этим статусом нарушают правила, заданные в ``possible_values`` соответствующего ``Flag``. Их следует обрабатывать как ошибочные.
+Flags with this status violate the rules defined in the ``possible_values`` of the corresponding ``Flag``. They should be treated as erroneous.
 
-**Условия получения статуса** ``INVALID``:
+**Conditions for receiving** ``INVALID`` **status:**
 
-*   Флаг с ``PossibleValues.NEITHER`` передан со значением.
-*   Значение флага не входит в список разрешённых.
-*   Значение флага не соответствует регулярному выражению.
-*   Флаг требует значение, но передан без него.
+*   Flag with ``PossibleValues.NEITHER`` passed with a value.
+*   Flag value is not in the list of allowed values.
+*   Flag value does not match the regular expression.
+*   Flag requires a value but was passed without one.
 
 -----
 
@@ -71,8 +71,8 @@ UNDEFINED
 
    ValidationStatus.UNDEFINED = 'UNDEFINED'
 
-Указывает, что введённый флаг не был зарегистрирован в команде.
+Indicates that the entered flag was not registered in the command.
 
-**Условия получения статуса** ``UNDEFINED``:
+**Conditions for receiving** ``UNDEFINED`` **status:**
 
-*   Введённый флаг не найден среди зарегистрированных для данной команды.
+*   The entered flag is not found among those registered for this command.

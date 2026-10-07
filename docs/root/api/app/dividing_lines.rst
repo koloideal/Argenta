@@ -3,14 +3,14 @@
 Dividing Lines
 ==============
 
-Разделительные линии в ``Argenta`` используются для визуального структурирования вывода и отделения блоков информации друг от друга. Библиотека предлагает два типа линий: статическую и динамическую.
+Dividing lines in ``Argenta`` are used for visual structuring of output and separating information blocks from each other. The library offers two types of lines: static and dynamic.
 
 -----
 
 ``StaticDividingLine``
 ----------------------
 
-``StaticDividingLine`` создаёт разделительную линию **фиксированной** длины. Этот тип линии полезен для создания предсказуемого и унифицированного интерфейса.
+``StaticDividingLine`` creates a dividing line of **fixed** length. This type of line is useful for creating a predictable and unified interface.
 
 .. code-block:: python
    :linenos:
@@ -18,48 +18,48 @@ Dividing Lines
       def __init__(self, unit_part: str = "-", *, 
                    length: int = 25) -> None
 
-Создаёт экземпляр статической разделительной линии.
+Creates a static dividing line instance.
 
-* ``unit_part``: Символ для построения линии (учитывается только первый символ). По умолчанию: ``-``.
-* ``length``: Фиксированная длина линии. По умолчанию: ``25``.
+* ``unit_part``: Character for building the line (only the first character is considered). Defaults to: ``-``.
+* ``length``: Fixed line length. Defaults to: ``25``.
 
 -----
 
 ``DynamicDividingLine``
 -----------------------
 
-``DynamicDividingLine`` создаёт линию, длина которой **динамически** подстраивается под самую длинную строку в выводе команды. Это требует перехвата ``stdout``, в результате чего разделители идеально обрамляют выводимый контент.
+``DynamicDividingLine`` creates a line whose length **dynamically** adjusts to the longest line in the command output. This requires capturing ``stdout``, resulting in dividers that perfectly frame the output content.
 
 .. code-block:: python
   :linenos:
 
    __init__(self, unit_part: str = "-") -> None
 
-Создаёт экземпляр динамической разделительной линии.
+Creates a dynamic dividing line instance.
 
-* ``unit_part``: Символ для построения линии. По умолчанию: ``-``.
+* ``unit_part``: Character for building the line. Defaults to: ``-``.
 
-Длина вычисляется автоматически и не задаётся при инициализации.
+Length is calculated automatically and is not set during initialization.
 
 .. warning::
-    Обязательно почитайте про нюансы использования динамических линий и перехвата ``stdout`` в :ref:`этом разделе<root_redirect_stdout>`.
+    Be sure to read about the nuances of using dynamic lines and capturing ``stdout`` in :ref:`this section<root_redirect_stdout>`.
 
 -----
 
-Назначение и использование
----------------------------
+Purpose and Usage
+-----------------
 
-Выбор между статической и динамической линией зависит от ваших задач.
+The choice between static and dynamic lines depends on your needs.
 
-*   **StaticDividingLine** идеально подходит, если:
+*   **StaticDividingLine** is ideal if:
 
-    *   Вам нужен строгий и консистентный дизайн.
-    *   Вы используете роутеры с отключённым перехватом ``stdout`` (``disable_redirect_stdout=True``), где динамическое вычисление длины невозможно.
+    *   You need a strict and consistent design.
+    *   You are using routers with disabled ``stdout`` capture (``disable_redirect_stdout=True``), where dynamic length calculation is not possible.
 
-*   **DynamicDividingLine** (поведение по умолчанию) — предпочтительный выбор, если:
+*   **DynamicDividingLine** (default behavior) is the preferred choice if:
 
-    *   Вы хотите, чтобы интерфейс был адаптивным.
-    *   Вывод ваших команд имеет разную длину.
-    *   В ваших обработчиках нет интерактивных операций ввода (например, ``input()``).
+    *   You want the interface to be adaptive.
+    *   Your command output has varying lengths.
+    *   Your handlers do not have interactive input operations (e.g., ``input()``).
 
-Тип разделителя для всего приложения задаётся при инициализации ``App`` через параметр ``dividing_line``.
+The divider type for the entire application is set during ``App`` initialization via the ``dividing_line`` parameter.

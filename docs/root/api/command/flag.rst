@@ -1,22 +1,22 @@
 .. _root_api_command_flag:
 
 Flag
-=====
+====
 
-``Flag`` — это сущность, описывающая флаг команды. Её основная задача — определить параметры флага, включая его имя, префикс и правила валидации.
+``Flag`` is an entity describing a command flag. Its main purpose is to define flag parameters, including its name, prefix, and validation rules.
 
 .. seealso::
 
-   Документация по :ref:`PossibleValues <root_api_command_possible_values>` — перечисление, определяющее типы допустимых значений.
+   Documentation for :ref:`PossibleValues <root_api_command_possible_values>` — an enumeration defining types of allowed values.
    
-   Документация по :ref:`InputFlag <root_api_command_input_flag>` — объект обработанного флага, введённого пользователем.
+   Documentation for :ref:`InputFlag <root_api_command_input_flag>` — an object representing a processed flag entered by the user.
    
-   :ref:`Общая информация <root_flags>` о флагах и их использовании в ``Argenta``
+   :ref:`General information <root_flags>` about flags and their usage in ``Argenta``
 
 -----
 
-Инициализация
--------------
+Initialization
+--------------
 
 .. code-block:: python
    :linenos:
@@ -27,27 +27,27 @@ Flag
        possible_values: list[str] | Pattern[str] | PossibleValues = PossibleValues.ALL,
    ) -> None
 
-Создаёт новый флаг для регистрации в команде.
+Creates a new flag for registration in a command.
 
-* ``name``: Имя флага (обязательный параметр).
-* ``prefix``: Префикс флага (``-``, ``--``, ``---``). По умолчанию ``--``.
-* ``possible_values``: Правила валидации значения. Может быть списком строк, регулярным выражением или значением из ``PossibleValues``. По умолчанию ``PossibleValues.ALL``, то есть любое значение допустимо.
+* ``name``: Flag name (required parameter).
+* ``prefix``: Flag prefix (``-``, ``--``, ``---``). Defaults to ``--``.
+* ``possible_values``: Value validation rules. Can be a list of strings, a regular expression, or a value from ``PossibleValues``. Defaults to ``PossibleValues.ALL``, meaning any value is allowed.
 
-**Атрибуты:**
+**Attributes:**
 
 .. py:attribute:: name
 
-   Имя флага в виде строки.
+   Flag name as a string.
 
 .. py:attribute:: prefix
 
-   Префикс флага. Один из: ``"-"``, ``"--"``, ``"---"``.
+   Flag prefix. One of: ``"-"``, ``"--"``, ``"---"``.
 
 .. py:attribute:: possible_values
 
-   Допустимые значения для флага.
+   Allowed values for the flag.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/flag/snippet.py
    :linenos:
@@ -55,8 +55,8 @@ Flag
 
 -----
 
-Свойства
---------
+Properties
+----------
 
 string_entity
 ~~~~~~~~~~~~~
@@ -67,16 +67,16 @@ string_entity
    @property
    string_entity(self) -> str
 
-Возвращает строковое представление флага в формате ``prefix + name``.
+Returns the string representation of the flag in the format ``prefix + name``.
 
-:return: Строковое представление флага
+:return: String representation of the flag
 
-Это свойство объединяет префикс и имя в единую строку, которая представляет флаг так, как он выглядел бы в командной строке.
+This property combines the prefix and name into a single string that represents the flag as it would appear on the command line.
 
 -----
 
-Магические методы
------------------
+Magic Methods
+-------------
 
 __str__
 ~~~~~~~
@@ -86,11 +86,11 @@ __str__
 
    __str__(self) -> str
 
-Возвращает строковое представление флага (аналогично ``string_entity``).
+Returns the string representation of the flag (similar to ``string_entity``).
 
-:return: Строковое представление флага
+:return: String representation of the flag
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/flag/snippet4.py
    :linenos:
@@ -106,11 +106,11 @@ __repr__
 
    __repr__(self) -> str
 
-Возвращает отладочное представление объекта.
+Returns the debug representation of the object.
 
-:return: Строка в формате ``Flag<prefix=..., name=...>``.
+:return: String in the format ``Flag<prefix=..., name=...>``.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/flag/snippet5.py
    :linenos:
@@ -126,14 +126,14 @@ __eq__
 
    __eq__(self, other: object) -> bool
 
-Сравнивает два флага на равенство по их строковому представлению (``string_entity``).
+Compares two flags for equality based on their string representation (``string_entity``).
 
-:param other: Объект для сравнения
-:return: **True**, если флаги равны, иначе **False**
+:param other: Object to compare
+:return: **True** if flags are equal, otherwise **False**
 
-Два флага считаются равными, если их ``string_entity`` идентичны.
+Two flags are considered equal if their ``string_entity`` are identical.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/flag/snippet6.py
    :linenos:
@@ -148,27 +148,27 @@ PredefinedFlags
 
 ``argenta.command.PredefinedFlags``
 
-Класс ``PredefinedFlags`` предоставляет набор готовых флагов для использования в приложениях без их ручного создания. Эти флаги покрывают распространённые сценарии.
+The ``PredefinedFlags`` class provides a set of ready-made flags for use in applications without manual creation. These flags cover common scenarios.
 
-Все предопределённые флаги являются атрибутами класса и представляют собой готовые экземпляры ``Flag``.
+All predefined flags are class attributes and represent ready-made ``Flag`` instances.
 
 -----
 
-Информационные флаги
-~~~~~~~~~~~~~~~~~~~~
+Informational Flags
+~~~~~~~~~~~~~~~~~~~
 
 
 .. py:attribute:: PredefinedFlags.HELP
 
-   Флаг для отображения справки: ``--help``
+   Flag for displaying help: ``--help``
    
    * ``name``: ``"help"``
-   * ``prefix``: ``"--"`` (по умолчанию)
+   * ``prefix``: ``"--"`` (default)
    * ``possible_values``: ``PossibleValues.NEITHER``
 
 .. py:attribute:: PredefinedFlags.SHORT_HELP
 
-   Короткая версия флага справки: ``-H``
+   Short version of the help flag: ``-H``
    
    * ``name``: ``"H"``
    * ``prefix``: ``"-"``
@@ -176,15 +176,15 @@ PredefinedFlags
 
 .. py:attribute:: PredefinedFlags.INFO
 
-   Флаг для отображения информации: ``--info``
+   Flag for displaying information: ``--info``
    
    * ``name``: ``"info"``
-   * ``prefix``: ``"--"`` (по умолчанию)
+   * ``prefix``: ``"--"`` (default)
    * ``possible_values``: ``PossibleValues.NEITHER``
 
 .. py:attribute:: PredefinedFlags.SHORT_INFO
 
-   Короткая версия флага информации: ``-I``
+   Short version of the info flag: ``-I``
    
    * ``name``: ``"I"``
    * ``prefix``: ``"-"``
@@ -192,12 +192,12 @@ PredefinedFlags
 
 -----
 
-Флаги выбора
-~~~~~~~~~~~~
+Selection Flags
+~~~~~~~~~~~~~~~
 
 .. py:attribute:: PredefinedFlags.ALL
 
-   Флаг для выбора всех элементов: ``--all``
+   Flag for selecting all items: ``--all``
    
    * ``name``: ``"all"``
    * ``prefix``: ``"--"``
@@ -205,7 +205,7 @@ PredefinedFlags
 
 .. py:attribute:: PredefinedFlags.SHORT_ALL
 
-   Короткая версия флага выбора всех элементов: ``-A``
+   Short version of the select all flag: ``-A``
    
    * ``name``: ``"A"``
    * ``prefix``: ``"-"``
@@ -213,44 +213,44 @@ PredefinedFlags
 
 -----
 
-Сетевые флаги
+Network Flags
 ~~~~~~~~~~~~~
 
 .. py:attribute:: PredefinedFlags.HOST
 
-   Флаг для указания IP-адреса хоста: ``--host``
+   Flag for specifying host IP address: ``--host``
    
    * ``name``: ``"host"``
-   * ``prefix``: ``"--"`` (по умолчанию)
-   * ``possible_values``: Регулярное выражение для валидации IPv4: ``r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"``
+   * ``prefix``: ``"--"`` (default)
+   * ``possible_values``: Regular expression for IPv4 validation: ``r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"``
 
 .. py:attribute:: PredefinedFlags.SHORT_HOST
 
-   Короткая версия флага хоста: ``-H``
+   Short version of the host flag: ``-H``
    
    * ``name``: ``"H"``
    * ``prefix``: ``"-"``
-   * ``possible_values``: Регулярное выражение для валидации IPv4: ``r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"``
+   * ``possible_values``: Regular expression for IPv4 validation: ``r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"``
 
 .. py:attribute:: PredefinedFlags.PORT
 
-   Флаг для указания порта: ``--port``
+   Flag for specifying port: ``--port``
    
    * ``name``: ``"port"``
-   * ``prefix``: ``"--"`` (по умолчанию)
-   * ``possible_values``: Регулярное выражение для валидации порта: ``r"^\d{1,5}$"``
+   * ``prefix``: ``"--"`` (default)
+   * ``possible_values``: Regular expression for port validation: ``r"^\d{1,5}$"``
 
 .. py:attribute:: PredefinedFlags.SHORT_PORT
 
-   Короткая версия флага порта: ``-P``
+   Short version of the port flag: ``-P``
    
    * ``name``: ``"P"``
    * ``prefix``: ``"-"``
-   * ``possible_values``: Регулярное выражение для валидации порта: ``r"^\d{1,5}$"``
+   * ``possible_values``: Regular expression for port validation: ``r"^\d{1,5}$"``
 
 -----
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/flag/predefined_flags.py
    :linenos:

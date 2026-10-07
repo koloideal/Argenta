@@ -3,16 +3,16 @@
 Arguments
 =========
 
-Модуль ``Arguments`` предоставляет классы для работы с аргументами командной строки. Они позволяют настраивать поведение приложения в момент его запуска, передавая различные параметры конфигурации.
+The ``Arguments`` module provides classes for working with command-line arguments. They allow configuring application behavior at startup by passing various configuration parameters.
 
-Аргументы регистрируются в ``ArgParser`` и после обработки становятся доступными в объекте ``ArgSpace``.
+Arguments are registered in ``ArgParser`` and after processing become available in the ``ArgSpace`` object.
 
 -----
 
 ValueArgument
 -------------
 
-Класс для аргументов, требующих передачи значения.
+Class for arguments that require passing a value.
 
 .. py:class:: ValueArgument(BaseArgument)
     :no-index:
@@ -28,23 +28,23 @@ ValueArgument
             is_required: bool = False,
             is_deprecated: bool = False) -> None
 
-Создаёт аргумент командной строки, требующий значения.
+Creates a command-line argument that requires a value.
 
-:param name: Имя аргумента
-:param prefix: Префикс (по умолчанию ``--``)
-:param help: Сообщение для справки (``--help``)
-:param possible_values: Список допустимых значений 
-:param default: Значение по умолчанию, если аргумент не передан
-:param is_required: Если ``True``, аргумент становится обязательным. Если не передать при запуске, приложение не запустится
-:param is_deprecated: Если ``True``, помечает аргумент как устаревший. Если передать при запуске, будет выведено предупреждение в консоль
+:param name: Argument name
+:param prefix: Prefix (defaults to ``--``)
+:param help: Help message (``--help``)
+:param possible_values: List of allowed values 
+:param default: Default value if the argument is not passed
+:param is_required: If ``True``, the argument becomes required. If not passed at startup, the application will not start
+:param is_deprecated: If ``True``, marks the argument as deprecated. If passed at startup, a warning will be displayed in the console
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/arguments/snippet.py
    :language: python
    :linenos:
 
-**Запуск приложения:**
+**Running the application:**
 
 .. code-block:: bash
 
@@ -56,7 +56,7 @@ ValueArgument
 BooleanArgument
 ---------------
 
-Класс для булевых аргументов, не требующих значения. Их наличие при запуске устанавливает значение в **True**, отсутствие — в **False**.
+Class for boolean arguments that do not require a value. Their presence at startup sets the value to **True**, absence to **False**.
 
 .. py:class:: BooleanArgument(BaseArgument)
     :no-index:
@@ -69,20 +69,20 @@ BooleanArgument
             help: str = "Help message for the boolean argument",
             is_deprecated: bool = False) -> None
 
-Создаёт булев аргумент командной строки без значения.
+Creates a boolean command-line argument without a value.
 
-:param name: Имя аргумента
-:param prefix: Префикс (по умолчанию ``--``)
-:param help: Сообщение для справки (``--help``)
-:param is_deprecated: Если ``True``, помечает аргумент как устаревший
+:param name: Argument name
+:param prefix: Prefix (defaults to ``--``)
+:param help: Help message (``--help``)
+:param is_deprecated: If ``True``, marks the argument as deprecated
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/arguments/snippet2.py
    :language: python
    :linenos:
 
-**Запуск приложения:**
+**Running the application:**
 
 .. code-block:: bash
 
@@ -98,9 +98,9 @@ InputArgument
 -------------
 
 .. seealso::
-   ``InputArgument`` напрямую связан с контейнером ``ArgSpace`` и является его наполнителем. Подробнее о нём см. :ref:`здесь <root_api_orchestrator_argspace>`.
+   ``InputArgument`` is directly related to the ``ArgSpace`` container and serves as its filler. For more details, see :ref:`here <root_api_orchestrator_argspace>`.
 
-Представляет собой обработанный аргумент командной строки. Этот класс используется внутри ``ArgSpace`` для хранения значений, полученных после парсинга.
+Represents a processed command-line argument. This class is used inside ``ArgSpace`` to store values obtained after parsing.
 
 .. py:class:: InputArgument
     :no-index:
@@ -112,26 +112,26 @@ InputArgument
             value: str | Literal[True],
             founder_class: type[BaseArgument]) -> None
 
-Создаёт экземпляр обработанного входного аргумента.
+Creates an instance of a processed input argument.
 
-:param name: Имя аргумента
-:param value: Значение аргумента. Для ``BooleanArgument`` — **True**, если аргумент передан, и **False**, если нет; для ``ValueArgument`` — введённая строка 
-:param founder_class: Класс-родитель, из которого был создан аргумент (``BooleanArgument`` или ``ValueArgument``)
+:param name: Argument name
+:param value: Argument value. For ``BooleanArgument`` — **True** if the argument is passed, and **False** if not; for ``ValueArgument`` — the entered string 
+:param founder_class: Parent class from which the argument was created (``BooleanArgument`` or ``ValueArgument``)
 
-**Атрибуты:**
+**Attributes:**
 
 .. py:attribute:: name
    :no-index:
 
-   Имя аргумента, указанное при создании ``ValueArgument`` или ``BooleanArgument``.
+   Argument name specified when creating ``ValueArgument`` or ``BooleanArgument``.
 
 .. py:attribute:: value
 
-   Значение аргумента. Тип зависит от исходного класса:
+   Argument value. Type depends on the source class:
 
-   * Для ``BooleanArgument``: **True**, если аргумент был передан
-   * Для ``ValueArgument``: строка с переданным значением или значением по умолчанию
+   * For ``BooleanArgument``: **True** if the argument was passed
+   * For ``ValueArgument``: string with the passed value or default value
 
 .. py:attribute:: founder_class
 
-   Ссылка на класс-родитель. Используется для определения типа и фильтрации.
+   Reference to the parent class. Used for type determination and filtering.

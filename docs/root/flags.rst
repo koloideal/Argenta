@@ -1,62 +1,62 @@
 .. _root_flags:
 
-Флаги вводимых команд
-=====================
+Input Command Flags
+===================
 
-Флаги — это специальные параметры, которые пользователь может добавлять к командам для управления их поведением. 
+Flags are special parameters that users can add to commands to control their behavior. 
 
-Зачем нужны флаги в командах
-----------------------------
+Why Flags Are Needed in Commands
+--------------------------------
 
-Управление поведением команды
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Controlling Command Behavior
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Основная цель флагов — предоставить способ изменить логику работы команды без её переработки. Команда может работать в нескольких режимах: стандартном, подробном, отладочном или упрощённом. Флаги переключают эти режимы по требованию пользователя, оставляя основную функциональность неизменной.
+The main purpose of flags is to provide a way to change the command's logic without reworking it. A command can operate in several modes: standard, verbose, debug, or simplified. Flags switch these modes on user demand, keeping the implementations functionality unchanged.
 
-Опциональность и удобство
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Optionality and Convenience
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Флаги решают проблему обязательности параметров. Если все параметры команды сделать обязательными, это затруднит использование команды. Флаги же позволяют задать значения только необходимые в конкретной ситуации, остальные используют значения по умолчанию.
+Flags solve the problem of mandatory parameters. If all command parameters are made required, it makes the command difficult to use. Flags allow you to specify only the values needed in a specific situation, while others use default values.
 
-Когда могут понадобиться флаги
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When Flags Might Be Needed
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Переключение режимов работы**
-  Команда выполняет развёртывание приложения обычно, но нужен режим без фактического развёртывания (dry-run) для проверки. Флаг ``--dry-run`` переключит режим работы.
+**Switching Operation Modes**
+  A command deploys an application normally, but a mode without actual deployment (dry-run) is needed for verification. The ``--dry-run`` flag will switch the mode.
 
-**Настройка уровня детальности**
-  При отладке или анализе требуется больше информации о процессе выполнения команды. Флаги ``--verbose`` или ``--debug`` предоставляют подробный вывод.
+**Adjusting Verbosity Level**
+  When debugging or analyzing, more information about the command execution process is required. The ``--verbose`` or ``--debug`` flags provide detailed output.
 
-**Управление поведением при ошибках**
-  По умолчанию команда может прерваться при первой ошибке. Флаг ``--force`` позволит продолжить работу, пропуская некритичные ошибки.
+**Managing Error Behavior**
+  By default, a command may abort on the first error. The ``--force`` flag allows continuing execution, skipping non-critical errors.
 
-**Форматирование вывода**
-  Команда выводит данные текстом, но в некоторых сценариях нужен JSON или CSV. Флаг ``--format=json`` переключит формат вывода.
+**Output Formatting**
+  A command outputs data as text, but in some scenarios JSON or CSV is needed. The ``--format=json`` flag will switch the output format.
 
-**Комбинирование опций**
-  Часто нужна комбинация нескольких изменений: подробный вывод, dry-run режим и JSON формат. Несколько флагов решают эту задачу одновременно.
+**Combining Options**
+  Often a combination of several changes is needed: verbose output, dry-run mode, and JSON format. Multiple flags solve this task simultaneously.
 
-Практическое значение
-~~~~~~~~~~~~~~~~~~~~~
+Practical Significance
+~~~~~~~~~~~~~~~~~~~~~~
 
-Флаги делают команды более предсказуемыми и контролируемыми. Пользователь может начать с простого использования, а затем добавлять флаги по мере необходимости. Это особенно важно при автоматизации задач в скриптах, где гибкость интерфейса критична.
+Flags make commands more predictable and controllable. Users can start with simple usage and then add flags as needed. This is especially important when automating tasks in scripts, where interface flexibility is critical.
 
-Флаги также облегчают интеграцию команд в различные системы, так как дополнительное поведение достигается без изменения структуры команды, а только через передачу опциональных параметров.
+Flags also facilitate command integration into various systems, as additional behavior is achieved without changing the command structure, only through passing optional parameters.
 
 -----
 
-Синтаксис флагов
------------------
+Flag Syntax
+-----------
 
-Общий синтаксис выглядит так:
+The general syntax looks like this:
 
 .. code-block:: py
 
    <command_name> <flag_prefix: Literal['-', '--', '---']><flag_name> <flag_value: Optional>
 
-Флаг состоит из префикса (``-``, ``--`` или ``---``), имени и, опционально, значения, которое указывается через пробел.
+A flag consists of a prefix (``-``, ``--``, or ``---``), a name, and optionally a value, which is specified with a space.
 
-**Примеры:**
+**Examples:**
 
 .. code-block:: shell
 
@@ -66,85 +66,85 @@
 
 -----
 
-Работа с флагами в обработчиках
---------------------------------
+Working with Flags in Handlers
+------------------------------
 
-Чтобы получить значение флага в обработчике, используйте объект ``response.input_flags`` типа :ref:`InputFlags <root_api_command_input_flags>`.
+To get the flag value in a handler, use the ``response.input_flags`` object of type :ref:`InputFlags <root_api_command_input_flags>`.
 
-**Пример с флагом, имеющим значение:**
+**Example with a flag that has a value:**
 
 .. literalinclude:: ../code_snippets/flags/greet_handler.py
    :language: python
    :linenos:
 
-**Пример с флагом-переключателем:**
+**Example with a toggle flag:**
 
 .. literalinclude:: ../code_snippets/flags/deploy_handler.py
    :language: python
    :linenos:
 
 .. seealso::
-   Подробнее о работе с объектом ``InputFlags`` см. в разделе :ref:`InputFlags <root_api_command_input_flags>`.
+   For more details on working with the ``InputFlags`` object, see the :ref:`InputFlags <root_api_command_input_flags>` section.
 
 -----
 
-Два типа флагов
----------------
+Two Types of Flags
+------------------
 
-Флаги бывают двух основных видов:
+Flags come in two main types:
 
-1. **Флаги со значениями** — принимают параметр после имени флага (например, ``--name John``, ``--port 8080``)
-2. **Флаги-переключатели** — не принимают значения, их наличие само по себе является сигналом (например, ``--verbose``, ``--force``)
+1. **Flags with values** — accept a parameter after the flag name (for example, ``--name John``, ``--port 8080``)
+2. **Toggle flags** — do not accept values, their presence itself is a signal (for example, ``--verbose``, ``--force``)
 
-``Argenta`` позволяет регистрировать и вводить флаги обоих типов в любой последовательности для одной команды.
+``Argenta`` allows registering and entering flags of both types in any sequence for a single command.
 
 .. note::
-    Ошибки валидации не выбрасывают исключений. Вместо этого у каждого объекта :ref:`InputFlag <root_api_command_input_flag>` есть атрибут ``status``, по которому можно определить, прошла ли валидация успешно. Подробное описание API для создания флагов находится в разделе :ref:`Flag <root_api_command_flag>`.
+    Validation errors do not throw exceptions. Instead, each :ref:`InputFlag <root_api_command_input_flag>` object has a ``status`` attribute that can be used to determine if validation was successful. A detailed description of the API for creating flags is in the :ref:`Flag <root_api_command_flag>` section.
 
-При регистрации флага можно задать правила валидации для его значения. По умолчанию любое значение считается корректным. Валидацию можно настроить несколькими способами:
-
------
-
-Флаги против аргументов
------------------------
-
-В контексте Argenta флаги и аргументы относятся к разным уровням взаимодействия с приложением.
-
-**Аргументы** — это параметры, передаваемые при запуске приложения. Они определяют глобальную конфигурацию на протяжении всей его работы (например, адрес базы данных, уровень логирования).
-
-.. seealso:: API и более подробное описание в разделах :ref:`ArgParser <root_api_orchestrator_argparser>` и :ref:`Arguments <root_api_orchestrator_arguments>`.
-
-**Флаги** — это параметры командных операций, доступные в рамках интерактивной сессии при вводе каждой новой команды. Они позволяют модифицировать поведение конкретной команды без перезагрузки приложения.
-
-.. seealso:: API и более подробное описание в разделе :ref:`Flag <root_api_command_flag>`.
+When registering a flag, you can set validation rules for its value. By default, any value is considered valid. Validation can be configured in several ways:
 
 -----
 
-Ключевые различия
-~~~~~~~~~~~~~~~~~
+Flags vs Arguments
+------------------
 
-**Время жизни**
-  Аргументы передаются один раз при запуске и действуют на весь период работы приложения. Флаги локальны и существуют только в рамках выполнения команды.
+In the context of Argenta, flags and arguments belong to different levels of interaction with the application.
 
-**Изменяемость**
-  Для изменения аргументов необходимо перезапустить приложение. Флаги можно менять при каждом вводе команды.
+**Arguments** are parameters passed when launching the application. They define the global configuration throughout its operation (for example, database address, logging level).
 
-**Назначение**
-  Аргументы управляют глобальной конфигурацией приложения. Флаги управляют поведением отдельных команд.
+.. seealso:: API and more detailed description in the :ref:`ArgParser <root_api_orchestrator_argparser>` and :ref:`Arguments <root_api_orchestrator_arguments>` sections.
+
+**Flags** are command operation parameters available within an interactive session when entering each new command. They allow modifying the behavior of a specific command without restarting the application.
+
+.. seealso:: API and more detailed description in the :ref:`Flag <root_api_command_flag>` section.
+
+-----
+
+Key Differences
+~~~~~~~~~~~~~~~
+
+**Lifetime**
+  Arguments are passed once at startup and remain in effect for the entire application runtime. Flags are local and exist only within the execution of a command.
+
+**Mutability**
+  To change arguments, the application must be restarted. Flags can be changed with each command input.
+
+**Purpose**
+  Arguments control the global configuration of the application. Flags control the behavior of individual commands.
 
 -----
   
-Практические примеры
-~~~~~~~~~~~~~~~~~~~~
+Practical Examples
+~~~~~~~~~~~~~~~~~~
 
-Аргументы при запуске приложения:
+Arguments at application startup:
 
-- Адрес подключения к базе данных
-- Режим работы (production, development, testing)
-- Уровень логирования
+- Database connection address
+- Operation mode (production, development, testing)
+- Logging level
 
-Флаги в интерактивной сессии:
+Flags in an interactive session:
 
-- ``deploy --verbose --dry-run`` — для команды развёртывания
-- ``backup --compress --encrypted`` — для команды резервного копирования
-- ``test --parallel --coverage`` — для команды тестирования
+- ``deploy --verbose --dry-run`` — for the deployment command
+- ``backup --compress --encrypted`` — for the backup command
+- ``test --parallel --coverage`` — for the testing command

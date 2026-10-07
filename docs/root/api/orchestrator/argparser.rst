@@ -1,14 +1,14 @@
 .. _root_api_orchestrator_argparser:
 
 ArgParser
-==========
+=========
 
-``ArgParser`` предназначен для обработки **аргументов командной строки**, передаваемых приложению при запуске. Важно не путать их с флагами, которые пользователь вводит в интерактивном режиме. ``ArgParser`` позволяет получать внешнюю конфигурацию в момент старта (например, путь к файлу настроек, флаги отладки или режим запуска).
+``ArgParser`` is designed for processing **command-line arguments** passed to the application at startup. It's important not to confuse them with flags that the user enters in interactive mode. ``ArgParser`` allows receiving external configuration at startup (e.g., path to settings file, debug flags, or launch mode).
 
 -----
 
-Инициализация
--------------
+Initialization
+--------------
 
 .. code-block:: python
       :linenos:
@@ -18,49 +18,49 @@ ArgParser
 	           description: str = "Argenta available arguments",
 	           epilog: str = "github.com/koloideal/Argenta | made by kolo")
 
-Создаёт экземпляр парсера аргументов командной строки.
+Creates an instance of the command-line argument parser.
 
-* ``processed_args``: Список аргументов для обработки при запуске приложения. Подробнее см. :ref:`здесь <root_api_orchestrator_arguments>`.
-* ``name``: Имя приложения для отображения в справке.
-* ``description``: Описание приложения для отображения в справке.
-* ``epilog``: Дополнительная информация для отображения в конце справки.
+* ``processed_args``: List of arguments to process at application startup. For more details, see :ref:`here <root_api_orchestrator_arguments>`.
+* ``name``: Application name for display in help.
+* ``description``: Application description for display in help.
+* ``epilog``: Additional information for display at the end of help.
 
 -----
 
-Атрибуты
---------
+Attributes
+----------
 
 .. py:attribute:: parsed_argspace: ArgSpace
 
-   Экземпляр ``ArgSpace``, содержащий все обработанные аргументы командной строки. Подробнее см. :ref:`здесь <root_api_orchestrator_argspace>`.
+   ``ArgSpace`` instance containing all processed command-line arguments. For more details, see :ref:`here <root_api_orchestrator_argspace>`.
 
 .. caution::
-   До инициализации ``Orchestrator``, в конструктор которого был передан экземпляр ``ArgParser``, атрибут ``parsed_argspace`` будет содержать пустой ``ArgSpace``.
+   Before initializing ``Orchestrator``, to whose constructor an ``ArgParser`` instance was passed, the ``parsed_argspace`` attribute will contain an empty ``ArgSpace``.
    
-   Парсинг и валидация аргументов происходят при инициализации ``Orchestrator``, поэтому использовать ``parsed_argspace`` **целесообразно только после** этого.
+   Parsing and validation of arguments occur during ``Orchestrator`` initialization, so using ``parsed_argspace`` is **advisable only after** that.
    
 -----
 
-Лучшие практики
----------------
+Best Practices
+--------------
 
-Использовать атрибут ``parsed_argspace`` рекомендуется только на этапе настройки приложения. В обработчиках лучшей практикой является получение ``ArgSpace`` через DI. Подробнее см. :ref:`здесь <root_dependency_injection>`.
+Using the ``parsed_argspace`` attribute is recommended only during the application setup phase. In handlers, the best practice is to obtain ``ArgSpace`` through DI. For more details, see :ref:`here <root_dependency_injection>`.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/argparser/snippet.py
    :language: python
    :linenos:
    
-Обработка ошибок
-----------------
+Error Handling
+--------------
 
 .. seealso:: 
-   Про типы аргументов подробнее в :ref:`Arguments <root_api_orchestrator_arguments>`
+   For more details on argument types, see :ref:`Arguments <root_api_orchestrator_arguments>`
 
-При работе с аргументами командной строки стандартный ``ArgumentParser`` автоматически обрабатывает следующие ситуации:
+When working with command-line arguments, the standard ``ArgumentParser`` automatically handles the following situations:
 
-**Отсутствие обязательного аргумента:**
+**Missing required argument:**
 
 .. code-block:: bash
 
@@ -68,7 +68,7 @@ ArgParser
     usage: Argenta [-h] --config CONFIG
     Argenta: error: the following arguments are required: --config
 
-**Недопустимое значение из списка possible_values:**
+**Invalid value from possible_values list:**
 
 .. code-block:: bash
 
@@ -76,9 +76,9 @@ ArgParser
     usage: Argenta [-h] --log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}
     Argenta: error: argument --log-level: invalid choice: 'TRACE'
 
-**Использование устаревшего аргумента:**
+**Using a deprecated argument:**
 
-При использовании аргумента с ``is_deprecated=True`` выводится предупреждение, но выполнение продолжается:
+When using an argument with ``is_deprecated=True``, a warning is displayed, but execution continues:
 
 .. code-block:: bash
 
@@ -87,5 +87,5 @@ ArgParser
 
 .. warning::
 
-    Параметр поддерживается начиная с версии CPython 3.13, если версия ниже, то параметр будет игнорироваться.
+    The parameter is supported since CPython 3.13; on earlier versions it is ignored.
 

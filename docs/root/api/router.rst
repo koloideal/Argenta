@@ -1,16 +1,16 @@
 .. _root_api_router:
 
 Router
-=============
+======
 
-``Router`` — это основной строительный блок для организации логики в приложении. Его задача — группировать связанные команды и их обработчики. Каждый роутер представляет собой логический контейнер для определённого набора функций.
+``Router`` is the main building block for organizing logic in an application. Its purpose is to group related commands and their handlers. Each router represents a logical container for a specific set of functions.
 
-Например, в приложении для управления пользователями один роутер может отвечать за аутентификацию (``login``, ``logout``), а другой — за операции с профилем (``profile-show``, ``profile-edit``).
+For example, in a user management application, one router can handle authentication (``login``, ``logout``), while another handles profile operations (``profile-show``, ``profile-edit``).
 
 -----
 
-Инициализация
--------------
+Initialization
+--------------
 
 .. code-block:: python
    :linenos:
@@ -18,25 +18,25 @@ Router
       __init__(self, title: str | None = None, 
                disable_redirect_stdout: bool = False) -> None
 
-Создаёт новый экземпляр роутера.
+Creates a new router instance.
 
-* ``title``: Необязательный заголовок для группы команд. Отображается в списке доступных команд, помогая пользователю ориентироваться.
-* ``disable_redirect_stdout``: Если ``True``, отключает перехват ``stdout`` для всех команд этого роутера. Это необходимо для интерактивных команд (например, с ``input()``). При отключении перехвата автоматически используется статическая разделительная линия. Подробнее см. в разделе :ref:`Переопределение стандартного вывода <root_redirect_stdout>`.
+* ``title``: Optional title for the command group. Displayed in the list of available commands to help users navigate.
+* ``disable_redirect_stdout``: If ``True``, disables ``stdout`` capture for all commands in this router. This is necessary for interactive commands (e.g., with ``input()``). When capture is disabled, a static separator line is automatically used. See :ref:`Overriding standard output <root_redirect_stdout>` for more details.
 
 -----
 
-Регистрация команд
-------------------
+Command Registration
+--------------------
 
-Для регистрации команды и привязки к ней обработчика используется декоратор ``@command``.
+The ``@command`` decorator is used to register a command and bind a handler to it.
 
 .. py:method:: @command(self, command: Command | str)
 
-   Декоратор для регистрации функции как обработчика команды.
+   Decorator for registering a function as a command handler.
 
-   :param command: Экземпляр ``Command``, описывающий триггер, флаги и описание команды. Может быть строкой, которая станет триггером (без возможности настройки флагов и описания).
+   :param command: A ``Command`` instance describing the trigger, flags, and command description. Can be a string that will become the trigger (without the ability to configure flags and description).
 
-   **Пример использования:**
+   **Usage example:**
 
    .. literalinclude:: ../../code_snippets/router/snippet.py
       :linenos:
@@ -44,38 +44,38 @@ Router
       
 -----
 
-Системный роутер
------------------------------
+System Router
+-------------
 
-``Argenta`` поставляется со встроенным системным роутером, который автоматически подключается к каждому приложению.
+``Argenta`` comes with a built-in system router that is automatically connected to every application.
 
 .. py:data:: system_router
    :no-index:
 
-   Предопределённый экземпляр ``Router`` с базовыми системными командами (по умолчанию — команда выхода). Имеет заголовок **«System points:»**, который можно переопределить в ``App``.
+   A predefined ``Router`` instance with basic system commands (by default, the exit command). Has the title **"System points:"**, which can be overridden in ``App``.
 
-   Вы можете добавлять свои команды в этот роутер. Для этого используйте атрибут ``.system_router`` у созданного экхемпляра ``Orchestrator`` и используйте его декоратор ``@command``.
+   You can add your own commands to this router. To do this, use the ``.system_router`` attribute of the created ``Orchestrator`` instance and use its ``@command`` decorator.
 
 -----   
    
-Возможные исключения
---------------------
+Possible Exceptions
+-------------------
 
-При регистрации команд и флагов в ``Router`` могут возникнуть следующие исключения:
+The following exceptions may occur when registering commands and flags in ``Router``:
 
 .. py:exception:: TriggerContainSpacesException
 
-   Выбрасывается, если триггер команды в ``Command`` содержит пробелы. Триггеры должны быть одним словом.
+   Raised if the command trigger in ``Command`` contains spaces. Triggers must be a single word.
 
-   **Неправильно:** ``Command("add user")``
+   **Incorrect:** ``Command("add user")``
    
-   **Правильно:** ``Command("add-user")``
+   **Correct:** ``Command("add-user")``
 
 .. py:exception:: RepeatedFlagNameException
 
-   Возникает, если при определении флагов для команды были использованы дублирующиеся имена. Имена флагов в рамках одной команды должны быть уникальны.
+   Raised if duplicate names were used when defining flags for a command. Flag names within a single command must be unique.
 
-   **Пример, вызывающий исключение:**
+   **Example that raises an exception:**
 
    .. code-block:: python
       :linenos:
@@ -87,13 +87,13 @@ Router
 
 .. py:exception:: RequiredArgumentNotPassedException
 
-   Возникает, если обработчик команды не принимает обязательный аргумент ``Response``.
+   Raised if the command handler does not accept the required ``Response`` argument.
 
 .. py:exception:: RepeatedTriggerNameException
 
-   Возникает, если при регистрации команд в роутере были использованы дублирующиеся триггеры. Каждая команда должна иметь уникальный триггер в рамках приложения.
+   Raised if duplicate triggers were used when registering commands in the router. Each command must have a unique trigger within a single router.
 
-   **Пример, вызывающий исключение:**
+   **Example that raises an exception:**
 
    .. code-block:: python
       :linenos:
@@ -110,9 +110,9 @@ Router
 
 .. py:exception:: RepeatedAliasNameException
 
-   Возникает, если при регистрации команд были использованы дублирующиеся алиасы. Алиасы должны быть уникальны в рамках всего приложения.
+   Raised if duplicate aliases were used when registering commands. Aliases must be unique within the entire router.
 
-   **Пример, вызывающий исключение:**
+   **Example that raises an exception:**
 
    .. code-block:: python
       :linenos:

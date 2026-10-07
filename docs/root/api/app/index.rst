@@ -3,12 +3,12 @@
 App
 ===
 
-Объект ``App`` — это ядро вашего консольного приложения. Он отвечает за конфигурацию, управление жизненным циклом, обработку команд и взаимодействие с пользователем, координируя работу всех компонентов: роутеров, обработчиков и системных сообщений.
+The ``App`` object is the implementations of your console application. It handles configuration, lifecycle management, command processing, and user interaction, coordinating the work of all components: routers, handlers, and system messages.
 
 ------
 
-Инициализация
--------------
+Initialization
+--------------
 
 .. code-block:: python
     :linenos:
@@ -28,105 +28,105 @@ App
         printer: Printer = Console().print,
     ) -> None:
 
-Создаёт и настраивает экземпляр приложения.
+Creates and configures an application instance.
 
-    * ``prompt``: Приглашение к вводу, отображаемое перед каждой командой.
-    * ``initial_message``: Сообщение, выводимое при запуске приложения.
-    * ``farewell_message``: Сообщение, выводимое при выходе из приложения.
-    * ``exit_command``: Команда, которая маркируется как триггер для выхода из приложения.
-    * ``system_router_title``: Заголовок для системного роутера (содержит команду выхода).
-    * ``dividing_line``: Тип разделительной линии (``StaticDividingLine`` или ``DynamicDividingLine``).
-    * ``repeat_command_groups_printing``: Если ``True``, список доступных команд выводится перед каждым вводом.
-    * ``override_system_messages``: Если ``True``, стандартное форматирование (цвета, ASCII-арт) отключается.
-    * ``autocompleter``: Экземпляр класса :ref:`AutoCompleter <root_api_app_autocompleter>`, отвечающий за автодополнение команд.
-    * ``printer``: Функция для вывода всех системных сообщений.
+    * ``prompt``: Input prompt displayed before each command.
+    * ``initial_message``: Message displayed when the application starts.
+    * ``farewell_message``: Message displayed when exiting the application.
+    * ``exit_command``: Command that is marked as a trigger for exiting the application.
+    * ``system_router_title``: Title for the system router (contains the exit command).
+    * ``dividing_line``: Type of dividing line (``StaticDividingLine`` or ``DynamicDividingLine``).
+    * ``repeat_command_groups_printing``: If ``True``, the list of available commands is displayed before each input.
+    * ``override_system_messages``: If ``True``, standard formatting (colors, ASCII art) is disabled.
+    * ``autocompleter``: Instance of the :ref:`AutoCompleter <root_api_app_autocompleter>` class responsible for command autocompletion.
+    * ``print_func``: Function for outputting all system messages (defaults to ``rich.Console().print``).
 
 -----
 
 .. note::
-    В приложениях на Argenta регистр вводимых команд не важен, проверка на существование и роутинг команд производится на основании триггеров, приведённых к нижнему регистру.
+    In applications on Argenta, the case of the entered commands is not important, checking for the  existence and routing of commands is performed based on triggers reduced to lowercase.
     
-Основные методы
----------------
+Main Methods
+------------
 
 - .. py:method:: include_router(self, router: Router) -> None
 
-    Регистрирует роутер в приложении. Все команды из этого роутера становятся доступными для вызова.
+    Registers a router in the application. All commands from this router become available for invocation.
     
-    :param router: Экземпляр ``Router`` для регистрации.
+    :param router: ``Router`` instance to register.
 
 - .. py:method:: include_routers(self, *routers: Router) -> None
 
-    Регистрирует несколько роутеров одновременно.
+    Registers multiple routers simultaneously.
     
-    :param routers: Последовательность экземпляров ``Router`` для регистрации.
+    :param routers: Sequence of ``Router`` instances to register.
 
 - .. py:method:: add_message_on_startup(self, message: str) -> None
 
-    Добавляет текстовое сообщение, которое выводится при запуске приложения после ``initial_message``.
+    Adds a text message that is displayed when the application starts after ``initial_message``.
 
-    :param message: Строка с сообщением.
+    :param message: String with the message.
 
     .. seealso::
-       Для вывода стандартных сообщений можно использовать готовые шаблоны из :ref:`PredefinedMessages <root_api_predefined_messages>`.
+       For outputting standard messages, you can use ready-made templates from :ref:`PredefinedMessages <root_api_predefined_messages>`.
     
 -----
 
-Методы установки обработчиков
--------------------------------
+Handler Setup Methods
+---------------------
 
-``App`` позволяет настраивать реакцию на различные события, такие как ошибки ввода или неизвестные команды.
+``App`` allows you to configure responses to various events, such as input errors or unknown commands.
 
 .. hint::
-   Подробнее об исключениях и их обработке в соответствующем :ref:`разделе документации <root_error_handling>`.
+   For more details on exceptions and their handling, see the corresponding :ref:`documentation section <root_error_handling>`.
    
 -----
 
 .. py:method:: set_description_message_pattern(self, handler: Callable[[str, str], str]) -> None
 
-   Устанавливает шаблон для форматирования описания команды.
+   Sets the template for formatting command descriptions.
    
-   Обработчик принимает триггер команды (``str``) и её описание (``str``).
+   The handler accepts the command trigger (``str``) and its description (``str``).
    
 ------
 
 .. py:method:: set_incorrect_input_syntax_handler(self, handler: Callable[[str], None]) -> None
 
-   Устанавливает обработчик при некорректном введённом синтаксисе флагов.
+   Sets the handler for incorrect flag syntax input.
    
-   Обработчик принимает строку, введённую пользователем.
+   The handler accepts the string entered by the user.
    
 ------
 
 .. py:method:: set_repeated_input_flags_handler(self, handler: Callable[[str], None]) -> None
 
-   Устанавливает обработчик при повторяющихся флагах в введённой команде.
+   Sets the handler for duplicate flags in the entered command.
    
-   Обработчик принимает строку, введённую пользователем.
+   The handler accepts the string entered by the user.
    
 ------
 
 .. py:method:: set_unknown_command_handler(self, handler: Callable[[InputCommand], None]) -> None
 
-   Устанавливает обработчик при вводе неизвестной команды.
+   Sets the handler for entering an unknown command.
    
-   Обработчик принимает объект ``InputCommand`` - объект введённой команды.
+   The handler accepts an ``InputCommand`` object - the entered command object.
    
 -----
 
 .. py:method:: set_empty_command_handler(self, handler: Callable[[], None]) -> None
 
-   Устанавливает обработчик при вводе пустой строки.
+   Sets the handler for entering an empty string.
    
-   Обработчик не принимает аргументов.
+   The handler accepts no arguments.
    
 -----
 
 .. py:method:: set_exit_command_handler(self, handler: Callable[[Response], None]) -> None
 
-   Переопределяет стандартное поведение при вызове команды выхода.
+   Overrides the default behavior when the exit command is invoked.
    
-   Обработчик принимает объект ``Response``.
+   The handler accepts a ``Response`` object.
 
 .. toctree::
     :hidden:
@@ -141,9 +141,9 @@ App
 PredefinedMessages
 ------------------
 
-``PredefinedMessages`` — это контейнер, содержащий набор готовых к использованию сообщений. Они отформатированы с использованием синтаксиса ``rich`` и предназначены для вывода стандартной информации, такой как подсказки по использованию.
+``PredefinedMessages`` is a container containing a set of ready-to-use messages. They are formatted using ``rich`` syntax and are intended for displaying standard information, such as usage hints.
 
-Рекомендуется использовать их при старте приложения.
+It is recommended to use them when starting the application.
 
 .. code-block:: python
    :linenos:
@@ -170,18 +170,18 @@ PredefinedMessages
 
    .. py:attribute:: USAGE
 
-      Строка: ``[b dim]Usage[/b dim]: [i]<command> <[green]flags[/green]>[/i]``
+      String: ``[b dim]Usage[/b dim]: [i]<command> <[green]flags[/green]>[/i]``
 
-      Отображается как: ``Usage: <command> <flags>``
+      Displayed as: ``Usage: <command> <flags>``
 
    .. py:attribute:: HELP
 
-      Строка: ``[b dim]Help[/b dim]: [i]<command>[/i] [b red]--help[/b red]``
+      String: ``[b dim]Help[/b dim]: [i]<command>[/i] [b red]--help[/b red]``
 
-      Отображается как: ``Help: <command> --help``
+      Displayed as: ``Help: <command> --help``
 
    .. py:attribute:: AUTOCOMPLETE
 
-      Строка: ``[b dim]Autocomplete[/b dim]: [i]<part>[/i] [bold]<tab>``
+      String: ``[b dim]Autocomplete[/b dim]: [i]<part>[/i] [bold]<tab>``
 
-      Отображается как: ``Autocomplete: <part> <tab>``
+      Displayed as: ``Autocomplete: <part> <tab>``
