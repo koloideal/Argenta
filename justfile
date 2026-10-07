@@ -45,12 +45,8 @@ check-format: format mypy ruff wps
 
 # Create a new changelog fragment and open it in $EDITOR
 frag:
-    if (-not (Test-Path "./changelog.d")) { New-Item -ItemType Directory -Path "./changelog.d" }
+    python -c "from pathlib import Path; Path('changelog.d').mkdir(exist_ok=True)"
     scriv create --add
-
-# Preview collected changelog without writing anything
-changelog-preview:
-    scriv collect --dry-run
 
 # Collect fragments into CHANGELOG.md for release  (usage: just release 1.2.3)
 release version:
