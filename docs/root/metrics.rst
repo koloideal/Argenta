@@ -1,14 +1,14 @@
-Метрики
+Metrics
 =======
 
-Система метрик ``Argenta`` предоставляет инструменты для измерения производительности ключевых компонентов библиотеки. Это позволяет отслеживать регрессию/прогрессию производительности между релизами и оптимизировать критические участки кода.
+The ``Argenta`` metrics system provides tools for measuring the performance of key library components. This allows tracking performance regression/progression between releases and optimizing critical code sections.
 
 -----
 
-Запуск метрик
--------------
+Running Metrics
+---------------
 
-Для работы с метриками необходимо склонировать репозиторий и установить зависимости:
+To work with metrics, you need to clone the repository and install dependencies:
 
 .. code-block:: bash
 
@@ -16,49 +16,49 @@
    cd Argenta
    uv sync --group metrics
 
-Запуск системы метрик:
+Running the metrics system:
 
 .. code-block:: bash
 
    python -m metrics
 
-После запуска откроется интерактивная сессия с доступными командами для работы с бенчмарками.
+After launch, an interactive session will open with available commands for working with benchmarks.
 
 -----
 
-Доступные команды
------------------
+Available Commands
+------------------
 
 run-all
 ~~~~~~~
 
-Запускает все зарегистрированные бенчмарки и выводит результаты в виде таблиц.
+Runs all registered benchmarks and outputs results as tables.
 
-**Синтаксис:**
+**Syntax:**
 
 .. code-block:: shell
 
    run-all [--without-gc] [--without-system-info]
 
-**Флаги:**
+**Flags:**
 
-- ``--without-gc`` — отключает сборщик мусора во время выполнения бенчмарков для более стабильных результатов
-- ``--without-system-info`` — скрывает информацию о системе в выводе
+- ``--without-gc`` — disables garbage collector during benchmark execution for more stable results
+- ``--without-system-info`` — hides system information in output
 
 -----
 
 list-types
 ~~~~~~~~~~
 
-Выводит список всех доступных типов бенчмарков с количеством тестов в каждой категории.
+Displays a list of all available benchmark types with the number of tests in each category.
 
-**Синтаксис:**
+**Syntax:**
 
 .. code-block:: shell
 
    list-types
 
-**Пример вывода:**
+**Example output:**
 
 .. code-block:: text
 
@@ -73,96 +73,96 @@ list-types
 run-type
 ~~~~~~~~
 
-Запускает бенчмарки определённого типа.
+Runs benchmarks of a specific type.
 
-**Синтаксис:**
+**Syntax:**
 
 .. code-block:: shell
 
    run-type --type <type_name> [--without-gc] [--without-system-info]
 
-**Флаги:**
+**Flags:**
 
-- ``--type`` — тип бенчмарков для запуска (обязательный)
-- ``--without-gc`` — отключает сборщик мусора
-- ``--without-system-info`` — скрывает информацию о системе
+- ``--type`` — benchmark type to run (required)
+- ``--without-gc`` — disables garbage collector
+- ``--without-system-info`` — hides system information
 
 -----
 
 diagrams-generate
 ~~~~~~~~~~~~~~~~~
 
-Генерирует визуальные диаграммы сравнения производительности для всех бенчмарков.
+Generates visual performance comparison diagrams for all benchmarks.
 
-**Синтаксис:**
+**Syntax:**
 
 .. code-block:: shell
 
    diagrams-generate [--iterations <number>] [--without-gc]
 
-**Флаги:**
+**Flags:**
 
-- ``--iterations`` — количество итераций для каждого бенчмарка (по умолчанию 100)
-- ``--without-gc`` — отключает сборщик мусора
+- ``--iterations`` — number of iterations for each benchmark (default 100)
+- ``--without-gc`` — disables garbage collector
 
-Диаграммы сохраняются в директорию ``metrics/reports/diagrams/<timestamp>/``.
+Diagrams are saved to the ``metrics/reports/diagrams/<timestamp>/`` directory.
 
 -----
 
 release-generate
 ~~~~~~~~~~~~~~~~
 
-Генерирует полный отчёт о производительности для текущей версии библиотеки. Используется при подготовке релизов.
+Generates a complete performance report for the current library version. Used when preparing releases.
 
-**Синтаксис:**
+**Syntax:**
 
 .. code-block:: shell
 
    release-generate
 
-Команда автоматически:
+The command automatically:
 
-1. Определяет текущую версию библиотеки
-2. Запускает все бенчмарки с 1000 итераций и отключённым GC
-3. Генерирует JSON-отчёты и диаграммы сравнения
-4. Сохраняет результаты в ``metrics/reports/releases/<version>/``
-
------
-
-Интерпретация результатов
--------------------------
-
-Результаты бенчмарков включают следующие метрики:
-
-**Среднее время (mean)**
-  Среднее время выполнения операции. Основная метрика для сравнения производительности.
-
-**Медиана (median)**
-  Медианное значение времени выполнения. Менее чувствительна к выбросам, чем среднее.
-
-**Стандартное отклонение (std)**
-  Показывает стабильность измерений. Меньшее значение означает более предсказуемую производительность.
+1. Determines the current library version
+2. Runs all benchmarks with 1000 iterations and disabled GC
+3. Generates JSON reports and comparison diagrams
+4. Saves results to ``metrics/reports/releases/<version>/``
 
 -----
 
-Рекомендации по использованию
-------------------------------
+Interpreting Results
+--------------------
 
-**Для оптимизации**
-  Используйте ``run-type`` для фокусировки на конкретной области и ``--without-gc`` для более точных измерений.
+Benchmark results include the following metrics:
 
-**Для визуализации**
-  Команда ``diagrams-generate`` создаёт наглядные графики, удобные для презентаций и документации.
+**Mean time (mean)**
+  Average operation execution time. The primary metric for performance comparison.
 
-**Для стабильных результатов**
-  Закройте ресурсоёмкие приложения, используйте флаг ``--without-gc`` и увеличивайте количество итераций через ``--iterations``.
+**Median (median)**
+  Median execution time value. Less sensitive to outliers than the mean.
+
+**Standard deviation (std)**
+  Shows measurement stability. A lower value means more predictable performance.
 
 -----
 
-Добавление новых бенчмарков
-----------------------------
+Usage Recommendations
+---------------------
 
-Вы можете реализовать свои бенчмарки для тестирования специфичных юнитов библиотеки. Новые бенчмарки добавляются через декоратор ``@benchmarks.register``:
+**For optimization**
+  Use ``run-type`` to focus on a specific area and ``--without-gc`` for more accurate measurements.
+
+**For visualization**
+  The ``diagrams-generate`` command creates clear charts suitable for presentations and documentation.
+
+**For stable results**
+  Close resource-intensive applications, use the ``--without-gc`` flag, and increase the number of iterations via ``--iterations``.
+
+-----
+
+Adding New Benchmarks
+---------------------
+
+You can implement your own benchmarks to test specific library units. New benchmarks are added via the ``@benchmarks.register`` decorator:
 
 .. literalinclude:: ../code_snippets/metrics/add_new_benchmark.py
    :language: python
@@ -170,4 +170,4 @@ release-generate
 
 .. important::
 
-  Бенчмарк должен быть импортирован в ``metrics/benchmarks/__init__.py`` для автоматической регистрации.
+  The benchmark must be imported in ``metrics/benchmarks/__init__.py`` for automatic registration.

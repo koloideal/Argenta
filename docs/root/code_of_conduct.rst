@@ -1,64 +1,62 @@
 .. _root_code_of_conduct:
 
-Правила сообщества
-==========================
+Community Guidelines
+====================
 
-Наше обязательство
-------------------
-
-В целях создания открытой и гостеприимной атмосферы мы, как участники и мейнтейнеры, обязуемся сделать участие в нашем проекте и сообществе свободным от преследований для всех, независимо от возраста, телосложения, инвалидности, этнической принадлежности, уровня опыта, образования, социально-экономического статуса, национальности, внешности, расы или религии.
-
------
-
-Наши стандарты
---------------
-
-Примеры поведения, которые способствуют созданию позитивной среды:
-
-*   Проявление эмпатии и доброты по отношению к другим.
-*   Уважение к различным мнениям, точкам зрения и опыту.
-*   Предоставление и тактичное принятие конструктивной обратной связи.
-*   Принятие ответственности и извинения перед теми, кого затронули наши ошибки, а также извлечение уроков из этого опыта.
-*   Фокус на том, что лучше для всего сообщества.
-
-Примеры недопустимого поведения включают:
-
-*   Троллинг, оскорбительные или уничижительные комментарии, а также личные или политические нападки.
-*   Публичное или частное преследование.
-*   Публикация личной информации других лиц (например, физического или электронного адреса) без их явного разрешения.
-*   Любое другое поведение, которое можно обоснованно считать неуместным в профессиональной среде.
-
------
-
-Наши обязанности
-----------------
-
-Мейнтейнеры проекта несут ответственность за разъяснение и обеспечение соблюдения стандартов приемлемого поведения и предпримут справедливые корректирующие действия в ответ на любые случаи неприемлемого поведения.
-
-Мейнтейнеры проекта имеют право и обязанность удалять, редактировать или отклонять комментарии, коммиты, код, правки в вики, задачи и другие вклады, которые не соответствуют настоящему Кодексу поведения, а также временно или навсегда блокировать любого участника за поведение, которое они сочтут неуместным, угрожающим, оскорбительным или вредным.
-
------
-
-Сфера применения
-----------------
-
-Настоящий Кодекс поведения применяется как в рамках проекта, так и в публичных пространствах, когда человек официально представляет сообщество. Примеры такого представительства включают использование официального адреса электронной почты, публикации через официальный аккаунт в социальных сетях или выступление в качестве назначенного представителя на онлайн- или офлайн-мероприятии.
-
------
-
-Обеспечение соблюдения
-----------------------
-
-О случаях оскорбительного, преследовательского или иного неприемлемого поведения можно сообщить команде проекта по адресу kolo.is.main@gmail.com. Все жалобы будут рассмотрены и расследованы оперативно и справедливо.
-
-Команда проекта обязуется уважать частную жизнь и безопасность заявителя.
-
------
-
-Атрибуция
+Our Pledge
 ----------
 
-Настоящий Кодекс поведения адаптирован из `Contributor Covenant <https://www.contributor-covenant.org/>`__, версии
-`1.4 <https://www.contributor-covenant.org/version/1/4/code-of-conduct/code_of_conduct.md>`__ и
-`2.0 <https://www.contributor-covenant.org/version/2/0/code_of_conduct/code_of_conduct.md>`__.
+In the interest of fostering an open and welcoming environment, we as contributors and maintainers pledge to make participation in our project and community a harassment-free experience for everyone, regardless of age, body size, disability, ethnicity, level of experience, education, socio-economic status, nationality, personal appearance, race, or religion.
+
+-----
+
+Our Standards
+-------------
+
+Examples of behavior that contributes to creating a positive environment:
+
+*   Demonstrating empathy and kindness toward other people.
+*   Being respectful of differing opinions, viewpoints, and experiences.
+*   Giving and gracefully accepting constructive feedback.
+*   Accepting responsibility and apologizing to those affected by our mistakes, and learning from the experience.
+*   Focusing on what is best for the overall community.
+
+Examples of unacceptable behavior include:
+
+*   Trolling, insulting or derogatory comments, and personal or political attacks.
+*   Public or private harassment.
+*   Publishing others' private information, such as a physical or email address, without their explicit permission.
+*   Other conduct which could reasonably be considered inappropriate in a professional setting.
+
+-----
+
+Our Responsibilities
+--------------------
+
+Project maintainers are responsible for clarifying and enforcing standards of acceptable behavior and will take appropriate and fair corrective action in response to any instances of unacceptable behavior.
+
+Project maintainers have the right and responsibility to remove, edit, or reject comments, commits, code, wiki edits, issues, and other contributions that are not aligned with this Code of Conduct, and will ban temporarily or permanently any contributor for behaviors that they deem inappropriate, threatening, offensive, or harmful.
+
+-----
+
+Scope
+-----
+
+This Code of Conduct applies both within project spaces and in public spaces when an individual is officially representing the community. Examples of representing the community include using an official project email address, posting via an official social media account, or acting as an appointed representative at an online or offline event.
+
+-----
+
+Enforcement
+-----------
+
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project team at kolo.is.main@gmail.com. All complaints will be reviewed and investigated promptly and fairly.
+
+The project team is obligated to respect the privacy and security of the reporter.
+
+-----
+
+Attribution
+-----------
+
+This Code of Conduct is adapted from the `Contributor Covenant <https://www.contributor-covenant.org/>`__, version `1.4 <https://www.contributor-covenant.org/version/1/4/code-of-conduct/code_of_conduct.md>`__ and `2.0 <https://www.contributor-covenant.org/version/2/0/code_of_conduct/code_of_conduct.md>`__.
 

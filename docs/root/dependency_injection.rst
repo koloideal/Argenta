@@ -1,43 +1,42 @@
 .. _root_dependency_injection:
 
-Внедрение зависимостей
-=======================
+Dependency Injection
+====================
 
-Внедрение зависимостей (Dependency Injection, DI) — это паттерн проектирования, который помогает писать слабосвязанный, легко тестируемый и расширяемый код. Вместо того чтобы обработчики сами создавали нужные им объекты (зависимости), они получают их извне.
+Dependency Injection (DI) is a design pattern that helps write loosely coupled, easily testable, and extensible code. Instead of handlers creating the objects (dependencies) they need themselves, they receive them from outside.
 
-``Argenta`` использует библиотеку ``dishka`` для реализации DI, что позволяет декларативно объявлять зависимости прямо в сигнатурах ваших обработчиков.
-Подробнее о DI, IoC и API для создания провайдеров можно прочитать в `официальной документации dishka <https://dishka.readthedocs.io/en/stable/di_intro.html>`_.
+``Argenta`` uses the ``dishka`` library to implement DI, which allows you to declaratively declare dependencies directly in your handler signatures. You can read more about DI, IoC, and the API for creating providers in the `official dishka documentation <https://dishka.readthedocs.io/en/stable/di_intro.html>`_.
 
 -----
 
-Основная идея
--------------
+Main Idea
+---------
 
-Представьте, что вашему обработчику для работы нужен доступ к базе данных. Вместо импорта и инициализации соединения внутри функции, вы просто объявляете его как аргумент с аннотацией типа:
+Imagine your handler needs access to a database to work. Instead of importing and initializing the connection inside the function, you simply declare it as an argument with a type annotation:
 
 .. note::
-   ``argenta.di.FromDishka`` является алиасом для ``dishka.FromDishka``, и они полностью взаимозаменяемы.
+   ``argenta.di.FromDishka`` is an alias for ``dishka.FromDishka``, and they are fully interchangeable.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../code_snippets/dependency_injection/snippet.py
    :language: python
    :linenos:
 
-``Argenta`` с помощью ``dishka`` разрешит зависимость по типу ``Connection`` и внедрит её. Но прежде чем использовать зависимость, её необходимо объявить в провайдере:
+``Argenta`` with ``dishka`` will resolve the dependency by type ``Connection`` and inject it. But before using the dependency, it must be declared in a provider:
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../code_snippets/dependency_injection/snippet2.py
    :language: python
    :linenos:
    
-После создания провайдера его необходимо зарегистрировать в оркестраторе.
+After creating the provider, it must be registered in the orchestrator.
 
 .. note::
-   Провайдеры регистрируются в ``Orchestrator``, а не в ``App``, так как оркестратор отвечает за настройку DI-контейнера на уровне всего приложения. Вы можете передать список из нескольких провайдеров через параметр ``custom_providers``.
+   Providers are registered in ``Orchestrator``, not in ``App``, because the orchestrator is responsible for configuring the DI container at the application level. You can pass a list of multiple providers through the ``custom_providers`` parameter.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../code_snippets/dependency_injection/snippet3.py
    :language: python
@@ -45,22 +44,22 @@
 
 -----
 
-Как это работает?
+How Does It Work?
 -----------------
 
-В основе DI в Argenta лежат **провайдеры** и **контейнер**.
+At the implementations of DI in Argenta are **providers** and a **container**.
 
-*   **Провайдер (Provider)** — это "рецепт", который объясняет, как создавать и настраивать ту или иную зависимость (например, подключение к БД, API-клиент или любой другой сервис).
-*   **Контейнер (IoC Container)** — это "фабрика", которая хранит все рецепты (провайдеры) и по запросу создаёт и выдаёт готовые зависимости.
+*   **Provider (Provider)** is a "recipe" that explains how to create and configure a particular dependency (for example, a database connection, API client, or any other service).
+*   **Container (IoC Container)** is a "factory" that stores all recipes (providers) and creates and provides ready dependencies on request.
 
 -----
 
-Встроенные провайдеры
------------------------
+Built-in Providers
+------------------
 
-``Argenta`` поставляется со встроенным провайдером, который даёт доступ к важным системным зависимостям без дополнительной настройки. Например, вы можете получить объект :ref:`ArgSpace <root_api_orchestrator_argspace>`, который содержит аргументы командной строки, переданные при запуске приложения.
+``Argenta`` comes with a built-in provider that gives access to important system dependencies without additional configuration. For example, you can get the :ref:`ArgSpace <root_api_orchestrator_argspace>` object, which contains the command-line arguments passed when the application was launched.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../code_snippets/dependency_injection/snippet4.py
    :language: python
@@ -68,12 +67,12 @@
    
 -----
 
-Обмен данными между обработчиками
-----------------------------------
+Data Exchange Between Handlers
+------------------------------
 
-Помимо DI, обработчики могут обмениваться данными в рамках сессии через **объект контекста**. В ``Argenta`` эту роль выполняет объект ``DataBridge``.
+In addition to DI, handlers can exchange data within a session through a **context object**. In ``Argenta``, this role is performed by the ``DataBridge`` object.
 
-Каждый обработчик может записывать в него данные, а также читать, обновлять и удалять их.
+Each handler can write data to it, as well as read, update, and delete data.
 
 .. seealso::
-   Подробнее об этом можно прочитать в разделе :ref:`root_api_bridge`.
+   You can read more about this in the :ref:`root_api_bridge` section.

@@ -1,16 +1,16 @@
 .. _root_api_orchestrator_index:
 
 Orchestrator
-====================
+============
 
-``Orchestrator`` — это высокоуровневый компонент, который конфигурирует и оркестрирует приложение, парсер командной строки, DI и остальные компоненты, находящиеся по иерархии на уровне с ``App``.
+``Orchestrator`` is a high-level component that configures and orchestrates the application, command-line parser, DI, and other components at the same hierarchical level as ``App``.
 
-В то время как ``App`` отвечает за логику интерактивной сессии (ввод команд, маршрутизация), ``Orchestrator`` подготавливает окружение для его работы и служит точкой входа в приложение.
+While ``App`` is responsible for interactive session logic (command input, routing), ``Orchestrator`` prepares the environment for its operation and serves as the entry point to the application.
 
 -----
 
-Инициализация
--------------
+Initialization
+--------------
 
 .. code-block:: python
    :linenos:
@@ -25,33 +25,33 @@ Orchestrator
                    custom_providers: list[Provider] = [], 
                    auto_inject_handlers: bool = True) -> None
 
-Создаёт и конфигурирует экземпляр ``Orchestrator``.
+Creates and configures an ``Orchestrator`` instance.
 
-* ``arg_parser``: Экземпляр ``ArgParser``, отвечающий за парсинг аргументов командной строки при запуске скрипта (не путать с командами в интерактивном режиме).
-* ``custom_providers``: Список пользовательских провайдеров ``dishka.Provider`` для добавления ваших сервисов (например, подключений к БД или API-клиентов) в di-контейнер.
-* ``auto_inject_handlers``: Если **True** (по умолчанию), ``dishka`` автоматически внедрит зависимости в обработчики команд, инспектируя их сигнатуры.
+* ``arg_parser``: ``ArgParser`` instance responsible for parsing command-line arguments at script startup (not to be confused with commands in interactive mode).
+* ``custom_providers``: List of custom ``dishka.Provider`` providers for adding your services (e.g., database connections or API clients) to the DI container.
+* ``auto_inject_handlers``: If **True** (default), ``dishka`` will automatically inject dependencies into command handlers by inspecting their signatures.
 
 -----
 
-Основные методы
-----------------
+Main Methods
+------------
 
 .. py:method:: run_repl(self, app: App) -> None
 
-   Это главный метод, который запускает приложение. Он запускает бесконечный цикл ввода -> вывода.
+   This is the main method that starts the application. It launches an infinite input -> output loop.
 
-   :param app: Экземпляр ``App``, который будет запущен.
+   :param app: ``App`` instance to be launched.
 
 -----
    
-Назначение и использование
-----------------------------
+Purpose and Usage
+-----------------
 
-``Orchestrator`` абстрагирует сложность, связанную с настройкой DI и парсингом стартовых аргументов.
+``Orchestrator`` abstracts the complexity associated with setting up DI and parsing startup arguments.
 
-Такой подход разделяет ответственности: ``App`` отвечает за логику интерактивной сессии, а ``Orchestrator`` — за подготовку окружения и запуск приложения.
+This approach separates responsibilities: ``App`` is responsible for interactive session logic, while ``Orchestrator`` handles environment preparation and application launch.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/orchestrator/snippet.py
    :language: python

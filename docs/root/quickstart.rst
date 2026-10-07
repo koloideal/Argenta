@@ -1,118 +1,118 @@
 .. _root_quickstart:
 
-Быстрый старт
-=============
+Quick Start
+===========
 
-В этом руководстве мы рассмотрим два примера создания CLI-приложения с помощью Argenta:
+In this guide, we will look at two examples of creating a CLI application with Argenta:
 
-*   **Простой пример**: минимальное приложение для быстрого знакомства с основными компонентами.
-*   **Пример средней сложности**: приложение "Калькулятор" с использованием и настройкой флагов.
-*   **Более сложный пример**: полнофункциональное приложение «Менеджер задач» с внедрением зависимостей и бизнес-логикой.
+*   **Simple example**: a minimal application for quick introduction to the main components.
+*   **Medium-complexity example**: the Calculator app using and setting flags.
+*   **More complex example**: a full-featured "Task Manager" application with dependency injection and business logic.
 
-Простой пример
----------------
+Simple Example
+--------------
 
-**Установка**
+**Installation**
 
 .. code-block:: shell
 
     pip install argenta
 
-Этот пример демонстрирует абсолютный минимум, необходимый для создания и запуска приложения. Вы можете скопировать этот код, запустить его и сразу увидеть результат.
+This example demonstrates the absolute minimum required to create and run an application. You can copy this code, run it, and immediately see the result.
 
 .. literalinclude:: ../code_snippets/quickstart/simple_app.py
    :language: python
    :linenos:
 
-**Запуск**
+**Running**
 
-Сохраните код в файл (например, ``main.py``) и запустите:
+Save the code to a file (for example, ``main.py``) and run:
 
 .. code-block:: shell
 
     python main.py
 
-**Результат**
+**Result**
 
 .. image:: https://i.ibb.co/35q24Bh8/image.png
    :alt: Simple App Example
    
 -----
 
-Промежуточный пример: Калькулятор с флагами
---------------------------------------------
+Intermediate Example: Calculator with Flags
+-------------------------------------------
 
-Прежде чем перейти к сложному примеру с DI, рассмотрим промежуточный вариант — калькулятор, который использует флаги для управления поведением.
+Before moving to a complex example with DI, let's consider an intermediate option — a calculator that uses flags to control behavior.
 
 .. literalinclude:: ../code_snippets/quickstart/calculator_app.py
    :language: python
    :linenos:
 
-**Запуск:**
+**Running:**
 
-Сохраните код в файл ``calculator.py`` и запустите:
+Save the code to a file ``calculator.py`` and run:
 
 .. code-block:: shell
 
     python calculator.py
 
-**Использование:**
+**Usage:**
 
 .. code-block:: shell
 
    calc --a 10 --b 5 --operation add
    calc --a 10 --b 5 --operation mul
 
-Этот пример показывает, как работать с флагами без использования DI. Теперь перейдём к более сложному примеру.
+This example shows how to work with flags without using DI. Now let's move on to a more complex example.
 
 -----
 
-Сложный пример: Менеджер задач с DI
-------------------------------------
+Complex Example: Task Manager with DI
+-------------------------------------
 
-В этом руководстве мы создадим полнофункциональное CLI-приложение «Менеджер задач», которое продемонстрирует работу с внедрением зависимостей.
+In this guide, we will create a full-featured CLI application "Task Manager" that will demonstrate working with dependency injection.
 
-1. **Установка**
+1. **Installation**
 
 .. code-block:: shell
 
     pip install argenta
 
-2. **Определение моделей данных и репозитория**
+2. **Defining Data Models and Repository**
 
-Сначала определим модели данных для задачи и репозиторий для их хранения.
+First, let's define data models for tasks and a repository to store them.
 
 .. literalinclude:: ../code_snippets/quickstart/task_manager/repository.py
    :language: python
    :linenos:
 
-3. **Создание провайдера для DI**
+3. **Creating a Provider for DI**
 
-Чтобы Argenta могла внедрять ``TaskRepository`` в наши обработчики, мы создадим провайдер для ``dishka``.
+To allow Argenta to inject ``TaskRepository`` into our handlers, we will create a provider for ``dishka``.
 
 .. literalinclude:: ../code_snippets/quickstart/task_manager/provider.py
    :language: python
    :linenos:
 
-4. **Создание обработчиков команд**
+4. **Creating Command Handlers**
 
-Теперь создадим обработчики для команд ``add-task`` и ``list-tasks``. Обратите внимание, как мы используем флаги и внедряем ``TaskRepository``.
+Now let's create handlers for the ``add-task`` and ``list-tasks`` commands. Notice how we use flags and inject ``TaskRepository``.
 
 .. literalinclude:: ../code_snippets/quickstart/task_manager/handlers.py
    :language: python
    :linenos:
 
-5. **Сборка и запуск приложения**
+5. **Building and Running the Application**
 
-Наконец, соберем все вместе: создадим экземпляр ``App``, подключим роутер и провайдер, а затем запустим приложение.
+Finally, let's put it all together: create an ``App`` instance, connect the router and provider, and then run the application.
 
 .. literalinclude:: ../code_snippets/quickstart/task_manager/main.py
    :language: python
    :linenos:
 
-6. **Результат**
+6. **Result**
 
-Теперь вы можете запустить ``main.py`` и взаимодействовать с вашим новым CLI-приложением.
+Now you can run ``main.py`` and interact with your new CLI application.
 
 .. image:: https://i.ibb.co/bgsCLZhP/image.png
    :alt: Task Manager Example

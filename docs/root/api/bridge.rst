@@ -3,9 +3,9 @@
 DataBridge
 ==========
 
-``DataBridge`` — это сущность, предоставляющая временное хранилище данных, которое существует в рамках одной сессии приложения (от запуска до выхода). Она предназначена для обмена данными между обработчиками.
+``DataBridge`` is an entity that provides temporary data storage that exists within a single application session (from startup to exit). It is designed for data exchange between handlers.
 
-Основной способ получения доступа к ``DataBridge`` — через DI.
+The main way to access ``DataBridge`` is through DI.
 
 .. code-block:: python
    :linenos:
@@ -18,19 +18,19 @@ DataBridge
    def my_handler(response: Response, data_bridge: FromDishka[DataBridge]):
        # ... your code
 
-**Практический пример: Аутентификация**
+**Practical Example: Authentication**
 
-Рассмотрим пример, где команда `login` сохраняет токен аутентификации, а команда `get-profile` использует его.
+Let's consider an example where the `login` command saves an authentication token, and the `get-profile` command uses it.
 
 .. literalinclude:: ../../code_snippets/response/data_sharing.py
    :language: python
    :linenos:
 
-**Как это работает:**
+**How it works:**
 
-1.  При вызове обработчика ``dishka`` автоматически внедряет экземпляр ``DataBridge``.
-2.  Команда ``login --username <имя>`` вызывает ``login_handler``, который через внедрённый ``data_bridge`` сохраняет токен.
-3.  Команда ``get-profile`` вызывает ``get_profile_handler``, который так же получает ``data_bridge`` и извлекает из него токен.
+1.  When calling a handler, ``dishka`` automatically injects a ``DataBridge`` instance.
+2.  The ``login --username <name>`` command calls ``login_handler``, which saves the token through the injected ``data_bridge``.
+3.  The ``get-profile`` command calls ``get_profile_handler``, which also receives ``data_bridge`` and extracts the token from it.
 
 -----------
 
@@ -39,24 +39,24 @@ DataBridge
    .. py:method:: __init__(self, initial_data: dict | None = None)
       :no-index:
 
-      Инициализирует хранилище. При использовании через DI вызывается автоматически.
+      Initializes the storage. When used through DI, it is called automatically.
 
    .. py:method:: update(self, data: dict) -> None
 
-      Обновляет хранилище данными из словаря.
+      Updates the storage with data from a dictionary.
 
    .. py:method:: get_all(self) -> dict
 
-      Возвращает все данные из хранилища.
+      Returns all data from the storage.
 
    .. py:method:: get_by_key(self, key: str) -> Any
 
-      Возвращает значение по ключу или ``None``, если ключ не найден.
+      Returns the value by key or ``None`` if the key is not found.
 
    .. py:method:: delete_by_key(self, key: str) -> None
 
-      Удаляет значение по ключу. Вызывает ``KeyError``, если ключ не найден.
+      Deletes the value by key. Raises ``KeyError`` if the key is not found.
 
    .. py:method:: clear_all(self) -> None
 
-      Полностью очищает хранилище.
+      Completely clears the storage.

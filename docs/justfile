@@ -11,20 +11,10 @@ builddir := "_build"
 default:
     @{{sphinxbuild}} -M help "{{sourcedir}}" "{{builddir}}" {{sphinxopts}}
 
-# Build all language versions
+# Build the documentation
 build:
-    {{sphinxbuild}} -b html -D language=ru {{sourcedir}} {{builddir}}/html/ru
-    {{sphinxbuild}} -b html -D language =en {{sourcedir}} {{builddir}}/html/en
+    {{sphinxbuild}} -b html {{sourcedir}} {{builddir}}/html
 
-# Live preview for Russian version
-live-ru:
-    sphinx-autobuild -b html . _build/html/ru -D language=ru
-
-# Live preview for English version
-live-en:
-    sphinx-autobuild -b html . _build/html/en -D language=en
-
-# Update translation files
-update-langs:
-    {{sphinxbuild}} -b gettext . _build/gettext
-    sphinx-intl update -p _build/gettext -l en
+# Live preview
+live:
+    sphinx-autobuild -b html . _build/html

@@ -1,29 +1,29 @@
 .. _root_api_orchestrator_argspace:
 
 ArgSpace
-==========
+========
 
-``ArgSpace`` — это контейнер для хранения и управления обработанными аргументами командной строки. Его основная задача — предоставить удобный интерфейс для доступа к значениям, переданным при запуске приложения.
+``ArgSpace`` is a container for storing and managing processed command-line arguments. Its main purpose is to provide a convenient interface for accessing values passed at application startup.
 
-``ArgSpace`` создаётся автоматически после обработки аргументов с помощью ``ArgParser`` и содержит коллекцию объектов ``InputArgument``.
+``ArgSpace`` is created automatically after processing arguments using ``ArgParser`` and contains a collection of ``InputArgument`` objects.
 
 -----
 
-Инициализация
--------------
+Initialization
+--------------
 
-Создание экземпляров класса ``ArgSpace`` происходит под `капотом`, вам не нужно создавать их вручную.
+Creation of ``ArgSpace`` class instances happens under the hood, you don't need to create them manually.
 
-**Атрибуты:**
+**Attributes:**
 
 .. py:attribute:: all_arguments
 
-   Список всех обработанных аргументов типа ``InputArgument``.
+   List of all processed arguments of type ``InputArgument``.
 
 -----
 
-Методы
-------  
+Methods
+-------
 
 get_by_name
 ~~~~~~~~~~~
@@ -33,12 +33,12 @@ get_by_name
 
    get_by_name(self, name: str) -> InputArgument | None
 
-Возвращает аргумент по имени.
+Returns an argument by name.
 
-:param name: Имя искомого аргумента.
-:return: Объект ``InputArgument`` или ``None``, если аргумент не найден.
+:param name: Name of the argument to search for.
+:return: ``InputArgument`` object or ``None`` if the argument is not found.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/argspace/snippet4.py
    :linenos:
@@ -53,14 +53,14 @@ get_by_type
 
    get_by_type(self, arg_type: type[BaseArgument]) -> list[InputArgument] | list[Never]
 
-Возвращает все аргументы определённого типа.
+Returns all arguments of a specific type.
 
-:param arg_type: Тип аргумента (``BooleanArgument`` или ``ValueArgument``).
-:return: Список аргументов указанного типа или пустой список.
+:param arg_type: Argument type (``BooleanArgument`` or ``ValueArgument``).
+:return: List of arguments of the specified type or an empty list.
 
-Метод фильтрует ``all_arguments`` по атрибуту ``founder_class`` и возвращает аргументы, созданные из указанного типа.
+The method filters ``all_arguments`` by the ``founder_class`` attribute and returns arguments created from the specified type.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/argspace/snippet3.py
    :linenos:
@@ -71,28 +71,28 @@ InputArgument
 -------------
 
 .. seealso ::
-   Документация по ``InputArgument`` находится :ref:`здесь <root_api_orchestrator_arguments_inputargument>`.
+   Documentation for ``InputArgument`` is located :ref:`here <root_api_orchestrator_arguments_inputargument>`.
 
 -----
 
-Примеры использования
----------------------
+Usage Examples
+--------------
 
-``ArgSpace`` используется для доступа к значениям аргументов после запуска приложения. Типичный сценарий включает обработку аргументов через ``ArgParser`` и последующее извлечение значений из ``ArgSpace``.
+``ArgSpace`` is used to access argument values after the application starts. A typical scenario includes processing arguments through ``ArgParser`` and subsequent extraction of values from ``ArgSpace``.
 
-**Полный пример:**
+**Complete example:**
 
 .. literalinclude:: ../../../code_snippets/argspace/snippet.py
    :linenos:
    
-Доступ к аргументам из обработчиков осуществляется с помощью DI. Подробнее см. :ref:`здесь <root_dependency_injection>`.
+Access to arguments from handlers is done using DI. For more details, see :ref:`here <root_dependency_injection>`.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/argspace/snippet2.py
    :linenos:
 
-**Запуск приложения:**
+**Running the application:**
 
 .. code-block:: bash
 

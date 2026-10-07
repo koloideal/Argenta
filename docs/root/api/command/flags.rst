@@ -1,40 +1,40 @@
 .. _root_api_command_flags:
 
 Flags
-======
+=====
 
-``Flags`` — это коллекция флагов команды. Её основная задача — группировать и управлять набором флагов, зарегистрированных для конкретной команды. ``Flags`` служит контейнером, который позволяет удобно добавлять, извлекать, итерировать флаги и проверять их наличие.
+``Flags`` is a collection of command flags. Its main purpose is to group and manage the set of flags registered for a specific command. ``Flags`` serves as a container that allows convenient addition, retrieval, iteration of flags, and checking their presence.
 
 .. seealso::
 
-   Документация по отдельным флагам (:ref:`Flag <root_api_command_flag>`, :ref:`InputFlag <root_api_command_input_flag>`)
+   Documentation for individual flags (:ref:`Flag <root_api_command_flag>`, :ref:`InputFlag <root_api_command_input_flag>`)
    
-   Документация по :ref:`InputFlags <root_api_command_input_flags>` — коллекция обработанных флагов, введённых пользователем.
+   Documentation for :ref:`InputFlags <root_api_command_input_flags>` — a collection of processed flags entered by the user.
    
-   :ref:`Общая информация <root_flags>` о флагах и их использовании в приложении ``Argenta``
+   :ref:`General information <root_flags>` about flags and their usage in the ``Argenta`` application
 
 -----
 
-Инициализация
--------------
+Initialization
+--------------
 
 .. code-block:: python
    :linenos:
 
    __init__(self, flags: list[Flag] | None = None) -> None
 
-Создаёт новую коллекцию флагов.
+Creates a new flag collection.
 
-* ``flags``: Необязательный список флагов типа ``Flag`` для инициализации коллекции. Если не указан, создаётся пустая коллекция.
+* ``flags``: Optional list of flags of type ``Flag`` for initializing the collection. If not specified, an empty collection is created.
 
-**Атрибуты:**
+**Attributes:**
 
 .. py:attribute:: flags
    :no-index:
 
-   Список всех зарегистрированных флагов типа ``Flag``. 
+   List of all registered flags of type ``Flag``. 
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/flags/snippet.py
    :linenos:
@@ -42,8 +42,8 @@ Flags
 
 -----
 
-Методы
-------
+Methods
+-------
 
 add_flag
 ~~~~~~~~
@@ -53,14 +53,14 @@ add_flag
 
    add_flag(self, flag: Flag) -> None
 
-Добавляет флаг в коллекцию.
+Adds a flag to the collection.
 
-:param flag: Флаг типа ``Flag`` для добавления.
+:param flag: Flag of type ``Flag`` to add.
 :return: None.
 
-Используется для динамического расширения набора флагов.
+Used for dynamically extending the set of flags.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/flags/snippet2.py
    :linenos:
@@ -76,14 +76,14 @@ add_flags
 
    add_flags(self, flags: list[Flag]) -> None
 
-Добавляет в коллекцию список флагов.
+Adds a list of flags to the collection.
 
-:param flags: Список флагов типа ``Flag`` для добавления.
+:param flags: List of flags of type ``Flag`` to add.
 :return: None.
 
-Метод расширяет коллекцию, добавляя в неё все флаги из переданного списка. Эффективен для пакетного добавления.
+The method extends the collection by adding all flags from the provided list. Efficient for batch addition.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/flags/snippet3.py
    :linenos:
@@ -99,14 +99,14 @@ get_flag_by_name
 
    get_flag_by_name(self, name: str) -> Flag | None
 
-Возвращает флаг по имени.
+Returns a flag by name.
 
-:param name: Имя искомого флага.
-:return: Объект ``Flag`` или ``None``, если флаг не найден.
+:param name: Name of the flag to search for.
+:return: ``Flag`` object or ``None`` if the flag is not found.
 
-Метод возвращает флаг с соответствующим именем. Если флаг не найден, возвращается ``None``.
+The method returns a flag with the corresponding name. If the flag is not found, ``None`` is returned.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/flags/snippet4.py
    :linenos:

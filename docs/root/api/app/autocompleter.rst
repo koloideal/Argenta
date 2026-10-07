@@ -1,14 +1,14 @@
 .. _root_api_app_autocompleter:
 
 AutoCompleter
-=====================
+=============
 
-``AutoCompleter`` — это компонент, отвечающий за интерактивное автодополнение команд. Он улучшает пользовательский опыт, предлагая подсказки и завершая ввод на основе истории команд, что ускоряет работу и снижает вероятность опечаток.
+``AutoCompleter`` is a component responsible for interactive command autocompletion. It improves user experience by offering suggestions and completing input based on command history, which speeds up work and reduces the likelihood of typos.
 
 -----
 
-Инициализация
--------------
+Initialization
+--------------
 
 .. code-block:: python
 
@@ -18,34 +18,34 @@ AutoCompleter
            command_highlighting: bool = True,
            auto_suggestions: bool = True) -> None:
 
-Создаёт и настраивает экземпляр ``AutoCompleter``.
+Creates and configures an ``AutoCompleter`` instance.
 
-* ``history_filename``: Имя файла для сохранения истории команд. Если указано, история будет сохраняться между сессиями. При значении ``None`` история хранится только в контексте сессии.
-* ``autocomplete_button``: Клавиша, активирующая автодополнение. По умолчанию — **Tab**.
-* ``command_highlighting``: Если True, то в реальном времени при вводе команды она будет подсвечиваться: зелёным, если такой триггер существует и красный, если нет.
-* ``auto_suggestions``: Если True, то дополнение до раннее введённой команды будет сразу отображаться светло-серым в строке ввода.
+* ``history_filename``: Filename for saving command history. If specified, history will be saved between sessions. When set to ``None``, history is stored only within the session context.
+* ``autocomplete_button``: Key that activates autocompletion. Defaults to **Tab**.
+* ``command_highlighting``: If True, then in real time, when entering a  command, it will be highlighted: green if such a trigger exists and red if not.
+* ``auto_suggestions``: If True, the addition to the previously entered  command will immediately be displayed in light gray in the input line.
 
 -----
 
-Назначение и возможности
--------------------------
+Purpose and Features
+--------------------
 
-Основные возможности ``AutoCompleter``:
+Main features of ``AutoCompleter``:
 
-*   **Автодополнение по истории**: При нажатии клавиши автодополнения (по умолчанию **Tab**) система ищет в истории команды, начинающиеся с уже введённого текста.
+*   **History-based autocompletion**: When the autocompletion key is pressed (by default **Tab**), the system searches history for commands starting with the already entered text.
 
-*   **Общий префикс**: Если найдено несколько команд с общим префиксом, будет подставлена только общая часть. Например, для команд ``show_users`` и ``show_profile`` при вводе ``sho`` и нажатии **Tab** ввод дополнится до ``show_``.
+*   **Common prefix**: If multiple commands with a common prefix are found, only the common part will be inserted. For example, for commands ``show_users`` and ``show_profile``, when entering ``sho`` and pressing **Tab**, the input will be completed to ``show_``.
 
-*   **Постоянная история**: Если указан ``history_filename``, история команд сохраняется в файл при выходе и загружается при следующем запуске. Это делает автодополнение со временем «умнее».
+*   **Persistent history**: If ``history_filename`` is specified, command history is saved to a file on exit and loaded on the next startup. This makes autocompletion "smarter" over time.
 
-*   **Настройка клавиши**: Клавишу автодополнения можно изменить с помощью параметра ``autocomplete_button``.
+*   **Key customization**: The autocompletion key can be changed using the ``autocomplete_button`` parameter.
  
 -----
 
-Пример использования
---------------------
+Usage Example
+-------------
 
-``AutoCompleter`` передаётся как аргумент при инициализации `App`.
+``AutoCompleter`` is passed as an argument when initializing `App`.
 
 .. literalinclude:: ../../../code_snippets/autocompleter/snippet.py
     :language: python

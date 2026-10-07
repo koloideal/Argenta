@@ -1,14 +1,14 @@
-Тестирование
-============
+Testing
+=======
 
-В этом разделе описаны практики тестирования приложений на основе ``Argenta``. Примеры основаны на фактическом публичном API.
+This section describes testing practices for applications based on ``Argenta``. Examples are based on the actual public API.
 
-Модульное тестирование обработчиков
-------------------------------------
+Unit Testing Handlers
+---------------------
 
-Обработчики в ``Argenta`` — обычные функции. Их удобно тестировать как чистые функции, не поднимая весь цикл приложения. Рекомендуются ``unittest`` или ``pytest``.
+Handlers in ``Argenta`` are regular functions. They are convenient to test as pure functions without starting the entire application cycle. ``unittest`` or ``pytest`` are recommended.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../code_snippets/testing/simple_handler_unittest.py
    :language: python
@@ -16,12 +16,12 @@
    
 -----
 
-Тестирование с внедрением зависимостей (DI)
--------------------------------------------
+Testing with Dependency Injection (DI)
+--------------------------------------
 
-Если обработчику нужны зависимости, используйте ``dishka`` и интеграцию ``Argenta``:
+If a handler needs dependencies, use ``dishka`` and ``Argenta`` integration:
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../code_snippets/testing/di_handler_unittest.py
    :language: python
@@ -29,12 +29,12 @@
    
 -----
 
-Интеграционное тестирование приложения
+Integration Testing of the Application
 --------------------------------------
 
-Для более высокого уровня тестов собирайте ``App`` и ``Router`` и вызывайте обработчики через парсинг команд, обходя бесконечный цикл ввода. Это даёт близкое к реальности поведение без необходимости симулировать ``stdin``.
+For higher-level tests, assemble ``App`` and ``Router`` and call handlers through command parsing, bypassing the infinite input loop. This provides behavior close to reality without the need to simulate ``stdin``.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../code_snippets/testing/app_integration_unittest.py
    :language: python
@@ -42,17 +42,17 @@
    
 -----
 
-E2E-тестирование цикла
-----------------------
+E2E Testing of the Loop
+-----------------------
 
-Полный запуск цикла ``run_repl`` можно покрывать через подпроцесс с передачей строк в ``stdin``. Это тяжелее и обычно не требуется. Если всё же необходимо — пример ниже.
+Full execution of the ``start_polling`` loop can be covered through a subprocess with passing strings to ``stdin``. This is heavier and usually not required. If still necessary, an example is below.
 
 .. danger::
-    **Важно:** Обязательно передавайте строковый триггер команды выхода последним элементом в списке ``side_effects`` при патче ``input``.
+    **Important:** Always pass the exit command string trigger as the last element in the ``side_effects`` list when patching ``input``.
     
-    Иначе тестируемое приложение будет ожидать ввода следующей команды и не сможет корректно завершиться.
+    Otherwise, the application under test will wait for the next command input and will not be able to terminate correctly.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../code_snippets/testing/app_e2e_test.py
    :language: python
@@ -60,11 +60,11 @@ E2E-тестирование цикла
    
 -----
 
-Советы по тестированию
-----------------------
+Testing Tips
+------------
 
-1. **Изолируйте тесты**: Каждый тест должен быть независимым от других.
-2. **Моки для внешних интеграций**: БД, HTTP-клиенты и т.п. подменяйте заглушками и провайдерами ``dishka``.
-3. **Покрывайте ошибочные сценарии**: Некорректные флаги, неизвестные команды, пустой ввод.
-4. **Минимизируйте зависимость от форматирования**: Сравнивайте ключевые фрагменты вывода, а не весь блок целиком.
-5. **Измеряйте покрытие**: Используйте ``pytest-cov``.
+1. **Isolate tests**: Each test should be independent of others.
+2. **Mocks for external integrations**: Replace databases, HTTP clients, etc. with stubs and ``dishka`` providers.
+3. **Cover error scenarios**: Incorrect flags, unknown commands, empty input.
+4. **Minimize formatting dependency**: Compare key output fragments, not the entire block.
+5. **Measure coverage**: Use ``pytest-cov``.

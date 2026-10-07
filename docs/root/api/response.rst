@@ -3,21 +3,21 @@
 Response
 ========
 
-``Response`` — это объект, который передаётся в обработчик команды. Он создаётся автоматически при обработке пользовательского ввода и содержит статус валидации, введённые флаги.
+``Response`` is an object that is passed to the command handler. It is created automatically when processing user input and contains validation status and entered flags.
 
 
 .. seealso::
 
-   Документация по :ref:`InputFlags <root_api_command_input_flags>` — коллекция введённых флагов команды.
+   Documentation for :ref:`InputFlags <root_api_command_input_flags>` — collection of entered command flags.
 
-   Документация по :ref:`ResponseStatus <root_api_response_status>` — статусы валидации флагов команды.
+   Documentation for :ref:`ResponseStatus <root_api_response_status>` — command flag validation statuses.
 
-   Документация по :ref:`InputFlag <root_api_command_input_flag>` — отдельный введённый флаг.
+   Documentation for :ref:`InputFlag <root_api_command_input_flag>` — individual entered flag.
 
 -----
 
-Инициализация
--------------
+Initialization
+--------------
 
 .. code-block:: python
    :linenos:
@@ -27,27 +27,27 @@ Response
        input_flags: InputFlags = EMPTY_INPUT_FLAGS,
    )
 
-Создаёт новый объект ответа.
+Creates a new response object.
 
-* ``status``: Общий статус валидации флагов из перечисления ``ResponseStatus``.
-* ``input_flags``: Коллекция введённых флагов (``InputFlags``). По умолчанию — пустая.
+* ``status``: Overall flag validation status from the ``ResponseStatus`` enumeration.
+* ``input_flags``: Collection of entered flags (``InputFlags``). Empty by default.
 
 .. warning::
-   Экземпляры этого класса не предназначены для прямого создания. Они автоматически формируются системой и передаются в обработчик команды в качестве первого обязательного аргумента.
+   Instances of this class are not intended for direct creation. They are automatically formed by the system and passed to the command handler as the first required argument.
 
-**Атрибуты:**
+**Attributes:**
 
 .. py:attribute:: status
    :no-index:
 
-   Общий статус валидации всех флагов команды (``ResponseStatus``). Указывает, были ли среди введённых флагов некорректные или незарегистрированные.
+   Overall validation status of all command flags (``ResponseStatus``). Indicates whether there were any incorrect or unregistered flags among the entered ones.
 
 .. py:attribute:: input_flags
    :no-index:
 
-   Коллекция всех флагов, переданных с командой (``InputFlags``). Содержит все обработанные флаги с их значениями и статусами валидации.
+   Collection of all flags passed with the command (``InputFlags``). Contains all processed flags with their values and validation statuses.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../code_snippets/response/snippet1.py
    :linenos:
@@ -55,12 +55,12 @@ Response
 
 -----
 
-Работа с флагами
-----------------
+Working with Flags
+------------------
 
-``Response`` предоставляет доступ к введённым флагам через атрибут ``input_flags``. Вы можете проверять их наличие, получать значения и статусы валидации.
+``Response`` provides access to entered flags through the ``input_flags`` attribute. You can check their presence, get values, and validation statuses.
 
-**Пример работы с флагами:**
+**Example of working with flags:**
 
 .. literalinclude:: ../../code_snippets/response/snippet6.py
    :linenos:
@@ -73,7 +73,7 @@ Response
 ResponseStatus
 --------------
 
-``ResponseStatus`` — это перечисление, которое определяет общий статус валидации всех флагов команды. Используется в атрибуте ``status`` объекта ``Response``.
+``ResponseStatus`` is an enumeration that defines the overall validation status of all command flags. Used in the ``status`` attribute of the ``Response`` object.
 
 ALL_FLAGS_VALID
 ~~~~~~~~~~~~~~~
@@ -83,7 +83,7 @@ ALL_FLAGS_VALID
 
    ResponseStatus.ALL_FLAGS_VALID = 'ALL_FLAGS_VALID'
 
-Все введённые флаги прошли валидацию. Нет ни некорректных, ни незарегистрированных флагов.
+All entered flags passed validation. There are no incorrect or unregistered flags.
 
 UNDEFINED_FLAGS
 ~~~~~~~~~~~~~~~
@@ -93,7 +93,7 @@ UNDEFINED_FLAGS
 
    ResponseStatus.UNDEFINED_FLAGS = 'UNDEFINED_FLAGS'
 
-Среди введённых флагов есть незарегистрированные, но нет флагов с некорректными значениями.
+Among the entered flags, there are unregistered ones, but no flags with incorrect values.
 
 INVALID_VALUE_FLAGS
 ~~~~~~~~~~~~~~~~~~~
@@ -103,7 +103,7 @@ INVALID_VALUE_FLAGS
 
    ResponseStatus.INVALID_VALUE_FLAGS = 'INVALID_VALUE_FLAGS'
 
-Среди введённых флагов есть флаги с некорректными значениями, но нет незарегистрированных.
+Among the entered flags, there are flags with incorrect values, but no unregistered ones.
 
 UNDEFINED_AND_INVALID_FLAGS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -113,4 +113,4 @@ UNDEFINED_AND_INVALID_FLAGS
 
    ResponseStatus.UNDEFINED_AND_INVALID_FLAGS = 'UNDEFINED_AND_INVALID_FLAGS'
 
-Среди введённых флагов есть как незарегистрированные, так и флаги с некорректными значениями.
+Among the entered flags, there are both unregistered flags and flags with incorrect values.

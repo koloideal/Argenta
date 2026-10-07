@@ -14,9 +14,6 @@ root_doc = "index"
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-locale_dirs = ['locales/']
-gettext_compact = False
-
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
@@ -26,13 +23,6 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_theme = "shibuya"
 html_static_path = ["_static"]
-
-html_context = {
-    "languages": [
-        ("English", "/en/latest/%s.html", "en"),
-        ("Русский", "/ru/latest/%s.html", "ru"),
-    ]
-}
 
 html_theme_options = {
   "accent_color": "cyan",

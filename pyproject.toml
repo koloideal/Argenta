@@ -75,7 +75,6 @@ docs = [
     "shibuya>=2025.9.25",
     "sphinx>=8.2.3",
     "sphinx-autobuild>=2025.8.25",
-    "sphinx-intl>=2.3.2",
 ]
 tests = [
     "pyfakefs>=5.5.0",

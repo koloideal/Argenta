@@ -1,192 +1,191 @@
 .. _root_contributing:
 
-Вклад в проект
-==============
+Contributing to the Project
+===========================
 
 .. default-role:: code
 
-Прежде всего, спасибо, что уделили время для внесения своего вклада! ❤️
+First of all, thank you for taking the time to contribute! ❤️
 
-Мы приветствуем и ценим любой вклад. Пожалуйста, прочтите соответствующий раздел, прежде чем начать. Это облегчит работу мейнтейнеров и сделает процесс более гладким для всех. Сообщество с нетерпением ждёт ваших идей! 🎉
+We welcome and appreciate any contribution. Please read the relevant section before getting started. This will make it easier for maintainers and make the process smoother for everyone. The community is looking forward to your ideas! 🎉
 
 .. note::
 
-   Если вам нравится проект, но у вас нет времени на активный вклад, вы можете поддержать нас другими способами:
+   If you like the project but don't have time to actively contribute, you can support us in other ways:
 
-*   Поставить звезду на GitHub.
-*   Написать о проекте в Twitter или других социальных сетях.
-*   Сослаться на проект в `README` вашего репозитория.
-*   Упомянуть проект на митапах и рассказать о нём друзьям и коллегам.
+*   Star the project on GitHub.
+*   Write about the project on Twitter or other social media.
+*   Reference the project in your repository's `README`.
+*   Mention the project at meetups and tell your friends and colleagues about it.
 
 .. _contents:
 
-Содержание
-----------
+Contents
+--------
 
-* :ref:`Кодекс поведения <code-of-conduct>`
-* :ref:`У меня есть вопрос <i-have-a-question>`
-* :ref:`Я хочу внести вклад <i-want-to-contribute>`
-* :ref:`Сообщение об ошибках <reporting-bugs>`
-* :ref:`Предложение улучшений <suggesting-enhancements>`
-* :ref:`Ваш первый вклад в код <your-first-code-contribution>`
-* :ref:`Улучшение документации <improving-documentation>`
-* :ref:`Руководства по стилю <styleguide>`
-* :ref:`Присоединяйтесь к команде проекта <join-the-project-team>`
+* :ref:`Code of Conduct <code-of-conduct>`
+* :ref:`I Have a Question <i-have-a-question>`
+* :ref:`I Want to Contribute <i-want-to-contribute>`
+* :ref:`Reporting Bugs <reporting-bugs>`
+* :ref:`Suggesting Enhancements <suggesting-enhancements>`
+* :ref:`Your First Code Contribution <your-first-code-contribution>`
+* :ref:`Improving Documentation <improving-documentation>`
+* :ref:`Style Guides <styleguide>`
+* :ref:`Join the Project Team <join-the-project-team>`
 
 .. _code-of-conduct:
 
-Кодекс поведения
-----------------
+Code of Conduct
+---------------
 
-Этот проект и все его участники руководствуются :ref:`Кодексом поведения Argenta <root_code_of_conduct>`.
-Участвуя, вы обязуетесь соблюдать этот кодекс. Пожалуйста, сообщайте о недопустимом поведении.
+This project and all its participants are governed by the :ref:`Argenta Code of Conduct <root_code_of_conduct>`. By participating, you are expected to uphold this code. Please report unacceptable behavior.
 
 -----
 
 .. _i-have-a-question:
 
-У меня есть вопрос
-------------------
+I Have a Question
+-----------------
 
 .. note::
 
-   Прежде чем задать вопрос, пожалуйста, ознакомьтесь с `документацией <https://argenta.readthedocs.io>`_.
+   Before asking a question, please check the `documentation <https://argenta.readthedocs.io>`_.
 
-Поищите ответ в существующих `Issues <https://github.com/koloideal/Argenta/issues>`_. Если вы нашли похожий вопрос, но всё ещё нуждаетесь в разъяснениях, можете написать в нём. Также рекомендуем поискать ответ в интернете.
+Search for an answer in existing `Issues <https://github.com/koloideal/Argenta/issues>`_. If you found a similar question but still need clarification, you can comment on it. We also recommend searching the internet for an answer.
 
-Если ответа не нашлось, создайте новый `Issue <https://github.com/koloideal/Argenta/issues/new>`_ и предоставьте как можно больше контекста, включая версии проекта и платформы.
+If you can't find an answer, create a new `Issue <https://github.com/koloideal/Argenta/issues/new>`_ and provide as much context as possible, including project and platform versions.
 
-Мы займемся вашей задачей как можно скорее.
+We will address your issue as soon as possible.
 
 -----
 
 .. _i-want-to-contribute:
 
-Я хочу внести вклад
--------------------
+I Want to Contribute
+--------------------
 
-.. rubric:: Правовое уведомление
+.. rubric:: Legal Notice
 
 .. note::
 
-   Внося вклад в этот проект, вы подтверждаете, что являетесь автором 100% контента, обладаете необходимыми правами на него и соглашаетесь, что он может распространяться под лицензией проекта.
+   By contributing to this project, you confirm that you are the author of 100% of the content, have the necessary rights to it, and agree that it may be distributed under the project's license.
 
 .. _reporting-bugs:
 
-Сообщение об ошибках
---------------------
+Reporting Bugs
+--------------
 
-.. rubric:: Перед отправкой отчета об ошибке
+.. rubric:: Before Submitting a Bug Report
 
-Хороший отчёт об ошибке не должен заставлять других вытягивать из вас дополнительную информацию. Пожалуйста, тщательно всё изучите, соберите информацию и подробно опишите проблему. Это поможет нам исправить её как можно быстрее.
+A good bug report shouldn't require others to extract additional information from you. Please investigate thoroughly, gather information, and describe the problem in detail. This will help us fix it as quickly as possible.
 
-* Убедитесь, что вы используете последнюю версию.
-* Убедитесь, что проблема действительно является ошибкой, а не вызвана, например, использованием несовместимых версий окружения. Прочтите `документацию <https://argenta.readthedocs.io>`_ и, если нужна поддержка, загляните в раздел :ref:`У меня есть вопрос <i-have-a-question>`.
-* Проверьте, нет ли уже отчёта о вашей ошибке в `трекере <https://github.com/koloideal/Argenta/issues?q=label%3Abug>`_.
-* Также поищите в интернете (включая `Stack Overflow`), чтобы узнать, обсуждалась ли проблема за пределами `GitHub`.
-* Соберите информацию об ошибке:
-    *   Трассировка стека.
-    *   ОС, платформа и версия (Windows, Linux, macOS, x86, ARM).
-    *   Версия интерпретатора, компилятора, SDK, среды выполнения, менеджера пакетов и т.д.
-    *   Входные данные и полученный результат.
-    *   Можете ли вы надёжно воспроизвести проблему? Воспроизводится ли она на старых версиях?
+* Make sure you are using the latest version.
+* Make sure the issue is actually a bug and not caused by, for example, using incompatible environment versions. Read the `documentation <https://argenta.readthedocs.io>`_ and, if you need support, check out the :ref:`I Have a Question <i-have-a-question>` section.
+* Check if there is already a report about your bug in the `tracker <https://github.com/koloideal/Argenta/issues?q=label%3Abug>`_.
+* Also search the internet (including `Stack Overflow`) to see if the issue has been discussed outside of `GitHub`.
+* Collect information about the bug:
+    *   Stack trace.
+    *   OS, platform, and version (Windows, Linux, macOS, x86, ARM).
+    *   Version of interpreter, compiler, SDK, runtime environment, package manager, etc.
+    *   Input data and output received.
+    *   Can you reliably reproduce the issue? Does it reproduce on older versions?
 
-.. rubric:: Как мне отправить хороший отчет об ошибке?
+.. rubric:: How Do I Submit a Good Bug Report?
 
 .. note::
 
-   Никогда не сообщайте о проблемах безопасности, уязвимостях или ошибках с конфиденциальной информацией в публичном трекере. Для этого используйте электронную почту.
+   Never report security issues, vulnerabilities, or bugs with sensitive information in the public tracker. Use email for this purpose.
 
-Мы используем `GitHub Issues` для отслеживания ошибок. Если вы столкнулись с проблемой:
+We use `GitHub Issues` to track bugs. If you encounter a problem:
 
-* Откройте новый `Issue <https://github.com/koloideal/Argenta/issues/new>`_. На этом этапе не нужно присваивать ему метки.
-* Объясните ожидаемое и фактическое поведение.
-* Предоставьте как можно больше контекста и опишите **шаги для воспроизведения**, чтобы проблему можно было воссоздать. Лучше всего изолировать её и создать минимальный тестовый пример.
-* Предоставьте информацию, которую вы собрали в предыдущем разделе.
+* Open a new `Issue <https://github.com/koloideal/Argenta/issues/new>`_. At this stage, you don't need to assign labels to it.
+* Explain the expected and actual behavior.
+* Provide as much context as possible and describe **reproduction steps** so the issue can be recreated. It's best to isolate it and create a minimal test case.
+* Provide the information you collected in the previous section.
 
-После того, как задача будет создана:
+Once the issue is created:
 
-* Команда проекта присвоит задаче соответствующую метку.
-* Член команды попытается воспроизвести проблему. Если шагов нет или они не приводят к результату, команда попросит вас предоставить их и пометит задачу как `needs-repro`. Такие задачи не будут рассматриваться до тех пор, пока проблема не будет воспроизведена.
-* Если проблема будет воспроизведена, она будет помечена как `needs-fix` (и, возможно, другими метками, например `critical`), после чего её сможет взять в работу :ref:`любой желающий <your-first-code-contribution>`.
+* The project team will assign an appropriate label to the issue.
+* A team member will try to reproduce the issue. If there are no steps or they don't lead to the result, the team will ask you to provide them and mark the issue as `needs-repro`. Such issues will not be addressed until the problem is reproduced.
+* If the issue is reproduced, it will be marked as `needs-fix` (and possibly with other labels, such as `critical`), after which :ref:`anyone willing <your-first-code-contribution>` can take it on.
 
 -----
 
 .. _suggesting-enhancements:
 
-Предложение улучшений
----------------------
+Suggesting Enhancements
+-----------------------
 
-Этот раздел поможет вам отправить предложение по улучшению `Argenta`, **включая как новые функции, так и незначительные улучшения**. Следование этим рекомендациям поможет мейнтейнерам и сообществу лучше понять вашу идею.
+This section will help you submit an enhancement suggestion for `Argenta`, **including both new features and minor improvements**. Following these guidelines will help maintainers and the community better understand your idea.
 
-.. rubric:: Перед отправкой предложения по улучшению
+.. rubric:: Before Submitting an Enhancement Suggestion
 
-* Убедитесь, что вы используете последнюю версию.
-* Внимательно прочтите `документацию <https://argenta.readthedocs.io>`_ и убедитесь, что предлагаемая функциональность ещё не реализована (возможно, через конфигурацию).
-* Выполните `поиск <https://github.com/koloideal/Argenta/issues>`_, чтобы проверить, не предлагалось ли это улучшение ранее. Если да, добавьте комментарий к существующей задаче.
-* Определите, соответствует ли ваша идея масштабу и целям проекта. Вам предстоит убедительно доказать её пользу. Мы хотим видеть функции, которые будут полезны большинству пользователей. Если ваша идея ориентирована на узкий круг, рассмотрите возможность создания плагина.
+* Make sure you are using the latest version.
+* Carefully read the `documentation <https://argenta.readthedocs.io>`_ and make sure the proposed functionality is not already implemented (perhaps through configuration).
+* Perform a `search <https://github.com/koloideal/Argenta/issues>`_ to check if this enhancement has been suggested before. If so, add a comment to the existing issue.
+* Determine if your idea fits the scope and goals of the project. You will need to convincingly demonstrate its value. We want to see features that will be useful to most users. If your idea targets a narrow audience, consider creating a plugin.
 
-.. rubric:: Как мне отправить хорошее предложение по улучшению?
+.. rubric:: How Do I Submit a Good Enhancement Suggestion?
 
-Предложения по улучшению отслеживаются в `GitHub Issues <https://github.com/koloideal/Argenta/issues>`_.
+Enhancement suggestions are tracked in `GitHub Issues <https://github.com/koloideal/Argenta/issues>`_.
 
-* Используйте **чёткий и описательный заголовок**, чтобы идентифицировать предложение.
-* Предоставьте **пошаговое и подробное описание** предлагаемого улучшения.
-* **Опишите текущее поведение** и **объясните, какое вы ожидали увидеть вместо этого** и почему. Здесь же можно указать, какие альтернативы вам не подходят.
-* **Приложите скриншоты или видео**, которые помогут продемонстрировать шаги или указать на часть, к которой относится предложение.
-* **Объясните, почему это улучшение будет полезно** большинству пользователей `Argenta`. Вы также можете указать на другие проекты, которые решили эту проблему и могут послужить источником вдохновения.
+* Use a **clear and descriptive title** to identify the suggestion.
+* Provide a **step-by-step and detailed description** of the proposed enhancement.
+* **Describe the current behavior** and **explain what you expected to see instead** and why. You can also mention which alternatives don't work for you.
+* **Attach screenshots or videos** that help demonstrate the steps or point to the part the suggestion relates to.
+* **Explain why this enhancement would be useful** to most `Argenta` users. You can also point to other projects that have solved this problem and could serve as inspiration.
 
 -----
 
 .. _your-first-code-contribution:
 
-Ваш первый вклад в код
------------------------
+Your First Code Contribution
+----------------------------
 
-Не знаете, с чего начать? Посмотрите на задачи с метками `good first issue` и `help wanted` в нашем репозитории на `GitHub`. Они хорошо подходят для новичков.
+Don't know where to start? Look at issues labeled `good first issue` and `help wanted` in our `GitHub` repository. They are well-suited for beginners.
 
-Чтобы начать, настройте локальное окружение для разработки, следуя этим шагам.
+To get started, set up a local development environment by following these steps.
 
-#. Сделайте форк репозитория ``Argenta`` на ``GitHub``.
-#. Клонируйте ваш форк на локальную машину:
+#. Fork the ``Argenta`` repository on ``GitHub``.
+#. Clone your fork to your local machine:
 
    .. code-block:: bash
 
-      git clone https://github.com/<ВАШ_НИКНЕЙМ>/Argenta.git
+      git clone https://github.com/<YOUR_USERNAME>/Argenta.git
       cd Argenta
 
-#. Создайте и активируйте виртуальное окружение.
+#. Create and activate a virtual environment.
 
    .. code-block:: bash
 
-      # Для macOS/Linux
+      # For macOS/Linux
       python3 -m venv .venv
       source .venv/bin/activate
 
-      # Для Windows
+      # For Windows
       python -m venv .venv
       .venv\Scripts\activate
 
-#. Установите зависимости проекта, включая инструменты для разработки.
+#. Install project dependencies, including development tools.
 
    .. code-block:: bash
 
       pip install -e .[dev]
 
-#. Создайте новую ветку для вашей функции или исправления. Используйте описательное имя, например `fix/login-bug` или `feat/new-widget`.
+#. Create a new branch for your feature or fix. Use a descriptive name, such as `fix/login-bug` or `feat/new-widget`.
 
    .. code-block:: bash
 
       git switch -c your-new-branch-name
 
-#. Внесите свои изменения. Напишите код и не забудьте добавить или обновить тесты.
-#. Запустите тесты, чтобы убедиться, что все работает корректно.
+#. Make your changes. Write code and don't forget to add or update tests.
+#. Run tests to make sure everything works correctly.
 
    .. code-block:: bash
 
       python -m pytest tests
 
-#. Сделайте коммит, следуя :ref:`нашему руководству по стилю <styleguide>`, и отправьте изменения в ваш форк.
+#. Commit following :ref:`our style guide <styleguide>` and push the changes to your fork.
 
    .. code-block:: bash
 
@@ -194,107 +193,105 @@
       git commit -m "feat(widget): add the new super widget"
       git push origin your-new-branch-name
 
-#. Откройте `Pull Request` из вашей ветки в ветку `main` официального репозитория. Предоставьте чёткое описание проблемы и вашего решения. Укажите номер связанной задачи, если она есть.
+#. Open a `Pull Request` from your branch to the `main` branch of the official repository. Provide a clear description of the problem and your solution. Include the related issue number if there is one.
 
 -----
 
 .. _improving-documentation:
 
-Улучшение документации
-----------------------
+Improving Documentation
+-----------------------
 
-Хорошая документация крайне важна. Мы используем `Sphinx` для её генерации из исходных файлов в директории `docs/`. Мы приветствуем любые улучшения: от исправления опечатки до написания нового раздела.
+Good documentation is crucial. We use `Sphinx` to generate it from source files in the `docs/` directory. We welcome any improvements: from fixing a typo to writing a new section.
 
 .. note::
 
-   Мы поддерживаем документацию на двух языках: русском и английском.
+   We maintain documentation in two languages: Russian and English.
    
 .. important::
 
-    Для инкапсуляции различных команд, необходимых для настройки и запуска проекта мы используем ``just``, он же фигурирует в различных примерах в документации, поэтому рекомендуем вам `установить его <https://github.com/casey/just#installation>`_
+    To encapsulate various commands needed for setting up and running the project, we use ``just``, which also appears in various examples in the documentation, so we recommend you `install it <https://github.com/casey/just#installation>`_
 
-Для улучшения документации вы можете следовать процессу, похожему на внесение вклада в код:
+To improve documentation, you can follow a process similar to contributing code:
 
-#. Убедитесь, что ваше окружение для разработки настроено, как описано в разделе :ref:`Ваш первый вклад в код <your-first-code-contribution>`.
-#. Перейдите в директорию с документацией.
+#. Make sure your development environment is set up as described in the :ref:`Your First Code Contribution <your-first-code-contribution>` section.
+#. Navigate to the documentation directory.
 
    .. code-block:: bash
 
       cd docs
 
-#. Внесите изменения в **русскую** версию документации (`docs/index.rst` и/или `docs/root/*`).
-#. Чтобы собрать документацию локально в режиме автоматического ребилда и увидеть изменения, выполните:
+#. Make changes to the **Russian** version of the documentation (`docs/index.rst` and/or `docs/root/*`).
+#. To build the documentation locally in auto-rebuild mode and see the changes, run:
 
    .. code-block:: bash
 
       just live-ru
 
-#. Откройте `127.0.0.1:8000` в браузере, чтобы просмотреть сгенерированную документацию.
-#. После завершения работы над русской версией необходимо создать английский перевод:
+#. Open `127.0.0.1:8000` in your browser to presentation the generated documentation.
+#. After completing work on the Russian version, you need to create an English translation:
 
    .. code-block:: bash
 
       just update-langs
 
-#. После обновления шаблона обновите файлы перевода, расположенные в `docs/locales/en/LC_MESSAGES/`.
-#. Когда изменения будут готовы, сделайте коммит и откройте `Pull Request`. Используйте префикс `docs:` в сообщении коммита.
+#. After updating the template, update the translation files located in `docs/locales/en/LC_MESSAGES/`.
+#. When the changes are ready, commit and open a `Pull Request`. Use the `docs:` prefix in the commit message.
 
 -----
 
 .. _styleguide:
 
-Руководства по стилю
---------------------
+Style Guides
+------------
 
 .. _commits_messages:
 
-**Сообщения коммитов**
+**Commit Messages**
 
-Мы следуем спецификации `Conventional Commits <https://www.conventionalcommits.org/en/v1.0.0/>`_. Это делает историю проекта более читаемой и позволяет автоматически генерировать журнал изменений.
+We follow the `Conventional Commits <https://www.conventionalcommits.org/en/v1.0.0/>`_ specification. This makes the project history more readable and allows automatic changelog generation.
 
-Каждое сообщение коммита состоит из **заголовка**, **тела** и **нижнего колонтитула**.
+Each commit message consists of a **header**, **body**, and **footer**.
 
 .. code-block:: text
 
-   <тип>(<область>): <тема>
+   <type>(<scope>): <subject>
 
-   [опциональное тело]
+   [optional body]
 
-   [опциональный нижний колонтитул]
+   [optional footer]
 
-``<тип>`` должен быть одним из следующих:
+``<type>`` must be one of the following:
 
-* **feat**: Новая функция для пользователя.
-* **fix**: Исправление ошибки для пользователя.
-* **docs**: Только изменения в документации.
-* **style**: Изменения, не влияющие на смысл кода (пробелы, форматирование и т.д.).
-* **refactor**: Изменение кода, которое не исправляет ошибку и не добавляет новую функцию.
-* **perf**: Изменение кода, улучшающее производительность.
-* **test**: Добавление недостающих тестов или исправление существующих.
-* **chore**: Изменения в процессе сборки или вспомогательных инструментах и библиотеках.
+* **feat**: A new feature for the user.
+* **fix**: A bug fix for the user.
+* **docs**: Documentation changes only.
+* **style**: Changes that don't affect the meaning of the code (whitespace, formatting, etc.).
+* **refactor**: A code change that neither fixes a bug nor adds a feature.
+* **perf**: A code change that improves performance.
+* **test**: Adding missing tests or correcting existing tests.
+* **chore**: Changes to the build process or auxiliary tools and libraries.
 
-.. rubric:: Примеры
+.. rubric:: Examples
 
-Простое исправление:
-``fix: correct typo in user authentication flow``
+Simple fix: ``fix: correct typo in user authentication flow``
 
-Новая функция с областью видимости:
-``feat(api): add new endpoint for user profiles``
+New feature with scope: ``feat(api): add new endpoint for user profiles``
 
 -----
 
 .. _join-the-project-team:
 
-Присоединяйтесь к команде проекта
----------------------------------
+Join the Project Team
+---------------------
 
-Мы всегда ищем энтузиастов для присоединения к команде. Если вы являетесь постоянным участником и продемонстрировали глубокое понимание целей и архитектуры проекта, вы можете стать хорошим кандидатом на роль мейнтейнера.
+We are always looking for enthusiasts to join the team. If you are a regular contributor and have demonstrated a deep understanding of the project's goals and architecture, you may be a good candidate for a maintainer role.
 
-Активные члены сообщества могут стать членами команды. Обычно это включает:
+Active community members can become team members. This typically includes:
 
-*   Постоянный вклад в виде качественного кода и документации.
-*   Помощь другим пользователям с их вопросами и проблемами.
-*   Проверку `Pull Request`'ов от других участников с конструктивной обратной связью.
+*   Consistent contributions of quality code and documentation.
+*   Helping other users with their questions and issues.
+*   Reviewing `Pull Requests` from other contributors with constructive feedback.
 
-Если вы заинтересованы в том, чтобы стать постоянным членом команды, лучший способ — быть активным и полезным участником сообщества. Существующие мейнтейнеры заметят ваши усилия и могут связаться с вами.
+If you are interested in becoming a permanent team member, the best way is to be an active and helpful community contributor. Existing maintainers will notice your efforts and may reach out to you.
 

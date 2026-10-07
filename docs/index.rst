@@ -6,35 +6,34 @@
 Argenta
 =======
 
-Что это и зачем?
-----------------
+What is it and why?
+-------------------
 
-**Библиотека для построения модульных CLI-приложений с простым и приятным API.**
+**A library for building modular CLI applications with a simple and pleasant API.**
 
-Если у вас есть функциональность, которую вы хотите предоставить в виде CLI-приложения, Argenta поможет вам в этом.
-Основная цель библиотеки — дать разработчикам возможность сосредоточиться на реализации своих идей, предоставляя для этого удобные абстракции.
+If you have functionality that you want to provide as a CLI application, Argenta will help you with that. The main goal of the library is to enable developers to focus on implementing their ideas by providing convenient abstractions.
 
 .. image:: https://i.ibb.co/fzWcfgFq/2025-12-04-173045.png
    :alt: App example
 
-Argenta предназначена для создания приложений, работающих в собственном контексте (scope). Это означает, что приложение запускается один раз и создаёт интерактивную сессию, похожую на Python REPL или MySQL консоль. При запуске пользователь входит в эту сессию, где ему доступна вся реализованная вами функциональность.
+Argenta is designed for creating applications that work in their own context (scope). This means that the application starts once and creates an interactive session, similar to Python REPL or MySQL console. When launched, the user enters this session where all the functionality you've implemented is available.
 
-Один из ключевых принципов библиотеки — цикличность. После выполнения команды пользователь остаётся в интерактивной сессии, в отличие от таких библиотек, как ``argparse``, ``click`` и ``typer``, где приложение завершается после каждой команды. Выход из сессии контролируется пользователем.
+One of the key principles of the library is cyclicity. After executing a command, the user remains in the interactive session, unlike libraries such as ``argparse``, ``click``, and ``typer``, where the application terminates after each command. Exiting the session is controlled by the user.
 
-**Ключевые особенности:**
+**Key features:**
 
-*   **Интерактивные сессии**: В отличие от традиционных CLI-инструментов, ``Argenta`` создаёт циклические сессии, позволяя пользователю выполнять команды последовательно, не перезапуская приложение.
-*   **Декларативный синтаксис**: Команды и их обработчики объявляются с помощью простых декораторов, что делает код интуитивно понятным и позволяет сосредоточиться на том, "что" вы хотите сделать, а не "как".
-*   **Нативный DI**: Благодаря интеграции с `dishka <https://dishka.readthedocs.io/en/stable/>`_, вы можете легко внедрять зависимости прямо в обработчики команд, что упрощает их тестирование, позволяет избежать мутабельных глобалов и многое другое.
-*   **Автоматическая валидация и парсинг**: Библиотека берёт на себя обработку флагов и аргументов командной строки, включая их парсинг, валидацию и преобразование типов.
-*   **Гибкая настройка**: Вы можете легко кастомизировать системные сообщения, форматирование вывода, создавать кастомные обработчики нестандартного поведения и т.д.
+*   **Interactive sessions**: Unlike traditional CLI tools, ``Argenta`` creates cyclical sessions, allowing users to execute commands sequentially without restarting the application.
+*   **Declarative syntax**: Commands and their handlers are declared using simple decorators, making the code intuitive and allowing you to focus on "what" you want to do, not "how".
+*   **Native DI**: Thanks to integration with `dishka <https://dishka.readthedocs.io/en/stable/>`_, you can easily inject dependencies directly into command handlers, simplifying their testing, avoiding mutable globals, and much more.
+*   **Automatic validation and parsing**: The library handles command-line flags and arguments, including their parsing, validation, and type conversion.
+*   **Flexible configuration**: You can easily customize system messages, output formatting, create custom handlers for non-standard behavior, and more.
 
 -----
 
-Архитектура и жизненный цикл
------------------------------
+Architecture and lifecycle
+--------------------------
 
-Следующая диаграмма иллюстрирует, как компоненты Argenta взаимодействуют друг с другом, обрабатывая ввод пользователя.
+The following diagram illustrates how Argenta components interact with each other while processing user input.
 
 .. image:: https://i.ibb.co/hF3FdFr1/argenta-intro-drawio-2.png
    :alt: Request Lifecycle Diagram
@@ -42,7 +41,7 @@ Argenta предназначена для создания приложений,
 
 .. toctree::
     :hidden:
-    :caption: Контент:
+    :caption: Content:
 
     root/quickstart
     root/error_handling
@@ -52,7 +51,7 @@ Argenta предназначена для создания приложений,
 
 .. toctree::
     :hidden:
-    :caption: Продвинутое использование:
+    :caption: Advanced usage:
 
     root/redirect_stdout
     root/dependency_injection
@@ -61,7 +60,7 @@ Argenta предназначена для создания приложений,
 
 .. toctree::
     :hidden:
-    :caption: Для разработчиков:
+    :caption: For developers:
 
     root/contributing
     root/code_of_conduct
@@ -69,7 +68,7 @@ Argenta предназначена для создания приложений,
 
 .. toctree::
     :hidden:
-    :caption: Ссылки проекта:
+    :caption: Project links:
 
     GitHub <https://github.com/koloideal/argenta>
     PyPI <https://pypi.org/project/argenta>

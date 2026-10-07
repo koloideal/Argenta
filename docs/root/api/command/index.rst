@@ -3,14 +3,14 @@
 Command
 =======
 
-``Command`` — это основная единица функциональности в приложении. Каждая команда связывает хэндлер с триггером, введя который он будет вызван для обработки.
+``Command`` is the basic unit of functionality in an application. Each command links a handler to a trigger, which when entered will invoke it for processing.
 
-``Command`` инкапсулирует всю информацию о команде: её триггер (ключевое слово для вызова), описание, набор флагов и множество псевдонимов.
+``Command`` encapsulates all information about a command: its trigger (keyword for invocation), description, set of flags, and set of aliases.
 
 -----
 
-Инициализация
--------------
+Initialization
+--------------
 
 .. code-block:: python
    :linenos:
@@ -20,69 +20,69 @@ Command
             flags: Flag | Flags = DEFAULT_WITHOUT_FLAGS,
             aliases: set[str] = DEFAULT_WITHOUT_ALIASES) -> None
 
-Создаёт новую команду для регистрации в роутере.
+Creates a new command for registration in a router.
 
-* ``trigger``: Строковый триггер, который пользователь вводит для вызова команды. Является основным идентификатором.
-* ``description``: Необязательное описание, объясняющее назначение команды. Отображается в справке.
-* ``flags``: Набор флагов для настройки поведения. Может быть одиночным объектом ``Flag`` или коллекцией ``Flags``.
-* ``aliases``: Множество строковых псевдонимов для основного триггера.
+* ``trigger``: String trigger that the user enters to invoke the command. Serves as the primary identifier.
+* ``description``: Optional description explaining the command's purpose. Displayed in help.
+* ``flags``: Set of flags for configuring behavior. Can be a single ``Flag`` object or a ``Flags`` collection.
+* ``aliases``: Set of string aliases for the main trigger.
 
-**Атрибуты:**
+**Attributes:**
 
 .. py:attribute:: trigger
 
-   Основной триггер команды. Используется для её идентификации при обработке пользовательского ввода.
+   The main command trigger. Used for its identification when processing user input.
 
 .. py:attribute:: description
 
-   Текстовое описание команды. Если не передано, используется значение по умолчанию.
+   Text description of the command. If not provided, the default value is used.
 
 .. py:attribute:: registered_flags
 
-   Объект ``Flags``, содержащий все зарегистрированные флаги. Если был передан ``Flag``, то автоматически конвертируется из одиночного в коллекцию при инициализации.
+   A ``Flags`` object containing all registered flags. If a ``Flag`` was passed, it is automatically converted from a single flag to a collection during initialization.
 
 .. py:attribute:: aliases
 
-   Множество строковых псевдонимов. Пуст, если псевдонимы не заданы.
+   Set of string aliases. Empty if no aliases are defined.
 
-**Пример использования:**
+**Usage example:**
 
 .. literalinclude:: ../../../code_snippets/command/snippet.py
    :linenos:
    
 .. seealso ::
-   Подробнее про флаги: :ref:`Flags <root_api_command_flags>` и :ref:`Флаги команд <root_flags>`.
+   More about flags: :ref:`Flags <root_api_command_flags>` and :ref:`Command flags <root_flags>`.
 
 -----
 
-Регистрация команд
-------------------
+Command Registration
+--------------------
 
-Команды передаются в качестве аргумента в декоратор ``@router.command()``.
+Commands are passed as an argument to the ``@router.command()`` decorator.
 
-**Базовый пример:**
+**Basic example:**
 
 .. literalinclude:: ../../../code_snippets/command/snippet2.py
    :linenos:
 
-**Команды с флагами:**
+**Commands with flags:**
 
 .. literalinclude:: ../../../code_snippets/command/snippet3.py
    :linenos:
 
 -----
 
-Работа с псевдонимами
----------------------
+Working with Aliases
+--------------------
 
-Псевдонимы позволяют вызывать один и тот же обработчик разными триггерами, сохраняя флаги и описание команды.
+Aliases allow invoking the same handler with different triggers while preserving the command's flags and description.
 
-**Пример с псевдонимами:**
+**Example with aliases:**
 
 .. literalinclude:: ../../../code_snippets/command/snippet5.py
    :linenos:
 
-Теперь пользователь может вызвать команду любым из способов:
+Now the user can invoke the command in any of the following ways:
 
 .. code-block:: bash
 
@@ -91,7 +91,7 @@ Command
    halt
    stop
 
-Все эти варианты вызовут один и тот же хэндлер ``handle_shutdown``.
+All these variants will invoke the same handler ``handle_shutdown``.
 
 -----
     
@@ -100,22 +100,22 @@ Command
 InputCommand
 ------------
 
-``InputCommand`` представляет собой обработанную команду, введённую пользователем. Этот внутренний класс создаётся автоматически при обработке пользовательского ввода. Прямая работа с ним возможна при создании пользовательского обработчика для неизвестных команд.
+``InputCommand`` represents a processed command entered by the user. This internal class is created automatically when processing user input. Direct work with it is possible when creating a custom handler for unknown commands.
 
 .. seealso ::
-   Подробнее о пользовательских обработчиках исключений см. :ref:`здесь <root_error_handling_unknown_command>`.
+   For more details on custom exception handlers, see :ref:`here <root_error_handling_unknown_command>`.
 
-**Атрибуты:**
+**Attributes:**
 
 .. py:attribute:: trigger
    :no-index:
 
-   Строковый триггер, введённый пользователем.
+   String trigger entered by the user.
 
 .. py:attribute:: input_flags
    :no-index:
 
-   Объект ``InputFlags``, содержащий все введённые и распаршенные флаги.
+   An ``InputFlags`` object containing all entered and parsed flags.
 
 .. toctree ::
     :hidden:
