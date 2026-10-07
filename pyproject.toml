@@ -133,6 +133,17 @@ md_header_level = "2"
 [tool.mypy]
 disable_error_code = "import-untyped"
 
+[[tool.mypy.overrides]]
+module = ["typer", "typer.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "argenta._cli.*"
+disallow_any_unimported = false
+disallow_untyped_calls = false
+disallow_untyped_decorators = false
+warn_return_any = false
+
 [tool.isort]
 profile = "black"
 line_length = 100
