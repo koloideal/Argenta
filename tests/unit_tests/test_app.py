@@ -44,6 +44,36 @@ def test_non_exit_command_is_not_recognized() -> None:
     assert app._is_exit_command(InputCommand('quit')) is False
 
 
+def test_dispatch_command_invokes_exit_handler_exactly_once() -> None:
+    app = App()
+    call_tracker = {'count': 0}
+
+    def custom_handler(_response: Response) -> None:
+        call_tracker['count'] += 1
+
+    app.set_exit_command_handler(custom_handler)
+    app._setup_system_router()
+
+    assert app._dispatch_command('q') is True
+    assert call_tracker['count'] == 1
+
+
+def test_dispatch_command_processes_registered_command_exactly_once() -> None:
+    app = App()
+    call_tracker = {'count': 0}
+    router = Router()
+
+    @router.command('run')
+    def handler(_response: Response) -> None:
+        call_tracker['count'] += 1
+
+    app.include_router(router)
+    app._setup_system_router()
+
+    assert app._dispatch_command('run') is False
+    assert call_tracker['count'] == 1
+
+
 # ============================================================================
 # Tests for unknown command detection
 # ============================================================================

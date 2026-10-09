@@ -154,4 +154,48 @@ class TestViewer:
         
         with pytest.raises(NotImplementedError):
             viewer.view_framed_text_from_generator(mock_output_generator, is_stdout_redirected_by_router=True)
+
+    def test_dynamic_dividing_line_matches_longest_output_line(self, mock_printer: Mock):
+        renderer = PlainRenderer()
+        dividing_line = DynamicDividingLine("-")
+        viewer = Viewer(mock_printer, renderer, dividing_line, False)
+
+        longest_line = "a much longer line of output here"
+
+        def output_generator():
+            print("short")
+            print(longest_line)
+
+        viewer.view_framed_text_from_generator(output_generator)
+
+        top_line = mock_printer.call_args_list[0][0][0]
+        assert top_line == "[dim]" + "-" * len(longest_line) + "[/dim]\n"
+
+    def test_dynamic_dividing_line_ignores_ansi_escapes_for_length(self, mock_printer: Mock):
+        renderer = PlainRenderer()
+        dividing_line = DynamicDividingLine("-")
+        viewer = Viewer(mock_printer, renderer, dividing_line, False)
+
+        payload = "x" * 30
+
+        def output_generator():
+            print("\u001b[31m" + payload + "\u001b[0m")
+
+        viewer.view_framed_text_from_generator(output_generator)
+
+        top_line = mock_printer.call_args_list[0][0][0]
+        assert top_line == "[dim]" + "-" * 30 + "[/dim]\n"
+
+    def test_dynamic_dividing_line_preserves_edge_whitespace_in_output(self, mock_printer: Mock):
+        renderer = PlainRenderer()
+        dividing_line = DynamicDividingLine("-")
+        viewer = Viewer(mock_printer, renderer, dividing_line, False)
+
+        def output_generator():
+            print("  spaced  ")
+
+        viewer.view_framed_text_from_generator(output_generator)
+
+        content = mock_printer.call_args_list[1][0][0]
+        assert content == "  spaced  "
         

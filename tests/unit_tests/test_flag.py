@@ -91,6 +91,11 @@ def test_flag_regex_validation_anchors_match_at_value_start() -> None:
     assert flag.validate_input_flag_value('abc123') is False
 
 
+def test_flag_regex_validation_accepts_prefix_match() -> None:
+    flag = Flag(name='test', possible_values=re.compile(r'\d+'))
+    assert flag.validate_input_flag_value('123abc') is True
+
+
 # ============================================================================
 # Tests for Flag - value validation with NEITHER and ALL
 # ============================================================================
@@ -207,6 +212,14 @@ def test_input_flags_get_by_name_with_status_returns_default_when_not_found() ->
     
     result = input_flags.get_flag_by_name('missing', with_status=ValidationStatus.VALID, default='default_value')
     assert result == 'default_value'
+
+
+def test_input_flags_get_by_name_returns_default_when_not_found() -> None:
+    flag = InputFlag(name='test', input_value='value')
+    input_flags = InputFlags([flag])
+
+    result = input_flags.get_flag_by_name('missing', default='fallback')
+    assert result == 'fallback'
 
 
 def test_input_flags_get_by_name_with_status_filters_by_both_name_and_status() -> None:

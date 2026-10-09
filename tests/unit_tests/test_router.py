@@ -82,6 +82,26 @@ def test_validate_func_args_accepts_missing_type_hint(capsys: CaptureFixture[str
     assert output.out == ''
 
 
+def test_validate_func_args_checks_first_argument_type_hint(capsys: CaptureFixture[str]) -> None:
+    def func(_response: int, _second: Response) -> None:
+        pass
+
+    _validate_func_args(func)
+    output = capsys.readouterr()
+
+    assert "WARNING" in output.out
+
+
+def test_validate_func_args_ignores_later_argument_type_hints(capsys: CaptureFixture[str]) -> None:
+    def func(_response: Response, _second: int) -> None:
+        pass
+
+    _validate_func_args(func)
+    output = capsys.readouterr()
+
+    assert "WARNING" not in output.out
+
+
 # ============================================================================
 # Tests for input flag structuring - undefined flags
 # ============================================================================
