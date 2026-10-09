@@ -1,14 +1,13 @@
-__all__ = ["CallableEntryPoint", "EntryPointAsApp", "EntrypointResolver"]
-
 import importlib
 import inspect
-import re
-import sys
 from collections.abc import Callable
 from dataclasses import dataclass
-from pathlib import Path
+from types import ModuleType
 from typing import cast, get_args
 
+from argenta._cli.infrastructure.entrypoint_resolver._location import (
+    resolve_module_location,
+)
 from argenta._cli.infrastructure.entrypoint_resolver.exceptions import (
     CallableEntrypointNotMatchRequiredSignatureError,
     EntrypointNotAppInstanceError,
@@ -33,19 +32,35 @@ class EntryPointAsApp:
 
 
 @dataclass(frozen=True, slots=True)
-class ResolvedEntrypoint[T]:
+class ResolvedEntrypoint[InstanceT]:
     resolved_source_path: str
-    instance: T
+    instance: InstanceT
 
 
-class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
+def _import_entrypoint_module(module_name: str, *, is_file_path: bool) -> ModuleType:
+    try:
+        return importlib.import_module(module_name)
+    except ImportError as error:
+        if is_file_path or module_name.endswith(".__main__"):
+            raise ResolveFromStringError(f'Cannot import module "{module_name}": {error}')
+        return _import_main_fallback(module_name, error)
+
+
+def _import_main_fallback(module_name: str, error: ImportError) -> ModuleType:
+    try:
+        return importlib.import_module(f"{module_name}.__main__")
+    except ImportError:
+        raise ResolveFromStringError(f'Cannot import module "{module_name}": {error}')
+
+
+class EntrypointResolver[EntrypointT: (CallableEntryPoint, EntryPointAsApp)]:
     def __init__(self, path_to_entrypoint: str):
         self._path_to_entrypoint = path_to_entrypoint
 
     def parse_entrypoint_with_type(
         self,
         entrypoint_object_name: str,
-    ) -> T:
+    ) -> EntrypointT:
         orig_class = getattr(self, "__orig_class__", None)
         if orig_class is None:
             raise ResolveFromStringError(
@@ -60,7 +75,7 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
             parsed = self._parse_entrypoint_as_app(entrypoint_object_name)
         else:
             raise NotImplementedError
-        return cast(T, parsed)
+        return cast(EntrypointT, parsed)
 
     def _parse_callable_entrypoint(self, entrypoint_object_name: str) -> CallableEntryPoint:
         resolved_entrypoint = self._resolve_from_string(entrypoint_object_name)
@@ -72,10 +87,10 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
         except (TypeError, ValueError):
             raise CallableEntrypointNotMatchRequiredSignatureError(repr(instance_object))
         required_params = [
-            param
-            for param in instance_object_signature.parameters.values()
-            if param.default is inspect.Parameter.empty
-            and param.kind
+            parameter
+            for parameter in instance_object_signature.parameters.values()
+            if parameter.default is inspect.Parameter.empty
+            and parameter.kind
             in (
                 inspect.Parameter.POSITIONAL_ONLY,
                 inspect.Parameter.POSITIONAL_OR_KEYWORD,
@@ -103,63 +118,25 @@ class EntrypointResolver[T: (CallableEntryPoint, EntryPointAsApp)]:
     def _resolve_from_string(
         self, entrypoint_object_name: str
     ) -> ResolvedEntrypoint[EntrypointCallable | App]:
-        raw_path = self._path_to_entrypoint
+        location = resolve_module_location(self._path_to_entrypoint)
 
-        raw_path_as_dir = Path(raw_path).resolve()
-        if raw_path_as_dir.is_dir() and (raw_path_as_dir / "__main__.py").exists():
-            raw_path = str(raw_path_as_dir / "__main__.py")
+        module = _import_entrypoint_module(location.module_name, is_file_path=location.is_file_path)
 
-        is_file_path = bool(re.search(r"[\/\\]|\.py$", raw_path))
-
-        if is_file_path:
-            abs_path = Path(raw_path).resolve()
-            if not abs_path.exists():
-                raise ResolveFromStringError(f'File "{raw_path}" not found')
-
-            package_root = abs_path.parent
-            while (package_root / "__init__.py").exists():
-                package_root = package_root.parent
-
-            pkg_root_str = str(package_root)
-            if pkg_root_str not in sys.path:
-                sys.path.insert(0, pkg_root_str)
-
-            module_name = ".".join(abs_path.relative_to(package_root).with_suffix("").parts)
-            resolved_source_path = str(abs_path)
-
-        else:
-            module_name = raw_path
-            cwd_str = str(Path.cwd())
-            if cwd_str not in sys.path:
-                sys.path.insert(0, cwd_str)
-
-            resolved_source_path = module_name
-
-        try:
-            module = importlib.import_module(module_name)
-        except ImportError as e:
-            if not is_file_path and not module_name.endswith(".__main__"):
-                try:
-                    main_module_name = f"{module_name}.__main__"
-                    module = importlib.import_module(main_module_name)
-                    module_name = main_module_name
-                except ImportError:
-                    raise ResolveFromStringError(f'Cannot import module "{module_name}": {e}')
-            else:
-                raise ResolveFromStringError(f'Cannot import module "{module_name}": {e}')
-
-        if not is_file_path:
+        resolved_source_path = location.resolved_source_path
+        if not location.is_file_path:
             resolved_source_path = getattr(module, "__file__", resolved_source_path)
 
         try:
             instance = getattr(module, entrypoint_object_name)
         except AttributeError:
-            raise ResolveFromStringError(f'"{entrypoint_object_name}" not found in "{raw_path}"')
+            raise ResolveFromStringError(
+                f'"{entrypoint_object_name}" not found in "{location.display_path}"'
+            )
 
         match instance:
             case App():
                 return ResolvedEntrypoint(resolved_source_path, instance)
-            case x if callable(x) and not isinstance(x, type):
+            case candidate if callable(candidate) and not isinstance(candidate, type):
                 return ResolvedEntrypoint(resolved_source_path, instance)
             case _:
                 raise ResolveFromStringError(

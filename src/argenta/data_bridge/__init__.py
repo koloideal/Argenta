@@ -1,3 +1,1 @@
-__all__ = ["DataBridge"]
-
-from .entity import DataBridge as DataBridge
+from argenta.data_bridge.entity import DataBridge as DataBridge

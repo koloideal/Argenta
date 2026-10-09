@@ -1,5 +1,3 @@
-__all__ = ["BooleanArgument", "InputArgument", "ValueArgument"]
-
 from typing import Literal
 
 
@@ -89,4 +87,5 @@ class InputArgument:
         return f"InputArgument({self.name}={self.value})"
 
     def __repr__(self) -> str:
-        return f"InputArgument<name={self.name}, value={self.value}, founder_class={self.founder_class.__name__}>"
+        founder_name = self.founder_class.__name__
+        return f"InputArgument<name={self.name}, value={self.value}, founder_class={founder_name}>"

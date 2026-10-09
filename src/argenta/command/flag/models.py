@@ -1,5 +1,3 @@
-__all__ = ["Flag", "Flags", "InputFlag", "InputFlags", "PossibleValues", "ValidationStatus"]
-
 from collections.abc import Container, Iterator
 from enum import Enum
 from re import Pattern
@@ -31,7 +29,8 @@ class Flag:
         Public. The entity of the flag being registered for subsequent processing
         :param name: The name of the flag
         :param prefix: The prefix of the flag
-        :param possible_values: The possible values of the flag, if False then the flag cannot have a value
+        :param possible_values: The possible values of the flag,
+               if False then the flag cannot have a value
         :return: None
         """
         self.name: str = name
@@ -115,7 +114,10 @@ class InputFlag:
 
     @override
     def __repr__(self) -> str:
-        return f"InputFlag<name={self.name}, prefix={self.prefix}, value={self.input_value}, status={self.status}>"
+        return (
+            f"InputFlag<name={self.name}, prefix={self.prefix}, "
+            f"value={self.input_value}, status={self.status}>"
+        )
 
     @override
     def __eq__(self, other: object) -> bool:

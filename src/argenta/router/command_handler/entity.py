@@ -1,5 +1,3 @@
-__all__ = ["CommandHandler", "CommandHandlers"]
-
 from collections.abc import Iterator
 from typing import Never
 
@@ -37,7 +35,8 @@ class CommandHandlers:
             list(command_handlers) if command_handlers else []
         )
         self.paired_command_handler_trigger: dict[str, CommandHandler] = {
-            x.handled_command.trigger: x for x in command_handlers
+            command_handler.handled_command.trigger: command_handler
+            for command_handler in command_handlers
         }
 
     def add_handler(self, command_handler: CommandHandler) -> None:

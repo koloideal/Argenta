@@ -1,5 +1,3 @@
-__all__ = ["RegisteredRouters"]
-
 from collections.abc import Iterator
 
 from argenta.router import Router

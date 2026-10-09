@@ -1,8 +1,6 @@
-__all__ = ["Command", "InputCommand"]
-
 import shlex
 from collections.abc import Iterable
-from typing import Literal, Never, Self, cast
+from typing import Literal, Never, Self
 
 from argenta.command import Flags, InputFlags
 from argenta.command.exceptions import (
@@ -15,8 +13,8 @@ from argenta.command.flag.models import Flag, InputFlag, ValidationStatus
 ParseFlagsResult = tuple[InputFlags, str | None, str | None]
 ParseResult = tuple[str, InputFlags]
 
-MIN_FLAG_PREFIX: str = "-"
 PREFIX_TYPE = Literal["-", "--", "---"]
+MIN_FLAG_PREFIX: PREFIX_TYPE = "-"
 
 
 class Command:
@@ -30,14 +28,19 @@ class Command:
     ):
         """
         Public. The command that can and should be registered in the Router
-        :param trigger: A string trigger, which, when entered by the user, indicates that the input corresponds to the command
+        :param trigger: A string trigger, which, when entered by the user,
+               indicates that the input corresponds to the command
         :param description: the description of the command
         :param flags: processed commands
         :param aliases: string synonyms for the main trigger
         """
-        pretty_flags: Flags = (
-            flags if isinstance(flags, Flags) else Flags([flags]) if flags is not None else Flags()
-        )
+        pretty_flags: Flags
+        if isinstance(flags, Flags):
+            pretty_flags = flags
+        elif flags:
+            pretty_flags = Flags([flags])
+        else:
+            pretty_flags = Flags()
         self.registered_flags: Flags = pretty_flags
         self.trigger: str = trigger
         self.description: str = description
@@ -53,7 +56,8 @@ class Command:
         :param flag: input flag for validation
         :return: is input flag valid as bool
         """
-        if registered_flag := self._paired_string_entity_flag.get(flag.string_entity):
+        registered_flag = self._paired_string_entity_flag.get(flag.string_entity)
+        if registered_flag:
             is_valid = registered_flag.validate_input_flag_value(flag.input_value)
             if is_valid:
                 return ValidationStatus.VALID
@@ -76,13 +80,12 @@ class InputCommand:
         :return: None
         """
         self.trigger: str = trigger
-        self.input_flags: InputFlags = (
-            input_flags
-            if isinstance(input_flags, InputFlags)
-            else InputFlags([input_flags])
-            if input_flags is not None
-            else InputFlags()
-        )
+        if isinstance(input_flags, InputFlags):
+            self.input_flags: InputFlags = input_flags
+        elif input_flags:
+            self.input_flags = InputFlags([input_flags])
+        else:
+            self.input_flags = InputFlags()
 
     @classmethod
     def parse(cls, raw_command: str) -> Self:
@@ -91,54 +94,57 @@ class InputCommand:
         :param raw_command: raw input command
         :return: model of the input command, after parsing as InputCommand
         """
-        lexer = shlex.shlex(raw_command, posix=True)
-        lexer.whitespace_split = True
-        lexer.commenters = ""
-
-        try:
-            tokens = list(lexer)
-        except ValueError as e:
-            raise UnprocessedInputFlagException from e
+        tokens = _tokenize_command(raw_command)
 
         if not tokens:
             raise EmptyInputCommandException
 
-        command = tokens[0]
-        flags: InputFlags = InputFlags()
+        return cls(tokens[0], input_flags=_parse_flag_tokens(tokens[1:]))
 
-        i = 1
-        while i < len(tokens):
-            token = tokens[i]
 
-            if token.startswith("---"):
-                prefix = "---"
-                name = token[3:]
-            elif token.startswith("--"):
-                prefix = "--"
-                name = token[2:]
-            elif token.startswith("-"):
-                prefix = "-"
-                name = token[1:]
-            else:
-                raise UnprocessedInputFlagException
+def _tokenize_command(raw_command: str) -> list[str]:
+    lexer = shlex.shlex(raw_command, posix=True)
+    lexer.whitespace_split = True
+    lexer.commenters = ""
 
-            if i + 1 < len(tokens) and not tokens[i + 1].startswith("-"):
-                input_value = tokens[i + 1]
-                i += 2
-            else:
-                input_value = ""
-                i += 1
+    try:
+        return list(lexer)
+    except ValueError as error:
+        raise UnprocessedInputFlagException from error
 
-            input_flag = InputFlag(
-                name=name,
-                prefix=cast(PREFIX_TYPE, prefix),  # pyright: ignore[reportUnnecessaryCast]
-                input_value=input_value,
-                status=None,
-            )
 
-            if input_flag in flags:
-                raise RepeatedInputFlagsException(input_flag)
+def _parse_flag_tokens(tokens: list[str]) -> InputFlags:
+    flags: InputFlags = InputFlags()
+    token_index = 0
 
-            flags.add_flag(input_flag)
+    while token_index < len(tokens):
+        input_flag, token_index = _parse_flag_token(tokens, token_index)
 
-        return cls(command, input_flags=flags)
+        if input_flag in flags:
+            raise RepeatedInputFlagsException(input_flag)
+
+        flags.add_flag(input_flag)
+
+    return flags
+
+
+def _split_flag_prefix(token: str) -> tuple[PREFIX_TYPE, str]:
+    if token.startswith("---"):
+        return "---", token[3:]
+    if token.startswith("--"):
+        return "--", token[2:]
+    if token.startswith(MIN_FLAG_PREFIX):
+        return MIN_FLAG_PREFIX, token[1:]
+    raise UnprocessedInputFlagException
+
+
+def _parse_flag_token(tokens: list[str], token_index: int) -> tuple[InputFlag, int]:
+    prefix, name = _split_flag_prefix(tokens[token_index])
+
+    next_index = token_index + 1
+    if next_index < len(tokens) and not tokens[next_index].startswith(MIN_FLAG_PREFIX):
+        input_flag = InputFlag(name=name, prefix=prefix, input_value=tokens[next_index])
+        return input_flag, token_index + 2
+
+    input_flag = InputFlag(name=name, prefix=prefix, input_value="")
+    return input_flag, token_index + 1

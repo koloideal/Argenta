@@ -1,12 +1,8 @@
-from __future__ import annotations
-
-__all__ = ["AutoCompleter"]
-
 import sys
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from prompt_toolkit import HTML, PromptSession
+from prompt_toolkit import HTML, PromptSession
+
+from argenta.app.autocompleter._ext_features_impl import build_session, do_prompt
 
 
 class AutoCompleter:
@@ -30,8 +26,6 @@ class AutoCompleter:
             self._fallback_mode = True
             return
 
-        from ._ext_features_impl import build_session
-
         self._session = build_session(
             self.history_filename,
             self.autocomplete_button,
@@ -45,7 +39,5 @@ class AutoCompleter:
             return input(prompt_text if isinstance(prompt_text, str) else ">>> ")
         if self._session is None:
             raise RuntimeError("Call initial_setup() before using prompt()")
-
-        from ._ext_features_impl import do_prompt
 
         return do_prompt(self._session, prompt_text)

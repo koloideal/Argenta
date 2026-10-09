@@ -8,9 +8,6 @@ from argenta._cli.infrastructure.entrypoint_resolver.entity import (
     EntrypointResolver as EntrypointResolver,
 )
 from argenta._cli.infrastructure.entrypoint_resolver.exceptions import (
-    CallableEntrypointNotMatchRequiredSignatureError as CallableEntrypointNotMatchRequiredSignatureError,
-)
-from argenta._cli.infrastructure.entrypoint_resolver.exceptions import (
     EntrypointNotAppInstanceError as EntrypointNotAppInstanceError,
 )
 from argenta._cli.infrastructure.entrypoint_resolver.exceptions import (

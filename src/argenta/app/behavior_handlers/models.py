@@ -1,3 +1,5 @@
+from functools import partial
+
 from rich.markup import escape
 
 from argenta.app.presentation.renderers import Renderer
@@ -41,19 +43,12 @@ class BehaviorHandlersFabric:
         return lambda: self._printer(self._renderer.render_text_for_empty_input_command_handler())
 
     def generate_unknown_command_handler(self) -> NonStandardBehaviorHandler[InputCommand]:
-        def unknown_command_handler(command: InputCommand) -> None:
-            command_trigger: str = command.trigger
-            most_similar_command_trigger: str | None = self._most_similar_command_getter(
-                command_trigger
-            )
-            self._printer(
-                self._renderer.render_text_for_unknown_command_handler(
-                    command_trigger=command_trigger,
-                    most_similar_command_trigger=most_similar_command_trigger,
-                )
-            )
-
-        return unknown_command_handler
+        return partial(
+            _handle_unknown_command,
+            self._printer,
+            self._renderer,
+            self._most_similar_command_getter,
+        )
 
     def generate_exit_command_handler(
         self, farewell_message: str
@@ -66,6 +61,22 @@ class BehaviorHandlersFabric:
                 command=command, description=description
             )
         )
+
+
+def _handle_unknown_command(
+    printer: Printer,
+    renderer: Renderer,
+    most_similar_command_getter: MostSimilarCommandGetter,
+    command: InputCommand,
+) -> None:
+    command_trigger: str = command.trigger
+    most_similar_command_trigger: str | None = most_similar_command_getter(command_trigger)
+    printer(
+        renderer.render_text_for_unknown_command_handler(
+            command_trigger=command_trigger,
+            most_similar_command_trigger=most_similar_command_trigger,
+        )
+    )
 
 
 class BehaviorHandlersSettersMixin:

@@ -1,8 +1,3 @@
-__all__ = [
-    "ArgParser",
-    "ArgSpace",
-]
-
 import sys
 from argparse import ArgumentParser, Namespace
 from collections.abc import Sequence
@@ -37,14 +32,22 @@ class ArgSpace:
         }
         parsed_arguments: list[InputArgument] = []
 
-        for name, value in vars(namespace).items():
+        for name, parsed_value in namespace.__dict__.items():
             parsed_arguments.append(
                 InputArgument(
-                    name=name, value=value, founder_class=name_type_paired_processed_args[name]
+                    name=name,
+                    value=parsed_value,
+                    founder_class=name_type_paired_processed_args[name],
                 )
             )
 
         return cls(parsed_arguments)
+
+    def get_by_name(self, name: str) -> InputArgument | None:
+        return self._name_object_paired_args.get(name)
+
+    def get_by_type(self, arg_type: type[BaseArgument]) -> list[InputArgument] | list[Never]:
+        return self._type_object_paired_args.get(arg_type, [])
 
     def _setup_getters(self) -> None:
         if not self.all_arguments:
@@ -52,12 +55,6 @@ class ArgSpace:
         for input_arg in self.all_arguments:
             self._name_object_paired_args[input_arg.name] = input_arg
             self._type_object_paired_args[input_arg.founder_class].append(input_arg)
-
-    def get_by_name(self, name: str) -> InputArgument | None:
-        return self._name_object_paired_args.get(name)
-
-    def get_by_type(self, arg_type: type[BaseArgument]) -> list[InputArgument] | list[Never]:
-        return self._type_object_paired_args.get(arg_type, [])
 
 
 class ArgParser:
@@ -99,14 +96,14 @@ class ArgParser:
         if sys.version_info >= (3, 13):
             for arg in processed_args:
                 if isinstance(arg, BooleanArgument):
-                    _ = self._core.add_argument(
+                    self._core.add_argument(
                         arg.string_entity,
                         action=arg.action,
                         help=arg.help,
                         deprecated=arg.is_deprecated,
                     )
                 else:
-                    _ = self._core.add_argument(
+                    self._core.add_argument(
                         arg.string_entity,
                         action=arg.action,
                         help=arg.help,
@@ -118,13 +115,13 @@ class ArgParser:
         else:
             for arg in processed_args:
                 if isinstance(arg, BooleanArgument):
-                    _ = self._core.add_argument(
+                    self._core.add_argument(
                         arg.string_entity,
                         action=arg.action,
                         help=arg.help,
                     )
                 else:
-                    _ = self._core.add_argument(
+                    self._core.add_argument(
                         arg.string_entity,
                         action=arg.action,
                         help=arg.help,

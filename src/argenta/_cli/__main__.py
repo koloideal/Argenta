@@ -1,9 +1,8 @@
 # pyright: reportUnknownMemberType=false
 from importlib.metadata import version
-from typing import Literal
+from typing import Annotated, Literal
 
 import typer
-from typer import Context, Typer
 
 from argenta._cli.commands import (
     build_handler,
@@ -15,30 +14,32 @@ from argenta._cli.commands import (
 )
 from argenta._cli.di import create_cli_container
 
-app = Typer(
+app = typer.Typer(
     name="argenta",
     help="Argenta CLI — scaffold, run, inspect, and build CLI apps.",
     no_args_is_help=True,
 )
 
 
-def _version_callback(value: bool) -> None:
-    if value:
+def _version_callback(show_version: bool) -> None:
+    if show_version:
         typer.echo(f"argenta {version('argenta')}")
         raise typer.Exit()
 
 
 @app.callback()
 def _root(
-    ctx: Context,
-    version_flag: bool = typer.Option(
-        None,
-        "--version",
-        "-v",
-        callback=_version_callback,
-        is_eager=True,
-        help="Show Argenta version and exit.",
-    ),
+    ctx: typer.Context,
+    version_flag: Annotated[
+        bool,
+        typer.Option(
+            "--version",
+            "-v",
+            callback=_version_callback,
+            is_eager=True,
+            help="Show Argenta version and exit.",
+        ),
+    ] = False,
 ) -> None:
     """Argenta CLI — scaffold, run, inspect, and build CLI apps."""
     if ctx.obj is None:
@@ -52,8 +53,10 @@ def _root(
     epilog="Example: argenta run app/main.py:main",
 )
 def _run(
-    ctx: Context,
-    entrypoint_path: str = typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>"),
+    ctx: typer.Context,
+    entrypoint_path: Annotated[
+        str, typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>")
+    ],
 ) -> None:
     run_handler(ctx.obj, entrypoint_path)
 
@@ -65,8 +68,10 @@ def _run(
     epilog="Run from the project root. Example: argenta init --arch src",
 )
 def _init(
-    ctx: Context,
-    arch: Literal["flat", "src"] = typer.Option("flat", "--arch", help="Architecture: flat or src"),
+    ctx: typer.Context,
+    arch: Annotated[
+        Literal["flat", "src"], typer.Option("--arch", help="Architecture: flat or src")
+    ] = "flat",
 ) -> None:
     init_handler(ctx.obj, arch)
 
@@ -78,22 +83,27 @@ def _init(
     epilog="Example: argenta new my-app --arch src",
 )
 def _new(
-    ctx: Context,
-    project_name: str = typer.Argument(help="Name of the new project directory"),
-    arch: Literal["flat", "src"] = typer.Option("flat", "--arch", help="Architecture: flat or src"),
+    ctx: typer.Context,
+    project_name: Annotated[str, typer.Argument(help="Name of the new project directory")],
+    arch: Annotated[
+        Literal["flat", "src"], typer.Option("--arch", help="Architecture: flat or src")
+    ] = "flat",
 ) -> None:
     new_handler(ctx.obj, project_name, arch)
 
 
 @app.command(
     "routes",
-    help="Display all registered routes, commands, aliases, and flags. Accepts an App instance or a callable returning App.",
+    help="Display all registered routes, commands, aliases, and flags. "
+    "Accepts an App instance or a callable returning App.",
     short_help="Show registered routes and commands",
     epilog="Examples:\n  argenta routes app/main.py:app\n  argenta routes app/main.py:create_app",
 )
 def _routes(
-    ctx: Context,
-    entrypoint_path: str = typer.Argument(help="Entrypoint as <path/to/file.py>:<app_or_callable>"),
+    ctx: typer.Context,
+    entrypoint_path: Annotated[
+        str, typer.Argument(help="Entrypoint as <path/to/file.py>:<app_or_callable>")
+    ],
 ) -> None:
     routes_handler(ctx.obj, entrypoint_path)
 
@@ -103,7 +113,7 @@ def _routes(
     help="Display Argenta version, Python version, and platform info.",
     short_help="Show Argenta version and environment info",
 )
-def _info(ctx: Context) -> None:
+def _show_info(ctx: typer.Context) -> None:
     info_handler(ctx.obj)
 
 
@@ -121,9 +131,11 @@ def _info(ctx: Context) -> None:
     context_settings={"allow_extra_args": True, "ignore_unknown_options": True},
 )
 def _build(
-    ctx: Context,
-    entry_point: str = typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>"),
-    output_name: str | None = typer.Option(None, "--output", "-o", help="Output binary name"),
+    ctx: typer.Context,
+    entry_point: Annotated[str, typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>")],
+    output_name: Annotated[
+        str | None, typer.Option("--output", "-o", help="Output binary name")
+    ] = None,
 ) -> None:
     build_handler(ctx.obj, entry_point, output_name=output_name, extra_nuitka_args=ctx.args)
 

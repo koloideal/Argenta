@@ -11,7 +11,11 @@ from prompt_toolkit.completion import CompleteEvent
 from prompt_toolkit.document import Document
 from prompt_toolkit.history import InMemoryHistory
 
-from argenta.app.autocompleter._ext_features_impl import CommandLexer, HistoryCompleter
+from argenta.app.autocompleter._ext_features_impl import (
+    CommandLexer,
+    HistoryCompleter,
+    find_common_prefix,
+)
 from argenta.app.autocompleter.entity import AutoCompleter
 
 COMMANDS: set[str] = {"start", "stop", "status"}
@@ -146,25 +150,25 @@ def test_history_completer_sorts_results() -> None:
 
 def test_find_common_prefix_with_multiple_matches() -> None:
     matches = ["start server", "start client", "start process"]
-    prefix = HistoryCompleter._find_common_prefix(matches)
+    prefix = find_common_prefix(matches)
     assert prefix == "start "
 
 
 def test_find_common_prefix_with_no_common() -> None:
     matches = ["start", "stop", "status"]
-    prefix = HistoryCompleter._find_common_prefix(matches)
+    prefix = find_common_prefix(matches)
     assert prefix == "st"
 
 
 def test_find_common_prefix_with_single_match() -> None:
     matches = ["start"]
-    prefix = HistoryCompleter._find_common_prefix(matches)
+    prefix = find_common_prefix(matches)
     assert prefix == "start"
 
 
 def test_find_common_prefix_with_empty_list() -> None:
     matches: list[str] = []
-    prefix = HistoryCompleter._find_common_prefix(matches)
+    prefix = find_common_prefix(matches)
     assert prefix == ""
 
 

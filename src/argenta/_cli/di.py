@@ -1,5 +1,3 @@
-__all__ = ["CliProvider", "create_cli_container"]
-
 from dishka import (  # pyright: ignore[reportUnknownVariableType]
     Container,
     Provider,

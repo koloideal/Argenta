@@ -1,11 +1,4 @@
-from __future__ import annotations
-
-__all__ = ["Response"]
-
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from dishka import Container
+from dishka import Container
 
 from argenta.command import InputFlags
 from argenta.response.status import ResponseStatus
