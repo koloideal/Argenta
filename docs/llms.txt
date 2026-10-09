@@ -1,0 +1,36 @@
+# Argenta
+
+> A Python library for building modular CLI applications with interactive REPL-like sessions, declarative command handlers, native DI via dishka, and automatic flag parsing/validation.
+
+Argenta creates applications that run a cyclic interactive session (like a Python REPL or MySQL console): the app starts once, and the user executes commands one after another without restarting. Commands and their handlers are registered via decorators; flags are parsed, validated and passed to handlers through a typed `Response` object. Requires Python 3.12+.
+
+## Guides
+
+- [Quick Start](https://argenta.wiki/root/quickstart.html): minimal app, calculator with flags, task manager with DI
+- [Error Handling](https://argenta.wiki/root/error_handling.html): custom handlers for unknown commands, empty input, repeated flags and invalid syntax
+- [Flags](https://argenta.wiki/root/flags.html): defining flags, prefixes, allowed values and validation
+- [Overriding Formatting](https://argenta.wiki/root/overriding_formatting.html): plain vs rich rendering of system messages
+
+## Advanced
+
+- [Redirecting stdout](https://argenta.wiki/root/redirect_stdout.html): how handler output is captured and framed, and when to disable it
+- [Dependency Injection](https://argenta.wiki/root/dependency_injection.html): dishka integration, injecting dependencies into handlers
+- [Argenta CLI](https://argenta.wiki/root/cli.html): scaffolding and running projects with the bundled CLI
+- [Testing](https://argenta.wiki/root/testing.html): testing applications built on Argenta
+
+## API Reference
+
+- [API index](https://argenta.wiki/root/api/index.html): all public API sections
+- [Router](https://argenta.wiki/root/api/router.html): command registration and dispatch
+- [Response](https://argenta.wiki/root/api/response.html): the object passed to handlers
+- [Command & Flags](https://argenta.wiki/root/api/command/index.html): Command, Flag, InputFlag, PossibleValues, ValidationStatus
+- [Orchestrator & ArgParser](https://argenta.wiki/root/api/orchestrator/index.html): startup-time CLI arguments and app orchestration
+- [App](https://argenta.wiki/root/api/app/index.html): application configuration, autocompleter, dividing lines
+- [DataBridge](https://argenta.wiki/root/api/bridge.html): shared storage between handlers
+
+## Optional
+
+- [Contributing](https://argenta.wiki/root/contributing.html)
+- [Metrics](https://argenta.wiki/root/metrics.html)
+- [GitHub](https://github.com/koloideal/argenta)
+- [PyPI](https://pypi.org/project/argenta)

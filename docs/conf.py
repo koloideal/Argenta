@@ -23,7 +23,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_theme = "shibuya"
 html_static_path = ["_static"]
-html_extra_path = ["robots.txt", "sitemap.xml"]
+html_extra_path = ["robots.txt", "sitemap.xml", "llms.txt"]
 
 html_theme_options = {
   "accent_color": "cyan",
