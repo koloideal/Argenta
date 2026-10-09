@@ -1,5 +1,3 @@
-__all__ = ["info_handler"]
-
 import platform
 import sys
 from importlib.metadata import version
@@ -27,7 +25,10 @@ def info_handler(container: Container) -> None:
 
     table.add_row("Argenta version", f"[bold red]{version('argenta')}[/bold red]")
     table.add_row("Python version", sys.version.split()[0])
-    table.add_row("Platform", f"{platform.system()} {platform.release()} ({platform.machine()})")
+    system_name = platform.system()
+    release_name = platform.release()
+    machine_name = platform.machine()
+    table.add_row("Platform", f"{system_name} {release_name} ({machine_name})")
     table.add_row("Docs", "https://argenta.wiki")
 
     console.print(f"[bold red]{text2art('Argenta', font='tarty1')}[/bold red]")

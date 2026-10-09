@@ -1,5 +1,3 @@
-__all__ = ["DynamicDividingLine", "StaticDividingLine"]
-
 from abc import ABC
 
 
@@ -42,8 +40,8 @@ class StaticDividingLine(BaseDividingLine):
         """
         if is_override:
             return self.length * self.get_unit_part()
-        else:
-            return f"[dim]{self.length * self.get_unit_part()}[/dim]"
+        repeated_unit_part = self.length * self.get_unit_part()
+        return f"[dim]{repeated_unit_part}[/dim]"
 
 
 class DynamicDividingLine(BaseDividingLine):
@@ -64,5 +62,5 @@ class DynamicDividingLine(BaseDividingLine):
         """
         if is_override:
             return length * self.get_unit_part()
-        else:
-            return f"[dim]{self.get_unit_part() * length}[/dim]"
+        repeated_unit_part = self.get_unit_part() * length
+        return f"[dim]{repeated_unit_part}[/dim]"

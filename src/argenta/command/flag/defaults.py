@@ -1,5 +1,3 @@
-__all__ = ["PredefinedFlags"]
-
 import re
 from typing import Literal
 

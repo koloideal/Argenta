@@ -1,9 +1,13 @@
 class ResolverError(Exception):
-    pass
+    """
+    Private. Base exception for entrypoint resolution errors
+    """
 
 
 class ResolveFromStringError(ResolverError):
-    pass
+    """
+    Private. Raised when an entrypoint cannot be resolved from a string
+    """
 
 
 class EntrypointError(Exception):
@@ -18,7 +22,10 @@ class EntrypointNotCallableError(EntrypointError):
 
 class CallableEntrypointNotMatchRequiredSignatureError(EntrypointError):
     def __str__(self) -> str:
-        return f"Callable entrypoint {self.entrypoint_as_repr} not match with required signature Callable[[], ...]"
+        return (
+            f"Callable entrypoint {self.entrypoint_as_repr} not match with"
+            " required signature Callable[[], ...]"
+        )
 
 
 class EntrypointNotAppInstanceError(EntrypointError):

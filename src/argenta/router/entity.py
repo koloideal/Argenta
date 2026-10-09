@@ -1,7 +1,7 @@
-__all__ = ["Router"]
-
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from inspect import get_annotations, getfullargspec, getsourcefile, getsourcelines
+
+from rich.console import Console
 
 from argenta.app.protocols import HandlerFunc
 from argenta.command import Command, InputCommand, InputFlags
@@ -17,6 +17,26 @@ from argenta.router.exceptions import (
 )
 
 
+def _ensure_unique_command_name(command_name: str, triggers: set[str], aliases: set[str]) -> None:
+    lowered_name = command_name.lower()
+    if lowered_name in triggers:
+        raise RepeatedTriggerNameException()
+    if lowered_name in aliases:
+        raise RepeatedAliasNameException({lowered_name})
+
+
+def _ensure_unique_aliases(aliases: Iterable[str], taken_names: set[str]) -> None:
+    overlapping_aliases = taken_names & {alias.lower() for alias in aliases}
+    if overlapping_aliases:
+        raise RepeatedAliasNameException(overlapping_aliases)
+
+
+def _ensure_unique_flag_names(command: Command) -> None:
+    flags_name: list[str] = [flag.string_entity.lower() for flag in command.registered_flags]
+    if len(set(flags_name)) < len(flags_name):
+        raise RepeatedFlagNameException()
+
+
 class Router:
     def __init__(
         self,
@@ -29,9 +49,10 @@ class Router:
         :param title: the title of the router, displayed when displaying the available commands
         :param disable_redirect_stdout: Disables stdout forwarding, if the argument value is True,
                the StaticDividingLine will be forced to be used as a line separator for this router,
-               disabled forwarding is needed when there is text output in conjunction with a text input request (for example, input()),
-               if the argument value is True, the output of the input() prompt is intercepted and not displayed,
-               which is ambiguous behavior and can lead to unexpected work
+               disabled forwarding is needed when there is text output in conjunction
+               with a text input request (for example, input()),
+               if the argument value is True, the output of the input() prompt is intercepted
+               and not displayed, which is ambiguous behavior and can lead to unexpected work
         :return: None
         """
         self.title: str = title
@@ -53,42 +74,15 @@ class Router:
             redefined_command = command
 
         self._validate_command(redefined_command)
-        self._update_routing_keys(redefined_command)
+        self.aliases.update({alias.lower() for alias in redefined_command.aliases})
+        self.triggers.add(redefined_command.trigger.lower())
 
         def decorator(func: HandlerFunc) -> HandlerFunc:
-            self._validate_func_args(func)
+            _validate_func_args(func)
             self.command_handlers.add_handler(CommandHandler(func, redefined_command))
             return func
 
         return decorator
-
-    def _validate_command(self, command: Command) -> None:
-        """
-        Private. Validates the command registered in handler
-        :param command: validated command
-        :return: None if command is valid else raise exception
-        """
-        command_name: str = command.trigger
-        if command_name.find(" ") != -1:
-            raise TriggerContainSpacesException()
-
-        if command_name.lower() in self.triggers:
-            raise RepeatedTriggerNameException()
-
-        if command_name.lower() in self.aliases:
-            raise RepeatedAliasNameException({command_name.lower()})
-
-        if overlapping := (self.aliases | self.triggers) & {x.lower() for x in command.aliases}:
-            raise RepeatedAliasNameException(overlapping)
-
-        flags_name: list[str] = [flag.string_entity.lower() for flag in command.registered_flags]
-        if len(set(flags_name)) < len(flags_name):
-            raise RepeatedFlagNameException()
-
-    def _update_routing_keys(self, registered_command: Command) -> None:
-        redefined_command_aliases_in_lower = {x.lower() for x in registered_command.aliases}
-        self.aliases.update(redefined_command_aliases_in_lower)
-        self.triggers.add(registered_command.trigger.lower())
 
     def finds_appropriate_handler(self, input_command: InputCommand) -> None:
         """
@@ -101,10 +95,10 @@ class Router:
 
         command_handler = self.command_handlers.get_command_handler_by_trigger(input_command_name)
 
-        if not command_handler:
-            raise RuntimeError(f"Handler for '{input_command.trigger}' command not found. Panic!")
-        else:
+        if command_handler:
             self.process_input_command(input_command_flags, command_handler)
+        else:
+            raise RuntimeError(f"Handler for '{input_command.trigger}' command not found. Panic!")
 
     def process_input_command(
         self, input_command_flags: InputFlags, command_handler: CommandHandler
@@ -118,9 +112,7 @@ class Router:
         handle_command = command_handler.handled_command
         if handle_command.registered_flags.flags:
             if input_command_flags.flags:
-                response: Response = self._structuring_input_flags(
-                    handle_command, input_command_flags
-                )
+                response: Response = _structuring_input_flags(handle_command, input_command_flags)
                 command_handler.handling(response)
             else:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
@@ -137,53 +129,68 @@ class Router:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
                 command_handler.handling(response)
 
-    @staticmethod
-    def _structuring_input_flags(handled_command: Command, input_flags: InputFlags) -> Response:
+    def _validate_command(self, command: Command) -> None:
         """
-        Private. Validates flags of input command
-        :param handled_command: entity of the handled command
-        :param input_flags:
-        :return: entity of response as Response
+        Private. Validates the command registered in handler
+        :param command: validated command
+        :return: None if command is valid else raise exception
         """
-        invalid_value_flags, undefined_flags = False, False
+        command_name: str = command.trigger
+        if command_name.find(" ") != -1:
+            raise TriggerContainSpacesException()
 
-        for flag in input_flags:
-            flag_status: ValidationStatus = handled_command.validate_input_flag(flag)
-            flag.status = flag_status
-            if flag_status == ValidationStatus.INVALID:
-                invalid_value_flags = True
-            elif flag_status == ValidationStatus.UNDEFINED:
-                undefined_flags = True
+        _ensure_unique_command_name(command_name, self.triggers, self.aliases)
+        _ensure_unique_aliases(command.aliases, self.aliases | self.triggers)
+        _ensure_unique_flag_names(command)
 
-        status = ResponseStatus.from_flags(
-            has_invalid_value_flags=invalid_value_flags, has_undefined_flags=undefined_flags
+
+def _structuring_input_flags(handled_command: Command, input_flags: InputFlags) -> Response:
+    """
+    Private. Validates flags of input command
+    :param handled_command: entity of the handled command
+    :param input_flags:
+    :return: entity of response as Response
+    """
+    invalid_value_flags, undefined_flags = False, False
+
+    for flag in input_flags:
+        flag_status: ValidationStatus = handled_command.validate_input_flag(flag)
+        flag.status = flag_status
+        if flag_status == ValidationStatus.INVALID:
+            invalid_value_flags = True
+        elif flag_status == ValidationStatus.UNDEFINED:
+            undefined_flags = True
+
+    status = ResponseStatus.from_flags(
+        has_invalid_value_flags=invalid_value_flags, has_undefined_flags=undefined_flags
+    )
+
+    return Response(status=status, input_flags=input_flags)
+
+
+def _validate_func_args(func: HandlerFunc) -> None:
+    """
+    Private. Validates the arguments of the handler
+    :param func: entity of the handler func
+    :return: None if func is valid else raise exception
+    """
+    transferred_args = getfullargspec(func).args
+    if len(transferred_args) == 0:
+        raise RequiredArgumentNotPassedException()
+
+    response_arg: str = transferred_args[0]
+    func_annotations: dict[str, None] = get_annotations(func)
+
+    response_arg_annotation = func_annotations.get(response_arg)
+
+    if response_arg_annotation is not None and response_arg_annotation is not Response:
+        source_line: int = getsourcelines(func)[1]
+        Console().print(
+            f'\nFile "{getsourcefile(func)}", line {source_line}\n'
+            "[b red]WARNING:[/b red] [i]The typehint "
+            f"of argument([green]{response_arg}[/green]) passed to the handler "
+            f"must be [/i][bold blue]{Response}[/bold blue],"
+            f" [i]but[/i] [bold blue]{response_arg_annotation}[/bold blue] "
+            "[i]is specified[/i]",
+            highlight=False,
         )
-
-        return Response(status=status, input_flags=input_flags)
-
-    @staticmethod
-    def _validate_func_args(func: HandlerFunc) -> None:
-        """
-        Private. Validates the arguments of the handler
-        :param func: entity of the handler func
-        :return: None if func is valid else raise exception
-        """
-        transferred_args = getfullargspec(func).args
-        if len(transferred_args) == 0:
-            raise RequiredArgumentNotPassedException()
-
-        response_arg: str = transferred_args[0]
-        func_annotations: dict[str, None] = get_annotations(func)
-
-        response_arg_annotation = func_annotations.get(response_arg)
-
-        if response_arg_annotation is not None and response_arg_annotation is not Response:
-            from rich.console import Console
-
-            source_line: int = getsourcelines(func)[1]
-            Console().print(
-                f'\nFile "{getsourcefile(func)}", line {source_line}\n[b red]WARNING:[/b red] [i]The typehint '
-                + f"of argument([green]{response_arg}[/green]) passed to the handler must be [/i][bold blue]{Response}[/bold blue],"
-                + f" [i]but[/i] [bold blue]{response_arg_annotation}[/bold blue] [i]is specified[/i]",
-                highlight=False,
-            )

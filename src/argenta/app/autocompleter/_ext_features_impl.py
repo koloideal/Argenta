@@ -1,6 +1,5 @@
-__all__ = ["build_session", "do_prompt"]
-
 from collections.abc import Callable, Iterable
+from functools import partial
 
 from prompt_toolkit import HTML, PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
@@ -19,23 +18,23 @@ class CommandLexer(Lexer):
         self.valid_commands: set[str] = valid_commands
 
     def lex_document(self, document: Document) -> Callable[[int], StyleAndTextTuples]:
-        def get_line_tokens(lineno: int) -> StyleAndTextTuples:
-            if lineno >= len(document.lines):
-                return []
+        return partial(self._lex_line, document)
 
-            line_text: str = document.lines[lineno]
+    def _lex_line(self, document: Document, lineno: int) -> StyleAndTextTuples:
+        if lineno >= len(document.lines):
+            return []
 
-            if not line_text.strip():
-                return [("", line_text)]
+        line_text: str = document.lines[lineno]
 
-            first_word: str = line_text.split()[0] if line_text.split() else ""
+        if not line_text.strip():
+            return [("", line_text)]
 
-            if first_word in self.valid_commands:
-                return [("class:valid", line_text)]
-            else:
-                return [("class:invalid", line_text)]
+        first_word: str = line_text.split()[0] if line_text.split() else ""
 
-        return get_line_tokens
+        if first_word in self.valid_commands:
+            return [("class:valid", line_text)]
+        else:
+            return [("class:invalid", line_text)]
 
 
 class HistoryCompleter(Completer):
@@ -51,23 +50,41 @@ class HistoryCompleter(Completer):
         all_candidates: set[str] = history_items.union(self.static_commands)
         matches: list[str] = sorted(cmd for cmd in all_candidates if cmd.startswith(text))
 
-        if not matches:
-            return
+        if matches:
+            for match in matches:
+                yield Completion(match, start_position=-len(text), display=match)
 
-        for match in matches:
-            yield Completion(match, start_position=-len(text), display=match)
 
-    @staticmethod
-    def _find_common_prefix(matches: list[str]) -> str:
-        if not matches:
-            return ""
-        common: str = matches[0]
-        for match in matches[1:]:
-            i: int = 0
-            while i < len(common) and i < len(match) and common[i] == match[i]:
-                i += 1
-            common = common[:i]
-        return common
+def find_common_prefix(matches: list[str]) -> str:
+    if not matches:
+        return ""
+    common: str = matches[0]
+    for match in matches[1:]:
+        char_index: int = 0
+        while (
+            char_index < len(common)
+            and char_index < len(match)
+            and common[char_index] == match[char_index]
+        ):
+            char_index += 1
+        common = common[:char_index]
+    return common
+
+
+def _accept_single_completion(event: KeyPressEvent) -> None:
+    buff = event.app.current_buffer
+    if buff.complete_state:
+        buff.complete_next()
+        return
+    completions_iter = iter(buff.completer.get_completions(buff.document, CompleteEvent()))
+    first = next(completions_iter, None)
+    if first is None:
+        return
+    second = next(completions_iter, None)
+    if second is None:
+        buff.apply_completion(first)
+    else:
+        buff.start_completion(select_first=False)
 
 
 def build_session(
@@ -79,23 +96,7 @@ def build_session(
 ) -> PromptSession[str]:
     kb = KeyBindings()
 
-    def _(event: KeyPressEvent) -> None:
-        buff = event.app.current_buffer
-        if buff.complete_state:
-            buff.complete_next()
-            return
-        comps_gen = iter(buff.completer.get_completions(buff.document, CompleteEvent()))
-        try:
-            first = next(comps_gen)
-        except StopIteration:
-            return
-        try:
-            _ = next(comps_gen)
-            buff.start_completion(select_first=False)
-        except StopIteration:
-            buff.apply_completion(first)
-
-    kb.add(autocomplete_button)(_)
+    kb.add(autocomplete_button)(_accept_single_completion)
 
     history: InMemoryHistory | ThreadedHistory
     if history_filename:

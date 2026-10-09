@@ -1,5 +1,3 @@
-__all__ = ["Orchestrator"]
-
 import os
 
 from dishka import Provider, make_container
@@ -18,12 +16,13 @@ class Orchestrator:
         auto_inject_handlers: bool = True,
     ):
         """
-        Public. An orchestrator and configurator that defines the behavior of an integrated system, one level higher than the App
+        Public. An orchestrator and configurator that defines the behavior
+        of an integrated system, one level higher than the App
         :param arg_parser: Cmd argument parser and configurator at startup
         :return: None
         """
         self._arg_parser: ArgParser | None = (
-            arg_parser if not os.getenv("RUN_FROM_ARGENTA_RUNNER") else None
+            None if os.getenv("RUN_FROM_ARGENTA_RUNNER") else arg_parser
         )
         self._custom_providers: list[Provider] = custom_providers or []
         self._auto_inject_handlers: bool = auto_inject_handlers

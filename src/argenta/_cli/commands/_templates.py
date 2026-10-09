@@ -1,17 +1,5 @@
-__all__ = [
-    "FLAT_HANDLERS_TEMPLATE",
-    "FLAT_MAIN_TEMPLATE",
-    "GITIGNORE_CONTENT",
-    "SRC_HANDLER_TEMPLATE",
-    "SRC_MAIN_TEMPLATE",
-    "SRC_ROUTERS_TEMPLATE",
-    "create_file",
-    "sanitize_package_name",
-]
-
-from pathlib import Path
-
-from rich.console import Console
+SRC_DIR_NAME = "src"
+INIT_FILE_NAME = "__init__.py"
 
 GITIGNORE_CONTENT = """
 __pycache__/
@@ -81,16 +69,3 @@ from argenta import Response
 def hello_handler(response: Response) -> None:
     print("Hello world!")
 """
-
-
-def sanitize_package_name(name: str) -> str:
-    return name.lower().replace(" ", "_").replace("-", "_")
-
-
-def create_file(path: Path, content: str, console: Console) -> None:
-    if path.exists():
-        console.print(f"[yellow]Skipped:[/yellow] {path} (already exists)")
-        return
-    path.parent.mkdir(parents=True, exist_ok=True)
-    stripped = content.strip()
-    path.write_text(stripped + "\n" if stripped else "", encoding="utf-8")

@@ -1,18 +1,9 @@
-__all__ = [
-    "DescriptionMessageGenerator",
-    "EmptyCommandHandler",
-    "HandlerFunc",
-    "MostSimilarCommandGetter",
-    "NonStandardBehaviorHandler",
-    "Printer",
-]
-
 from collections.abc import Callable
 from typing import Any, Protocol
 
 
-class NonStandardBehaviorHandler[T](Protocol):
-    def __call__(self, _param: T, /) -> None:
+class NonStandardBehaviorHandler[PayloadT](Protocol):
+    def __call__(self, _payload: PayloadT, /) -> None:
         raise NotImplementedError
 
 

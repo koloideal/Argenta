@@ -63,6 +63,7 @@ dev = [
     "scriv>=1.8.0",
 ]
 linters = [
+    "flake8-pyproject>=1.2.3",
     "isort>=7.0.0",
     "ruff>=0.12.12",
     "wemake-python-styleguide>=0.17.0",
@@ -92,6 +93,22 @@ metrics = [
 
 [tool.ruff]
 line-length = 100
+
+[tool.flake8]
+max-line-length = 100
+per-file-ignores = """
+__init__.py:F401
+integration.py:WPS410
+*app/presentation/renderers.py:WPS602,WPS118,WPS214
+*command/flag/defaults.py:WPS115
+*behavior_handlers/models.py:WPS615,WPS211
+*dividing_line/models.py:WPS615
+*argparser/arguments/models.py:WPS110,WPS211
+*entrypoint_resolver/exceptions.py:WPS118
+*autocompleter/entity.py:WPS421
+*app/models.py:WPS201,WPS211,WPS214,WPS421
+*_cli/__main__.py:WPS202
+"""
 
 [tool.pyright]
 typeCheckingMode = "strict"

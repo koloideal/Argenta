@@ -1,7 +1,3 @@
-__all__ = [
-    "SystemProvider",
-]
-
 from dishka import Provider, Scope, provide  # pyright: ignore[reportUnknownVariableType]
 
 from argenta.data_bridge import DataBridge
