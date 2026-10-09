@@ -61,6 +61,13 @@ def test_databridge_get_all_returns_empty_dict_initially(data_bridge: DataBridge
     assert data_bridge.get_all() == {}
 
 
+def test_databridge_get_all_returns_live_storage(data_bridge: DataBridge) -> None:
+    """Test get_all returns the internal storage itself (mutations propagate)"""
+    data_bridge.update({"key": "value"})
+    data_bridge.get_all()["injected"] = "yes"
+    assert data_bridge.get_by_key("injected") == "yes"
+
+
 def test_databridge_get_by_key_retrieves_correct_values(data_bridge: DataBridge) -> None:
     """Test get_by_key retrieves correct value"""
     test_data = {"key1": "value1", "key2": date(2024, 1, 1)}

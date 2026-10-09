@@ -48,6 +48,12 @@ def test_parse_raises_error_for_repeated_flag_names() -> None:
         InputCommand.parse('ssh --host 192.168.0.3 --host 172.198.0.43')
 
 
+def test_repeated_flags_error_message_contains_flag_string_entity() -> None:
+    with pytest.raises(RepeatedInputFlagsException) as exc_info:
+        InputCommand.parse('ssh -x 1 -x 2')
+    assert "'-x'" in str(exc_info.value)
+
+
 def test_parse_raises_error_for_unprocessed_entity_after_flags() -> None:
     with pytest.raises(UnprocessedInputFlagException):
         InputCommand.parse('ssh --host 192.168.0.3 9977')

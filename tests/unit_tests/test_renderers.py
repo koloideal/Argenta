@@ -59,8 +59,7 @@ class TestRichRenderer:
             return f"{cmd}: {desc}"
         
         result = RichRenderer.render_command_groups_description(desc_gen, registered_routers)
-        assert "Test Router" in result
-        assert "test: Test command" in result
+        assert result == "\n\nTest Router\ntest: Test command"
 
 
 class TestPlainRenderer:
@@ -122,5 +121,4 @@ class TestPlainRenderer:
             return f"{cmd}: {desc}"
         
         result = PlainRenderer.render_command_groups_description(desc_gen, registered_routers)
-        assert "Test Router" in result
-        assert "test: Test command" in result
+        assert result == "\n\nTest Router\ntest: Test command"

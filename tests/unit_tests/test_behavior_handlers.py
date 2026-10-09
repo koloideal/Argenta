@@ -46,6 +46,14 @@ class TestBehaviorHandlersFabric:
         assert "Incorrect flag syntax" in call_arg
         assert "bad --flag" in call_arg
 
+    def test_incorrect_input_syntax_handler_escapes_markup(self, behavior_fabric: BehaviorHandlersFabric, mock_printer: Mock):
+        handler = behavior_fabric.generate_incorrect_input_syntax_handler()
+
+        handler("bad [bold]flag")
+
+        call_arg = mock_printer.call_args[0][0]
+        assert "\\[bold]" in call_arg
+
     def test_generate_repeated_input_flags_handler(self, behavior_fabric: BehaviorHandlersFabric, mock_printer: Mock):
         handler = behavior_fabric.generate_repeated_input_flags_handler()
         
@@ -55,6 +63,14 @@ class TestBehaviorHandlersFabric:
         call_arg = mock_printer.call_args[0][0]
         assert "Repeated input flags" in call_arg
         assert "cmd --flag --flag" in call_arg
+
+    def test_repeated_input_flags_handler_escapes_markup(self, behavior_fabric: BehaviorHandlersFabric, mock_printer: Mock):
+        handler = behavior_fabric.generate_repeated_input_flags_handler()
+
+        handler("cmd --flag [red]x")
+
+        call_arg = mock_printer.call_args[0][0]
+        assert "\\[red]" in call_arg
 
     def test_generate_empty_input_command_handler(self, behavior_fabric: BehaviorHandlersFabric, mock_printer: Mock):
         handler = behavior_fabric.generate_empty_input_command_handler()
