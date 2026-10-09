@@ -52,6 +52,10 @@ def test_flag_equality_with_non_flag_raises_error() -> None:
         flag == not_flag  # noqa: B015 # pyright: ignore[reportUnusedExpression]
 
 
+def test_flag_equality_distinguishes_different_prefixes() -> None:
+    assert Flag('same', prefix='--') != Flag('same', prefix='-')
+
+
 # ============================================================================
 # Tests for Flag - value validation with list of possible values
 # ============================================================================
@@ -80,6 +84,11 @@ def test_flag_validates_value_matching_regex_pattern() -> None:
 def test_flag_rejects_value_not_matching_regex_pattern() -> None:
     flag = Flag(name='test', possible_values=re.compile(r'192.168.\d+.\d+'))
     assert flag.validate_input_flag_value('152.123.9.8') is False
+
+
+def test_flag_regex_validation_anchors_match_at_value_start() -> None:
+    flag = Flag(name='test', possible_values=re.compile(r'\d+'))
+    assert flag.validate_input_flag_value('abc123') is False
 
 
 # ============================================================================
@@ -136,6 +145,12 @@ def test_input_flag_equality_with_non_flag_raises_error() -> None:
     not_flag = object()
     with pytest.raises(NotImplementedError):
         flag == not_flag  # noqa: B015 # pyright: ignore[reportUnusedExpression]
+
+
+def test_input_flag_equality_compares_names_only() -> None:
+    flag = InputFlag('same', input_value='', prefix='--')
+    other = InputFlag('same', input_value='different', prefix='-')
+    assert flag == other
 
 
 # ============================================================================
@@ -303,6 +318,12 @@ def test_flags_not_equal_when_different_flags() -> None:
 def test_flags_not_equal_when_different_length() -> None:
     flags = Flags([Flag('some')])
     flags2 = Flags([Flag('some'), Flag('other')])
+    assert flags != flags2
+
+
+def test_flags_not_equal_when_partially_matching() -> None:
+    flags = Flags([Flag('one'), Flag('two')])
+    flags2 = Flags([Flag('one'), Flag('three')])
     assert flags != flags2
 
 

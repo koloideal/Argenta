@@ -141,3 +141,28 @@ def test_response_accepts_all_status_types() -> None:
     for status in statuses:
         response = Response(status)
         assert response.status == status
+
+
+# ============================================================================
+# Tests for ResponseStatus.from_flags
+# ============================================================================
+
+
+def test_from_flags_returns_all_valid_when_no_errors() -> None:
+    status = ResponseStatus.from_flags(has_invalid_value_flags=False, has_undefined_flags=False)
+    assert status == ResponseStatus.ALL_FLAGS_VALID
+
+
+def test_from_flags_returns_invalid_when_only_invalid() -> None:
+    status = ResponseStatus.from_flags(has_invalid_value_flags=True, has_undefined_flags=False)
+    assert status == ResponseStatus.INVALID_VALUE_FLAGS
+
+
+def test_from_flags_returns_undefined_when_only_undefined() -> None:
+    status = ResponseStatus.from_flags(has_invalid_value_flags=False, has_undefined_flags=True)
+    assert status == ResponseStatus.UNDEFINED_FLAGS
+
+
+def test_from_flags_returns_combined_when_both_error_kinds() -> None:
+    status = ResponseStatus.from_flags(has_invalid_value_flags=True, has_undefined_flags=True)
+    assert status == ResponseStatus.UNDEFINED_AND_INVALID_FLAGS
