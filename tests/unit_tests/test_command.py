@@ -2,7 +2,7 @@ import re
 
 import pytest
 
-from argenta.command import Flags
+from argenta.command import Flags, InputFlags
 from argenta.command.exceptions import (
     EmptyInputCommandException,
     RepeatedInputFlagsException,
@@ -58,6 +58,27 @@ def test_parse_raises_error_for_empty_command() -> None:
         InputCommand.parse('')
 
     
+# ============================================================================
+# Tests for InputCommand - initialization
+# ============================================================================
+
+
+def test_input_command_wraps_single_input_flag() -> None:
+    input_flag = InputFlag('ssh', input_value='val')
+    cmd = InputCommand('get', input_flags=input_flag)
+    assert input_flag in cmd.input_flags
+
+
+def test_input_command_accepts_input_flags_collection() -> None:
+    input_flags = InputFlags([InputFlag('ssh', input_value='val')])
+    cmd = InputCommand('get', input_flags=input_flags)
+    assert cmd.input_flags is input_flags
+
+
+def test_input_command_without_flags_has_empty_input_flags() -> None:
+    assert not InputCommand('get').input_flags
+
+
 def test_parse_raises_error_slash_on_the_end() -> None:
     with pytest.raises(UnprocessedInputFlagException):
         InputCommand.parse('ssh --host 192.168.0.3\\')

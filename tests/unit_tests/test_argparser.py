@@ -158,6 +158,12 @@ def test_argspace_from_namespace_creates_argspace_from_parsed_namespace() -> Non
     assert debug_arg.founder_class is BooleanArgument
 
 
+def test_argspace_from_namespace_raises_error_for_unprocessed_argument() -> None:
+    namespace = Namespace(rogue="value")
+    with pytest.raises(KeyError):
+        ArgSpace.from_namespace(namespace, [])
+
+
 # ============================================================================
 # Fixtures for ArgParser tests
 # ============================================================================

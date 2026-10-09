@@ -2,6 +2,7 @@ from collections.abc import Generator
 
 import pytest
 from dishka import Container, make_container
+from dishka.integrations.base import is_dishka_injected
 
 from argenta import App, DataBridge, Router
 from argenta.di.integration import (
@@ -70,19 +71,35 @@ def test_get_container_from_response_raises_error_when_no_response_in_args(conta
 def test_setup_dishka_with_auto_inject_enabled(container: Container) -> None:
     app = App()
     router = Router()
-    
+
     @router.command('command')
     def handler(_res: Response, data_bridge: FromDishka[DataBridge]) -> None:
         print(data_bridge)
-        
+
     app.include_router(router)
-    
-    assert setup_dishka(app, container, auto_inject=True) is None
+    command_handler = next(iter(router.command_handlers))
+
+    setup_dishka(app, container, auto_inject=True)
+
+    assert Response.__dishka_container__ is container
+    assert is_dishka_injected(command_handler.handler_as_func)
 
 
 def test_setup_dishka_with_auto_inject_disabled(container: Container) -> None:
     app = App()
-    assert setup_dishka(app, container, auto_inject=False) is None
+    router = Router()
+
+    @router.command('command')
+    def handler(_res: Response, data_bridge: FromDishka[DataBridge]) -> None:
+        print(data_bridge)
+
+    app.include_router(router)
+    command_handler = next(iter(router.command_handlers))
+
+    setup_dishka(app, container, auto_inject=False)
+
+    assert Response.__dishka_container__ is container
+    assert not is_dishka_injected(command_handler.handler_as_func)
 
 
 # ============================================================================
@@ -92,23 +109,29 @@ def test_setup_dishka_with_auto_inject_disabled(container: Container) -> None:
 
 def test_auto_inject_handlers_injects_dependencies_into_handlers(container: Container) -> None:
     Response.patch_by_container(container)
-    
+
     app = App()
     router = Router()
-    
+
     @router.command('command')
     def handler(_res: Response, data_bridge: FromDishka[DataBridge]) -> None:
         print(data_bridge)
-        
+
     app.include_router(router)
-        
+    command_handler = next(iter(router.command_handlers))
+    assert not is_dishka_injected(command_handler.handler_as_func)
+
     _auto_inject_handlers(app)
+    assert is_dishka_injected(command_handler.handler_as_func)
+
+    injected_handler = command_handler.handler_as_func
     _auto_inject_handlers(app)  # check idempotency
+    assert command_handler.handler_as_func is injected_handler
 
 
 # ============================================================================
 # Tests for container dependency resolution
-# ============================================================================F
+# ============================================================================
 
 
 def test_container_resolves_argspace_dependency(container: Container) -> None:

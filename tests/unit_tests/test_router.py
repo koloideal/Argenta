@@ -7,6 +7,7 @@ from argenta.command import Command, Flags, InputCommand, InputFlags
 from argenta.command.flag import Flag, InputFlag
 from argenta.command.flag.models import PossibleValues, ValidationStatus
 from argenta.response.entity import Response
+from argenta.response.status import ResponseStatus
 from argenta.router import Router
 from argenta.router.entity import _structuring_input_flags, _validate_func_args
 from argenta.router.exceptions import (
@@ -154,6 +155,42 @@ def test_structuring_input_flags_marks_flag_valid_when_empty_value_for_neither()
     command = Command('cmd', flags=Flag('ssh', possible_values=PossibleValues.NEITHER))
     input_flags = InputFlags([InputFlag('ssh', input_value='', status=None)])
     assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='', status=ValidationStatus.VALID)])
+
+
+# ============================================================================
+# Tests for input flag structuring - response status
+# ============================================================================
+
+
+def test_structuring_input_flags_returns_all_valid_status_when_all_flags_valid() -> None:
+    command = Command('cmd', flags=Flag('port'))
+    input_flags = InputFlags([InputFlag('port', input_value='some', status=None)])
+    response = _structuring_input_flags(command, input_flags)
+    assert response.status == ResponseStatus.ALL_FLAGS_VALID
+
+
+def test_structuring_input_flags_returns_undefined_status_for_unknown_flag() -> None:
+    command = Command('cmd')
+    input_flags = InputFlags([InputFlag('ssh', input_value='', status=None)])
+    response = _structuring_input_flags(command, input_flags)
+    assert response.status == ResponseStatus.UNDEFINED_FLAGS
+
+
+def test_structuring_input_flags_returns_invalid_status_for_bad_value() -> None:
+    command = Command('cmd', flags=Flag('ssh', possible_values=PossibleValues.NEITHER))
+    input_flags = InputFlags([InputFlag('ssh', input_value='some', status=None)])
+    response = _structuring_input_flags(command, input_flags)
+    assert response.status == ResponseStatus.INVALID_VALUE_FLAGS
+
+
+def test_structuring_input_flags_returns_combined_status_for_mixed_flags() -> None:
+    command = Command('cmd', flags=Flag('ssh', possible_values=PossibleValues.NEITHER))
+    input_flags = InputFlags([
+        InputFlag('ssh', input_value='some', status=None),
+        InputFlag('unknown', input_value='', status=None),
+    ])
+    response = _structuring_input_flags(command, input_flags)
+    assert response.status == ResponseStatus.UNDEFINED_AND_INVALID_FLAGS
 
 
 # ============================================================================
