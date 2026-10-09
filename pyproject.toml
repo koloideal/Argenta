@@ -3,7 +3,7 @@ name = "argenta"
 version = "1.3.0"
 description = "Python library for building modular CLI applications"
 authors = [{ name = "kolo", email = "kolo.is.main@gmail.com" }]
-requires-python = ">=3.12,<3.15"
+requires-python = ">=3.12,<3.16"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -20,6 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Programming Language :: Python :: 3 :: Only",
     "Typing :: Typed",
 ]
