@@ -16,19 +16,25 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.12", "3.13", "3.14"]
+        # 3.15 is a pre-release: coverage's prebuilt C tracer fails to
+        # import on it, so coverage is built from source (pure-Python)
+        include:
+          - python-version: "3.15"
+            uv-sync-extra-args: "--no-binary-package coverage"
 
     steps:
     - uses: actions/checkout@v3
-    
-    - uses: actions/setup-python@v3
+
+    - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    
+        allow-prereleases: true
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install uv
-        uv sync --group tests
+        uv sync --group tests ${{ matrix.uv-sync-extra-args }}
 
     - name: Run tests
       run: uv run python -m pytest tests
