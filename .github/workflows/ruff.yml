@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  ruff:
 
     runs-on: ubuntu-latest
 
