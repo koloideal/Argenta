@@ -25,7 +25,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "rich (>=14.0.0,<15.0.0)",
+    "rich>=14.0.0,<16.0.0",
     "art (>=6.4,<7.0)",
     "dishka>=1.7.2",
     "prompt-toolkit>=3.0.52",
