@@ -12,7 +12,7 @@ class Response:
     def __init__(
         self,
         status: ResponseStatus,
-        input_flags: InputFlags = EMPTY_INPUT_FLAGS,
+        input_flags: InputFlags | None = None,
     ):
         """
         Public. The entity of the user input sent to the handler
@@ -20,7 +20,7 @@ class Response:
         :param input_flags: all input flags
         """
         self.status: ResponseStatus = status
-        self.input_flags: InputFlags = input_flags
+        self.input_flags: InputFlags = InputFlags() if input_flags is None else input_flags
 
     @classmethod
     def patch_by_container(cls, container: Container) -> None:
