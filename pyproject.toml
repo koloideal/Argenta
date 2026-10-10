@@ -125,6 +125,9 @@ root = "metrics/"
 reportPrivateUsage = false
 reportUnusedFunction = false
 
+[tool.coverage.report]
+fail_under = 100
+
 [tool.coverage.run]
 branch = true
 omit = [
