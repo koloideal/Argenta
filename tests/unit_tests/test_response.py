@@ -132,6 +132,15 @@ def test_response_initializes_with_status_and_input_flags() -> None:
     assert response.input_flags == input_flags
 
 
+def test_response_default_input_flags_are_not_shared() -> None:
+    """Each Response gets its own InputFlags instance (no shared mutable default)"""
+    first = Response(ResponseStatus.ALL_FLAGS_VALID)
+    first.input_flags.add_flag(InputFlag('leak', input_value='x'))
+
+    second = Response(ResponseStatus.ALL_FLAGS_VALID)
+    assert len(second.input_flags.flags) == 0
+
+
 # ============================================================================
 # Tests for Response - status types
 # ============================================================================
