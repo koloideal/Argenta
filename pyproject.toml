@@ -51,7 +51,7 @@ argenta = "argenta._cli.__main__:main"
 [project.optional-dependencies]
 cli = [
     "nuitka[onefile]>=4.0.5",
-    "typer>=0.9,!=0.12,<=0.21.1",
+    "typer>=0.9,!=0.12,<=0.27.3",
 ]
 
 [dependency-groups]
