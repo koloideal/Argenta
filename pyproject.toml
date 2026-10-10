@@ -9,7 +9,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 keywords = ["cli", "cli-app", "command-line", "terminal", "modular", "framework"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Software Development :: User Interfaces",

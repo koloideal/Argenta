@@ -207,6 +207,10 @@ To improve the documentation, you can follow a similar workflow as for code cont
 
 ## Styleguides
 
+### API Stability
+
+Argenta follows [Semantic Versioning](https://semver.org/): the public API is stable and may only change in backwards-incompatible ways in major releases. Prefer deprecating an API over removing it outright, and flag any breaking change clearly in the changelog and PR description.
+
 ### Commit Messages
 
 We follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification for our commit messages. This leads to more readable messages that are easy to follow when looking through the project history and allows for automated changelog generation.

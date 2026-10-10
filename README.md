@@ -41,7 +41,11 @@ Argenta is ready for the demands of building scalable, robust and maintainable C
 
 Need something more? Create an **issue**, we're open to suggestions.
 
-## 📝 Why did we create this?
+## 📌 Stability & Versioning
+
+Argenta follows [Semantic Versioning](https://semver.org/). The public API is stable: breaking changes are only introduced in major releases, so minor and patch upgrades are always safe.
+
+## 📄 Why did we create this?
 
 Building complex CLI applications often requires managing different contexts and command scopes. For example, when creating a utility similar to the Metasploit Framework, users need to enter specific scopes (like selecting a scanning module) and then access commands specific only to that context.
 
