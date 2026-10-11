@@ -83,6 +83,7 @@ tests = [
     "pytest>=8.3.2",
     "pytest-cov>=7.0.0",
     "pytest-mock>=3.15.1",
+    "typer>=0.9,!=0.12,<=0.27.3",
 ]
 metrics = [
     "matplotlib>=3.10.8",
@@ -133,7 +134,6 @@ branch = true
 omit = [
     "src/argenta/app/protocols.py",
     "src/argenta/*/exceptions.py",
-    "src/argenta/_cli/*",
     "src/argenta/metrics/*"
 ]
 
