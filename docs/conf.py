@@ -17,12 +17,16 @@ root_doc = "index"
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
+extensions = ["sphinx_sitemap"]
+sitemap_url_scheme = "{link}"
+
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "shibuya"
-html_extra_path = ["robots.txt", "sitemap.xml", "llms.txt"]
+html_baseurl = "https://argenta.wiki/"
+html_extra_path = ["robots.txt", "llms.txt"]
 
 html_theme_options = {
   "accent_color": "cyan",
