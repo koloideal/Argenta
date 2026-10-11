@@ -1,4 +1,4 @@
-![preview](https://i.ibb.co/whkMfHw5/a-minimalist-logo-design-featuring-the-t-t-GXhfz-NFRwi-k-ROq-NMd-LWA-R7-6ru-YSh-G0kz-LKr5t-ZQ.jpg)
+![preview](https://raw.githubusercontent.com/koloideal/Argenta/main/.github/assets/logo.jpg)
 
 **Argenta** is a simple and elegant framework for building modular CLI applications. It provides a clean and intuitive way to create context-aware command-line tools with isolated command scopes.
 
@@ -9,7 +9,7 @@ Argenta is the **"Simplest"**, **"Most Modular"**, and **"Most Elegant"** way to
 
 ---
 
-![preview](https://vhs.charm.sh/vhs-2hvLCEgclmwZPJZt1vLGKi.gif)
+![preview](https://raw.githubusercontent.com/koloideal/Argenta/main/.github/assets/demo.gif)
 
 **Argenta** allows you to build interactive CLI applications incredibly easily. There's no need to manually parse complex command structures or manage state transitions — just use routers and commands!
 

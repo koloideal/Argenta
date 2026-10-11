@@ -1,4 +1,4 @@
-![preview](https://i.ibb.co/whkMfHw5/a-minimalist-logo-design-featuring-the-t-t-GXhfz-NFRwi-k-ROq-NMd-LWA-R7-6ru-YSh-G0kz-LKr5t-ZQ.jpg)
+![preview](https://raw.githubusercontent.com/koloideal/Argenta/main/.github/assets/logo.jpg)
 
 **Argenta** — это простой и элегантный фреймворк для создания модульных CLI-приложений. Он предоставляет чистый и интуитивный способ создания контекстно-зависимых инструментов командной строки с изолированными областями команд.
 
@@ -9,7 +9,7 @@ Argenta — это **"Самый простой"**, **"Самый модульн
 
 ---
 
-![preview](https://vhs.charm.sh/vhs-2hvLCEgclmwZPJZt1vLGKi.gif)
+![preview](https://raw.githubusercontent.com/koloideal/Argenta/main/.github/assets/demo.gif)
 
 **Argenta** позволяет создавать интерактивные CLI-приложения невероятно легко. Не нужно вручную парсить сложные структуры команд или управлять переходами состояний — просто используйте роутеры и команды!
 

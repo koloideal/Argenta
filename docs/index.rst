@@ -13,7 +13,7 @@ What is it and why?
 
 If you have functionality that you want to provide as a CLI application, Argenta will help you with that. The main goal of the library is to enable developers to focus on implementing their ideas by providing convenient abstractions.
 
-.. image:: https://i.ibb.co/fzWcfgFq/2025-12-04-173045.png
+.. image:: /_static/app-screenshot.png
    :alt: App example
 
 Argenta is designed for creating applications that work in their own context (scope). This means that the application starts once and creates an interactive session, similar to Python REPL or MySQL console. When launched, the user enters this session where all the functionality you've implemented is available.
@@ -35,7 +35,7 @@ Architecture and lifecycle
 
 The following diagram illustrates how Argenta components interact with each other while processing user input.
 
-.. image:: https://i.ibb.co/hF3FdFr1/argenta-intro-drawio-2.png
+.. image:: /_static/architecture.png
    :alt: Request Lifecycle Diagram
    :align: center
 

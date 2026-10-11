@@ -34,7 +34,7 @@ Save the code to a file (for example, ``main.py``) and run:
 
 **Result**
 
-.. image:: https://i.ibb.co/35q24Bh8/image.png
+.. image:: /_static/quickstart-simple.png
    :alt: Simple App Example
    
 -----
@@ -114,5 +114,5 @@ Finally, let's put it all together: create an ``App`` instance, connect the rout
 
 Now you can run ``main.py`` and interact with your new CLI application.
 
-.. image:: https://i.ibb.co/bgsCLZhP/image.png
+.. image:: /_static/quickstart-complex.png
    :alt: Task Manager Example
