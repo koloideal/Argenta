@@ -4,6 +4,12 @@
 
 Argenta — это **"Самый простой"**, **"Самый модульный"** и **"Самый элегантный"** способ создания интерактивных CLI-приложений на Python. 
 
+[![PyPI version](https://img.shields.io/pypi/v/argenta)](https://pypi.org/project/argenta/)
+[![Python versions](https://img.shields.io/pypi/pyversions/argenta)](https://pypi.org/project/argenta/)
+[![Tests](https://github.com/koloideal/Argenta/actions/workflows/tests.yml/badge.svg)](https://github.com/koloideal/Argenta/actions/workflows/tests.yml)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/koloideal/Argenta/actions/workflows/tests.yml)
+[![License](https://img.shields.io/pypi/l/argenta)](https://github.com/koloideal/Argenta/blob/main/LICENSE)
+
 📖 **Читайте полную документацию:** [argenta.wiki](https://argenta.wiki/)<br>
 🌍 **Другие языки:** [EN](https://github.com/koloideal/Argenta/blob/main/README.md)
 
