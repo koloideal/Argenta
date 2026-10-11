@@ -26,7 +26,7 @@ After installation, the ``argenta`` command is available in the terminal:
 
     argenta --help
 
-.. image:: https://i.ibb.co/p60T7fvh/image.png
+.. image:: /_static/cli-help.png
    :alt: Argenta CLI help
 
 .. note::
@@ -116,7 +116,7 @@ With the ``src`` architecture:
 .. literalinclude:: ../code_snippets/cli/src_structure.txt
    :language: text
 
-.. image:: https://i.ibb.co/gY6zTQd/image.png
+.. image:: /_static/cli-new.png
    :alt: argenta new command output
 
 The ``init`` command
@@ -163,7 +163,7 @@ Entrypoint format — see :ref:`Entrypoint format <cli_entrypoint>`.
     argenta run app/main.py:main
     argenta run my_project.application:main
 
-.. image:: https://i.ibb.co/fVPzxWxp/image.png
+.. image:: /_static/cli-run.png
    :alt: argenta run command output
 
 .. note::
@@ -225,7 +225,7 @@ Example output:
         └── ⚡ hello
             📝 description: Say hello
 
-.. image:: https://i.ibb.co/wNFvKcqM/image.png
+.. image:: /_static/cli-routes.png
    :alt: argenta routes command output
 
 -----
@@ -300,7 +300,7 @@ The full flag list is in the `Nuitka documentation <https://nuitka.net/user-docu
 ``--jobs=<n>``
     Number of parallel compilation processes. Argenta's default is all cores (``os.cpu_count()``). On memory-constrained machines it makes sense to limit it: ``-- --jobs=2``.
 
-.. image:: https://i.ibb.co/VsVXxf7/image.png
+.. image:: /_static/cli-build.png
    :alt: argenta build command output
 
 -----
@@ -326,5 +326,5 @@ Example output:
     Platform  Linux-7.1.5-zen1-2-zen-x86_64-with-glibc2.40
     Docs    https://argenta.wiki
 
-.. image:: https://i.ibb.co/B5k8Ftyg/image.png
+.. image:: /_static/cli-info.png
    :alt: argenta info command output

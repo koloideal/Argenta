@@ -31,14 +31,14 @@ By default, ``Argenta`` intercepts all text output to ``stdout`` inside a comman
 
 Example of an application with a dynamic dividing line:
 
-.. image:: https://i.ibb.co/yn9rWnNC/2025-11-07-180751.png
+.. image:: /_static/dividing-line-dynamic.png
   :alt: Example of an application with a dynamic dividing line
 
 As you can see, the dividing line is exactly the same length as the longest line in the output.
 
 The same application with a static line:
 
-.. image:: https://i.ibb.co/P8B4xyp/2025-11-07-180330.png
+.. image:: /_static/dividing-line-static.png
   :alt: Example of an application with a static dividing line
 
 In this example, the dividing line has a fixed length (25 characters by default).
