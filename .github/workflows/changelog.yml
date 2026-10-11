@@ -1,0 +1,35 @@
+name: changelog
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  changelog-fragment:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+
+    - name: Check for changelog fragment
+      env:
+        BASE_REF: ${{ github.base_ref }}
+      run: |
+        changed="$(git diff --name-only "origin/${BASE_REF}...HEAD")"
+        if ! echo "$changed" | grep -q '^src/'; then
+          echo "No src/ changes — fragment not required."
+          exit 0
+        fi
+        added="$(git diff --name-only --diff-filter=A "origin/${BASE_REF}...HEAD")"
+        if echo "$added" | grep -q '^changelog.d/.*\.md$'; then
+          echo "Changelog fragment found."
+        else
+          echo "::error title=Missing changelog fragment::This PR changes src/ but adds no file in changelog.d/. Create one with 'just frag'."
+          exit 1
+        fi
