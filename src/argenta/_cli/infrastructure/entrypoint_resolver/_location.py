@@ -44,9 +44,16 @@ def file_path_location(raw_path: str) -> ModuleLocation:
     while (package_root / "__init__.py").exists():
         package_root = package_root.parent
 
+    parts = abs_path.relative_to(package_root).with_suffix("").parts
+    if parts == ("__main__",):
+        # A bare "__main__" would resolve to this process's own __main__
+        # module; import the file as "<dir>.__main__" instead.
+        package_root = package_root.parent
+        parts = (abs_path.parent.name, "__main__")
+
     pkg_root_str = str(package_root)
     if pkg_root_str not in sys.path:
         sys.path.insert(0, pkg_root_str)
 
-    module_name = ".".join(abs_path.relative_to(package_root).with_suffix("").parts)
+    module_name = ".".join(parts)
     return ModuleLocation(module_name, str(abs_path), True, raw_path)
