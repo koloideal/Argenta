@@ -112,7 +112,7 @@ if __name__ == '__main__':
 
 ---
 
-MIT 2025 kolo | made by [kolo](https://t.me/kolo_id)
+MIT 2025-2026 kolo | made by [kolo](https://t.me/kolo_id)
 
 
 

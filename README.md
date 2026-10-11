@@ -112,4 +112,4 @@ Full documentation is available at [argenta.wiki](https://argenta.wiki/)
 
 ---
 
-MIT 2025 kolo | made by [kolo](https://t.me/kolo_id)
+MIT 2025-2026 kolo | made by [kolo](https://t.me/kolo_id)
