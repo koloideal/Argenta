@@ -3,11 +3,13 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+from datetime import datetime, timezone
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "Argenta"
-copyright = "2025, kolo"
+copyright = f"2025–{datetime.now(timezone.utc).year}, kolo"
 author = "kolo"
 root_doc = "index"
 
