@@ -104,9 +104,10 @@ We use GitHub issues to track bugs and errors. If you run into an issue with the
 
 Once it's filed:
 
-- The project team will label the issue accordingly.
-- A team member will try to reproduce the issue with your provided steps. If there are no reproduction steps or no obvious way to reproduce the issue, the team will ask you for those steps and mark the issue as `needs-repro`. Bugs with the `needs-repro` tag will not be addressed until they are reproduced.
-- If the team is able to reproduce the issue, it will be marked `needs-fix`, as well as possibly other tags (such as `critical`), and the issue will be left to be [implemented by someone](#your-first-code-contribution).
+- New issues enter the triage pipeline with the `needs-triage` label — the project team will evaluate the report.
+- If the report lacks reproduction steps or other needed information, the team will ask for them and mark the issue as `needs-info`. Issues marked `needs-info` will not move forward until the reporter responds.
+- Once the issue is confirmed and fully specified, it will be marked `ready-for-agent` (a task an AI agent can pick up) or `ready-for-human` (requires human work), and left to be [implemented by someone](#your-first-code-contribution).
+- If the issue is out of scope or won't be fixed, it will be marked `wontfix`.
 
 <!-- You might want to create an issue template for bugs and errors that can be used as a guide and that defines the structure of the information to be included. If you do so, reference it here in the description. -->
 
