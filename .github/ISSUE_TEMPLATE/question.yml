@@ -1,0 +1,26 @@
+name: Question
+description: Ask a question about using Argenta
+title: "[question] "
+labels: ["needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before asking: check the [documentation](https://argenta.wiki) — most answers live there.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What are you trying to do, and where are you stuck?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Relevant code, Argenta version, environment — anything that helps answer.
+      render: shell
+    validations:
+      required: false
