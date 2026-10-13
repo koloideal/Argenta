@@ -134,6 +134,12 @@ omit = [
     "src/argenta/*/exceptions.py"
 ]
 
+[tool.pytest.ini_options]
+testpaths = "tests"
+addopts = "--strict-markers -ra"
+xfail_strict = true
+filterwarnings = ["error"]
+
 [tool.scriv]
 format = "md"
 output_file = "CHANGELOG.md"
