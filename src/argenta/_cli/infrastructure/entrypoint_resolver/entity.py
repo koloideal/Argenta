@@ -42,7 +42,9 @@ def _import_entrypoint_module(module_name: str, *, is_file_path: bool) -> Module
         return importlib.import_module(module_name)
     except ImportError as error:
         if is_file_path or module_name.endswith(".__main__"):
-            raise ResolveFromStringError(f'Cannot import module "{module_name}": {error}')
+            raise ResolveFromStringError(
+                f'Cannot import module "{module_name}": {error}'
+            ) from error
         return _import_main_fallback(module_name, error)
 
 
@@ -50,7 +52,7 @@ def _import_main_fallback(module_name: str, error: ImportError) -> ModuleType:
     try:
         return importlib.import_module(f"{module_name}.__main__")
     except ImportError:
-        raise ResolveFromStringError(f'Cannot import module "{module_name}": {error}')
+        raise ResolveFromStringError(f'Cannot import module "{module_name}": {error}') from error
 
 
 class EntrypointResolver[EntrypointT: (CallableEntryPoint, EntryPointAsApp)]:
@@ -85,7 +87,7 @@ class EntrypointResolver[EntrypointT: (CallableEntryPoint, EntryPointAsApp)]:
         try:
             instance_object_signature = inspect.signature(instance_object)
         except (TypeError, ValueError):
-            raise CallableEntrypointNotMatchRequiredSignatureError(repr(instance_object))
+            raise CallableEntrypointNotMatchRequiredSignatureError(repr(instance_object)) from None
         required_params = [
             parameter
             for parameter in instance_object_signature.parameters.values()
@@ -131,7 +133,7 @@ class EntrypointResolver[EntrypointT: (CallableEntryPoint, EntryPointAsApp)]:
         except AttributeError:
             raise ResolveFromStringError(
                 f'"{entrypoint_object_name}" not found in "{location.display_path}"'
-            )
+            ) from None
 
         match instance:
             case App():

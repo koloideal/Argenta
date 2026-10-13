@@ -63,8 +63,7 @@ class Command:
             is_valid = registered_flag.validate_input_flag_value(flag.input_value)
             if is_valid:
                 return ValidationStatus.VALID
-            else:
-                return ValidationStatus.INVALID
+            return ValidationStatus.INVALID
         return ValidationStatus.UNDEFINED
 
 

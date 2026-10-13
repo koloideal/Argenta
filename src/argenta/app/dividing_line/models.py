@@ -1,7 +1,4 @@
-from abc import ABC
-
-
-class BaseDividingLine(ABC):
+class BaseDividingLine:
     def __init__(self, unit_part: str = "-") -> None:
         """
         Private. The basic dividing line
@@ -17,8 +14,7 @@ class BaseDividingLine(ABC):
         """
         if len(self._unit_part) == 0:
             return " "
-        else:
-            return self._unit_part[0]
+        return self._unit_part[0]
 
 
 class StaticDividingLine(BaseDividingLine):

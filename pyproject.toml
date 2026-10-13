@@ -97,6 +97,22 @@ metrics = [
 [tool.ruff]
 line-length = 100
 
+[tool.ruff.lint]
+extend-select = [
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "RUF",  # ruff-specific rules
+    "PT",   # flake8-pytest-style
+    "PERF", # perflint
+    "C4",   # flake8-comprehensions
+    "PIE",  # flake8-pie
+    "RET",  # flake8-return
+]
+# Codes ruff does not know but must keep in noqa comments (wemake-python-styleguide)
+external = ["WPS"]
+
 [tool.flake8]
 max-line-length = 100
 per-file-ignores = """

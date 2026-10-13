@@ -33,8 +33,7 @@ class CommandLexer(Lexer):
 
         if first_word in self.valid_commands:
             return [("class:valid", line_text)]
-        else:
-            return [("class:invalid", line_text)]
+        return [("class:invalid", line_text)]
 
 
 class HistoryCompleter(Completer):
