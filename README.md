@@ -9,6 +9,7 @@ Argenta is the **"Simplest"**, **"Most Modular"**, and **"Most Elegant"** way to
 [![Tests](https://github.com/koloideal/Argenta/actions/workflows/tests.yml/badge.svg)](https://github.com/koloideal/Argenta/actions/workflows/tests.yml)
 [![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/koloideal/Argenta/actions/workflows/tests.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/koloideal/Argenta/badge)](https://scorecard.dev/viewer/?uri=github.com/koloideal/Argenta)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/15453/badge)](https://www.bestpractices.dev/projects/15453)
 [![License](https://img.shields.io/pypi/l/argenta)](https://github.com/koloideal/Argenta/blob/main/LICENSE)
 
 📖 **Read the full documentation:** [argenta.wiki](https://argenta.wiki/)<br>
