@@ -9,34 +9,34 @@ default:
 
 # Run tests via pytest
 tests:
-    python -m pytest tests
+    uv run python -m pytest tests
 
 # Run tests with coverage report
 tests-cov:
-    python -m pytest --cov=argenta tests
+    uv run python -m pytest --cov=argenta tests
 
 # Run tests with coverage HTML report
 tests-cov-html:
-    python -m pytest --cov=argenta tests --cov-report=html
+    uv run python -m pytest --cov=argenta tests --cov-report=html
 
 # ── Code quality ──────────────────────────────────────────────────────────────
 
 # Format code (Ruff)
 format:
-    python -m ruff format ./src
-    python -m ruff check --select I --fix ./src
+    uv run python -m ruff format ./src
+    uv run python -m ruff check --select I --fix ./src
 
 # Check types via mypy (strict)
 mypy:
-    python -m mypy -p argenta --strict
+    uv run python -m mypy -p argenta --strict
 
 # Check style via wemake-python-styleguide
 wps:
-    python -m flake8 --format=wemake ./src
+    uv run python -m flake8 --format=wemake ./src
 
 # Run Ruff linter
 ruff:
-    python -m ruff check ./src
+    uv run python -m ruff check ./src
 
 # Run all checks (format, mypy, ruff, wps)
 check-format: format mypy ruff wps
@@ -45,9 +45,9 @@ check-format: format mypy ruff wps
 
 # Create a new changelog fragment and open it in $EDITOR
 frag:
-    python -c "from pathlib import Path; Path('changelog.d').mkdir(exist_ok=True)"
-    scriv create --add
+    uv run python -c "from pathlib import Path; Path('changelog.d').mkdir(exist_ok=True)"
+    uv run scriv create --add
 
 # Collect fragments into CHANGELOG.md for release  (usage: just release 1.2.3)
 release version:
-    scriv collect --version {{ version }} --add
+    uv run scriv collect --version {{ version }} --add
