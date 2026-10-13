@@ -28,6 +28,13 @@ def test_validate_command_raises_error_for_trigger_with_spaces() -> None:
     router = Router()
     with pytest.raises(TriggerContainSpacesException):
         router._validate_command(Command(trigger='command with spaces'))
+
+
+@pytest.mark.parametrize('trigger', ['tab\tcmd', 'new\nline', 'cr\rcmd', 'nbsp\u00a0cmd'])
+def test_validate_command_raises_error_for_trigger_with_any_whitespace(trigger: str) -> None:
+    router = Router()
+    with pytest.raises(TriggerContainSpacesException):
+        router._validate_command(Command(trigger=trigger))
         
         
 def test_validate_command_raises_error_for_same_trigger() -> None:
