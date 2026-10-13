@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 from typing import Protocol
 
-from art import text2art  # pyright: ignore[reportUnknownVariableType]
+from art import text2art
 
 from argenta.app.protocols import DescriptionMessageGenerator
 from argenta.app.registered_routers.entity import RegisteredRouters
