@@ -286,3 +286,30 @@ def test_provider_finalizer_runs_after_repl_exits(monkeypatch: pytest.MonkeyPatc
     output = capsys.readouterr().out
 
     assert re.search(r'resource used\n(.|\n)*resource finalized\n', output)
+
+
+# ============================================================================
+# Tests for custom printer
+# ============================================================================
+
+
+def test_prompt_gaps_are_written_through_custom_printer(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    inputs = iter(["test", "q"])
+    monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
+    printed: list[str] = []
+
+    router = Router()
+    orchestrator = Orchestrator()
+
+    @router.command(Command('test'))
+    def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
+        print('test command')
+
+    app = App(override_system_messages=True, printer=printed.append)
+    app.include_router(router)
+    orchestrator.run_repl(app)
+
+    output = capsys.readouterr().out
+
+    assert output.strip('\n') == 'test command'
+    assert printed.count('') == 4
