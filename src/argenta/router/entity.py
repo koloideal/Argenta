@@ -69,10 +69,7 @@ class Router:
         :param command: Registered command
         :return: decorated handler as Callable
         """
-        if isinstance(command, str):
-            redefined_command = Command(command)
-        else:
-            redefined_command = command
+        redefined_command = Command(command) if isinstance(command, str) else command
 
         self._validate_command(redefined_command)
         self.aliases.update({alias.lower() for alias in redefined_command.aliases})

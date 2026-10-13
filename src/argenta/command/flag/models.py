@@ -74,8 +74,7 @@ class Flag:
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Flag):
             return self.string_entity == other.string_entity
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
 
 class InputFlag:
@@ -123,8 +122,7 @@ class InputFlag:
     def __eq__(self, other: object) -> bool:
         if isinstance(other, InputFlag):
             return self.name == other.name
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
 
 class BaseFlags[FlagType]:
@@ -182,17 +180,13 @@ class Flags(BaseFlags[Flag]):
         if len(self.flags) != len(other.flags):
             return False
 
-        flag_pairs: Iterator[tuple[Flag, Flag]] = zip(self.flags, other.flags)
+        flag_pairs: Iterator[tuple[Flag, Flag]] = zip(self.flags, other.flags, strict=True)
         return all(s_flag == o_flag for s_flag, o_flag in flag_pairs)
 
     def __contains__(self, flag_to_check: object) -> bool:
         if isinstance(flag_to_check, Flag):
-            for flag in self.flags:
-                if flag == flag_to_check:
-                    return True
-            return False
-        else:
-            raise TypeError
+            return any(flag == flag_to_check for flag in self.flags)
+        raise TypeError
 
 
 class InputFlags(BaseFlags[InputFlag]):
@@ -208,11 +202,10 @@ class InputFlags(BaseFlags[InputFlag]):
         """
         if with_status is None:
             return next((flag for flag in self.flags if flag.name == name), default)
-        else:
-            return next(
-                (flag for flag in self.flags if flag.name == name and flag.status == with_status),
-                default,
-            )
+        return next(
+            (flag for flag in self.flags if flag.name == name and flag.status == with_status),
+            default,
+        )
 
     @override
     def __eq__(self, other: object) -> bool:
@@ -222,15 +215,13 @@ class InputFlags(BaseFlags[InputFlag]):
         if len(self.flags) != len(other.flags):
             return False
 
-        paired_flags: Iterator[tuple[InputFlag, InputFlag]] = zip(self.flags, other.flags)
+        paired_flags: Iterator[tuple[InputFlag, InputFlag]] = zip(
+            self.flags, other.flags, strict=True
+        )
 
         return all(my_flag == other_flag for my_flag, other_flag in paired_flags)
 
     def __contains__(self, ingressable_item: object) -> bool:
         if isinstance(ingressable_item, InputFlag):
-            for flag in self.flags:
-                if flag == ingressable_item:
-                    return True
-            return False
-        else:
-            raise TypeError
+            return any(flag == ingressable_item for flag in self.flags)
+        raise TypeError
