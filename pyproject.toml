@@ -134,8 +134,7 @@ fail_under = 100
 branch = true
 omit = [
     "src/argenta/app/protocols.py",
-    "src/argenta/*/exceptions.py",
-    "src/argenta/metrics/*"
+    "src/argenta/*/exceptions.py"
 ]
 
 [tool.scriv]
