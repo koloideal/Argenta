@@ -32,6 +32,7 @@ jobs:
       with:
         # no cache: a poisoned dependency cache must never feed a release build
         enable-cache: false
+        version: "0.13.0"
 
     - name: Install dependencies
       run: uv sync --frozen --no-dev
