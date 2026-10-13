@@ -21,10 +21,10 @@ tests-cov-html:
 
 # ── Code quality ──────────────────────────────────────────────────────────────
 
-# Format code (Ruff + isort)
+# Format code (Ruff)
 format:
     python -m ruff format ./src
-    python -m isort ./src
+    python -m ruff check --select I --fix ./src
 
 # Check types via mypy (strict)
 mypy:

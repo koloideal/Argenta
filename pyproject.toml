@@ -65,7 +65,6 @@ dev = [
 ]
 linters = [
     "flake8-pyproject>=1.2.3",
-    "isort>=7.0.0",
     "ruff>=0.12.12",
     "wemake-python-styleguide>=1.0.0",
 ]
@@ -179,10 +178,6 @@ disallow_any_unimported = false
 disallow_untyped_calls = false
 disallow_untyped_decorators = false
 warn_return_any = false
-
-[tool.isort]
-profile = "black"
-line_length = 100
 
 [build-system]
 requires = ["uv_build>=0.4,<0.13"]
