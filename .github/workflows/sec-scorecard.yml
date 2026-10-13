@@ -1,4 +1,4 @@
-name: scorecard
+name: sec-scorecard
 
 on:
   push:
