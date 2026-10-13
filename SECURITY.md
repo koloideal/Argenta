@@ -8,15 +8,15 @@ This table shows the versions of Argenta that are currently supported with secur
 
 | Version | Supported       |
 |---------|-----------------|
-| 1.1.x   | ✅              |
-| < 1.1   | ❌               |
+| 1.3.x   | ✅              |
+| < 1.3   | ❌               |
 
 ## Reporting a Vulnerability
 
 If you believe you have found a security vulnerability in Argenta, please report it to us through one of the following methods:
 
-- **Email**: Send a detailed report to `kolo.is.main@gmailcom`.
-- **GitHub Security Advisories**: You can create a new security advisory directly in the Argenta repository.
+- **Email**: Send a detailed report to `kolo.is.main@gmail.com`.
+- **GitHub Security Advisories**: You can create a new security advisory directly in the Argenta repository: [open a private advisory](https://github.com/koloideal/Argenta/security/advisories/new).
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
