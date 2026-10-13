@@ -241,3 +241,48 @@ def test_repeated_flags_trigger_repeated_flags_handler(monkeypatch: pytest.Monke
     output = capsys.readouterr().out
 
     assert 'Repeated input flags: "test --port 22 --port 33"' in output
+
+
+# ============================================================================
+# Tests for terminal interrupts (Ctrl+C / Ctrl+D)
+# ============================================================================
+
+
+def _raising_input(inputs: Iterator[str | type[BaseException]]) -> str:
+    item = next(inputs)
+    if isinstance(item, str):
+        return item
+    raise item
+
+
+def test_keyboard_interrupt_at_prompt_does_not_stop_loop(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    inputs: Iterator[str | type[BaseException]] = iter([KeyboardInterrupt, "test", "q"])
+    monkeypatch.setattr('builtins.input', lambda _prompt="": _raising_input(inputs))
+
+    router = Router()
+    orchestrator = Orchestrator()
+
+    @router.command(Command('test'))
+    def test(_response: Response) -> None:  # pyright: ignore[reportUnusedFunction]
+        print('test command')
+
+    app = App(override_system_messages=True, printer=print)
+    app.include_router(router)
+    orchestrator.run_repl(app)
+
+    output = capsys.readouterr().out
+
+    assert "\ntest command\n" in output
+
+
+def test_eof_at_prompt_exits_through_exit_command_handler(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    inputs: Iterator[str | type[BaseException]] = iter([EOFError])
+    monkeypatch.setattr('builtins.input', lambda _prompt="": _raising_input(inputs))
+
+    app = App(override_system_messages=True, printer=print)
+    app.set_exit_command_handler(lambda _response: print('Exited on EOF'))
+    Orchestrator().run_repl(app)
+
+    output = capsys.readouterr().out
+
+    assert "\nExited on EOF\n" in output

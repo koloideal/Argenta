@@ -172,9 +172,17 @@ class BaseApp(BehaviorHandlersSettersMixin):
                     self._description_message_generator, self.registered_routers
                 )
 
-            raw_command = self._prompt_for_command()
-            if self._dispatch_command(raw_command):
+            raw_command = self._read_command()
+            if raw_command is not None and self._dispatch_command(raw_command):
                 return
+
+    def _read_command(self) -> str | None:
+        try:
+            return self._prompt_for_command()
+        except KeyboardInterrupt:
+            return None
+        except EOFError:
+            return self._exit_command.trigger
 
     def _prompt_for_command(self) -> str:
         print()  # pre-prompt gap
