@@ -1,0 +1,114 @@
+# serializer version: 1
+# name: TestRendererSnapshots.test_render_command_groups_description[plain]
+  '''
+  
+  
+  Admin
+  restart — Restart the service
+  logs — 
+  
+  User
+  profile — Show user profile
+  '''
+# ---
+# name: TestRendererSnapshots.test_render_command_groups_description[rich]
+  '''
+  
+  
+  Admin
+  restart — Restart the service
+  logs — 
+  
+  User
+  profile — Show user profile
+  '''
+# ---
+# name: TestRendererSnapshots.test_render_farewell_message[plain]
+  '''
+  
+  Bye! | https://github.com/koloideal/Argenta | made by kolo
+  '''
+# ---
+# name: TestRendererSnapshots.test_render_farewell_message[rich]
+  '''
+  [bold red] ______                __ 
+  |   __ \.--.--..-----.|  |
+  |   __ <|  |  ||  -__||__|
+  |______/|___  ||_____||__|
+          |_____|           
+  [/bold red]
+  [red i]https://github.com/koloideal/Argenta[/red i] | [red bold i]made by kolo[/red bold i]
+  '''
+# ---
+# name: TestRendererSnapshots.test_render_initial_message[plain]
+  'Welcome!'
+# ---
+# name: TestRendererSnapshots.test_render_initial_message[rich]
+  '''
+  [bold red]
+  ░██╗░░░░░░░██╗███████╗██╗░░░░░░█████╗░░█████╗░███╗░░░███╗███████╗██╗
+  ░██║░░██╗░░██║██╔════╝██║░░░░░██╔══██╗██╔══██╗████╗░████║██╔════╝██║
+  ░╚██╗████╗██╔╝█████╗░░██║░░░░░██║░░╚═╝██║░░██║██╔████╔██║█████╗░░██║
+  ░░████╔═████║░██╔══╝░░██║░░░░░██║░░██╗██║░░██║██║╚██╔╝██║██╔══╝░░╚═╝
+  ░░╚██╔╝░╚██╔╝░███████╗███████╗╚█████╔╝╚█████╔╝██║░╚═╝░██║███████╗██╗
+  ░░░╚═╝░░░╚═╝░░╚══════╝╚══════╝░╚════╝░░╚════╝░╚═╝░░░░░╚═╝╚══════╝╚═╝[/bold red]
+  '''
+# ---
+# name: TestRendererSnapshots.test_render_messages_on_startup[plain]
+  '''
+  
+  First
+  Second
+  Third
+  '''
+# ---
+# name: TestRendererSnapshots.test_render_messages_on_startup[rich]
+  '''
+  
+  First
+  Second
+  Third
+  '''
+# ---
+# name: TestRendererSnapshots.test_render_prompt[plain]
+  'Enter command'
+# ---
+# name: TestRendererSnapshots.test_render_prompt[rich]
+  '<gray><b>Enter command</b></gray>'
+# ---
+# name: TestRendererSnapshots.test_render_text_for_description_message_generator[plain]
+  'deploy *=*=* Deploy the app'
+# ---
+# name: TestRendererSnapshots.test_render_text_for_description_message_generator[rich]
+  '[bold red]<deploy>[/bold red] [blue dim]*=*=*[/blue dim] [bold yellow italic]Deploy the app[/bold yellow italic]'
+# ---
+# name: TestRendererSnapshots.test_render_text_for_empty_input_command_handler[plain]
+  'Empty input command'
+# ---
+# name: TestRendererSnapshots.test_render_text_for_empty_input_command_handler[rich]
+  '[red bold]Empty input command[/red bold]'
+# ---
+# name: TestRendererSnapshots.test_render_text_for_incorrect_input_syntax_handler[plain]
+  'Incorrect flag syntax: cmd --'
+# ---
+# name: TestRendererSnapshots.test_render_text_for_incorrect_input_syntax_handler[rich]
+  '[red bold]Incorrect flag syntax: cmd --[/red bold]'
+# ---
+# name: TestRendererSnapshots.test_render_text_for_repeated_input_flags_handler[plain]
+  'Repeated input flags: cmd -a -a'
+# ---
+# name: TestRendererSnapshots.test_render_text_for_repeated_input_flags_handler[rich]
+  '[red bold]Repeated input flags: cmd -a -a[/red bold]'
+# ---
+# name: TestRendererSnapshots.test_render_text_for_unknown_command_handler_no_similar[plain]
+  'Unknown command: whetever'
+# ---
+# name: TestRendererSnapshots.test_render_text_for_unknown_command_handler_no_similar[rich]
+  '[red]Unknown command:[/red] [blue]whetever[/blue]'
+# ---
+# name: TestRendererSnapshots.test_render_text_for_unknown_command_handler_with_similar[plain]
+  'Unknown command: whetever, most similar: whatever'
+# ---
+# name: TestRendererSnapshots.test_render_text_for_unknown_command_handler_with_similar[rich]
+  '[red]Unknown command:[/red] [blue]whetever[/blue][red], most similar:[/red] [blue]whatever[/blue]'
+# ---

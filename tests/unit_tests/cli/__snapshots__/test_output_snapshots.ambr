@@ -1,0 +1,42 @@
+# serializer version: 1
+# name: test_info_output
+  '''
+  
+  ░█████╗░██████╗░░██████╗░███████╗███╗░░██╗████████╗░█████╗░
+  ██╔══██╗██╔══██╗██╔════╝░██╔════╝████╗░██║╚══██╔══╝██╔══██╗
+  ███████║██████╔╝██║░░██╗░█████╗░░██╔██╗██║░░░██║░░░███████║
+  ██╔══██║██╔══██╗██║░░╚██╗██╔══╝░░██║╚████║░░░██║░░░██╔══██║
+  ██║░░██║██║░░██║╚██████╔╝███████╗██║░╚███║░░░██║░░░██║░░██║
+  ╚═╝░░╚═╝╚═╝░░╚═╝░╚═════╝░╚══════╝╚═╝░░╚══╝░░░╚═╝░░░╚═╝░░╚═╝
+  
+  
+       Argenta version                              <masked>
+       Python version                             <masked>
+       Platform           <masked>
+       Docs                         https://argenta.wiki
+  
+  
+                   made with ❤ by kolo
+  
+  '''
+# ---
+# name: test_routes_output
+  '''
+  ╭───── App Stats ──────╮
+  │ 📁 Total Routers:  1 │
+  │ ⚡ Total Commands: 2 │
+  │ 🔀 Total Aliases:  1 │
+  │ 🚩 Total Flags:    1 │
+  ╰──────────────────────╯
+  
+  📦 App object: <argenta.app.models.App object at 0xADDR>
+  └── 📁 Router: Test router
+      ├── ⚡ mycmd
+      │   ├── 📝 description: Some useful command
+      │   ├── 🔀 aliases: mc
+      │   └── 🚩 flags: (1)
+      │       └── --verbose  possible_values: <PossibleValues.ALL: 'ALL'>
+      └── ⚡ bare
+  
+  '''
+# ---
