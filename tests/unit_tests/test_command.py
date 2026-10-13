@@ -33,6 +33,25 @@ def test_parse_handles_triple_prefix_flags() -> None:
     InputFlag('host', input_value='192.168.0.0', prefix='---')
 
 
+@pytest.mark.parametrize('value', ['-5', '-3.14', '-0'])
+def test_parse_treats_negative_number_after_flag_as_value(value: str) -> None:
+    flags = InputCommand.parse(f'move --offset {value}').input_flags
+    offset = flags.get_flag_by_name('offset')
+    assert offset is not None
+    assert offset.input_value == value
+    assert len(flags) == 1
+
+
+def test_parse_negative_number_value_followed_by_another_flag() -> None:
+    flags = InputCommand.parse('move --x -5 --y 7').input_flags
+    assert [(flag.name, flag.input_value) for flag in flags] == [('x', '-5'), ('y', '7')]
+
+
+def test_parse_non_numeric_dash_token_after_flag_is_a_new_flag() -> None:
+    flags = InputCommand.parse('move --x -abc').input_flags
+    assert [(flag.name, flag.input_value) for flag in flags] == [('x', ''), ('abc', '')]
+
+
 # ============================================================================
 # Tests for InputCommand parsing - error cases
 # ============================================================================

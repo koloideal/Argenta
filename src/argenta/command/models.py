@@ -1,3 +1,4 @@
+import re
 import shlex
 from collections.abc import Iterable
 from typing import Literal, Never, Self
@@ -15,6 +16,7 @@ ParseResult = tuple[str, InputFlags]
 
 PREFIX_TYPE = Literal["-", "--", "---"]
 MIN_FLAG_PREFIX: PREFIX_TYPE = "-"
+NEGATIVE_NUMBER_PATTERN = re.compile(r"-\d+(\.\d+)?")
 
 
 class Command:
@@ -142,9 +144,13 @@ def _parse_flag_token(tokens: list[str], token_index: int) -> tuple[InputFlag, i
     prefix, name = _split_flag_prefix(tokens[token_index])
 
     next_index = token_index + 1
-    if next_index < len(tokens) and not tokens[next_index].startswith(MIN_FLAG_PREFIX):
+    if next_index < len(tokens) and _is_flag_value(tokens[next_index]):
         input_flag = InputFlag(name=name, prefix=prefix, input_value=tokens[next_index])
         return input_flag, token_index + 2
 
     input_flag = InputFlag(name=name, prefix=prefix, input_value="")
     return input_flag, token_index + 1
+
+
+def _is_flag_value(token: str) -> bool:
+    return not token.startswith(MIN_FLAG_PREFIX) or bool(NEGATIVE_NUMBER_PATTERN.fullmatch(token))
