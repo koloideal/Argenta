@@ -88,7 +88,7 @@ def greet_handler(response: Response):
 ```python
 # main.py
 from argenta import App, Orchestrator
-from .routers import router
+from routers import router
 
 app = App()
 orchestrator = Orchestrator()
@@ -98,7 +98,7 @@ def main() -> None:
     app.include_router(router)
     
     # Запустите интерактивный CLI
-    orchestrator.start_polling(app)
+    orchestrator.run_repl(app)
 
 if __name__ == '__main__':
     main()

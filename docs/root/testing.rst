@@ -45,7 +45,7 @@ For higher-level tests, assemble ``App`` and ``Router`` and call handlers throug
 E2E Testing of the Loop
 -----------------------
 
-Full execution of the ``start_polling`` loop can be covered through a subprocess with passing strings to ``stdin``. This is heavier and usually not required. If still necessary, an example is below.
+Full execution of the ``run_repl`` loop can be covered through a subprocess with passing strings to ``stdin``. This is heavier and usually not required. If still necessary, an example is below.
 
 .. danger::
     **Important:** Always pass the exit command string trigger as the last element in the ``side_effects`` list when patching ``input``.
