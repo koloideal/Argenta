@@ -6,8 +6,8 @@ Argenta — это **"Самый простой"**, **"Самый модульн
 
 [![PyPI version](https://img.shields.io/pypi/v/argenta)](https://pypi.org/project/argenta/)
 [![Python versions](https://img.shields.io/pypi/pyversions/argenta)](https://pypi.org/project/argenta/)
-[![Tests](https://github.com/koloideal/Argenta/actions/workflows/tests.yml/badge.svg)](https://github.com/koloideal/Argenta/actions/workflows/tests.yml)
-[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/koloideal/Argenta/actions/workflows/tests.yml)
+[![Tests](https://github.com/koloideal/Argenta/actions/workflows/ci-tests.yml/badge.svg)](https://github.com/koloideal/Argenta/actions/workflows/ci-tests.yml)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/koloideal/Argenta/actions/workflows/ci-tests.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/koloideal/Argenta/badge)](https://scorecard.dev/viewer/?uri=github.com/koloideal/Argenta)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/15453/badge)](https://www.bestpractices.dev/projects/15453)
 [![License](https://img.shields.io/pypi/l/argenta)](https://github.com/koloideal/Argenta/blob/main/LICENSE)

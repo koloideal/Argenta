@@ -1,4 +1,4 @@
-name: codeql
+name: sec-codeql
 
 on:
   push:

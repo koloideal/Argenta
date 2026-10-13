@@ -1,0 +1,37 @@
+name: fuzz-prune
+
+on:
+  schedule:
+    # Weekly, Monday 06:30 UTC — prunes the corpus built up by batch fuzzing.
+    - cron: "30 6 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  pruning:
+    name: corpus-pruning
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    concurrency:
+      group: cflite-prune
+      cancel-in-progress: true
+
+    steps:
+    - name: Build fuzzers
+      id: build
+      uses: google/clusterfuzzlite/actions/build_fuzzers@884713a6c30a92e5e8544c39945cd7cb630abcd1 # v1
+      with:
+        language: python
+
+    - name: Prune corpus
+      id: run
+      uses: google/clusterfuzzlite/actions/run_fuzzers@884713a6c30a92e5e8544c39945cd7cb630abcd1 # v1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        fuzz-seconds: 600
+        mode: prune
