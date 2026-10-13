@@ -41,9 +41,9 @@ _numeric_name = re.compile(r"\d+(\.\d+)?")
 # simultaneously flag "5" and a negative number, and the parser always
 # consumes it as the previous flag's value — so it cannot round-trip.
 flag_specs = st.lists(
-    st.tuples(
-        st.sampled_from(PREFIXES), flag_names, flag_values
-    ).filter(lambda spec: spec[0] != "-" or not _numeric_name.fullmatch(spec[1])),
+    st.tuples(st.sampled_from(PREFIXES), flag_names, flag_values).filter(
+        lambda spec: spec[0] != "-" or not _numeric_name.fullmatch(spec[1])
+    ),
     # InputFlag equality is name-based, so equal names would raise
     # RepeatedInputFlagsException instead of round-tripping.
     unique_by=lambda spec: spec[1],
@@ -87,9 +87,7 @@ def test_parse_whitespace_only_raises_empty(raw: str) -> None:
 
 
 @given(trigger=st.text(min_size=1), flags=flag_specs)
-def test_parse_round_trips_quoted_tokens(
-    trigger: str, flags: list[tuple[str, str, str]]
-) -> None:
+def test_parse_round_trips_quoted_tokens(trigger: str, flags: list[tuple[str, str, str]]) -> None:
     parsed = InputCommand.parse(_render_command(trigger, flags))
 
     assert parsed.trigger == trigger
@@ -137,9 +135,7 @@ def test_parse_rejects_bare_token_after_flag_value(stray: str, value: str) -> No
         lambda pair: pair[0] != pair[1]
     ),
 )
-def test_parse_rejects_same_flag_name_across_prefixes(
-    name: str, prefixes: tuple[str, str]
-) -> None:
+def test_parse_rejects_same_flag_name_across_prefixes(name: str, prefixes: tuple[str, str]) -> None:
     command = f"cmd {shlex.quote(prefixes[0] + name)} {shlex.quote(prefixes[1] + name)}"
     with pytest.raises(RepeatedInputFlagsException):
         InputCommand.parse(command)
@@ -185,9 +181,7 @@ def test_possible_values_neither_means_only_empty(value: str) -> None:
 
 
 @given(container=st.sets(st.text()), value=st.text())
-def test_possible_values_container_means_membership(
-    container: set[str], value: str
-) -> None:
+def test_possible_values_container_means_membership(container: set[str], value: str) -> None:
     flag = Flag("f", possible_values=container)
     assert flag.validate_input_flag_value(value) == (value in container)
 
