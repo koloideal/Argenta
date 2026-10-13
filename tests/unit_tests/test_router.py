@@ -1,4 +1,5 @@
 import re
+import warnings
 
 import pytest
 from pytest import CaptureFixture
@@ -60,46 +61,55 @@ def test_validate_func_args_raises_error_for_missing_response_parameter() -> Non
         _validate_func_args(handler)  # pyright: ignore[reportArgumentType]
 
 
-def test_validate_func_args_prints_warning_for_wrong_type_hint(capsys: CaptureFixture[str]) -> None:
+def test_validate_func_args_warns_for_wrong_type_hint(capsys: CaptureFixture[str]) -> None:
     class NotResponse:
         pass
 
     def func(_response: NotResponse) -> None:
         pass
 
-    _validate_func_args(func)
+    with pytest.warns(UserWarning, match=r"_response.*func.*Response.*NotResponse"):
+        _validate_func_args(func)
 
-    output = capsys.readouterr()
-
-    assert "WARNING" in output.out
+    assert capsys.readouterr().out == ''
 
 
 def test_validate_func_args_accepts_missing_type_hint(capsys: CaptureFixture[str]) -> None:
     def func(response) -> None:  # pyright: ignore[reportMissingParameterType, reportUnknownParameterType]
         pass
-    _validate_func_args(func)  # pyright: ignore[reportUnknownArgumentType]
+    with warnings.catch_warnings():
+        warnings.simplefilter('error')
+        _validate_func_args(func)  # pyright: ignore[reportUnknownArgumentType]
     output = capsys.readouterr()
     assert output.out == ''
 
 
-def test_validate_func_args_checks_first_argument_type_hint(capsys: CaptureFixture[str]) -> None:
+def test_validate_func_args_checks_first_argument_type_hint() -> None:
     def func(_response: int, _second: Response) -> None:
         pass
 
-    _validate_func_args(func)
-    output = capsys.readouterr()
-
-    assert "WARNING" in output.out
+    with pytest.warns(UserWarning, match=r"_response.*int"):
+        _validate_func_args(func)
 
 
-def test_validate_func_args_ignores_later_argument_type_hints(capsys: CaptureFixture[str]) -> None:
+def test_validate_func_args_ignores_later_argument_type_hints() -> None:
     def func(_response: Response, _second: int) -> None:
         pass
 
-    _validate_func_args(func)
-    output = capsys.readouterr()
+    with warnings.catch_warnings():
+        warnings.simplefilter('error')
+        _validate_func_args(func)
 
-    assert "WARNING" not in output.out
+
+def test_wrong_type_hint_warning_points_to_handler_registration() -> None:
+    router = Router()
+
+    with pytest.warns(UserWarning) as record:
+        @router.command('cmd')
+        def handler(_response: int) -> None:  # pyright: ignore[reportUnusedFunction]
+            pass
+
+    assert record[0].filename == __file__
 
 
 # ============================================================================
