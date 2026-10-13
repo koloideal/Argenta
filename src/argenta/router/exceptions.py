@@ -7,9 +7,7 @@ class RepeatedFlagNameException(Exception):
     """
 
     @override
-    def __init__(  # pyrefly: ignore[bad-override]
-        self, repeated_flags: set[str], trigger: str
-    ) -> None:
+    def __init__(self, repeated_flags: set[str], trigger: str) -> None:
         self.repeated_flags = repeated_flags
         self.trigger = trigger
         super().__init__()
@@ -25,7 +23,7 @@ class RepeatedTriggerNameException(Exception):
     """
 
     @override
-    def __init__(self, repeated_triggers: set[str]) -> None:  # pyrefly: ignore[bad-override]
+    def __init__(self, repeated_triggers: set[str]) -> None:
         self.repeated_triggers = repeated_triggers
         super().__init__()
 
@@ -40,7 +38,7 @@ class RepeatedAliasNameException(Exception):
     """
 
     @override
-    def __init__(self, repeated_aliases: set[str]) -> None:  # pyrefly: ignore[bad-override]
+    def __init__(self, repeated_aliases: set[str]) -> None:
         self.repeated_aliases = repeated_aliases
         super().__init__()
 

@@ -1,4 +1,4 @@
-from dishka import Provider, Scope, provide  # pyright: ignore[reportUnknownVariableType]
+from dishka import Provider, Scope, provide
 
 from argenta.data_bridge import DataBridge
 from argenta.orchestrator.argparser import ArgParser

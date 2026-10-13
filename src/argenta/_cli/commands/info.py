@@ -2,7 +2,7 @@ import platform
 import sys
 from importlib.metadata import version
 
-from art import text2art  # pyright: ignore[reportUnknownVariableType]
+from art import text2art
 from dishka import Container
 from rich import box
 from rich.console import Console

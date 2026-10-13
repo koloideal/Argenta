@@ -1,4 +1,4 @@
-from dishka import (  # pyright: ignore[reportUnknownVariableType]
+from dishka import (
     Container,
     Provider,
     Scope,

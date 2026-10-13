@@ -28,7 +28,7 @@ def _get_container_from_response(args: tuple[Any, ...], kwargs: dict[str, Any]) 
     for arg in args:
         if isinstance(arg, Response):
             if hasattr(arg, "__dishka_container__"):
-                return arg.__dishka_container__  # pyright: ignore[reportPrivateUsage]
+                return arg.__dishka_container__
             break
     raise RuntimeError("dishka container not found in Response")
 

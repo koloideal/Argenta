@@ -38,13 +38,6 @@ Repository = "https://github.com/koloideal/Argenta"
 Issues = "https://github.com/koloideal/Argenta/issues"
 Changelog = "https://github.com/koloideal/Argenta/blob/master/CHANGELOG.md"
 
-[tool.pyrefly]
-project-excludes = ["docs/**"]
-search-path = ["src", "."]
-
-[tool.pyrefly.errors]
-untyped-import = "ignore"
-
 [project.scripts]
 argenta = "argenta._cli.__main__:main"
 
@@ -127,20 +120,6 @@ integration.py:WPS410
 *app/models.py:WPS201,WPS211,WPS214,WPS421
 *_cli/__main__.py:WPS202
 """
-
-[tool.pyright]
-typeCheckingMode = "strict"
-reportMissingTypeStubs = false
-
-[[tool.pyright.executionEnvironments]]
-root = "tests/"
-reportPrivateUsage = false
-reportUnusedFunction = false
-
-[[tool.pyright.executionEnvironments]]
-root = "metrics/"
-reportPrivateUsage = false
-reportUnusedFunction = false
 
 [tool.coverage.report]
 fail_under = 100
