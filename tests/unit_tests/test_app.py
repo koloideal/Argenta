@@ -238,7 +238,7 @@ def test_app_detects_trigger_collision_between_routers() -> None:
     app.include_router(router1)
     app.include_router(router2)
 
-    with pytest.raises(RepeatedTriggerNameException):
+    with pytest.raises(RepeatedTriggerNameException, match="'hello'"):
         app._pre_cycle_setup()
 
 

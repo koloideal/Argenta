@@ -116,8 +116,9 @@ class BaseApp(BehaviorHandlersSettersMixin):
         seen_names: set[str] = set()
 
         for router_entity in self.registered_routers:
-            if not seen_names.isdisjoint(router_entity.triggers):
-                raise RepeatedTriggerNameException()
+            trigger_collisions = seen_names.intersection(router_entity.triggers)
+            if trigger_collisions:
+                raise RepeatedTriggerNameException(trigger_collisions)
 
             alias_collisions = seen_names.intersection(router_entity.aliases)
             if alias_collisions:

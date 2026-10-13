@@ -7,8 +7,16 @@ class RepeatedFlagNameException(Exception):
     """
 
     @override
+    def __init__(  # pyrefly: ignore[bad-override]
+        self, repeated_flags: set[str], trigger: str
+    ) -> None:
+        self.repeated_flags = repeated_flags
+        self.trigger = trigger
+        super().__init__()
+
+    @override
     def __str__(self) -> str:
-        return "Repeated registered flag names in register command"
+        return f"Repeated flag names {self.repeated_flags} in command '{self.trigger}'"
 
 
 class RepeatedTriggerNameException(Exception):
@@ -17,8 +25,13 @@ class RepeatedTriggerNameException(Exception):
     """
 
     @override
+    def __init__(self, repeated_triggers: set[str]) -> None:  # pyrefly: ignore[bad-override]
+        self.repeated_triggers = repeated_triggers
+        super().__init__()
+
+    @override
     def __str__(self) -> str:
-        return "Repeated trigger name in registered commands"
+        return f"Repeated trigger names: {self.repeated_triggers}"
 
 
 class RepeatedAliasNameException(Exception):

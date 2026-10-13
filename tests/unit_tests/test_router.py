@@ -44,7 +44,7 @@ def test_validate_command_raises_error_for_same_trigger() -> None:
     def handler(res: Response):
         pass
     
-    with pytest.raises(RepeatedTriggerNameException):
+    with pytest.raises(RepeatedTriggerNameException, match="'comm'"):
         @router.command('comm')
         def handler2(res: Response):
             pass
@@ -52,7 +52,7 @@ def test_validate_command_raises_error_for_same_trigger() -> None:
 
 def test_validate_command_raises_error_for_repeated_flag_names() -> None:
     router = Router()
-    with pytest.raises(RepeatedFlagNameException):
+    with pytest.raises(RepeatedFlagNameException, match="'--test'.*'command'"):
         router._validate_command(Command(trigger='command', flags=Flags([Flag('test'), Flag('test')])))
 
 
