@@ -54,16 +54,13 @@ class Benchmark:
         if is_gc_disabled:
             was_gc_enabled = gc.isenabled()
             gc.disable()
-            for _ in range(iterations):
-                run_attempts.append(self.single_run())
+            run_attempts.extend(self.single_run() for _ in range(iterations))
             if was_gc_enabled:
                 gc.enable()
             gc.collect()
             return tuple(run_attempts)
-        else:
-            for _ in range(iterations):
-                run_attempts.append(self.single_run())
-            return tuple(run_attempts)
+        run_attempts.extend(self.single_run() for _ in range(iterations))
+        return tuple(run_attempts)
 
     @override
     def __repr__(self) -> str:
@@ -129,12 +126,10 @@ class Benchmarks:
         benchmarks = self.get_benchmarks_by_type(type_)
         if not benchmarks:
             raise BenchmarksNotFound(type_)
-        benchmark_results: list[BenchmarkResult] = []
-
-        for benchmark in benchmarks:
-            benchmark_results.append(
-                self.run_benchmark_by_name(benchmark.name, iterations, is_gc_disabled)
-            )
+        benchmark_results = [
+            self.run_benchmark_by_name(benchmark.name, iterations, is_gc_disabled)
+            for benchmark in benchmarks
+        ]
 
         return BenchmarkGroupResult(
             type_=type_,
@@ -146,10 +141,10 @@ class Benchmarks:
     def run_benchmarks_grouped_by_type(
         self, iterations: int = 100, is_gc_disabled: bool = False
     ) -> list[BenchmarkGroupResult]:
-        results: list[BenchmarkGroupResult] = []
-        for type_ in self._benchmarks_grouped_by_type:
-            results.append(self.run_benchmarks_by_type(type_, iterations, is_gc_disabled))
-        return results
+        return [
+            self.run_benchmarks_by_type(type_, iterations, is_gc_disabled)
+            for type_ in self._benchmarks_grouped_by_type
+        ]
 
     def get_benchmarks_by_type(self, type_: str) -> list[Benchmark]:
         return self._benchmarks_grouped_by_type.get(type_, [])

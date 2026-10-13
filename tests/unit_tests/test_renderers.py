@@ -47,17 +47,17 @@ class TestRichRenderer:
 
     def test_render_command_groups_description(self):
         router = Router(title="Test Router")
-        
+
         @router.command(Command("test", description="Test command"))
         def handler(_: Response):
             pass
-        
+
         registered_routers = RegisteredRouters()
         registered_routers.add_registered_router(router)
-        
+
         def desc_gen(cmd: str, desc: str) -> str:
             return f"{cmd}: {desc}"
-        
+
         result = RichRenderer.render_command_groups_description(desc_gen, registered_routers)
         assert result == "\n\nTest Router\ntest: Test command"
 
@@ -109,16 +109,16 @@ class TestPlainRenderer:
 
     def test_render_command_groups_description(self):
         router = Router(title="Test Router")
-        
+
         @router.command(Command("test", description="Test command"))
         def handler(_: Response):
             pass
-        
+
         registered_routers = RegisteredRouters()
         registered_routers.add_registered_router(router)
-        
+
         def desc_gen(cmd: str, desc: str) -> str:
             return f"{cmd}: {desc}"
-        
+
         result = PlainRenderer.render_command_groups_description(desc_gen, registered_routers)
         assert result == "\n\nTest Router\ntest: Test command"

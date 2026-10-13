@@ -18,38 +18,37 @@ from argenta.command.models import Command, InputCommand
 
 
 def test_parse_extracts_trigger_from_command_with_flags() -> None:
-    assert InputCommand.parse('ssh --host 192.168.0.3').trigger == 'ssh'
+    assert InputCommand.parse("ssh --host 192.168.0.3").trigger == "ssh"
 
 
 def test_parse_returns_input_command_instance() -> None:
-    cmd = InputCommand.parse('ssh --host 192.168.0.3')
+    cmd = InputCommand.parse("ssh --host 192.168.0.3")
     assert isinstance(cmd, InputCommand)
 
 
 def test_parse_handles_triple_prefix_flags() -> None:
-    assert InputCommand.parse(
-        'ssh ---host 192.168.0.0'
-    ).input_flags.get_flag_by_name('host') == \
-    InputFlag('host', input_value='192.168.0.0', prefix='---')
+    assert InputCommand.parse("ssh ---host 192.168.0.0").input_flags.get_flag_by_name(
+        "host"
+    ) == InputFlag("host", input_value="192.168.0.0", prefix="---")
 
 
-@pytest.mark.parametrize('value', ['-5', '-3.14', '-0'])
+@pytest.mark.parametrize("value", ["-5", "-3.14", "-0"])
 def test_parse_treats_negative_number_after_flag_as_value(value: str) -> None:
-    flags = InputCommand.parse(f'move --offset {value}').input_flags
-    offset = flags.get_flag_by_name('offset')
+    flags = InputCommand.parse(f"move --offset {value}").input_flags
+    offset = flags.get_flag_by_name("offset")
     assert offset is not None
     assert offset.input_value == value
     assert len(flags) == 1
 
 
 def test_parse_negative_number_value_followed_by_another_flag() -> None:
-    flags = InputCommand.parse('move --x -5 --y 7').input_flags
-    assert [(flag.name, flag.input_value) for flag in flags] == [('x', '-5'), ('y', '7')]
+    flags = InputCommand.parse("move --x -5 --y 7").input_flags
+    assert [(flag.name, flag.input_value) for flag in flags] == [("x", "-5"), ("y", "7")]
 
 
 def test_parse_non_numeric_dash_token_after_flag_is_a_new_flag() -> None:
-    flags = InputCommand.parse('move --x -abc').input_flags
-    assert [(flag.name, flag.input_value) for flag in flags] == [('x', ''), ('abc', '')]
+    flags = InputCommand.parse("move --x -abc").input_flags
+    assert [(flag.name, flag.input_value) for flag in flags] == [("x", ""), ("abc", "")]
 
 
 # ============================================================================
@@ -59,54 +58,54 @@ def test_parse_non_numeric_dash_token_after_flag_is_a_new_flag() -> None:
 
 def test_parse_raises_error_for_value_without_flag_name() -> None:
     with pytest.raises(UnprocessedInputFlagException):
-        InputCommand.parse('ssh 192.168.0.3')
+        InputCommand.parse("ssh 192.168.0.3")
 
 
 def test_parse_raises_error_for_repeated_flag_names() -> None:
     with pytest.raises(RepeatedInputFlagsException):
-        InputCommand.parse('ssh --host 192.168.0.3 --host 172.198.0.43')
+        InputCommand.parse("ssh --host 192.168.0.3 --host 172.198.0.43")
 
 
 def test_repeated_flags_error_message_contains_flag_string_entity() -> None:
     with pytest.raises(RepeatedInputFlagsException) as exc_info:
-        InputCommand.parse('ssh -x 1 -x 2')
+        InputCommand.parse("ssh -x 1 -x 2")
     assert "'-x'" in str(exc_info.value)
 
 
 def test_parse_raises_error_for_unprocessed_entity_after_flags() -> None:
     with pytest.raises(UnprocessedInputFlagException):
-        InputCommand.parse('ssh --host 192.168.0.3 9977')
+        InputCommand.parse("ssh --host 192.168.0.3 9977")
 
 
 def test_parse_raises_error_for_empty_command() -> None:
     with pytest.raises(EmptyInputCommandException):
-        InputCommand.parse('')
+        InputCommand.parse("")
 
-    
+
 # ============================================================================
 # Tests for InputCommand - initialization
 # ============================================================================
 
 
 def test_input_command_wraps_single_input_flag() -> None:
-    input_flag = InputFlag('ssh', input_value='val')
-    cmd = InputCommand('get', input_flags=input_flag)
+    input_flag = InputFlag("ssh", input_value="val")
+    cmd = InputCommand("get", input_flags=input_flag)
     assert input_flag in cmd.input_flags
 
 
 def test_input_command_accepts_input_flags_collection() -> None:
-    input_flags = InputFlags([InputFlag('ssh', input_value='val')])
-    cmd = InputCommand('get', input_flags=input_flags)
+    input_flags = InputFlags([InputFlag("ssh", input_value="val")])
+    cmd = InputCommand("get", input_flags=input_flags)
     assert cmd.input_flags is input_flags
 
 
 def test_input_command_without_flags_has_empty_input_flags() -> None:
-    assert not InputCommand('get').input_flags
+    assert not InputCommand("get").input_flags
 
 
 def test_parse_raises_error_slash_on_the_end() -> None:
     with pytest.raises(UnprocessedInputFlagException):
-        InputCommand.parse('ssh --host 192.168.0.3\\')
+        InputCommand.parse("ssh --host 192.168.0.3\\")
 
 
 # ============================================================================
@@ -115,8 +114,11 @@ def test_parse_raises_error_slash_on_the_end() -> None:
 
 
 def test_validate_input_flag_returns_valid_for_registered_flag() -> None:
-    command = Command('some', flags=Flags([Flag('test'), Flag('more')]))
-    assert command.validate_input_flag(InputFlag('more', input_value='random-value', status=None)) == ValidationStatus.VALID
+    command = Command("some", flags=Flags([Flag("test"), Flag("more")]))
+    assert (
+        command.validate_input_flag(InputFlag("more", input_value="random-value", status=None))
+        == ValidationStatus.VALID
+    )
 
 
 # ============================================================================
@@ -125,23 +127,35 @@ def test_validate_input_flag_returns_valid_for_registered_flag() -> None:
 
 
 def test_validate_input_flag_returns_invalid_for_flag_with_empty_value() -> None:
-    command = Command('some', flags=Flag('test'))
-    assert command.validate_input_flag(InputFlag('test', input_value='', status=None)) == ValidationStatus.INVALID
+    command = Command("some", flags=Flag("test"))
+    assert (
+        command.validate_input_flag(InputFlag("test", input_value="", status=None))
+        == ValidationStatus.INVALID
+    )
 
 
 def test_validate_input_flag_returns_invalid_when_value_provided_for_neither_flag() -> None:
-    command = Command('some', flags=Flag('test', possible_values=PossibleValues.NEITHER))
-    assert command.validate_input_flag(InputFlag('test', input_value='example', status=None)) == ValidationStatus.INVALID
+    command = Command("some", flags=Flag("test", possible_values=PossibleValues.NEITHER))
+    assert (
+        command.validate_input_flag(InputFlag("test", input_value="example", status=None))
+        == ValidationStatus.INVALID
+    )
 
 
 def test_validate_input_flag_returns_invalid_when_value_not_in_allowed_list() -> None:
-    command = Command('some', flags=Flag('test', possible_values=['some', 'case']))
-    assert command.validate_input_flag(InputFlag('test', input_value='slay', status=None)) == ValidationStatus.INVALID
+    command = Command("some", flags=Flag("test", possible_values=["some", "case"]))
+    assert (
+        command.validate_input_flag(InputFlag("test", input_value="slay", status=None))
+        == ValidationStatus.INVALID
+    )
 
 
 def test_validate_input_flag_returns_invalid_when_value_does_not_match_regex() -> None:
-    command = Command('some', flags=Flag('test', possible_values=re.compile(r'^ex\d{1,2}op$')))
-    assert command.validate_input_flag(InputFlag('test', input_value='example', status=None)) == ValidationStatus.INVALID
+    command = Command("some", flags=Flag("test", possible_values=re.compile(r"^ex\d{1,2}op$")))
+    assert (
+        command.validate_input_flag(InputFlag("test", input_value="example", status=None))
+        == ValidationStatus.INVALID
+    )
 
 
 # ============================================================================
@@ -150,15 +164,24 @@ def test_validate_input_flag_returns_invalid_when_value_does_not_match_regex() -
 
 
 def test_validate_input_flag_returns_undefined_for_unregistered_flag_name() -> None:
-    command = Command('some', flags=Flag('test'))
-    assert command.validate_input_flag(InputFlag('more', input_value='', status=None)) == ValidationStatus.UNDEFINED
+    command = Command("some", flags=Flag("test"))
+    assert (
+        command.validate_input_flag(InputFlag("more", input_value="", status=None))
+        == ValidationStatus.UNDEFINED
+    )
 
 
 def test_validate_input_flag_returns_undefined_for_unregistered_flag_in_multiple_flags() -> None:
-    command = Command('some', flags=Flags([Flag('test'), Flag('more')]))
-    assert command.validate_input_flag(InputFlag('case', input_value='', status=None)) == ValidationStatus.UNDEFINED
+    command = Command("some", flags=Flags([Flag("test"), Flag("more")]))
+    assert (
+        command.validate_input_flag(InputFlag("case", input_value="", status=None))
+        == ValidationStatus.UNDEFINED
+    )
 
 
 def test_validate_input_flag_returns_undefined_when_command_has_no_flags() -> None:
-    command = Command('some')
-    assert command.validate_input_flag(InputFlag('case', input_value='', status=None)) == ValidationStatus.UNDEFINED
+    command = Command("some")
+    assert (
+        command.validate_input_flag(InputFlag("case", input_value="", status=None))
+        == ValidationStatus.UNDEFINED
+    )

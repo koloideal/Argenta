@@ -61,7 +61,7 @@ def benchmark_validate_multiple_flags_10() -> None:
     flags = [Flag(f"flag{i}", possible_values=PossibleValues.ALL) for i in range(10)]
     input_flags = [InputFlag(f"flag{i}", input_value=f"value{i}") for i in range(10)]
 
-    for flag, input_flag in zip(flags, input_flags):
+    for flag, input_flag in zip(flags, input_flags, strict=True):
         flag.validate_input_flag_value(input_flag.input_value)
 
 
@@ -70,7 +70,7 @@ def benchmark_validate_multiple_flags_50() -> None:
     flags = [Flag(f"flag{i}", possible_values=PossibleValues.ALL) for i in range(50)]
     input_flags = [InputFlag(f"flag{i}", input_value=f"value{i}") for i in range(50)]
 
-    for flag, input_flag in zip(flags, input_flags):
+    for flag, input_flag in zip(flags, input_flags, strict=True):
         flag.validate_input_flag_value(input_flag.input_value)
 
 
@@ -82,5 +82,5 @@ def benchmark_validate_extreme_100_flags() -> None:
     flags = [Flag(f"flag{i}", possible_values=pattern) for i in range(100)]
     input_flags = [InputFlag(f"flag{i}", input_value=f"valid_value_{i}") for i in range(100)]
 
-    for flag, input_flag in zip(flags, input_flags):
+    for flag, input_flag in zip(flags, input_flags, strict=True):
         flag.validate_input_flag_value(input_flag.input_value)

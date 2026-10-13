@@ -292,6 +292,7 @@ def _setup_captured_handler(completer: AutoCompleter) -> Callable[[Any], None] |
             nonlocal captured_handler
             captured_handler = func
             return func
+
         return decorator
 
     with (

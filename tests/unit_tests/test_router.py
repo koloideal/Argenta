@@ -2,7 +2,6 @@ import re
 import warnings
 
 import pytest
-from pytest import CaptureFixture
 
 from argenta.command import Command, Flags, InputCommand, InputFlags
 from argenta.command.flag import Flag, InputFlag
@@ -27,33 +26,36 @@ from argenta.router.exceptions import (
 def test_validate_command_raises_error_for_trigger_with_spaces() -> None:
     router = Router()
     with pytest.raises(TriggerContainSpacesException):
-        router._validate_command(Command(trigger='command with spaces'))
+        router._validate_command(Command(trigger="command with spaces"))
 
 
-@pytest.mark.parametrize('trigger', ['tab\tcmd', 'new\nline', 'cr\rcmd', 'nbsp\u00a0cmd'])
+@pytest.mark.parametrize("trigger", ["tab\tcmd", "new\nline", "cr\rcmd", "nbsp\u00a0cmd"])
 def test_validate_command_raises_error_for_trigger_with_any_whitespace(trigger: str) -> None:
     router = Router()
     with pytest.raises(TriggerContainSpacesException):
         router._validate_command(Command(trigger=trigger))
-        
-        
+
+
 def test_validate_command_raises_error_for_same_trigger() -> None:
     router = Router()
-    
-    @router.command('comm')
+
+    @router.command("comm")
     def handler(res: Response):
         pass
-    
+
     with pytest.raises(RepeatedTriggerNameException, match="'comm'"):
-        @router.command('comm')
+
+        @router.command("comm")
         def handler2(res: Response):
             pass
-        
+
 
 def test_validate_command_raises_error_for_repeated_flag_names() -> None:
     router = Router()
-    with pytest.raises(RepeatedFlagNameException, match="'--test'.*'command'"):
-        router._validate_command(Command(trigger='command', flags=Flags([Flag('test'), Flag('test')])))
+    with pytest.raises(RepeatedFlagNameException, match=r"'--test'.*'command'"):
+        router._validate_command(
+            Command(trigger="command", flags=Flags([Flag("test"), Flag("test")]))
+        )
 
 
 # ============================================================================
@@ -64,11 +66,12 @@ def test_validate_command_raises_error_for_repeated_flag_names() -> None:
 def test_validate_func_args_raises_error_for_missing_response_parameter() -> None:
     def handler() -> None:
         pass
+
     with pytest.raises(RequiredArgumentNotPassedException):
-        _validate_func_args(handler)  # pyright: ignore[reportArgumentType]
+        _validate_func_args(handler)
 
 
-def test_validate_func_args_warns_for_wrong_type_hint(capsys: CaptureFixture[str]) -> None:
+def test_validate_func_args_warns_for_wrong_type_hint(capsys: pytest.CaptureFixture[str]) -> None:
     class NotResponse:
         pass
 
@@ -78,17 +81,18 @@ def test_validate_func_args_warns_for_wrong_type_hint(capsys: CaptureFixture[str
     with pytest.warns(UserWarning, match=r"_response.*func.*Response.*NotResponse"):
         _validate_func_args(func)
 
-    assert capsys.readouterr().out == ''
+    assert capsys.readouterr().out == ""
 
 
-def test_validate_func_args_accepts_missing_type_hint(capsys: CaptureFixture[str]) -> None:
-    def func(response) -> None:  # pyright: ignore[reportMissingParameterType, reportUnknownParameterType]
+def test_validate_func_args_accepts_missing_type_hint(capsys: pytest.CaptureFixture[str]) -> None:
+    def func(response) -> None:
         pass
+
     with warnings.catch_warnings():
-        warnings.simplefilter('error')
-        _validate_func_args(func)  # pyright: ignore[reportUnknownArgumentType]
+        warnings.simplefilter("error")
+        _validate_func_args(func)
     output = capsys.readouterr()
-    assert output.out == ''
+    assert output.out == ""
 
 
 def test_validate_func_args_checks_first_argument_type_hint() -> None:
@@ -104,16 +108,17 @@ def test_validate_func_args_ignores_later_argument_type_hints() -> None:
         pass
 
     with warnings.catch_warnings():
-        warnings.simplefilter('error')
+        warnings.simplefilter("error")
         _validate_func_args(func)
 
 
 def test_wrong_type_hint_warning_points_to_handler_registration() -> None:
     router = Router()
 
-    with pytest.warns(UserWarning) as record:
-        @router.command('cmd')
-        def handler(_response: int) -> None:  # pyright: ignore[reportUnusedFunction]
+    with pytest.warns(UserWarning, match=r"type hint.*handler") as record:
+
+        @router.command("cmd")
+        def handler(_response: int) -> None:
             pass
 
     assert record[0].filename == __file__
@@ -125,21 +130,27 @@ def test_wrong_type_hint_warning_points_to_handler_registration() -> None:
 
 
 def test_structuring_input_flags_marks_unregistered_flag_as_undefined() -> None:
-    cmd = Command('cmd')
-    input_flags = InputFlags([InputFlag('ssh', input_value='', status=None)])
-    assert _structuring_input_flags(cmd, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='', status=ValidationStatus.UNDEFINED)])
+    cmd = Command("cmd")
+    input_flags = InputFlags([InputFlag("ssh", input_value="", status=None)])
+    assert _structuring_input_flags(cmd, input_flags).input_flags == InputFlags(
+        [InputFlag("ssh", input_value="", status=ValidationStatus.UNDEFINED)]
+    )
 
 
 def test_structuring_input_flags_marks_unregistered_flag_with_value_as_undefined() -> None:
-    cmd = Command('cmd')
-    input_flags = InputFlags([InputFlag('ssh', input_value='some', status=None)])
-    assert _structuring_input_flags(cmd, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='some', status=ValidationStatus.UNDEFINED)])
+    cmd = Command("cmd")
+    input_flags = InputFlags([InputFlag("ssh", input_value="some", status=None)])
+    assert _structuring_input_flags(cmd, input_flags).input_flags == InputFlags(
+        [InputFlag("ssh", input_value="some", status=ValidationStatus.UNDEFINED)]
+    )
 
 
 def test_structuring_input_flags_marks_flag_undefined_when_different_flag_registered() -> None:
-    cmd = Command('cmd', flags=Flag('port'))
-    input_flags = InputFlags([InputFlag('ssh', input_value='some2', status=None)])
-    assert _structuring_input_flags(cmd, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='some2', status=ValidationStatus.UNDEFINED)])
+    cmd = Command("cmd", flags=Flag("port"))
+    input_flags = InputFlags([InputFlag("ssh", input_value="some2", status=None)])
+    assert _structuring_input_flags(cmd, input_flags).input_flags == InputFlags(
+        [InputFlag("ssh", input_value="some2", status=ValidationStatus.UNDEFINED)]
+    )
 
 
 # ============================================================================
@@ -148,21 +159,27 @@ def test_structuring_input_flags_marks_flag_undefined_when_different_flag_regist
 
 
 def test_structuring_input_flags_marks_flag_invalid_when_value_provided_for_neither() -> None:
-    command = Command('cmd', flags=Flag('ssh', possible_values=PossibleValues.NEITHER))
-    input_flags = InputFlags([InputFlag('ssh', input_value='some3', status=None)])
-    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='some3', status=ValidationStatus.INVALID)])
+    command = Command("cmd", flags=Flag("ssh", possible_values=PossibleValues.NEITHER))
+    input_flags = InputFlags([InputFlag("ssh", input_value="some3", status=None)])
+    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags(
+        [InputFlag("ssh", input_value="some3", status=ValidationStatus.INVALID)]
+    )
 
 
 def test_structuring_input_flags_marks_flag_invalid_when_value_not_matching_regex() -> None:
-    command = Command('cmd', flags=Flag('ssh', possible_values=re.compile(r'some[1-5]$')))
-    input_flags = InputFlags([InputFlag('ssh', input_value='some40', status=None)])
-    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='some40', status=ValidationStatus.INVALID)])
+    command = Command("cmd", flags=Flag("ssh", possible_values=re.compile(r"some[1-5]$")))
+    input_flags = InputFlags([InputFlag("ssh", input_value="some40", status=None)])
+    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags(
+        [InputFlag("ssh", input_value="some40", status=ValidationStatus.INVALID)]
+    )
 
 
 def test_structuring_input_flags_marks_flag_invalid_when_value_not_in_list() -> None:
-    command = Command('cmd', flags=Flag('ssh', possible_values=['example']))
-    input_flags = InputFlags([InputFlag('ssh', input_value='example2', status=None)])
-    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='example2', status=ValidationStatus.INVALID)])
+    command = Command("cmd", flags=Flag("ssh", possible_values=["example"]))
+    input_flags = InputFlags([InputFlag("ssh", input_value="example2", status=None)])
+    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags(
+        [InputFlag("ssh", input_value="example2", status=ValidationStatus.INVALID)]
+    )
 
 
 # ============================================================================
@@ -171,27 +188,35 @@ def test_structuring_input_flags_marks_flag_invalid_when_value_not_in_list() -> 
 
 
 def test_structuring_input_flags_marks_registered_flag_as_valid() -> None:
-    command = Command('cmd', flags=Flag('port'))
-    input_flags = InputFlags([InputFlag('port', input_value='some2', status=None)])
-    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('port', input_value='some2', status=ValidationStatus.VALID)])
+    command = Command("cmd", flags=Flag("port"))
+    input_flags = InputFlags([InputFlag("port", input_value="some2", status=None)])
+    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags(
+        [InputFlag("port", input_value="some2", status=ValidationStatus.VALID)]
+    )
 
 
 def test_structuring_input_flags_marks_flag_valid_when_value_in_list() -> None:
-    command = Command('cmd', flags=Flag('port', possible_values=['some2', 'some3']))
-    input_flags = InputFlags([InputFlag('port', input_value='some2', status=None)])
-    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('port', input_value='some2', status=ValidationStatus.VALID)])
+    command = Command("cmd", flags=Flag("port", possible_values=["some2", "some3"]))
+    input_flags = InputFlags([InputFlag("port", input_value="some2", status=None)])
+    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags(
+        [InputFlag("port", input_value="some2", status=ValidationStatus.VALID)]
+    )
 
 
 def test_structuring_input_flags_marks_flag_valid_when_value_matches_regex() -> None:
-    command = Command('cmd', flags=Flag('ssh', possible_values=re.compile(r'more[1-5]$')))
-    input_flags = InputFlags([InputFlag('ssh', input_value='more5', status=None)])
-    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='more5', status=ValidationStatus.VALID)])
+    command = Command("cmd", flags=Flag("ssh", possible_values=re.compile(r"more[1-5]$")))
+    input_flags = InputFlags([InputFlag("ssh", input_value="more5", status=None)])
+    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags(
+        [InputFlag("ssh", input_value="more5", status=ValidationStatus.VALID)]
+    )
 
 
 def test_structuring_input_flags_marks_flag_valid_when_empty_value_for_neither() -> None:
-    command = Command('cmd', flags=Flag('ssh', possible_values=PossibleValues.NEITHER))
-    input_flags = InputFlags([InputFlag('ssh', input_value='', status=None)])
-    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags([InputFlag('ssh', input_value='', status=ValidationStatus.VALID)])
+    command = Command("cmd", flags=Flag("ssh", possible_values=PossibleValues.NEITHER))
+    input_flags = InputFlags([InputFlag("ssh", input_value="", status=None)])
+    assert _structuring_input_flags(command, input_flags).input_flags == InputFlags(
+        [InputFlag("ssh", input_value="", status=ValidationStatus.VALID)]
+    )
 
 
 # ============================================================================
@@ -200,32 +225,34 @@ def test_structuring_input_flags_marks_flag_valid_when_empty_value_for_neither()
 
 
 def test_structuring_input_flags_returns_all_valid_status_when_all_flags_valid() -> None:
-    command = Command('cmd', flags=Flag('port'))
-    input_flags = InputFlags([InputFlag('port', input_value='some', status=None)])
+    command = Command("cmd", flags=Flag("port"))
+    input_flags = InputFlags([InputFlag("port", input_value="some", status=None)])
     response = _structuring_input_flags(command, input_flags)
     assert response.status == ResponseStatus.ALL_FLAGS_VALID
 
 
 def test_structuring_input_flags_returns_undefined_status_for_unknown_flag() -> None:
-    command = Command('cmd')
-    input_flags = InputFlags([InputFlag('ssh', input_value='', status=None)])
+    command = Command("cmd")
+    input_flags = InputFlags([InputFlag("ssh", input_value="", status=None)])
     response = _structuring_input_flags(command, input_flags)
     assert response.status == ResponseStatus.UNDEFINED_FLAGS
 
 
 def test_structuring_input_flags_returns_invalid_status_for_bad_value() -> None:
-    command = Command('cmd', flags=Flag('ssh', possible_values=PossibleValues.NEITHER))
-    input_flags = InputFlags([InputFlag('ssh', input_value='some', status=None)])
+    command = Command("cmd", flags=Flag("ssh", possible_values=PossibleValues.NEITHER))
+    input_flags = InputFlags([InputFlag("ssh", input_value="some", status=None)])
     response = _structuring_input_flags(command, input_flags)
     assert response.status == ResponseStatus.INVALID_VALUE_FLAGS
 
 
 def test_structuring_input_flags_returns_combined_status_for_mixed_flags() -> None:
-    command = Command('cmd', flags=Flag('ssh', possible_values=PossibleValues.NEITHER))
-    input_flags = InputFlags([
-        InputFlag('ssh', input_value='some', status=None),
-        InputFlag('unknown', input_value='', status=None),
-    ])
+    command = Command("cmd", flags=Flag("ssh", possible_values=PossibleValues.NEITHER))
+    input_flags = InputFlags(
+        [
+            InputFlag("ssh", input_value="some", status=None),
+            InputFlag("unknown", input_value="", status=None),
+        ]
+    )
     response = _structuring_input_flags(command, input_flags)
     assert response.status == ResponseStatus.UNDEFINED_AND_INVALID_FLAGS
 
@@ -237,28 +264,35 @@ def test_structuring_input_flags_returns_combined_status_for_mixed_flags() -> No
 
 def test_router_aliases_returns_command_aliases() -> None:
     router = Router()
-    @router.command(Command('some', aliases={'test', 'case'}))
+
+    @router.command(Command("some", aliases={"test", "case"}))
     def handler(_response: Response) -> None:
         pass
-    assert router.aliases == {'test', 'case'}
+
+    assert router.aliases == {"test", "case"}
 
 
 def test_router_aliases_returns_combined_aliases_from_multiple_commands() -> None:
     router = Router()
-    @router.command(Command('some', aliases={'test', 'case'}))
+
+    @router.command(Command("some", aliases={"test", "case"}))
     def handler(_response: Response) -> None:
         pass
-    @router.command(Command('ext', aliases={'more', 'foo'}))
+
+    @router.command(Command("ext", aliases={"more", "foo"}))
     def handler2(_response: Response) -> None:
         pass
-    assert router.aliases == {'test', 'case', 'more', 'foo'}
+
+    assert router.aliases == {"test", "case", "more", "foo"}
 
 
 def test_router_aliases_returns_empty_set_when_no_aliases() -> None:
     router = Router()
-    @router.command(Command('some'))
+
+    @router.command(Command("some"))
     def handler(_response: Response) -> None:
         pass
+
     assert router.aliases == set()
 
 
@@ -267,55 +301,64 @@ def test_router_aliases_returns_empty_set_when_no_aliases() -> None:
 # ============================================================================
 
 
-def test_finds_appropriate_handler_executes_handler_by_alias(capsys: CaptureFixture[str]) -> None:
+def test_finds_appropriate_handler_executes_handler_by_alias(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     router = Router()
 
-    @router.command(Command('hello', aliases={'hi'}))
+    @router.command(Command("hello", aliases={"hi"}))
     def handler(_res: Response) -> None:
         print("Hello World!")
 
-    router.finds_appropriate_handler(InputCommand('hi'))
-
-    output = capsys.readouterr()
-
-    assert "Hello World!" in output.out
-    
-def test_finds_appropriate_handler_executes_handler_by_alias_case_insensitive(capsys: CaptureFixture[str]) -> None:
-    router = Router()
-
-    @router.command(Command('hello', aliases={'hI'}))
-    def handler(_res: Response) -> None:
-        print("Hello World!")
-
-    router.finds_appropriate_handler(InputCommand('HI'))
-
-    output = capsys.readouterr()
-
-    assert "Hello World!" in output.out
-    
-    
-def test_finds_appropriate_handler_executes_handler_by_trigger_case_insensitive(capsys: CaptureFixture[str]) -> None:
-    router = Router()
-
-    @router.command(Command('heLLo'))
-    def handler(_res: Response) -> None:
-        print("Hello World!")
-
-    router.finds_appropriate_handler(InputCommand('HellO'))
+    router.finds_appropriate_handler(InputCommand("hi"))
 
     output = capsys.readouterr()
 
     assert "Hello World!" in output.out
 
 
-def test_finds_appropriate_handler_executes_handler_with_flags_by_alias(capsys: CaptureFixture[str]) -> None:
+def test_finds_appropriate_handler_executes_handler_by_alias_case_insensitive(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     router = Router()
 
-    @router.command(Command('hello', flags=Flag('flag'), aliases={'hi'}))
+    @router.command(Command("hello", aliases={"hI"}))
     def handler(_res: Response) -> None:
         print("Hello World!")
 
-    router.finds_appropriate_handler(InputCommand('hi'))
+    router.finds_appropriate_handler(InputCommand("HI"))
+
+    output = capsys.readouterr()
+
+    assert "Hello World!" in output.out
+
+
+def test_finds_appropriate_handler_executes_handler_by_trigger_case_insensitive(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    router = Router()
+
+    @router.command(Command("heLLo"))
+    def handler(_res: Response) -> None:
+        print("Hello World!")
+
+    router.finds_appropriate_handler(InputCommand("HellO"))
+
+    output = capsys.readouterr()
+
+    assert "Hello World!" in output.out
+
+
+def test_finds_appropriate_handler_executes_handler_with_flags_by_alias(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    router = Router()
+
+    @router.command(Command("hello", flags=Flag("flag"), aliases={"hi"}))
+    def handler(_res: Response) -> None:
+        print("Hello World!")
+
+    router.finds_appropriate_handler(InputCommand("hi"))
 
     output = capsys.readouterr()
 
@@ -325,12 +368,14 @@ def test_finds_appropriate_handler_executes_handler_with_flags_by_alias(capsys: 
 def test_finds_appropriate_handler_raises_runtime_error_when_handler_not_found() -> None:
     router = Router()
 
-    @router.command('hello')
+    @router.command("hello")
     def handler(_res: Response) -> None:
         pass
 
-    with pytest.raises(RuntimeError, match="Handler for 'unknown' command not found. Panic!"):
-        router.finds_appropriate_handler(InputCommand('unknown'))
+    with pytest.raises(
+        RuntimeError, match=re.escape("Handler for 'unknown' command not found. Panic!")
+    ):
+        router.finds_appropriate_handler(InputCommand("unknown"))
 
 
 # ============================================================================
@@ -340,52 +385,56 @@ def test_finds_appropriate_handler_raises_runtime_error_when_handler_not_found()
 
 def test_validate_command_raises_error_for_alias_collision_with_existing_trigger() -> None:
     router = Router()
-    
-    @router.command('hello')
+
+    @router.command("hello")
     def handler(_res: Response) -> None:
         pass
-    
+
     with pytest.raises(RepeatedAliasNameException):
-        @router.command(Command('world', aliases={'hello'}))
+
+        @router.command(Command("world", aliases={"hello"}))
         def handler2(_res: Response) -> None:
             pass
 
 
 def test_validate_command_raises_error_for_alias_collision_with_existing_alias() -> None:
     router = Router()
-    
-    @router.command(Command('hello', aliases={'hi'}))
+
+    @router.command(Command("hello", aliases={"hi"}))
     def handler(_res: Response) -> None:
         pass
-    
+
     with pytest.raises(RepeatedAliasNameException):
-        @router.command(Command('world', aliases={'hi'}))
+
+        @router.command(Command("world", aliases={"hi"}))
         def handler2(_res: Response) -> None:
             pass
 
 
 def test_validate_command_raises_error_for_trigger_collision_with_existing_alias() -> None:
     router = Router()
-    
-    @router.command(Command('hello', aliases={'hi'}))
+
+    @router.command(Command("hello", aliases={"hi"}))
     def handler(_res: Response) -> None:
         pass
-    
+
     with pytest.raises(RepeatedAliasNameException):
-        @router.command('hi')
+
+        @router.command("hi")
         def handler2(_res: Response) -> None:
             pass
 
 
 def test_validate_command_raises_error_for_alias_collision_case_insensitive() -> None:
     router = Router()
-    
-    @router.command(Command('hello', aliases={'Hi'}))
+
+    @router.command(Command("hello", aliases={"Hi"}))
     def handler(_res: Response) -> None:
         pass
-    
+
     with pytest.raises(RepeatedAliasNameException):
-        @router.command(Command('world', aliases={'hI'}))
+
+        @router.command(Command("world", aliases={"hI"}))
         def handler2(_res: Response) -> None:
             pass
 
@@ -397,86 +446,86 @@ def test_validate_command_raises_error_for_alias_collision_case_insensitive() ->
 
 def test_registered_routers_get_router_by_trigger() -> None:
     from argenta.app.registered_routers.entity import RegisteredRouters
-    
+
     registered_routers = RegisteredRouters()
     router = Router()
-    
-    @router.command('hello')
+
+    @router.command("hello")
     def handler(_res: Response) -> None:
         pass
-    
+
     registered_routers.add_registered_router(router)
-    
-    assert registered_routers.get_router_by_trigger('hello') == router
+
+    assert registered_routers.get_router_by_trigger("hello") == router
 
 
 def test_registered_routers_get_router_by_alias() -> None:
     from argenta.app.registered_routers.entity import RegisteredRouters
-    
+
     registered_routers = RegisteredRouters()
     router = Router()
-    
-    @router.command(Command('hello', aliases={'hi'}))
+
+    @router.command(Command("hello", aliases={"hi"}))
     def handler(_res: Response) -> None:
         pass
-    
+
     registered_routers.add_registered_router(router)
-    
-    assert registered_routers.get_router_by_trigger('hi') == router
+
+    assert registered_routers.get_router_by_trigger("hi") == router
 
 
 def test_registered_routers_get_router_case_insensitive() -> None:
     from argenta.app.registered_routers.entity import RegisteredRouters
-    
+
     registered_routers = RegisteredRouters()
     router = Router()
-    
-    @router.command(Command('HeLLo'))
+
+    @router.command(Command("HeLLo"))
     def handler(_res: Response) -> None:
         pass
-    
+
     registered_routers.add_registered_router(router)
-    
+
     # Trigger stored in lowercase, should match regardless of case
-    assert registered_routers.get_router_by_trigger('hello') == router
-    assert registered_routers.get_router_by_trigger('HELLO') is None  # Exact match required in dict
+    assert registered_routers.get_router_by_trigger("hello") == router
+    assert registered_routers.get_router_by_trigger("HELLO") is None  # Exact match required in dict
 
 
 def test_registered_routers_get_triggers_returns_all_triggers_and_aliases() -> None:
     from argenta.app.registered_routers.entity import RegisteredRouters
-    
+
     registered_routers = RegisteredRouters()
     router1 = Router()
     router2 = Router()
-    
-    @router1.command(Command('hello', aliases={'hi'}))
+
+    @router1.command(Command("hello", aliases={"hi"}))
     def handler1(_res: Response) -> None:
         pass
-    
-    @router2.command(Command('world', aliases={'w'}))
+
+    @router2.command(Command("world", aliases={"w"}))
     def handler2(_res: Response) -> None:
         pass
-    
+
     registered_routers.add_registered_router(router1)
     registered_routers.add_registered_router(router2)
-    
+
     triggers = registered_routers.get_triggers()
-    assert 'hello' in triggers
-    assert 'hi' in triggers
-    assert 'world' in triggers
-    assert 'w' in triggers
+    assert "hello" in triggers
+    assert "hi" in triggers
+    assert "world" in triggers
+    assert "w" in triggers
 
 
 def test_registered_routers_returns_none_for_unknown_trigger() -> None:
     from argenta.app.registered_routers.entity import RegisteredRouters
-    
+
     registered_routers = RegisteredRouters()
     router = Router()
-    
-    @router.command('hello')
+
+    @router.command("hello")
     def handler(_res: Response) -> None:
         pass
-    
+
     registered_routers.add_registered_router(router)
-    
-    assert registered_routers.get_router_by_trigger('unknown') is None
+
+    assert registered_routers.get_router_by_trigger("unknown") is None

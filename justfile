@@ -23,20 +23,21 @@ tests-cov-html:
 
 # Format code (Ruff)
 format:
-    uv run python -m ruff format ./src
-    uv run python -m ruff check --select I --fix ./src
+    uv run python -m ruff format ./src ./tests ./metrics ./examples
+    uv run python -m ruff check --select I --fix ./src ./tests ./metrics ./examples
 
-# Check types via mypy (strict)
+# Check types via mypy (strict for src, default for the rest)
 mypy:
     uv run python -m mypy -p argenta --strict
+    uv run python -m mypy tests metrics examples
 
 # Check style via wemake-python-styleguide
 wps:
-    uv run python -m flake8 --format=wemake ./src
+    uv run python -m flake8 --format=wemake ./src ./tests ./metrics ./examples
 
 # Run Ruff linter
 ruff:
-    uv run python -m ruff check ./src
+    uv run python -m ruff check ./src ./tests ./metrics ./examples
 
 # Run all checks (format, mypy, ruff, wps)
 check-format: format mypy ruff wps

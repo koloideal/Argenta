@@ -17,7 +17,7 @@ from argenta.response import Response
 def mock_argparser(mocker: MockerFixture) -> ArgParser:
     """Create a mock ArgParser that doesn't actually parse sys.argv"""
     argparser = ArgParser(processed_args=[])
-    mocker.patch.object(argparser, '_parse_args')
+    mocker.patch.object(argparser, "_parse_args")
     return argparser
 
 
@@ -31,11 +31,11 @@ def sample_app() -> App:
 def sample_router() -> Router:
     """Create a sample Router with a test command"""
     router = Router()
-    
-    @router.command(Command('test'))
+
+    @router.command(Command("test"))
     def handler(_res: Response) -> None:
-        print('test command executed')
-    
+        print("test command executed")
+
     return router
 
 
@@ -46,7 +46,7 @@ def sample_router() -> Router:
 
 def test_orchestrator_initializes_with_no_argparser(mocker: MockerFixture) -> None:
     """Test Orchestrator initialization with no ArgParser"""
-    mocker.patch('sys.argv', ['test_program'])
+    mocker.patch("sys.argv", ["test_program"])
     orchestrator = Orchestrator()
     assert orchestrator._arg_parser is None
 
@@ -59,7 +59,7 @@ def test_orchestrator_initializes_with_custom_argparser(mock_argparser: ArgParse
 
 def test_orchestrator_initializes_with_custom_providers(mocker: MockerFixture) -> None:
     """Test Orchestrator initialization with custom providers"""
-    mocker.patch('sys.argv', ['test_program'])
+    mocker.patch("sys.argv", ["test_program"])
     custom_provider = Provider()
     orchestrator = Orchestrator(custom_providers=[custom_provider])
     assert custom_provider in orchestrator._custom_providers
@@ -67,22 +67,24 @@ def test_orchestrator_initializes_with_custom_providers(mocker: MockerFixture) -
 
 def test_orchestrator_initializes_with_auto_inject_disabled(mocker: MockerFixture) -> None:
     """Test Orchestrator initialization with auto_inject_handlers disabled"""
-    mocker.patch('sys.argv', ['test_program'])
+    mocker.patch("sys.argv", ["test_program"])
     orchestrator = Orchestrator(auto_inject_handlers=False)
     assert orchestrator._auto_inject_handlers is False
 
 
 def test_orchestrator_initializes_with_auto_inject_enabled(mocker: MockerFixture) -> None:
     """Test Orchestrator initialization with auto_inject_handlers enabled (default)"""
-    mocker.patch('sys.argv', ['test_program'])
+    mocker.patch("sys.argv", ["test_program"])
     orchestrator = Orchestrator()
     assert orchestrator._auto_inject_handlers is True
 
 
-def test_orchestrator_parses_args_on_initialization(mocker: MockerFixture, mock_argparser: ArgParser) -> None:
+def test_orchestrator_parses_args_on_initialization(
+    mocker: MockerFixture, mock_argparser: ArgParser
+) -> None:
     """Test that Orchestrator calls _parse_args on initialization"""
-    parse_spy = mocker.spy(mock_argparser, '_parse_args')
-    _orchestrator = Orchestrator(arg_parser=mock_argparser)
+    parse_spy = mocker.spy(mock_argparser, "_parse_args")
+    Orchestrator(arg_parser=mock_argparser)
     parse_spy.assert_called_once()
 
 
@@ -95,29 +97,29 @@ def test_run_repl_creates_dishka_container(
     mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
 ) -> None:
     """Test that run_repl creates a dishka container"""
-    mock_make_container = mocker.patch('argenta.orchestrator.entity.make_container')
-    _mock_setup_dishka = mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mocker.patch.object(sample_app, '_run_repl')
-    
+    mock_make_container = mocker.patch("argenta.orchestrator.entity.make_container")
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mocker.patch.object(sample_app, "_run_repl")
+
     orchestrator = Orchestrator(arg_parser=mock_argparser)
     orchestrator.run_repl(sample_app)
-    
+
     mock_make_container.assert_called_once()
-    assert mock_make_container.call_args[1]['context'] == {ArgParser: mock_argparser}
+    assert mock_make_container.call_args[1]["context"] == {ArgParser: mock_argparser}
 
 
 def test_run_repl_calls_setup_dishka_with_auto_inject_enabled(
     mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
 ) -> None:
     """Test that run_repl calls setup_dishka with auto_inject=True"""
-    mock_container = mocker.MagicMock()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
-    mocker.patch('argenta.orchestrator.entity.make_container', return_value=mock_container)
-    mock_setup_dishka = mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mocker.patch.object(sample_app, '_run_repl')
-    
+    mock_container = mocker.MagicMock()
+    mocker.patch("argenta.orchestrator.entity.make_container", return_value=mock_container)
+    mock_setup_dishka = mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mocker.patch.object(sample_app, "_run_repl")
+
     orchestrator = Orchestrator(arg_parser=mock_argparser, auto_inject_handlers=True)
     orchestrator.run_repl(sample_app)
-    
+
     mock_setup_dishka.assert_called_once_with(sample_app, mock_container, auto_inject=True)
 
 
@@ -125,14 +127,14 @@ def test_run_repl_calls_setup_dishka_with_auto_inject_disabled(
     mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
 ) -> None:
     """Test that run_repl calls setup_dishka with auto_inject=False"""
-    mock_container = mocker.MagicMock()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
-    mocker.patch('argenta.orchestrator.entity.make_container', return_value=mock_container)
-    mock_setup_dishka = mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mocker.patch.object(sample_app, '_run_repl')
-    
+    mock_container = mocker.MagicMock()
+    mocker.patch("argenta.orchestrator.entity.make_container", return_value=mock_container)
+    mock_setup_dishka = mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mocker.patch.object(sample_app, "_run_repl")
+
     orchestrator = Orchestrator(arg_parser=mock_argparser, auto_inject_handlers=False)
     orchestrator.run_repl(sample_app)
-    
+
     mock_setup_dishka.assert_called_once_with(sample_app, mock_container, auto_inject=False)
 
 
@@ -140,13 +142,13 @@ def test_run_repl_calls_app_run_repl(
     mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
 ) -> None:
     """Test that run_repl calls app.run_polling()"""
-    mocker.patch('argenta.orchestrator.entity.make_container')
-    mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mock_run_repl = mocker.patch.object(sample_app, '_run_repl')
-    
+    mocker.patch("argenta.orchestrator.entity.make_container")
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mock_run_repl = mocker.patch.object(sample_app, "_run_repl")
+
     orchestrator = Orchestrator(arg_parser=mock_argparser)
     orchestrator.run_repl(sample_app)
-    
+
     mock_run_repl.assert_called_once()
 
 
@@ -155,13 +157,13 @@ def test_run_repl_includes_custom_providers_in_container(
 ) -> None:
     """Test that run_repl includes custom providers in container"""
     custom_provider = Provider()
-    mock_make_container = mocker.patch('argenta.orchestrator.entity.make_container')
-    mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mocker.patch.object(sample_app, '_run_repl')
-    
+    mock_make_container = mocker.patch("argenta.orchestrator.entity.make_container")
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mocker.patch.object(sample_app, "_run_repl")
+
     orchestrator = Orchestrator(arg_parser=mock_argparser, custom_providers=[custom_provider])
     orchestrator.run_repl(sample_app)
-    
+
     # Check that custom_provider was passed to make_container
     call_args = mock_make_container.call_args[0]
     assert custom_provider in call_args
@@ -176,15 +178,15 @@ def test_orchestrator_integrates_with_app_with_router(
     mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App, sample_router: Router
 ) -> None:
     """Test that Orchestrator properly integrates with App that has routers"""
-    mocker.patch('argenta.orchestrator.entity.make_container')
-    mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mock_run_repl = mocker.patch.object(sample_app, '_run_repl')
-    
+    mocker.patch("argenta.orchestrator.entity.make_container")
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mock_run_repl = mocker.patch.object(sample_app, "_run_repl")
+
     sample_app.include_router(sample_router)
-    
+
     orchestrator = Orchestrator(arg_parser=mock_argparser)
     orchestrator.run_repl(sample_app)
-    
+
     mock_run_repl.assert_called_once()
     assert len(sample_app.registered_routers.registered_routers) == 1
 
@@ -198,18 +200,18 @@ def test_orchestrator_passes_argparser_to_container_context(
     mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
 ) -> None:
     """Test that Orchestrator passes ArgParser instance to container context"""
-    mock_make_container = mocker.patch('argenta.orchestrator.entity.make_container')
-    mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mocker.patch.object(sample_app, '_run_repl')
-    
+    mock_make_container = mocker.patch("argenta.orchestrator.entity.make_container")
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mocker.patch.object(sample_app, "_run_repl")
+
     orchestrator = Orchestrator(arg_parser=mock_argparser)
     orchestrator.run_repl(sample_app)
-    
+
     # Verify that ArgParser was passed in context
     call_kwargs = mock_make_container.call_args[1]
-    assert 'context' in call_kwargs
-    assert ArgParser in call_kwargs['context']
-    assert call_kwargs['context'][ArgParser] is mock_argparser
+    assert "context" in call_kwargs
+    assert ArgParser in call_kwargs["context"]
+    assert call_kwargs["context"][ArgParser] is mock_argparser
 
 
 # ============================================================================
@@ -221,12 +223,12 @@ def test_orchestrator_handles_app_run_repl_exception(
     mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
 ) -> None:
     """Test that Orchestrator propagates exceptions from app.run_polling()"""
-    mocker.patch('argenta.orchestrator.entity.make_container')
-    mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mocker.patch.object(sample_app, '_run_repl', side_effect=RuntimeError("Test error"))
-    
+    mocker.patch("argenta.orchestrator.entity.make_container")
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mocker.patch.object(sample_app, "_run_repl", side_effect=RuntimeError("Test error"))
+
     orchestrator = Orchestrator(arg_parser=mock_argparser)
-    
+
     with pytest.raises(RuntimeError, match="Test error"):
         orchestrator.run_repl(sample_app)
 
@@ -235,31 +237,31 @@ def test_run_repl_closes_container_after_repl_finishes(
     mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
 ) -> None:
     """Test that run_repl closes the dishka container so provider finalizers run"""
-    mock_container = mocker.MagicMock()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
-    mocker.patch('argenta.orchestrator.entity.make_container', return_value=mock_container)
-    mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mock_container.__exit__.return_value = False  # pyright: ignore[reportUnknownMemberType]
-    mocker.patch.object(sample_app, '_run_repl')
+    mock_container = mocker.MagicMock()
+    mocker.patch("argenta.orchestrator.entity.make_container", return_value=mock_container)
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mock_container.__exit__.return_value = False
+    mocker.patch.object(sample_app, "_run_repl")
 
     Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
 
-    mock_container.__exit__.assert_called_once()  # pyright: ignore[reportUnknownMemberType]
+    mock_container.__exit__.assert_called_once()
 
 
 def test_run_repl_closes_container_when_repl_raises(
     mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
 ) -> None:
     """Test that run_repl closes the dishka container even if the REPL raises"""
-    mock_container = mocker.MagicMock()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
-    mocker.patch('argenta.orchestrator.entity.make_container', return_value=mock_container)
-    mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mock_container.__exit__.return_value = False  # pyright: ignore[reportUnknownMemberType]
-    mocker.patch.object(sample_app, '_run_repl', side_effect=RuntimeError("Test error"))
+    mock_container = mocker.MagicMock()
+    mocker.patch("argenta.orchestrator.entity.make_container", return_value=mock_container)
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mock_container.__exit__.return_value = False
+    mocker.patch.object(sample_app, "_run_repl", side_effect=RuntimeError("Test error"))
 
     with pytest.raises(RuntimeError, match="Test error"):
         Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
 
-    mock_container.__exit__.assert_called_once()  # pyright: ignore[reportUnknownMemberType]
+    mock_container.__exit__.assert_called_once()
 
 
 # ============================================================================
@@ -273,16 +275,13 @@ def test_orchestrator_accepts_multiple_custom_providers(
     """Test that Orchestrator accepts multiple custom providers"""
     provider1 = Provider()
     provider2 = Provider()
-    mock_make_container = mocker.patch('argenta.orchestrator.entity.make_container')
-    mocker.patch('argenta.orchestrator.entity.setup_dishka')
-    mocker.patch.object(sample_app, '_run_repl')
-    
-    orchestrator = Orchestrator(
-        arg_parser=mock_argparser,
-        custom_providers=[provider1, provider2]
-    )
+    mock_make_container = mocker.patch("argenta.orchestrator.entity.make_container")
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mocker.patch.object(sample_app, "_run_repl")
+
+    orchestrator = Orchestrator(arg_parser=mock_argparser, custom_providers=[provider1, provider2])
     orchestrator.run_repl(sample_app)
-    
+
     call_args = mock_make_container.call_args[0]
     assert provider1 in call_args
     assert provider2 in call_args

@@ -130,9 +130,7 @@ def test_resolver_finds_zero_arg_callable(tmp_path: Path) -> None:
 
 def test_resolver_rejects_callable_with_required_params(tmp_path: Path) -> None:
     path = _write_module(tmp_path, "clipkg_reqargs", "def main(arg):\n    pass\n")
-    with pytest.raises(
-        CallableEntrypointNotMatchRequiredSignatureError, match="not match"
-    ):
+    with pytest.raises(CallableEntrypointNotMatchRequiredSignatureError, match="not match"):
         EntrypointResolver[CallableEntryPoint](str(path)).parse_entrypoint_with_type("main")
 
 
@@ -169,9 +167,7 @@ def test_resolver_rejects_app_instance_as_callable(tmp_path: Path) -> None:
         tmp_path, "clipkg_appval", "from argenta import App\napplication = App()\n"
     )
     with pytest.raises(EntrypointNotCallableError, match="not callable"):
-        EntrypointResolver[CallableEntryPoint](str(path)).parse_entrypoint_with_type(
-            "application"
-        )
+        EntrypointResolver[CallableEntryPoint](str(path)).parse_entrypoint_with_type("application")
 
 
 def test_resolver_raises_for_missing_attribute(tmp_path: Path) -> None:
@@ -182,22 +178,18 @@ def test_resolver_raises_for_missing_attribute(tmp_path: Path) -> None:
 
 def test_resolver_raises_for_missing_module() -> None:
     with pytest.raises(ResolveFromStringError, match="Cannot import module"):
-        EntrypointResolver[CallableEntryPoint](
-            "clipkg_no_such_module"
-        ).parse_entrypoint_with_type("main")
+        EntrypointResolver[CallableEntryPoint]("clipkg_no_such_module").parse_entrypoint_with_type(
+            "main"
+        )
 
 
 def test_resolver_raises_when_module_import_fails(tmp_path: Path) -> None:
-    path = _write_module(
-        tmp_path, "clipkg_broken", "import clipkg_definitely_missing_dep\n"
-    )
+    path = _write_module(tmp_path, "clipkg_broken", "import clipkg_definitely_missing_dep\n")
     with pytest.raises(ResolveFromStringError, match="Cannot import module"):
         EntrypointResolver[CallableEntryPoint](str(path)).parse_entrypoint_with_type("main")
 
 
-def test_resolver_resolves_module_by_name(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_resolver_resolves_module_by_name(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     _write_module(tmp_path, "clipkg_bymodname", "def main():\n    return 'by-name'\n")
     monkeypatch.chdir(tmp_path)
 

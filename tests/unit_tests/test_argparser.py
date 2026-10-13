@@ -65,12 +65,12 @@ def test_input_argument_stores_all_properties() -> None:
 
 
 def test_input_argument_str_representation() -> None:
-    arg = InputArgument('host', value='192.168.0.0', founder_class=ValueArgument)
-    assert str(arg) == 'InputArgument(host=192.168.0.0)'
+    arg = InputArgument("host", value="192.168.0.0", founder_class=ValueArgument)
+    assert str(arg) == "InputArgument(host=192.168.0.0)"
 
 
 def test_input_argument_repr_representation() -> None:
-    arg = InputArgument('host', value='192.168.0.0', founder_class=ValueArgument)
+    arg = InputArgument("host", value="192.168.0.0", founder_class=ValueArgument)
     assert repr(arg) == "InputArgument<name=host, value=192.168.0.0, founder_class=ValueArgument>"
 
 
@@ -98,12 +98,16 @@ def arg_space(mock_arguments: list[InputArgument]) -> ArgSpace:
 # ============================================================================
 
 
-def test_argspace_initializes_with_arguments(arg_space: ArgSpace, mock_arguments: list[InputArgument]) -> None:
+def test_argspace_initializes_with_arguments(
+    arg_space: ArgSpace, mock_arguments: list[InputArgument]
+) -> None:
     assert len(arg_space.all_arguments) == 3
     assert arg_space.all_arguments == mock_arguments
 
 
-def test_argspace_get_by_name_finds_existing_argument(arg_space: ArgSpace, mock_arguments: list[InputArgument]) -> None:
+def test_argspace_get_by_name_finds_existing_argument(
+    arg_space: ArgSpace, mock_arguments: list[InputArgument]
+) -> None:
     found_arg: InputArgument | None = arg_space.get_by_name("arg1")
     assert found_arg is not None
     assert found_arg == mock_arguments[0]
@@ -114,14 +118,18 @@ def test_argspace_get_by_name_returns_none_for_missing_argument(arg_space: ArgSp
     assert found_arg is None
 
 
-def test_argspace_get_by_type_filters_value_arguments(arg_space: ArgSpace, mock_arguments: list[InputArgument]) -> None:
+def test_argspace_get_by_type_filters_value_arguments(
+    arg_space: ArgSpace, mock_arguments: list[InputArgument]
+) -> None:
     value_args = arg_space.get_by_type(ValueArgument)
     assert len(value_args) == 2
     assert mock_arguments[0] in value_args
     assert mock_arguments[2] in value_args
 
 
-def test_argspace_get_by_type_filters_boolean_arguments(arg_space: ArgSpace, mock_arguments: list[InputArgument]) -> None:
+def test_argspace_get_by_type_filters_boolean_arguments(
+    arg_space: ArgSpace, mock_arguments: list[InputArgument]
+) -> None:
     bool_args = arg_space.get_by_type(BooleanArgument)
     assert len(bool_args) == 1
     assert mock_arguments[1] in bool_args
@@ -131,7 +139,7 @@ def test_argspace_get_by_type_returns_empty_list_for_unknown_type(arg_space: Arg
     class OtherArgument(BaseArgument):
         pass
 
-    other_args = arg_space.get_by_type(OtherArgument)  # pyright: ignore[reportAssignmentType]
+    other_args = arg_space.get_by_type(OtherArgument)
     assert other_args == []
 
 
@@ -146,8 +154,8 @@ def test_argspace_from_namespace_creates_argspace_from_parsed_namespace() -> Non
     arg_space: ArgSpace = ArgSpace.from_namespace(namespace, processed_args)
     assert len(arg_space.all_arguments) == 3
 
-    config_arg: InputArgument | None = arg_space.get_by_name('config')
-    debug_arg: InputArgument | None = arg_space.get_by_name('debug')
+    config_arg: InputArgument | None = arg_space.get_by_name("config")
+    debug_arg: InputArgument | None = arg_space.get_by_name("debug")
 
     assert config_arg is not None
     assert config_arg.value == "config.json"
@@ -186,7 +194,9 @@ def bool_arg() -> BooleanArgument:
 
 
 @pytest.fixture
-def processed_args(value_arg: ValueArgument, bool_arg: BooleanArgument) -> list[ValueArgument | BooleanArgument]:
+def processed_args(
+    value_arg: ValueArgument, bool_arg: BooleanArgument
+) -> list[ValueArgument | BooleanArgument]:
     return [value_arg, bool_arg]
 
 
@@ -195,7 +205,9 @@ def processed_args(value_arg: ValueArgument, bool_arg: BooleanArgument) -> list[
 # ============================================================================
 
 
-def test_argparser_initializes_with_all_properties(processed_args: list[ValueArgument | BooleanArgument]) -> None:
+def test_argparser_initializes_with_all_properties(
+    processed_args: list[ValueArgument | BooleanArgument],
+) -> None:
     parser: ArgParser = ArgParser(
         processed_args=processed_args,
         name="TestApp",
@@ -221,74 +233,76 @@ def test_argparser_registers_arguments_with_deprecated_flag_py313(
 ) -> None:
     mock_add_argument: MockType = mocker.patch("argparse.ArgumentParser.add_argument")
 
-    _parser: ArgParser = ArgParser(processed_args=[value_arg, bool_arg])
+    ArgParser(processed_args=[value_arg, bool_arg])
 
     # ArgParser may add additional arguments (like help), so check at least 2
     assert mock_add_argument.call_count >= 2
-    
+
     # Check that value_arg was registered correctly
     value_arg_call = None
     bool_arg_call = None
-    
+
     for call_args in mock_add_argument.call_args_list:
         args, kwargs = call_args
         if len(args) > 0 and args[0] == value_arg.string_entity:
             value_arg_call = (args, kwargs)
         elif len(args) > 0 and args[0] == bool_arg.string_entity:
             bool_arg_call = (args, kwargs)
-    
+
     assert value_arg_call is not None, "value_arg was not registered"
     _, value_kwargs = value_arg_call
-    assert value_kwargs['action'] == value_arg.action
-    assert value_kwargs['help'] == value_arg.help
-    assert value_kwargs['default'] == value_arg.default
-    assert value_kwargs['choices'] == value_arg.possible_values
-    assert value_kwargs['required'] == value_arg.is_required
-    assert value_kwargs['deprecated'] == value_arg.is_deprecated
-    
+    assert value_kwargs["action"] == value_arg.action
+    assert value_kwargs["help"] == value_arg.help
+    assert value_kwargs["default"] == value_arg.default
+    assert value_kwargs["choices"] == value_arg.possible_values
+    assert value_kwargs["required"] == value_arg.is_required
+    assert value_kwargs["deprecated"] == value_arg.is_deprecated
+
     assert bool_arg_call is not None, "bool_arg was not registered"
     _, bool_kwargs = bool_arg_call
-    assert bool_kwargs['action'] == bool_arg.action
-    assert bool_kwargs['help'] == bool_arg.help
-    assert bool_kwargs['deprecated'] == bool_arg.is_deprecated
+    assert bool_kwargs["action"] == bool_arg.action
+    assert bool_kwargs["help"] == bool_arg.help
+    assert bool_kwargs["deprecated"] == bool_arg.is_deprecated
 
 
-@pytest.mark.skipif(sys.version_info > (3, 12), reason="for more latest python version has been other test")
+@pytest.mark.skipif(
+    sys.version_info > (3, 12), reason="for more latest python version has been other test"
+)
 def test_argparser_registers_arguments_without_deprecated_flag_py312(
     mocker: MockerFixture, value_arg: ValueArgument, bool_arg: BooleanArgument
 ) -> None:
     mock_add_argument: MockType = mocker.patch("argparse.ArgumentParser.add_argument")
 
-    _parser: ArgParser = ArgParser(processed_args=[value_arg, bool_arg])
+    ArgParser(processed_args=[value_arg, bool_arg])
 
     # ArgParser may add additional arguments (like help), so check at least 2
     assert mock_add_argument.call_count >= 2
-    
+
     # Check that value_arg was registered correctly
     value_arg_call = None
     bool_arg_call = None
-    
+
     for call_args in mock_add_argument.call_args_list:
         args, kwargs = call_args
         if len(args) > 0 and args[0] == value_arg.string_entity:
             value_arg_call = (args, kwargs)
         elif len(args) > 0 and args[0] == bool_arg.string_entity:
             bool_arg_call = (args, kwargs)
-    
+
     assert value_arg_call is not None, "value_arg was not registered"
     _, value_kwargs = value_arg_call
-    assert value_kwargs['action'] == value_arg.action
-    assert value_kwargs['help'] == value_arg.help
-    assert value_kwargs['default'] == value_arg.default
-    assert value_kwargs['choices'] == value_arg.possible_values
-    assert value_kwargs['required'] == value_arg.is_required
-    assert 'deprecated' not in value_kwargs
-    
+    assert value_kwargs["action"] == value_arg.action
+    assert value_kwargs["help"] == value_arg.help
+    assert value_kwargs["default"] == value_arg.default
+    assert value_kwargs["choices"] == value_arg.possible_values
+    assert value_kwargs["required"] == value_arg.is_required
+    assert "deprecated" not in value_kwargs
+
     assert bool_arg_call is not None, "bool_arg was not registered"
     _, bool_kwargs = bool_arg_call
-    assert bool_kwargs['action'] == bool_arg.action
-    assert bool_kwargs['help'] == bool_arg.help
-    assert 'deprecated' not in bool_kwargs
+    assert bool_kwargs["action"] == bool_arg.action
+    assert bool_kwargs["help"] == bool_arg.help
+    assert "deprecated" not in bool_kwargs
 
 
 # ============================================================================
@@ -299,8 +313,8 @@ def test_argparser_registers_arguments_without_deprecated_flag_py312(
 def test_argparser_parse_args_populates_argspace_correctly(
     mocker: MockerFixture, processed_args: list[ValueArgument | BooleanArgument]
 ) -> None:
-    mock_namespace: Namespace = Namespace(config='config.json', debug=True)
-    mocker.patch('argparse.ArgumentParser.parse_args', return_value=mock_namespace)
+    mock_namespace: Namespace = Namespace(config="config.json", debug=True)
+    mocker.patch("argparse.ArgumentParser.parse_args", return_value=mock_namespace)
 
     parser: ArgParser = ArgParser(processed_args=processed_args)
     parser._parse_args()
@@ -309,11 +323,11 @@ def test_argparser_parse_args_populates_argspace_correctly(
     assert isinstance(arg_space, ArgSpace)
     assert len(arg_space.all_arguments) == 2
 
-    config_arg: InputArgument | None = arg_space.get_by_name('config')
-    debug_arg: InputArgument | None = arg_space.get_by_name('debug')
+    config_arg: InputArgument | None = arg_space.get_by_name("config")
+    debug_arg: InputArgument | None = arg_space.get_by_name("debug")
 
     assert config_arg is not None
-    assert config_arg.value == 'config.json'
+    assert config_arg.value == "config.json"
     assert config_arg.founder_class is ValueArgument
 
     assert debug_arg is not None

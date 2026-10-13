@@ -3,13 +3,14 @@ from argenta import App, Orchestrator
 
 from .routers import router
 
-app: App = App(prompt='>>> ', dividing_line=None)
+app: App = App(prompt=">>> ", dividing_line=None)
 orchestrator: Orchestrator = Orchestrator()
+
 
 def main() -> None:
     app.include_router(router)
     orchestrator.run_repl(app)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
-    

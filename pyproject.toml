@@ -108,8 +108,11 @@ external = ["WPS"]
 [tool.flake8]
 max-line-length = 100
 per-file-ignores = """
-__init__.py:F401
-integration.py:WPS410
+*__init__.py:F401,F403
+*tests/*:WPS
+*metrics/*:WPS
+*examples/*:WPS
+*integration.py:WPS410
 *app/presentation/renderers.py:WPS602,WPS118,WPS214
 *command/flag/defaults.py:WPS115
 *behavior_handlers/models.py:WPS615,WPS211

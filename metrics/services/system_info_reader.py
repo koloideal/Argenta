@@ -42,19 +42,15 @@ def get_os_info() -> OSInfo:
         ver = sys.getwindowsversion()
         kernel_version = f"{ver.major}.{ver.minor}.{ver.build}"
 
-        if ver.build >= 22000:
-            product_name = "Windows 11"
-        else:
-            product_name = "Windows 10"
+        product_name = "Windows 11" if ver.build >= 22000 else "Windows 10"
 
         return OSInfo(
             name=product_name,
             kernel_version=kernel_version,
         )
-    elif sys.platform == "darwin":
+    if sys.platform == "darwin":
         return OSInfo(kernel_version=platform.release(), name=f"macOS {platform.mac_ver()[0]}")
-    else:
-        return OSInfo(kernel_version=platform.release(), name=platform.system())
+    return OSInfo(kernel_version=platform.release(), name=platform.system())
 
 
 def get_cpu_info() -> CPUInfo:

@@ -159,9 +159,7 @@ def test_routes_accepts_callable_returning_app(tmp_path: Path) -> None:
 
 
 def test_routes_fails_when_callable_returns_non_app(tmp_path: Path) -> None:
-    path = _write_module(
-        tmp_path, "climod_routes_bad", "def make():\n    return 5\n"
-    )
+    path = _write_module(tmp_path, "climod_routes_bad", "def make():\n    return 5\n")
     result = runner.invoke(app, ["routes", f"{path}:make"])
 
     assert result.exit_code == 1
@@ -181,9 +179,7 @@ def test_routes_fails_on_invalid_entrypoint_object(tmp_path: Path) -> None:
 
 
 def _mock_nuitka_present(mocker: MockerFixture) -> MagicMock:
-    mocker.patch(
-        "argenta._cli.commands.build.find_spec", return_value=MagicMock()
-    )
+    mocker.patch("argenta._cli.commands.build.find_spec", return_value=MagicMock())
     return mocker.patch(
         "argenta._cli.commands.build.subprocess.run",
         return_value=MagicMock(returncode=0),
@@ -233,9 +229,7 @@ def test_build_appends_extra_nuitka_args(mocker: MockerFixture, tmp_path: Path) 
     run_mock = _mock_nuitka_present(mocker)
     path = _write_module(tmp_path, "climod_build_extra", "def main():\n    pass\n")
 
-    result = runner.invoke(
-        app, ["build", f"{path}:main", "--", "--lto=yes", "--include-package=x"]
-    )
+    result = runner.invoke(app, ["build", f"{path}:main", "--", "--lto=yes", "--include-package=x"])
 
     assert result.exit_code == 0
     nuitka_cmd = run_mock.call_args[0][0]
