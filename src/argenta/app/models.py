@@ -185,9 +185,9 @@ class BaseApp(BehaviorHandlersSettersMixin):
             return self._exit_command.trigger
 
     def _prompt_for_command(self) -> str:
-        print()  # pre-prompt gap
+        self._printer("")  # pre-prompt gap
         raw_command: str = self._autocompleter.prompt(self._renderer.render_prompt(self._prompt))
-        print()  # post-prompt gap
+        self._printer("")  # post-prompt gap
         return raw_command
 
     def _dispatch_command(self, raw_command: str) -> bool:
