@@ -20,15 +20,18 @@ jobs:
       id-token: write
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      with:
+        persist-credentials: false
 
-    - uses: actions/setup-python@v7
+    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
       with:
         python-version: "3.13"
 
-    - uses: astral-sh/setup-uv@v10.3.0
+    - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       with:
-        enable-cache: true
+        # no cache: a poisoned dependency cache must never feed a release build
+        enable-cache: false
 
     - name: Install dependencies
       run: uv sync --frozen --no-dev
@@ -37,4 +40,4 @@ jobs:
       run: uv build
 
     - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+      uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
