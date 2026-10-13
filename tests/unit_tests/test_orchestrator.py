@@ -231,6 +231,37 @@ def test_orchestrator_handles_app_run_repl_exception(
         orchestrator.run_repl(sample_app)
 
 
+def test_run_repl_closes_container_after_repl_finishes(
+    mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
+) -> None:
+    """Test that run_repl closes the dishka container so provider finalizers run"""
+    mock_container = mocker.MagicMock()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    mocker.patch('argenta.orchestrator.entity.make_container', return_value=mock_container)
+    mocker.patch('argenta.orchestrator.entity.setup_dishka')
+    mock_container.__exit__.return_value = False  # pyright: ignore[reportUnknownMemberType]
+    mocker.patch.object(sample_app, '_run_repl')
+
+    Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
+
+    mock_container.__exit__.assert_called_once()  # pyright: ignore[reportUnknownMemberType]
+
+
+def test_run_repl_closes_container_when_repl_raises(
+    mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
+) -> None:
+    """Test that run_repl closes the dishka container even if the REPL raises"""
+    mock_container = mocker.MagicMock()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    mocker.patch('argenta.orchestrator.entity.make_container', return_value=mock_container)
+    mocker.patch('argenta.orchestrator.entity.setup_dishka')
+    mock_container.__exit__.return_value = False  # pyright: ignore[reportUnknownMemberType]
+    mocker.patch.object(sample_app, '_run_repl', side_effect=RuntimeError("Test error"))
+
+    with pytest.raises(RuntimeError, match="Test error"):
+        Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
+
+    mock_container.__exit__.assert_called_once()  # pyright: ignore[reportUnknownMemberType]
+
+
 # ============================================================================
 # Tests for multiple providers
 # ============================================================================
