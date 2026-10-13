@@ -23,6 +23,7 @@ All types of contributions are encouraged and valued. Please make sure to read t
 - [Improving The Documentation](#improving-the-documentation)
 - [Styleguides](#styleguides)
 - [Commit Messages](#commit-messages)
+- [Governance](#governance)
 - [Join The Project Team](#join-the-project-team)
 
 
@@ -70,6 +71,8 @@ Depending on how large the project is, you may want to outsource the questioning
 
 > ### Legal Notice <!-- omit in toc -->
 > When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project licence.
+>
+> By submitting a pull request you certify — in the sense of the [Developer Certificate of Origin](https://developercertificate.org/) and GitHub's Terms of Service (section D.6, "inbound = outbound") — that you are legally authorized to make the contribution and that it is licensed under the project's MIT license.
 
 ### Reporting Bugs
 
@@ -244,6 +247,22 @@ A simple fix:
 
 A new feature with a scope: 
 ``feat(api): add new endpoint for user profiles``
+
+---
+
+## Governance
+
+Argenta is maintained by a single maintainer:
+
+| Member | Role | Access to sensitive resources |
+|--------|------|-------------------------------|
+| [@koloideal](https://github.com/koloideal) | Maintainer | Admin on the repository, PyPI publishing, Actions secrets |
+
+**Maintainer** responsibilities: reviewing and merging pull requests, cutting releases, triaging issues, and managing repository settings and credentials.
+
+**Contributor** responsibilities: submitting pull requests that follow the styleguides above; contributors have no access to sensitive resources and need no elevated permissions.
+
+All changes to `main` go through pull requests with required status checks — direct pushes are blocked by branch protection for everyone, including the maintainer.
 
 ---
 
