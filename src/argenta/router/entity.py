@@ -136,7 +136,7 @@ class Router:
         :return: None if command is valid else raise exception
         """
         command_name: str = command.trigger
-        if command_name.find(" ") != -1:
+        if any(char.isspace() for char in command_name):
             raise TriggerContainSpacesException()
 
         _ensure_unique_command_name(command_name, self.triggers, self.aliases)
