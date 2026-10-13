@@ -23,19 +23,23 @@ jobs:
             uv-sync-extra-args: "--no-binary-package coverage"
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      with:
+        persist-credentials: false
 
-    - uses: actions/setup-python@v7
+    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
       with:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
 
-    - uses: astral-sh/setup-uv@v10.3.0
+    - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       with:
         enable-cache: true
 
     - name: Install dependencies
-      run: uv sync --group tests ${{ matrix.uv-sync-extra-args }}
+      env:
+        UV_SYNC_EXTRA_ARGS: ${{ matrix.uv-sync-extra-args }}
+      run: uv sync --group tests $UV_SYNC_EXTRA_ARGS
 
     - name: Run tests
       run: uv run python -m pytest --cov=argenta --cov-report=term-missing tests
@@ -45,13 +49,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      with:
+        persist-credentials: false
 
-    - uses: actions/setup-python@v7
+    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
       with:
         python-version: "3.12"
 
-    - uses: astral-sh/setup-uv@v10.3.0
+    - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       with:
         enable-cache: true
 
