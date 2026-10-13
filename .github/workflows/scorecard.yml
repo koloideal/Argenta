@@ -29,6 +29,8 @@ jobs:
         results_file: results.sarif
         results_format: sarif
         publish_results: true
+        # PAT with Administration:read — needed to inspect branch protection rules
+        repo_token: ${{ secrets.SCORECARD_TOKEN }}
 
     - uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
       with:
