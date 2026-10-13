@@ -1,4 +1,5 @@
 import warnings
+from collections import Counter
 from collections.abc import Callable, Iterable
 from inspect import get_annotations, getfullargspec
 
@@ -19,7 +20,7 @@ from argenta.router.exceptions import (
 def _ensure_unique_command_name(command_name: str, triggers: set[str], aliases: set[str]) -> None:
     lowered_name = command_name.lower()
     if lowered_name in triggers:
-        raise RepeatedTriggerNameException()
+        raise RepeatedTriggerNameException({lowered_name})
     if lowered_name in aliases:
         raise RepeatedAliasNameException({lowered_name})
 
@@ -31,9 +32,10 @@ def _ensure_unique_aliases(aliases: Iterable[str], taken_names: set[str]) -> Non
 
 
 def _ensure_unique_flag_names(command: Command) -> None:
-    flags_name: list[str] = [flag.string_entity.lower() for flag in command.registered_flags]
-    if len(set(flags_name)) < len(flags_name):
-        raise RepeatedFlagNameException()
+    flag_counts = Counter(flag.string_entity.lower() for flag in command.registered_flags)
+    repeated_flags = {name for name, count in flag_counts.items() if count > 1}
+    if repeated_flags:
+        raise RepeatedFlagNameException(repeated_flags, command.trigger)
 
 
 class Router:
