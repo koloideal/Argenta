@@ -126,7 +126,7 @@ def test_response_initializes_with_status_and_empty_flags() -> None:
 
 def test_response_initializes_with_status_and_input_flags() -> None:
     """Test Response initialization with input flags"""
-    input_flags = InputFlags([InputFlag('test', input_value='value', status=None)])
+    input_flags = InputFlags([InputFlag("test", input_value="value", status=None)])
     response = Response(ResponseStatus.INVALID_VALUE_FLAGS, input_flags)
     assert response.status == ResponseStatus.INVALID_VALUE_FLAGS
     assert response.input_flags == input_flags
@@ -135,7 +135,7 @@ def test_response_initializes_with_status_and_input_flags() -> None:
 def test_response_default_input_flags_are_not_shared() -> None:
     """Each Response gets its own InputFlags instance (no shared mutable default)"""
     first = Response(ResponseStatus.ALL_FLAGS_VALID)
-    first.input_flags.add_flag(InputFlag('leak', input_value='x'))
+    first.input_flags.add_flag(InputFlag("leak", input_value="x"))
 
     second = Response(ResponseStatus.ALL_FLAGS_VALID)
     assert len(second.input_flags.flags) == 0
@@ -152,7 +152,7 @@ def test_response_accepts_all_status_types() -> None:
         ResponseStatus.ALL_FLAGS_VALID,
         ResponseStatus.UNDEFINED_FLAGS,
         ResponseStatus.INVALID_VALUE_FLAGS,
-        ResponseStatus.UNDEFINED_AND_INVALID_FLAGS
+        ResponseStatus.UNDEFINED_AND_INVALID_FLAGS,
     ]
     for status in statuses:
         response = Response(status)

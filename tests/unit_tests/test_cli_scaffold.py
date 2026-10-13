@@ -170,7 +170,7 @@ def test_init_with_unknown_arch_writes_only_gitignore(
     container = MagicMock()
     container.get.return_value = _quiet_console()
 
-    init_handler(container, "bogus")
+    init_handler(container, "bogus")  # type: ignore[arg-type]
 
     assert (tmp_path / ".gitignore").exists()
     assert not (tmp_path / "main.py").exists()
@@ -180,7 +180,7 @@ def test_init_with_unknown_arch_writes_only_gitignore(
 def test_scaffold_with_unknown_arch_writes_only_gitignore(tmp_path: Path) -> None:
     from argenta._cli.commands.new import _scaffold_project
 
-    _scaffold_project(tmp_path, "proj", "bogus", _quiet_console())
+    _scaffold_project(tmp_path, "proj", "bogus", _quiet_console())  # type: ignore[arg-type]
 
     assert (tmp_path / ".gitignore").exists()
     assert not (tmp_path / "main.py").exists()

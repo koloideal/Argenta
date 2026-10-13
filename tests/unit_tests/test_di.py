@@ -38,26 +38,41 @@ def container(argparser: ArgParser) -> Generator[Container, None, None]:
 # ============================================================================
 
 
-def test_get_container_from_response_extracts_container_from_first_response_arg(container: Container) -> None:
+def test_get_container_from_response_extracts_container_from_first_response_arg(
+    container: Container,
+) -> None:
     Response.patch_by_container(container)
     response = Response(ResponseStatus.ALL_FLAGS_VALID)
     assert _get_container_from_response((response,), {}) == container
 
 
-def test_get_container_from_response_extracts_container_from_second_response_arg(container: Container) -> None:
+def test_get_container_from_response_extracts_container_from_second_response_arg(
+    container: Container,
+) -> None:
     Response.patch_by_container(container)
     response = Response(ResponseStatus.ALL_FLAGS_VALID)
-    assert _get_container_from_response((object(), response,), {}) == container
+    assert (
+        _get_container_from_response(
+            (
+                object(),
+                response,
+            ),
+            {},
+        )
+        == container
+    )
 
 
 def test_get_container_from_response_raises_error_when_container_not_patched() -> None:
-    delattr(Response, '__dishka_container__')
+    delattr(Response, "__dishka_container__")
     response = Response(ResponseStatus.ALL_FLAGS_VALID)
     with pytest.raises(RuntimeError):
         _get_container_from_response((response,), {})
 
 
-def test_get_container_from_response_raises_error_when_no_response_in_args(container: Container) -> None:
+def test_get_container_from_response_raises_error_when_no_response_in_args(
+    container: Container,
+) -> None:
     Response.patch_by_container(container)
     with pytest.raises(RuntimeError):
         _get_container_from_response((), {})
@@ -72,7 +87,7 @@ def test_setup_dishka_with_auto_inject_enabled(container: Container) -> None:
     app = App()
     router = Router()
 
-    @router.command('command')
+    @router.command("command")
     def handler(_res: Response, data_bridge: FromDishka[DataBridge]) -> None:
         print(data_bridge)
 
@@ -89,7 +104,7 @@ def test_setup_dishka_with_auto_inject_disabled(container: Container) -> None:
     app = App()
     router = Router()
 
-    @router.command('command')
+    @router.command("command")
     def handler(_res: Response, data_bridge: FromDishka[DataBridge]) -> None:
         print(data_bridge)
 
@@ -113,7 +128,7 @@ def test_auto_inject_handlers_injects_dependencies_into_handlers(container: Cont
     app = App()
     router = Router()
 
-    @router.command('command')
+    @router.command("command")
     def handler(_res: Response, data_bridge: FromDishka[DataBridge]) -> None:
         print(data_bridge)
 
