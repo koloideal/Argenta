@@ -1,7 +1,6 @@
+import warnings
 from collections.abc import Callable, Iterable
-from inspect import get_annotations, getfullargspec, getsourcefile, getsourcelines
-
-from rich.console import Console
+from inspect import get_annotations, getfullargspec
 
 from argenta.app.protocols import HandlerFunc
 from argenta.command import Command, InputCommand, InputFlags
@@ -184,13 +183,10 @@ def _validate_func_args(func: HandlerFunc) -> None:
     response_arg_annotation = func_annotations.get(response_arg)
 
     if response_arg_annotation is not None and response_arg_annotation is not Response:
-        source_line: int = getsourcelines(func)[1]
-        Console().print(
-            f'\nFile "{getsourcefile(func)}", line {source_line}\n'
-            "[b red]WARNING:[/b red] [i]The typehint "
-            f"of argument([green]{response_arg}[/green]) passed to the handler "
-            f"must be [/i][bold blue]{Response}[/bold blue],"
-            f" [i]but[/i] [bold blue]{response_arg_annotation}[/bold blue] "
-            "[i]is specified[/i]",
-            highlight=False,
+        warnings.warn(
+            f"The type hint of argument '{response_arg}' of handler "
+            f"'{func.__qualname__}' must be {Response}, "
+            f"but {response_arg_annotation} is specified",
+            UserWarning,
+            stacklevel=3,
         )
