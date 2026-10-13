@@ -3,11 +3,13 @@ import sys
 from collections.abc import Iterator
 
 import pytest
+from dishka import Provider, Scope, provide
 
 from argenta import App, Orchestrator, Router
 from argenta.command import Command, Flags, PredefinedFlags
 from argenta.command.flag import Flag
 from argenta.command.flag.models import PossibleValues, ValidationStatus
+from argenta.di import FromDishka
 from argenta.response import Response
 
 
@@ -249,3 +251,38 @@ def test_two_predefined_flags_are_recognized_together(monkeypatch: pytest.Monkey
     output = capsys.readouterr().out
 
     assert '\nconnecting to host 192.168.32.1 and port 132\n' in output
+
+
+# ============================================================================
+# Tests for DI container lifecycle
+# ============================================================================
+
+
+class _Resource:
+    pass
+
+
+def test_provider_finalizer_runs_after_repl_exits(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    inputs = iter(["use", "q"])
+    monkeypatch.setattr('builtins.input', lambda _prompt="": _mock_input(inputs))
+
+    class ResourceProvider(Provider):
+        @provide(scope=Scope.APP)
+        def resource(self) -> Iterator[_Resource]:
+            yield _Resource()
+            print('resource finalized')
+
+    router = Router()
+    orchestrator = Orchestrator(custom_providers=[ResourceProvider()])
+
+    @router.command(Command('use'))
+    def use(_response: Response, _resource: FromDishka[_Resource]) -> None:  # pyright: ignore[reportUnusedFunction]
+        print('resource used')
+
+    app = App(override_system_messages=True, printer=print)
+    app.include_router(router)
+    orchestrator.run_repl(app)
+
+    output = capsys.readouterr().out
+
+    assert re.search(r'resource used\n(.|\n)*resource finalized\n', output)

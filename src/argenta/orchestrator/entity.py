@@ -41,4 +41,5 @@ class Orchestrator:
         )
         setup_dishka(app, container, auto_inject=self._auto_inject_handlers)
 
-        app._run_repl()  # pyright: ignore[reportPrivateUsage]
+        with container:
+            app._run_repl()  # pyright: ignore[reportPrivateUsage]
