@@ -21,11 +21,12 @@ jobs:
       with:
         python-version: "3.13"
 
+    - uses: astral-sh/setup-uv@v10.3.0
+      with:
+        enable-cache: true
+
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install uv
-        uv sync --group linters
+      run: uv sync --group linters
 
     - name: Run style checker
       run: uv run python -m flake8 --format=wemake ./src ./tests ./metrics ./examples
