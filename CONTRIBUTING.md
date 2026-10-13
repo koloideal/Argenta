@@ -262,6 +262,8 @@ Argenta is maintained by a single maintainer:
 
 **Contributor** responsibilities: submitting pull requests that follow the styleguides above; contributors have no access to sensitive resources and need no elevated permissions.
 
+New collaborators are granted escalated permissions only after a review by the maintainer, based on a track record of sustained, high-quality contributions.
+
 All changes to `main` go through pull requests with required status checks — direct pushes are blocked by branch protection for everyone, including the maintainer.
 
 ---
