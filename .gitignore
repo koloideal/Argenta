@@ -327,3 +327,9 @@ http-client.private.env.json
 
 .zed
 test.py
+# Fuzzing artifacts (atheris)
+fuzz/corpus/
+fuzz/artifacts/
+crash-*
+timeout-*
+leak-*
