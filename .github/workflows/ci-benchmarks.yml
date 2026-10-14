@@ -1,12 +1,14 @@
 name: ci-benchmarks
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  # Lets CodSpeed trigger backtests to generate initial baseline data.
-  workflow_dispatch:
+    paths:
+      - "src/**"
+      - "metrics/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/ci-benchmarks.yml"
 
 permissions: {}
 
@@ -14,35 +16,82 @@ concurrency:
   group: ci-benchmarks-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  COMMENT_MARKER: "<!-- argenta-benchmarks -->"
+
 jobs:
-  benchmarks:
+  measure:
     name: benchmarks
 
     runs-on: ubuntu-latest
 
     permissions:
       contents: read
-      id-token: write # OIDC authentication with CodSpeed
 
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       with:
         persist-credentials: false
 
-    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       with:
-        python-version: "3.13"
+        ref: ${{ github.event.pull_request.base.sha }}
+        path: .bench/base-src
+        persist-credentials: false
 
     - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       with:
         enable-cache: true
         version: "0.13.0"
 
-    - name: Install dependencies
-      run: uv sync --no-dev --group benchmarks
+    - name: Install main and this branch side by side
+      run: |
+        uv venv .bench/base --python 3.13
+        uv venv .bench/head --python 3.13
+        uv pip install --python .bench/base/bin/python .bench/base-src
+        uv pip install --python .bench/head/bin/python .
 
-    - name: Run benchmarks
-      uses: CodSpeedHQ/action@c4fd08a3a159bd0cc208da1e0edf32b8c47d75e5 # v5.4.0
+    - name: Compare benchmarks
+      run: |
+        .bench/head/bin/python -m metrics.ci.compare \
+          --base-python .bench/base/bin/python \
+          --head-python .bench/head/bin/python \
+          --output report.md
+        { echo "$COMMENT_MARKER"; cat report.md; } > comment.md
+        cat report.md >> "$GITHUB_STEP_SUMMARY"
+
+    - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
       with:
-        mode: simulation
-        run: uv run --no-sync pytest metrics/test_codspeed.py --codspeed
+        name: benchmark-report
+        path: comment.md
+
+  comment:
+    name: benchmarks-comment
+
+    needs: measure
+
+    if: github.event.pull_request.head.repo.full_name == github.repository
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write # create or update the benchmark comment
+
+    steps:
+    - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+      with:
+        name: benchmark-report
+
+    - name: Create or update the PR comment
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+      run: |
+        comment_id=$(gh api "repos/$GH_REPO/issues/$PR_NUMBER/comments" --paginate \
+          --jq ".[] | select(.body | startswith(\"$COMMENT_MARKER\")) | .id" | head -n 1)
+        if [ -n "$comment_id" ]; then
+          gh api -X PATCH "repos/$GH_REPO/issues/comments/$comment_id" -F body=@comment.md
+        else
+          gh pr comment "$PR_NUMBER" --body-file comment.md
+        fi
