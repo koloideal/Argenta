@@ -42,6 +42,18 @@ ruff:
 # Run all checks (format, mypy, ruff, wps)
 check-format: format mypy ruff wps
 
+# ── Fuzzing (atheris) ─────────────────────────────────────────────────────────
+
+# Fuzz InputCommand.parse for N seconds (usage: just fuzz 300)
+fuzz seconds="60":
+    mkdir -p fuzz/corpus fuzz/artifacts
+    uv run --group fuzz python fuzz/parse_fuzzer.py fuzz/corpus -artifact_prefix=fuzz/artifacts/ -max_total_time={{ seconds }}
+
+# Quick smoke run of the fuzzer (1000 iterations)
+fuzz-smoke:
+    mkdir -p fuzz/corpus fuzz/artifacts
+    uv run --group fuzz python fuzz/parse_fuzzer.py fuzz/corpus -artifact_prefix=fuzz/artifacts/ -runs=1000
+
 # ── Changelog (scriv) ─────────────────────────────────────────────────────────
 
 # Create a new changelog fragment and open it in $EDITOR
