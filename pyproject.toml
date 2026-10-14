@@ -172,5 +172,5 @@ disallow_untyped_decorators = false
 warn_return_any = false
 
 [build-system]
-requires = ["uv_build>=0.4,<0.13"]
+requires = ["uv_build>=0.4,<0.14"]
 build-backend = "uv_build"
