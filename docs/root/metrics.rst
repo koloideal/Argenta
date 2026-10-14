@@ -171,3 +171,19 @@ You can implement your own benchmarks to test specific library units. New benchm
 .. important::
 
   The benchmark must be imported in ``metrics/benchmarks/__init__.py`` for automatic registration.
+
+-----
+
+Continuous Benchmarking
+-----------------------
+
+Every registered benchmark is also exposed to `CodSpeed <https://codspeed.io>`_ through ``metrics/test_codspeed.py``. The ``ci-benchmarks`` workflow runs them on every pull request and on pushes to ``main``; CodSpeed then posts a performance report comment on the pull request comparing it against ``main``.
+
+CodSpeed measures in CPU simulation mode, so results are stable across CI runners. New benchmarks registered with ``@benchmarks.register`` are picked up automatically.
+
+To run the same benchmarks locally (wall-time mode):
+
+.. code-block:: bash
+
+   uv sync --group benchmarks
+   uv run pytest metrics/test_codspeed.py --codspeed

@@ -146,6 +146,9 @@ class Benchmarks:
             for type_ in self._benchmarks_grouped_by_type
         ]
 
+    def get_all_benchmarks(self) -> list[Benchmark]:
+        return list(self._benchmarks)
+
     def get_benchmarks_by_type(self, type_: str) -> list[Benchmark]:
         return self._benchmarks_grouped_by_type.get(type_, [])
 
