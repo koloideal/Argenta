@@ -177,13 +177,19 @@ You can implement your own benchmarks to test specific library units. New benchm
 Continuous Benchmarking
 -----------------------
 
-Every registered benchmark is also exposed to `CodSpeed <https://codspeed.io>`_ through ``metrics/test_codspeed.py``. The ``ci-benchmarks`` workflow runs them on every pull request and on pushes to ``main``; CodSpeed then posts a performance report comment on the pull request comparing it against ``main``.
+The ``ci-benchmarks`` workflow compares every pull request that touches ``src/`` or ``metrics/`` against ``main`` and posts the result as a single, self-updating comment on the pull request.
 
-CodSpeed measures in CPU simulation mode, so results are stable across CI runners. New benchmarks registered with ``@benchmarks.register`` are picked up automatically.
+Both versions of the library are installed side by side on the same runner, and all registered benchmarks are run against them in interleaved rounds. Each benchmark is timed in batches with the garbage collector disabled; the reported value is the median of the per-round best times.
 
-To run the same benchmarks locally (wall-time mode):
+.. important::
+
+  Absolute times are specific to the CI runner that produced them (its CPU is shown in the comment footer). Compare the ``main`` and ``this branch`` columns within one report; do not compare absolute values between different reports. Changes within ±10% are treated as noise.
+
+To produce the same report locally, install both versions into separate virtual environments and run:
 
 .. code-block:: bash
 
-   uv sync --group benchmarks
-   uv run pytest metrics/test_codspeed.py --codspeed
+   python -m metrics.ci.compare \
+       --base-python .venv-base/bin/python \
+       --head-python .venv-head/bin/python \
+       --output report.md

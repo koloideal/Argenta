@@ -54,7 +54,6 @@ dev = [
     {include-group = "docs"},
     {include-group = "tests"},
     {include-group = "metrics"},
-    {include-group = "benchmarks"},
     "scriv>=1.8.0",
 ]
 linters = [
@@ -90,10 +89,6 @@ metrics = [
 ]
 fuzz = [
     "atheris>=3.1.0",
-]
-benchmarks = [
-    "pytest>=8.3.2",
-    "pytest-codspeed>=5.0.3",
 ]
 
 [tool.ruff]
