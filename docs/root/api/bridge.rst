@@ -34,29 +34,26 @@ Let's consider an example where the `login` command saves an authentication toke
 
 -----------
 
-.. py:class:: DataBridge
+.. autoclass:: argenta.DataBridge
 
-   .. py:method:: __init__(self, initial_data: dict | None = None)
-      :no-index:
+   Initializes the storage. When used through DI, it is called automatically.
 
-      Initializes the storage. When used through DI, it is called automatically.
+.. automethod:: argenta.DataBridge.update
 
-   .. py:method:: update(self, data: dict) -> None
+   Updates the storage with data from a dictionary.
 
-      Updates the storage with data from a dictionary.
+.. automethod:: argenta.DataBridge.get_all
 
-   .. py:method:: get_all(self) -> dict
+   Returns all data from the storage.
 
-      Returns all data from the storage.
+.. automethod:: argenta.DataBridge.get_by_key
 
-   .. py:method:: get_by_key(self, key: str) -> Any
+   Returns the value by key or ``None`` if the key is not found.
 
-      Returns the value by key or ``None`` if the key is not found.
+.. automethod:: argenta.DataBridge.delete_by_key
 
-   .. py:method:: delete_by_key(self, key: str) -> None
+   Deletes the value by key. Raises ``KeyError`` if the key is not found.
 
-      Deletes the value by key. Raises ``KeyError`` if the key is not found.
+.. automethod:: argenta.DataBridge.clear_all
 
-   .. py:method:: clear_all(self) -> None
-
-      Completely clears the storage.
+   Completely clears the storage.

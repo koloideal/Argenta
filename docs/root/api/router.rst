@@ -12,11 +12,7 @@ For example, in a user management application, one router can handle authenticat
 Initialization
 --------------
 
-.. code-block:: python
-   :linenos:
-
-      __init__(self, title: str | None = None, 
-               disable_redirect_stdout: bool = False) -> None
+.. autoclass:: argenta.Router
 
 Creates a new router instance.
 
@@ -30,7 +26,7 @@ Command Registration
 
 The ``@command`` decorator is used to register a command and bind a handler to it.
 
-.. py:method:: @command(self, command: Command | str)
+.. automethod:: argenta.Router.command
 
    Decorator for registering a function as a command handler.
 
@@ -63,7 +59,7 @@ Possible Exceptions
 
 The following exceptions may occur when registering commands and flags in ``Router``:
 
-.. py:exception:: TriggerContainSpacesException
+.. autoexception:: argenta.router.exceptions.TriggerContainSpacesException
 
    Raised if the command trigger in ``Command`` contains spaces. Triggers must be a single word.
 
@@ -71,7 +67,7 @@ The following exceptions may occur when registering commands and flags in ``Rout
    
    **Correct:** ``Command("add-user")``
 
-.. py:exception:: RepeatedFlagNameException
+.. autoexception:: argenta.router.exceptions.RepeatedFlagNameException
 
    Raised if duplicate names were used when defining flags for a command. Flag names within a single command must be unique.
 
@@ -85,11 +81,11 @@ The following exceptions may occur when registering commands and flags in ``Rout
           Flag("recipient")  # Duplicate!
       ])
 
-.. py:exception:: RequiredArgumentNotPassedException
+.. autoexception:: argenta.router.exceptions.RequiredArgumentNotPassedException
 
    Raised if the command handler does not accept the required ``Response`` argument.
 
-.. py:exception:: RepeatedTriggerNameException
+.. autoexception:: argenta.router.exceptions.RepeatedTriggerNameException
 
    Raised if duplicate triggers were used when registering commands in the router. Each command must have a unique trigger within a single router.
 
@@ -108,7 +104,7 @@ The following exceptions may occur when registering commands and flags in ``Rout
       def another_start_handler(response: Response) -> None:
           pass
 
-.. py:exception:: RepeatedAliasNameException
+.. autoexception:: argenta.router.exceptions.RepeatedAliasNameException
 
    Raised if duplicate aliases were used when registering commands. Aliases must be unique within the entire router.
 

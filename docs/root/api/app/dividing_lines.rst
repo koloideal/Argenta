@@ -12,11 +12,7 @@ Dividing lines in ``Argenta`` are used for visual structuring of output and sepa
 
 ``StaticDividingLine`` creates a dividing line of **fixed** length. This type of line is useful for creating a predictable and unified interface.
 
-.. code-block:: python
-   :linenos:
-   
-      def __init__(self, unit_part: str = "-", *, 
-                   length: int = 25) -> None
+.. autoclass:: argenta.app.StaticDividingLine
 
 Creates a static dividing line instance.
 
@@ -30,10 +26,7 @@ Creates a static dividing line instance.
 
 ``DynamicDividingLine`` creates a line whose length **dynamically** adjusts to the longest line in the command output. This requires capturing ``stdout``, resulting in dividers that perfectly frame the output content.
 
-.. code-block:: python
-  :linenos:
-
-   __init__(self, unit_part: str = "-") -> None
+.. autoclass:: argenta.app.DynamicDividingLine
 
 Creates a dynamic dividing line instance.
 

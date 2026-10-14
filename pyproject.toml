@@ -68,6 +68,7 @@ docs = [
     "shibuya>=2025.9.25",
     "sphinx>=8.2.3",
     "sphinx-autobuild>=2025.8.25",
+    "sphinx-autodoc-typehints>=3.5.2",
     "sphinx-sitemap>=2.6",
 ]
 tests = [

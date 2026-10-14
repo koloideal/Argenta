@@ -12,18 +12,7 @@ While ``App`` is responsible for interactive session logic (command input, routi
 Initialization
 --------------
 
-.. code-block:: python
-   :linenos:
-
-   DEFAULT_ARGPARSER: ArgParser = ArgParser(processed_args=[])
-
-   
-.. code-block:: python
-      :linenos:
-   
-      def __init__(self, arg_parser: ArgParser = DEFAULT_ARGPARSER, 
-                   custom_providers: list[Provider] = [], 
-                   auto_inject_handlers: bool = True) -> None
+.. autoclass:: argenta.Orchestrator
 
 Creates and configures an ``Orchestrator`` instance.
 
@@ -36,7 +25,7 @@ Creates and configures an ``Orchestrator`` instance.
 Main Methods
 ------------
 
-.. py:method:: run_repl(self, app: App) -> None
+.. automethod:: argenta.Orchestrator.run_repl
 
    This is the main method that starts the application. It launches an infinite input -> output loop.
 

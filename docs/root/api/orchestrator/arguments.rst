@@ -14,19 +14,7 @@ ValueArgument
 
 Class for arguments that require passing a value.
 
-.. py:class:: ValueArgument(BaseArgument)
-    :no-index:
-
-.. code-block:: python
-   :linenos:
-
-   __init__(self, name: str, *,
-            prefix: Literal["-", "--", "---"] = "--",
-            help: str = "Help message for the value argument",
-            possible_values: list[str] | None = None,
-            default: str | None = None,
-            is_required: bool = False,
-            is_deprecated: bool = False) -> None
+.. autoclass:: argenta.orchestrator.argparser.ValueArgument
 
 Creates a command-line argument that requires a value.
 
@@ -58,16 +46,7 @@ BooleanArgument
 
 Class for boolean arguments that do not require a value. Their presence at startup sets the value to **True**, absence to **False**.
 
-.. py:class:: BooleanArgument(BaseArgument)
-    :no-index:
-
-.. code-block:: python
-   :linenos:
-
-   __init__(self, name: str, *,
-            prefix: Literal["-", "--", "---"] = "--",
-            help: str = "Help message for the boolean argument",
-            is_deprecated: bool = False) -> None
+.. autoclass:: argenta.orchestrator.argparser.BooleanArgument
 
 Creates a boolean command-line argument without a value.
 
@@ -102,15 +81,7 @@ InputArgument
 
 Represents a processed command-line argument. This class is used inside ``ArgSpace`` to store values obtained after parsing.
 
-.. py:class:: InputArgument
-    :no-index:
-
-.. code-block:: python
-   :linenos:
-
-   __init__(self, name: str,
-            value: str | Literal[True],
-            founder_class: type[BaseArgument]) -> None
+.. autoclass:: argenta.orchestrator.argparser.arguments.InputArgument
 
 Creates an instance of a processed input argument.
 

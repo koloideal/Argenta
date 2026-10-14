@@ -18,10 +18,7 @@ Flags
 Initialization
 --------------
 
-.. code-block:: python
-   :linenos:
-
-   __init__(self, flags: list[Flag] | None = None) -> None
+.. autoclass:: argenta.command.Flags
 
 Creates a new flag collection.
 
@@ -48,10 +45,7 @@ Methods
 add_flag
 ~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   add_flag(self, flag: Flag) -> None
+.. automethod:: argenta.command.Flags.add_flag
 
 Adds a flag to the collection.
 
@@ -71,10 +65,7 @@ Used for dynamically extending the set of flags.
 add_flags
 ~~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   add_flags(self, flags: list[Flag]) -> None
+.. automethod:: argenta.command.Flags.add_flags
 
 Adds a list of flags to the collection.
 
@@ -94,10 +85,7 @@ The method extends the collection by adding all flags from the provided list. Ef
 get_flag_by_name
 ~~~~~~~~~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   get_flag_by_name(self, name: str) -> Flag | None
+.. automethod:: argenta.command.Flags.get_flag_by_name
 
 Returns a flag by name.
 

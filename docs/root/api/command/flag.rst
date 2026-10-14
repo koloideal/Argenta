@@ -18,14 +18,7 @@ Flag
 Initialization
 --------------
 
-.. code-block:: python
-   :linenos:
-
-   __init__(
-       self, name: str, *,
-       prefix: Literal["-", "--", "---"] = "--",
-       possible_values: list[str] | Pattern[str] | PossibleValues = PossibleValues.ALL,
-   ) -> None
+.. autoclass:: argenta.command.Flag
 
 Creates a new flag for registration in a command.
 
@@ -61,11 +54,7 @@ Properties
 string_entity
 ~~~~~~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   @property
-   string_entity(self) -> str
+.. autoproperty:: argenta.command.Flag.string_entity
 
 Returns the string representation of the flag in the format ``prefix + name``.
 
@@ -81,10 +70,7 @@ Magic Methods
 __str__
 ~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   __str__(self) -> str
+.. automethod:: argenta.command.Flag.__str__
 
 Returns the string representation of the flag (similar to ``string_entity``).
 
@@ -101,10 +87,7 @@ Returns the string representation of the flag (similar to ``string_entity``).
 __repr__
 ~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   __repr__(self) -> str
+.. automethod:: argenta.command.Flag.__repr__
 
 Returns the debug representation of the object.
 
@@ -121,10 +104,7 @@ Returns the debug representation of the object.
 __eq__
 ~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   __eq__(self, other: object) -> bool
+.. automethod:: argenta.command.Flag.__eq__
 
 Compares two flags for equality based on their string representation (``string_entity``).
 

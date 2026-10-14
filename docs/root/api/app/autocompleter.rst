@@ -10,13 +10,7 @@ AutoCompleter
 Initialization
 --------------
 
-.. code-block:: python
-
-  __init__(self,
-           history_filename: str | None = None,
-           autocomplete_button: str = "tab",
-           command_highlighting: bool = True,
-           auto_suggestions: bool = True) -> None:
+.. autoclass:: argenta.app.AutoCompleter
 
 Creates and configures an ``AutoCompleter`` instance.
 

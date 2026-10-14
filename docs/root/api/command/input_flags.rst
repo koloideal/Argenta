@@ -20,10 +20,7 @@ InputFlags
 Initialization
 --------------
 
-.. code-block:: python
-   :linenos:
-
-   __init__(self, flags: list[InputFlag] | None = None) -> None
+.. autoclass:: argenta.command.InputFlags
 
 Creates a new collection of entered flags.
 
@@ -53,10 +50,7 @@ Methods
 get_flag_by_name
 ~~~~~~~~~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   get_flag_by_name(self, name: str) -> InputFlag | None
+.. automethod:: argenta.command.InputFlags.get_flag_by_name
 
 Returns a flag by name.
 
@@ -76,10 +70,7 @@ The method returns the first flag with the corresponding name (ignoring the pref
 add_flag
 ~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   add_flag(self, flag: InputFlag) -> None
+.. automethod:: argenta.command.InputFlags.add_flag
 
 Adds an entered flag to the collection.
 
@@ -102,10 +93,7 @@ The method adds a flag to the end of the ``flags`` list. Used for dynamically ex
 add_flags
 ~~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   add_flags(self, flags: list[InputFlag]) -> None
+.. automethod:: argenta.command.InputFlags.add_flags
 
 Adds a list of entered flags to the collection.
 

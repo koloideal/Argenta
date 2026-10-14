@@ -28,10 +28,7 @@ Methods
 get_by_name
 ~~~~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   get_by_name(self, name: str) -> InputArgument | None
+.. automethod:: argenta.orchestrator.argparser.ArgSpace.get_by_name
 
 Returns an argument by name.
 
@@ -48,10 +45,7 @@ Returns an argument by name.
 get_by_type
 ~~~~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   get_by_type(self, arg_type: type[BaseArgument]) -> list[InputArgument] | list[Never]
+.. automethod:: argenta.orchestrator.argparser.ArgSpace.get_by_type
 
 Returns all arguments of a specific type.
 

@@ -24,10 +24,7 @@ PossibleValues
 NEITHER
 ~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   PossibleValues.NEITHER = 'NEITHER'
+.. autoattribute:: argenta.command.PossibleValues.NEITHER
 
 Indicates that the flag **should not** have a value.
 
@@ -51,10 +48,7 @@ Flags with this value work as boolean switches: their presence on the command li
 ALL
 ~~~
 
-.. code-block:: python
-   :linenos:
-
-   PossibleValues.ALL = 'ALL'
+.. autoattribute:: argenta.command.PossibleValues.ALL
 
 Indicates that the flag can accept **any** value.
 
