@@ -1,4 +1,0 @@
-sphinx
-sphinx-sitemap
-shibuya
-sphinx-autobuild
