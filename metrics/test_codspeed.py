@@ -13,7 +13,6 @@ from metrics.benchmarks.entity import benchmarks
 @pytest.mark.parametrize(
     "registered_benchmark",
     benchmarks.get_all_benchmarks(),
-    # No "::" in ids: CodSpeed uses it as its URI separator and truncates on it.
     ids=lambda bench: f"{bench.type_}.{bench.name.removeprefix('benchmark_')}",
 )
 def test_benchmark(benchmark: BenchmarkFixture, registered_benchmark: Benchmark) -> None:
