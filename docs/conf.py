@@ -3,7 +3,11 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import os
 from datetime import datetime, timezone
+from pathlib import Path
+
+from sphinx.application import Sphinx
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -27,8 +31,7 @@ sitemap_url_scheme = "{link}"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "shibuya"
-html_baseurl = "https://argenta.wiki/"
-html_extra_path = ["robots.txt", "llms.txt"]
+html_baseurl = os.environ.get("READTHEDOCS_CANONICAL_URL", "https://argenta.wiki/")
 
 html_theme_options = {
   "accent_color": "cyan",
@@ -41,4 +44,18 @@ html_theme_options = {
     "github_url": "https://github.com/koloideal/Argenta",
     "linkedin_url": "https://www.linkedin.com/in/dmitry-shevelev-31b9a6324"
 }
+
+
+def render_base_url_files(app: Sphinx, exception: Exception | None) -> None:
+    if exception is not None or app.builder.format != "html":
+        return
+    for name in ("robots.txt", "llms.txt"):
+        template = Path(app.confdir, name).read_text(encoding="utf-8")
+        Path(app.outdir, name).write_text(
+            template.replace("{base_url}", html_baseurl), encoding="utf-8"
+        )
+
+
+def setup(app: Sphinx) -> None:
+    app.connect("build-finished", render_base_url_files)
 
