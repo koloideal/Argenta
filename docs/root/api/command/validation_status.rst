@@ -24,10 +24,7 @@ ValidationStatus
 VALID
 ~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   ValidationStatus.VALID = 'VALID'
+.. autoattribute:: argenta.command.flag.ValidationStatus.VALID
 
 Indicates that the flag and its value **passed** validation.
 
@@ -45,10 +42,7 @@ Flags with this status comply with the rules defined in the ``possible_values`` 
 INVALID
 ~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   ValidationStatus.INVALID = 'INVALID'
+.. autoattribute:: argenta.command.flag.ValidationStatus.INVALID
 
 Indicates that the flag or its value **did not pass** validation.
 
@@ -66,10 +60,7 @@ Flags with this status violate the rules defined in the ``possible_values`` of t
 UNDEFINED
 ~~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   ValidationStatus.UNDEFINED = 'UNDEFINED'
+.. autoattribute:: argenta.command.flag.ValidationStatus.UNDEFINED
 
 Indicates that the entered flag was not registered in the command.
 

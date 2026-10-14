@@ -12,13 +12,7 @@ Command
 Initialization
 --------------
 
-.. code-block:: python
-   :linenos:
-
-   __init__(self, trigger: str, *,
-            description: str | None = None,
-            flags: Flag | Flags = DEFAULT_WITHOUT_FLAGS,
-            aliases: set[str] = DEFAULT_WITHOUT_ALIASES) -> None
+.. autoclass:: argenta.Command
 
 Creates a new command for registration in a router.
 

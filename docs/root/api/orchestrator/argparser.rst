@@ -10,13 +10,7 @@ ArgParser
 Initialization
 --------------
 
-.. code-block:: python
-      :linenos:
-   
-      def __init__(self, processed_args: list[ValueArgument | BooleanArgument], *,
-	           name: str = "Argenta",
-	           description: str = "Argenta available arguments",
-	           epilog: str = "github.com/koloideal/Argenta | made by kolo")
+.. autoclass:: argenta.orchestrator.ArgParser
 
 Creates an instance of the command-line argument parser.
 

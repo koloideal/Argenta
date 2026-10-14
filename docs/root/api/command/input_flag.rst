@@ -45,11 +45,7 @@ Properties
 string_entity
 ~~~~~~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   @property
-   string_entity(self) -> str
+.. autoproperty:: argenta.command.InputFlag.string_entity
 
 Returns the string representation of the flag in the format ``prefix + name``.
 
@@ -63,10 +59,7 @@ Magic Methods
 __str__
 ~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   __str__(self) -> str
+.. automethod:: argenta.command.InputFlag.__str__
 
 Returns the string representation of the flag along with its value.
 
@@ -83,10 +76,7 @@ Returns the string representation of the flag along with its value.
 __repr__
 ~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   __repr__(self) -> str
+.. automethod:: argenta.command.InputFlag.__repr__
 
 Returns the debug representation of the object.
 
@@ -103,10 +93,7 @@ Returns the debug representation of the object.
 __eq__
 ~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   __eq__(self, other: object) -> bool
+.. automethod:: argenta.command.InputFlag.__eq__
 
 Compares two entered flags for equality by name.
 

@@ -19,13 +19,7 @@ Response
 Initialization
 --------------
 
-.. code-block:: python
-   :linenos:
-
-   __init__(
-       self, status: ResponseStatus,
-       input_flags: InputFlags = EMPTY_INPUT_FLAGS,
-   )
+.. autoclass:: argenta.Response
 
 Creates a new response object.
 
@@ -78,39 +72,27 @@ ResponseStatus
 ALL_FLAGS_VALID
 ~~~~~~~~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   ResponseStatus.ALL_FLAGS_VALID = 'ALL_FLAGS_VALID'
+.. autoattribute:: argenta.response.ResponseStatus.ALL_FLAGS_VALID
 
 All entered flags passed validation. There are no incorrect or unregistered flags.
 
 UNDEFINED_FLAGS
 ~~~~~~~~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   ResponseStatus.UNDEFINED_FLAGS = 'UNDEFINED_FLAGS'
+.. autoattribute:: argenta.response.ResponseStatus.UNDEFINED_FLAGS
 
 Among the entered flags, there are unregistered ones, but no flags with incorrect values.
 
 INVALID_VALUE_FLAGS
 ~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   ResponseStatus.INVALID_VALUE_FLAGS = 'INVALID_VALUE_FLAGS'
+.. autoattribute:: argenta.response.ResponseStatus.INVALID_VALUE_FLAGS
 
 Among the entered flags, there are flags with incorrect values, but no unregistered ones.
 
 UNDEFINED_AND_INVALID_FLAGS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
-   :linenos:
-
-   ResponseStatus.UNDEFINED_AND_INVALID_FLAGS = 'UNDEFINED_AND_INVALID_FLAGS'
+.. autoattribute:: argenta.response.ResponseStatus.UNDEFINED_AND_INVALID_FLAGS
 
 Among the entered flags, there are both unregistered flags and flags with incorrect values.

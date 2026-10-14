@@ -10,23 +10,7 @@ The ``App`` object is the implementations of your console application. It handle
 Initialization
 --------------
 
-.. code-block:: python
-    :linenos:
-    
-    def __init__(
-        self,
-        *,
-        prompt: str = ">>> ",
-        initial_message: str = "Argenta",
-        farewell_message: str = "See you",
-        exit_command: Command = Command("q", description="Exit command"),
-        system_router_title: str = "System points:",
-        dividing_line: StaticDividingLine | DynamicDividingLine | None = None,
-        repeat_command_groups_printing: bool = False,
-        override_system_messages: bool = False,
-        autocompleter: AutoCompleter | None = None,
-        printer: Printer = Console().print,
-    ) -> None:
+.. autoclass:: argenta.App
 
 Creates and configures an application instance.
 
@@ -49,19 +33,19 @@ Creates and configures an application instance.
 Main Methods
 ------------
 
-- .. py:method:: include_router(self, router: Router) -> None
+- .. automethod:: argenta.App.include_router
 
     Registers a router in the application. All commands from this router become available for invocation.
     
     :param router: ``Router`` instance to register.
 
-- .. py:method:: include_routers(self, *routers: Router) -> None
+- .. automethod:: argenta.App.include_routers
 
     Registers multiple routers simultaneously.
     
     :param routers: Sequence of ``Router`` instances to register.
 
-- .. py:method:: add_message_on_startup(self, message: str) -> None
+- .. automethod:: argenta.App.add_message_on_startup
 
     Adds a text message that is displayed when the application starts after ``initial_message``.
 
@@ -82,7 +66,7 @@ Handler Setup Methods
    
 -----
 
-.. py:method:: set_description_message_pattern(self, handler: Callable[[str, str], str]) -> None
+.. automethod:: argenta.App.set_description_message_pattern
 
    Sets the template for formatting command descriptions.
    
@@ -90,7 +74,7 @@ Handler Setup Methods
    
 ------
 
-.. py:method:: set_incorrect_input_syntax_handler(self, handler: Callable[[str], None]) -> None
+.. automethod:: argenta.App.set_incorrect_input_syntax_handler
 
    Sets the handler for incorrect flag syntax input.
    
@@ -98,7 +82,7 @@ Handler Setup Methods
    
 ------
 
-.. py:method:: set_repeated_input_flags_handler(self, handler: Callable[[str], None]) -> None
+.. automethod:: argenta.App.set_repeated_input_flags_handler
 
    Sets the handler for duplicate flags in the entered command.
    
@@ -106,7 +90,7 @@ Handler Setup Methods
    
 ------
 
-.. py:method:: set_unknown_command_handler(self, handler: Callable[[InputCommand], None]) -> None
+.. automethod:: argenta.App.set_unknown_command_handler
 
    Sets the handler for entering an unknown command.
    
@@ -114,7 +98,7 @@ Handler Setup Methods
    
 -----
 
-.. py:method:: set_empty_command_handler(self, handler: Callable[[], None]) -> None
+.. automethod:: argenta.App.set_empty_command_handler
 
    Sets the handler for entering an empty string.
    
@@ -122,7 +106,7 @@ Handler Setup Methods
    
 -----
 
-.. py:method:: set_exit_command_handler(self, handler: Callable[[Response], None]) -> None
+.. automethod:: argenta.App.set_exit_command_handler
 
    Overrides the default behavior when the exit command is invoked.
    
@@ -165,23 +149,26 @@ It is recommended to use them when starting the application.
       main()
     
 
-.. py:class:: PredefinedMessages
+.. autoclass:: argenta.app.PredefinedMessages
    :no-index:
 
-   .. py:attribute:: USAGE
+.. py:attribute:: PredefinedMessages.USAGE
+   :no-index:
 
-      String: ``[b dim]Usage[/b dim]: [i]<command> <[green]flags[/green]>[/i]``
+   String: ``[b dim]Usage[/b dim]: [i]<command> <[green]flags[/green]>[/i]``
 
-      Displayed as: ``Usage: <command> <flags>``
+   Displayed as: ``Usage: <command> <flags>``
 
-   .. py:attribute:: HELP
+.. py:attribute:: PredefinedMessages.HELP
+   :no-index:
 
-      String: ``[b dim]Help[/b dim]: [i]<command>[/i] [b red]--help[/b red]``
+   String: ``[b dim]Help[/b dim]: [i]<command>[/i] [b red]--help[/b red]``
 
-      Displayed as: ``Help: <command> --help``
+   Displayed as: ``Help: <command> --help``
 
-   .. py:attribute:: AUTOCOMPLETE
+.. py:attribute:: PredefinedMessages.AUTOCOMPLETE
+   :no-index:
 
-      String: ``[b dim]Autocomplete[/b dim]: [i]<part>[/i] [bold]<tab>``
+   String: ``[b dim]Autocomplete[/b dim]: [i]<part>[/i] [bold]<tab>``
 
-      Displayed as: ``Autocomplete: <part> <tab>``
+   Displayed as: ``Autocomplete: <part> <tab>``
