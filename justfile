@@ -9,40 +9,40 @@ default:
 
 # Run tests via pytest
 tests:
-    uv run python -m pytest tests
+    uv run pytest tests
 
 # Run tests with coverage report
 tests-cov:
-    uv run python -m pytest --cov=argenta tests
+    uv run pytest --cov=argenta tests
 
 # Run tests with coverage HTML report
 tests-cov-html:
-    uv run python -m pytest --cov=argenta tests --cov-report=html
+    uv run pytest --cov=argenta tests --cov-report=html
 
 # ── Code quality ──────────────────────────────────────────────────────────────
 
 # Format code and fix imports (Ruff) — modifies files
 format:
-    uv run python -m ruff format ./src ./tests ./metrics ./examples
-    uv run python -m ruff check --select I --fix ./src ./tests ./metrics ./examples
+    uv run ruff format ./src ./tests ./metrics ./examples
+    uv run ruff check --select I --fix ./src ./tests ./metrics ./examples
 
 # Check types via mypy (strict for src, default for the rest)
 mypy:
-    uv run python -m mypy -p argenta --strict
-    uv run python -m mypy tests metrics examples
+    uv run mypy -p argenta --strict
+    uv run mypy tests metrics examples
 
 # Check style via wemake-python-styleguide
 wps:
-    uv run python -m flake8 --format=wemake ./src ./tests ./metrics ./examples
+    uv run flake8 --format=wemake ./src ./tests ./metrics ./examples
 
 # Run Ruff linter
 ruff:
-    uv run python -m ruff check ./src ./tests ./metrics ./examples
+    uv run ruff check ./src ./tests ./metrics ./examples
 
 # Verify formatting without changing files
 format-check:
-    uv run python -m ruff format --check ./src ./tests ./metrics ./examples
-    uv run python -m ruff check --select I ./src ./tests ./metrics ./examples
+    uv run ruff format --check ./src ./tests ./metrics ./examples
+    uv run ruff check --select I ./src ./tests ./metrics ./examples
 
 # Run all checks (format-check, mypy, ruff, wps) — never modifies files
 check-format: format-check mypy ruff wps
@@ -73,7 +73,7 @@ fuzz-smoke:
 
 # Create a new changelog fragment and open it in $EDITOR
 frag:
-    uv run python -c "from pathlib import Path; Path('changelog.d').mkdir(exist_ok=True)"
+    mkdir -p changelog.d
     uv run scriv create --add
 
 # Collect fragments into CHANGELOG.md for release  (usage: just release 1.2.3)
