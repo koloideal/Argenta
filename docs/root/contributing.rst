@@ -148,6 +148,10 @@ Don't know where to start? Look at issues labeled `good first issue <https://git
 
 To get started, set up a local development environment by following these steps.
 
+.. tip::
+
+   The repository ships a devcontainer — click **Code → Codespaces → Create codespace** on GitHub (or use the Dev Containers extension in your editor) and wait ~30 seconds: ``uv`` and ``just`` are installed and ``uv sync`` runs automatically.
+
 #. Fork the ``Argenta`` repository on ``GitHub``.
 #. Clone your fork to your local machine:
 
