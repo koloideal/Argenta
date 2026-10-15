@@ -29,6 +29,17 @@ class InvalidFigletFontException(FigletFontException):
         return f"Invalid FIGlet font: {self.reason}"
 
 
+class FigletFontFetchException(FigletFontException):
+    @override
+    def __init__(self, source: str) -> None:
+        self.source = source
+        super().__init__()
+
+    @override
+    def __str__(self) -> str:
+        return f"Could not fetch FIGlet font data: {self.source}"
+
+
 class MissingGlyphsException(FigletFontException):
     @override
     def __init__(self, missing_chars: Iterable[str]) -> None:

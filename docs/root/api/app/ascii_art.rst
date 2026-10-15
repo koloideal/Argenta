@@ -32,7 +32,7 @@ Loads and parses ``.flf`` font files. The same loader serves both bundled and us
 
 .. automethod:: argenta.app.presentation.ascii_art.FigletFontLoader.compile
 
-   Compiles an ``.flf`` font into an ``.flfd`` dump. Equivalent to the ``argenta compile-font`` CLI command; useful for building compiled fonts programmatically before packaging an application.
+   Compiles an ``.flf`` font into an ``.flfd`` dump. Equivalent to the ``argenta fonts compile`` CLI command; useful for building compiled fonts programmatically before packaging an application.
 
    :param source_path: Path to the source ``.flf`` file (``pathlib.Path`` or ``str``).
    :param target_path: Optional output path; defaults to ``<source>.flfd`` next to the source.
@@ -46,6 +46,35 @@ Loads and parses ``.flf`` font files. The same loader serves both bundled and us
 
    :param font: A member of the ``BundledFont`` enumeration (``TARTY1`` or ``CHUNKY``).
    :return: Parsed ``FigletFont``.
+
+-----
+
+FigletFontFetcher
+-----------------
+
+.. autoclass:: argenta.app.presentation.ascii_art.FigletFontFetcher
+
+Downloads fonts from the community collections known to Argenta (the upstream ``figlet`` repository and the `figlet-fonts <https://github.com/xero/figlet-fonts>`_ collection) or from a direct URL. Powers the ``argenta fonts`` CLI commands.
+
+**Methods:**
+
+.. automethod:: argenta.app.presentation.ascii_art.FigletFontFetcher.fetch
+
+   Downloads a font by name (trying the known collections, including capitalized spellings) or from a direct URL. The downloaded file is validated and a compiled ``.flfd`` dump is written next to it automatically. Invalid content is rejected and the file is not kept.
+
+   :param font: Font name (e.g. ``"slant"``) or a direct ``https://`` URL to an ``.flf`` file.
+   :param target_dir: Directory to save the font into; defaults to the current directory.
+   :raises UnreachableFigletFontException: the target directory is not writable.
+   :raises InvalidFigletFontException: the name is invalid or the downloaded file is not a well-formed ``.flf``.
+   :raises FigletFontFetchException: the font could not be downloaded from any source.
+   :return: Path to the downloaded ``.flf`` file.
+
+.. automethod:: argenta.app.presentation.ascii_art.FigletFontFetcher.list_available
+
+   Returns the names of fonts available for download across the known collections, merged and sorted. Requires network access.
+
+   :raises FigletFontFetchException: no collection could be reached.
+   :return: List of font names.
 
 -----
 
@@ -82,6 +111,11 @@ All font errors derive from a common base class, so a single ``except`` covers t
    :show-inheritance:
 
    Raised at ``App`` construction when the message text contains characters the font has no glyphs for (for example, Cyrillic in an ASCII-only font). The ``missing_chars`` attribute holds the offending characters.
+
+.. autoexception:: argenta.app.presentation.ascii_art.FigletFontFetchException
+   :show-inheritance:
+
+   Raised by ``FigletFontFetcher`` when a font or the remote font index cannot be downloaded (unknown name, network failure, every source unreachable). The ``source`` attribute carries the requested font or index description.
 
 -----
 

@@ -56,7 +56,18 @@ Where to get fonts
 *   The `pyfiglet fonts collection <https://github.com/pwaller/pyfiglet/tree/master/pyfiglet/fonts>`_ on GitHub.
 *   Any ``figlet`` package installed on your system (``/usr/share/figlet/`` on most Linux distros).
 
+The CLI can browse community collections and download fonts directly:
+
+.. code-block:: bash
+
+   argenta fonts list                          # list fonts available for download
+   argenta fonts fetch slant                   # downloads slant.flf (+ compiled .flfd)
+   argenta fonts fetch slant -o fonts/         # save into a specific directory
+   argenta fonts fetch https://example.com/doom.flf   # direct URL also works
+
 Argenta bundles two fonts: ``tarty1`` for ``initial_message`` and ``chunky`` for ``farewell_message``.
+
+The typical workflow end to end: find a font (``argenta fonts list`` or the sources above), download it (``argenta fonts fetch``), load it into your ``App`` — and, when you are ready to ship a standalone binary, compile it into ``.flfd`` so the banner costs nothing at startup.
 
 Loading a custom font
 ~~~~~~~~~~~~~~~~~~~~~
@@ -83,7 +94,7 @@ Fonts are loaded eagerly at ``App`` creation, so a broken font fails immediately
 Compiled fonts (.flfd)
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Parsing an ``.flf`` file takes a noticeable fraction of a millisecond. To make font loading nearly free, ``FigletFontLoader`` maintains a compiled dump next to the source file:
+Fonts are loaded eagerly when the ``App`` is created — font loading sits directly on the startup path of your CLI, and parsing an ``.flf`` file takes a noticeable fraction of a millisecond per font. To make font loading nearly free, ``FigletFontLoader`` maintains a compiled dump next to the source file:
 
 *   ``load("fonts/slant.flf")`` looks for ``fonts/slant.flfd`` first. If the dump is present, has a valid header and matches the source file's modification time, it is deserialized directly — no parsing.
 *   If the dump is missing, corrupted or stale, the ``.flf`` is parsed and the dump is (re)written automatically, so the next load is fast.
@@ -93,8 +104,8 @@ To compile a font ahead of time (for example before building a standalone binary
 
 .. code-block:: bash
 
-   argenta compile-font fonts/slant.flf                 # writes fonts/slant.flfd
-   argenta compile-font fonts/slant.flf -o dist/slant.flfd
+   argenta fonts compile fonts/slant.flf                 # writes fonts/slant.flfd
+   argenta fonts compile fonts/slant.flf -o dist/slant.flfd
 
 The equivalent is available in Python as ``FigletFontLoader.compile(source, target)``.
 

@@ -1,7 +1,9 @@
 import marshal
 import os
+from collections.abc import Mapping
 from importlib.resources import files
 from pathlib import Path
+from typing import Self
 
 import pytest
 
@@ -11,6 +13,8 @@ from argenta.app.presentation.ascii_art import (
     BundledFont,
     FigletFont,
     FigletFontException,
+    FigletFontFetcher,
+    FigletFontFetchException,
     FigletFontLoader,
     FigletFontParser,
     InvalidFigletFontException,
@@ -281,13 +285,17 @@ class TestFigletFontLoader:
 
 
 class TestLazyGlyphs:
-    def make_glyphs(self) -> object:
-        return FigletFontCompiler().load(
-            FigletFontCompiler().dump(
-                FigletFont(height=2, glyphs={"a": ("a0", "a1"), "b": ("b0", "b1")}),
-                source_mtime_ns=0,
+    def make_glyphs(self) -> Mapping[str, tuple[str, ...]]:
+        return (
+            FigletFontCompiler()
+            .load(
+                FigletFontCompiler().dump(
+                    FigletFont(height=2, glyphs={"a": ("a0", "a1"), "b": ("b0", "b1")}),
+                    source_mtime_ns=0,
+                )
             )
-        ).glyphs
+            .glyphs
+        )
 
     def test_materializes_glyph_on_access(self) -> None:
         assert self.make_glyphs()["a"] == ("a0", "a1")
@@ -313,6 +321,113 @@ class TestLazyGlyphs:
         assert glyphs == {"a": ("a0", "a1"), "b": ("b0", "b1")}
         assert glyphs != {"a": ("x",)}
         assert glyphs != "not a mapping"
+
+
+class TestFigletFontFetcher:
+    def stub_urlopen(
+        self, monkeypatch: pytest.MonkeyPatch, payloads: dict[str, bytes]
+    ) -> list[str]:
+        requested: list[str] = []
+
+        class FakeResponse:
+            def __init__(self, body: bytes) -> None:
+                self._body = body
+
+            def read(self) -> bytes:
+                return self._body
+
+            def __enter__(self) -> Self:
+                return self
+
+            def __exit__(self, *_args: object) -> None:
+                pass
+
+        def fake_urlopen(url: str, **_kwargs: object) -> FakeResponse:
+            requested.append(url)
+            if url not in payloads:
+                raise OSError("404")
+            return FakeResponse(payloads[url])
+
+        monkeypatch.setattr("argenta.app.presentation.ascii_art.fetcher.urlopen", fake_urlopen)
+        return requested
+
+    def test_fetches_font_by_name(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        font_bytes = build_flf(height=3).encode("utf-8")
+        fetcher = FigletFontFetcher()
+        payloads = {fetcher.sources[0].format(name="myfont"): font_bytes}
+        self.stub_urlopen(monkeypatch, payloads)
+
+        target = fetcher.fetch("myfont", tmp_path)
+        assert target == tmp_path / "myfont.flf"
+        assert target.read_bytes() == font_bytes
+        assert target.with_suffix(".flfd").is_file()
+
+    def test_tries_alternative_sources_and_cases(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        font_bytes = build_flf().encode("utf-8")
+        fetcher = FigletFontFetcher()
+        payloads = {fetcher.sources[1].format(name="Myfont"): font_bytes}
+        requested = self.stub_urlopen(monkeypatch, payloads)
+
+        fetcher.fetch("myfont", tmp_path)
+        assert len(requested) == 4
+        assert requested[-1] == fetcher.sources[1].format(name="Myfont")
+
+    def test_fetches_from_direct_url(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        url = "https://example.com/fonts/doom.flf"
+        self.stub_urlopen(monkeypatch, {url: build_flf().encode("utf-8")})
+        target = FigletFontFetcher().fetch(url, tmp_path)
+        assert target.name == "doom.flf"
+
+    def test_rejects_unsafe_font_name(self, tmp_path: Path) -> None:
+        with pytest.raises(InvalidFigletFontException, match="invalid font name"):
+            FigletFontFetcher().fetch("../../etc/passwd", tmp_path)
+
+    def test_raises_when_all_sources_fail(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        self.stub_urlopen(monkeypatch, {})
+        with pytest.raises(FigletFontFetchException, match="myfont"):
+            FigletFontFetcher().fetch("myfont", tmp_path)
+
+    def test_removes_invalid_downloaded_file(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        fetcher = FigletFontFetcher()
+        payloads = {fetcher.sources[0].format(name="bad"): b"not a font"}
+        self.stub_urlopen(monkeypatch, payloads)
+
+        with pytest.raises(InvalidFigletFontException):
+            fetcher.fetch("bad", tmp_path)
+        assert not (tmp_path / "bad.flf").exists()
+
+    def test_rejects_unwritable_target(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        fetcher = FigletFontFetcher()
+        self.stub_urlopen(
+            monkeypatch, {fetcher.sources[0].format(name="font"): build_flf().encode("utf-8")}
+        )
+
+        def denied_write_bytes(self: Path, _data: bytes) -> int:
+            raise OSError("denied")
+
+        monkeypatch.setattr(Path, "write_bytes", denied_write_bytes)
+        with pytest.raises(UnreachableFigletFontException):
+            fetcher.fetch("font", tmp_path)
+
+    def test_lists_available_fonts(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        payload = (
+            b'{"tree": [{"path": "fonts/slant.flf"}, {"path": "README.md"}, {"path": "Doom.flf"}]}'
+        )
+        self.stub_urlopen(monkeypatch, dict.fromkeys(FigletFontFetcher.index_sources, payload))
+        assert FigletFontFetcher().list_available() == ["Doom", "slant"]
+
+    def test_list_raises_on_malformed_index(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        self.stub_urlopen(monkeypatch, dict.fromkeys(FigletFontFetcher.index_sources, b"not json"))
+        with pytest.raises(FigletFontFetchException, match="remote font index"):
+            FigletFontFetcher().list_available()
 
 
 class TestAsciiArtRenderer:

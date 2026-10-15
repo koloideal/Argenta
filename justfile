@@ -80,8 +80,8 @@ fuzz-smoke:
 
 # Recompile bundled .flf fonts into .flfd dumps (run after editing _fonts/*.flf)
 fonts-compile:
-    uv run argenta compile-font src/argenta/app/presentation/ascii_art/_fonts/tarty1.flf
-    uv run argenta compile-font src/argenta/app/presentation/ascii_art/_fonts/chunky.flf
+    uv run argenta fonts compile src/argenta/app/presentation/ascii_art/_fonts/tarty1.flf
+    uv run argenta fonts compile src/argenta/app/presentation/ascii_art/_fonts/chunky.flf
 
 # ── Changelog (scriv) ─────────────────────────────────────────────────────────
 

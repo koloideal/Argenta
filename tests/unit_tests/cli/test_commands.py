@@ -2,6 +2,7 @@ import importlib
 import os
 import sys
 from pathlib import Path
+from typing import Self
 from unittest.mock import MagicMock
 
 import pytest
@@ -227,7 +228,7 @@ def test_build_target_rejects_non_python_file(tmp_path: Path) -> None:
 
 
 # ============================================================================
-# `argenta compile-font`
+# `argenta fonts compile`
 # ============================================================================
 
 
@@ -245,7 +246,7 @@ def _write_font(tmp_path: Path, height: int = 2) -> Path:
 
 def test_compile_font_writes_dump(tmp_path: Path) -> None:
     font_path = _write_font(tmp_path)
-    result = runner.invoke(app, ["compile-font", str(font_path)])
+    result = runner.invoke(app, ["fonts", "compile", str(font_path)])
 
     assert result.exit_code == 0
     assert "Compiled" in result.output
@@ -255,14 +256,14 @@ def test_compile_font_writes_dump(tmp_path: Path) -> None:
 def test_compile_font_writes_to_explicit_output(tmp_path: Path) -> None:
     font_path = _write_font(tmp_path)
     target = tmp_path / "dump.flfd"
-    result = runner.invoke(app, ["compile-font", str(font_path), "-o", str(target)])
+    result = runner.invoke(app, ["fonts", "compile", str(font_path), "-o", str(target)])
 
     assert result.exit_code == 0
     assert target.is_file()
 
 
 def test_compile_font_fails_on_missing_source(tmp_path: Path) -> None:
-    result = runner.invoke(app, ["compile-font", str(tmp_path / "missing.flf")])
+    result = runner.invoke(app, ["fonts", "compile", str(tmp_path / "missing.flf")])
 
     assert result.exit_code == 1
     assert "unreachable" in result.output
@@ -271,7 +272,74 @@ def test_compile_font_fails_on_missing_source(tmp_path: Path) -> None:
 def test_compile_font_fails_on_invalid_font(tmp_path: Path) -> None:
     bad_font = tmp_path / "bad.flf"
     bad_font.write_text("not a font")
-    result = runner.invoke(app, ["compile-font", str(bad_font)])
+    result = runner.invoke(app, ["fonts", "compile", str(bad_font)])
 
     assert result.exit_code == 1
     assert "Invalid" in result.output
+
+
+# ============================================================================
+# `argenta fonts fetch` and `argenta fonts list`
+# ============================================================================
+
+
+def test_fetch_font_downloads(tmp_path: Path, mocker: MockerFixture) -> None:
+    from argenta.app.presentation.ascii_art import fetcher as fetcher_module
+
+    class FakeResponse:
+        def read(self) -> bytes:
+            return _write_font(tmp_path).read_bytes()
+
+        def __enter__(self) -> Self:
+            return self
+
+        def __exit__(self, *_args: object) -> None:
+            pass
+
+    mocker.patch.object(fetcher_module, "urlopen", return_value=FakeResponse())
+    result = runner.invoke(app, ["fonts", "fetch", "slant", "-o", str(tmp_path)])
+
+    assert result.exit_code == 0
+    assert "Downloaded" in result.output
+    assert (tmp_path / "slant.flf").is_file()
+
+
+def test_fetch_font_fails_when_download_fails(tmp_path: Path, mocker: MockerFixture) -> None:
+    from argenta.app.presentation.ascii_art import fetcher as fetcher_module
+
+    mocker.patch.object(fetcher_module, "urlopen", side_effect=OSError("404"))
+    result = runner.invoke(app, ["fonts", "fetch", "nosuchfont", "-o", str(tmp_path)])
+
+    assert result.exit_code == 1
+    assert "Could not fetch" in result.output
+
+
+def test_fonts_list_shows_names(mocker: MockerFixture) -> None:
+    from argenta.app.presentation.ascii_art import fetcher as fetcher_module
+
+    class FakeResponse:
+        def read(self) -> bytes:
+            return b'{"tree": [{"path": "fonts/slant.flf"}, {"path": "Slant2.flf"}]}'
+
+        def __enter__(self) -> Self:
+            return self
+
+        def __exit__(self, *_args: object) -> None:
+            pass
+
+    mocker.patch.object(fetcher_module, "urlopen", return_value=FakeResponse())
+    result = runner.invoke(app, ["fonts", "list"])
+
+    assert result.exit_code == 0
+    assert "fonts available" in result.output
+    assert "slant" in result.output
+
+
+def test_fonts_list_fails_on_network_error(mocker: MockerFixture) -> None:
+    from argenta.app.presentation.ascii_art import fetcher as fetcher_module
+
+    mocker.patch.object(fetcher_module, "urlopen", side_effect=OSError("down"))
+    result = runner.invoke(app, ["fonts", "list"])
+
+    assert result.exit_code == 1
+    assert "Could not fetch" in result.output
