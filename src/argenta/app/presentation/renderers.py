@@ -1,8 +1,7 @@
 from collections.abc import Iterable
 from typing import Protocol
 
-from art import text2art
-
+from argenta.app.presentation.ascii_art import AsciiArtRenderer, FigletFont
 from argenta.app.protocols import DescriptionMessageGenerator
 from argenta.app.registered_routers.entity import RegisteredRouters
 
@@ -11,11 +10,9 @@ class Renderer(Protocol):
     @staticmethod
     def render_prompt(text: str) -> str: ...
 
-    @staticmethod
-    def render_initial_message(text: str) -> str: ...
+    def render_initial_message(self, text: str) -> str: ...
 
-    @staticmethod
-    def render_farewell_message(text: str) -> str: ...
+    def render_farewell_message(self, text: str) -> str: ...
 
     @staticmethod
     def render_messages_on_startup(messages: Iterable[str]) -> str: ...
@@ -45,18 +42,23 @@ class Renderer(Protocol):
 
 
 class RichRenderer(Renderer):
+    def __init__(self, initial_message_font: FigletFont, farewell_message_font: FigletFont) -> None:
+        self._initial_message_font: FigletFont = initial_message_font
+        self._farewell_message_font: FigletFont = farewell_message_font
+        self._ascii_art_renderer: AsciiArtRenderer = AsciiArtRenderer()
+
     @staticmethod
     def render_prompt(text: str) -> str:
         return f"<gray><b>{text}</b></gray>"
 
-    @staticmethod
-    def render_initial_message(text: str) -> str:
-        return f"[bold red]{text2art(text, font='tarty1')}[/bold red]"
+    def render_initial_message(self, text: str) -> str:
+        ascii_art = self._ascii_art_renderer.render(text, self._initial_message_font)
+        return f"[bold red]{ascii_art}[/bold red]"
 
-    @staticmethod
-    def render_farewell_message(text: str) -> str:
+    def render_farewell_message(self, text: str) -> str:
+        ascii_art = self._ascii_art_renderer.render(text, self._farewell_message_font)
         return (
-            f"[bold red]{text2art(text, font='chanky')}[/bold red]\n"
+            f"[bold red]{ascii_art}[/bold red]\n"
             "[red i]https://github.com/koloideal/Argenta[/red i] | "
             "[red bold i]made by kolo[/red bold i]"
         )

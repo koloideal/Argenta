@@ -10,6 +10,7 @@ from argenta.app.behavior_handlers.models import (
     BehaviorHandlersSettersMixin,
 )
 from argenta.app.dividing_line.models import DynamicDividingLine, StaticDividingLine
+from argenta.app.presentation.ascii_art import BundledFont, FigletFont, FigletFontLoader
 from argenta.app.presentation.renderers import PlainRenderer, Renderer, RichRenderer
 from argenta.app.presentation.viewers import Viewer
 from argenta.app.protocols import Printer
@@ -42,6 +43,8 @@ class BaseApp(BehaviorHandlersSettersMixin):
         override_system_messages: bool,
         autocompleter: AutoCompleter,
         printer: Printer,
+        initial_message_font: FigletFont,
+        farewell_message_font: FigletFont,
     ) -> None:
         self._prompt: str = prompt
         self._printer: Printer = printer
@@ -56,7 +59,12 @@ class BaseApp(BehaviorHandlersSettersMixin):
         self._messages_on_startup: list[str] = []
 
         self._renderer: Renderer = (
-            PlainRenderer() if self._override_system_messages else RichRenderer()
+            PlainRenderer()
+            if self._override_system_messages
+            else RichRenderer(
+                initial_message_font=initial_message_font,
+                farewell_message_font=farewell_message_font,
+            )
         )
 
         self._viewer: Viewer = Viewer(
@@ -228,6 +236,8 @@ class App(BaseApp):
         override_system_messages: bool = False,
         autocompleter: AutoCompleter | None = None,
         printer: Printer | None = None,
+        initial_message_font: FigletFont | None = None,
+        farewell_message_font: FigletFont | None = None,
     ) -> None:
         """
         Public. The essence of the application itself.
@@ -245,8 +255,11 @@ class App(BaseApp):
                the default formatting of system messages
         :param autocompleter: the entity of the autocompleter
         :param printer: system messages text output function
+        :param initial_message_font: FIGlet font for the initial message
+        :param farewell_message_font: FIGlet font for the farewell message
         :return: None
         """
+        font_loader = FigletFontLoader()
         super().__init__(
             prompt=prompt,
             initial_message=initial_message,
@@ -258,6 +271,12 @@ class App(BaseApp):
             override_system_messages=override_system_messages,
             autocompleter=autocompleter or AutoCompleter(),
             printer=printer or Console().print,
+            initial_message_font=(
+                initial_message_font or font_loader.load_bundled(BundledFont.TARTY1)
+            ),
+            farewell_message_font=(
+                farewell_message_font or font_loader.load_bundled(BundledFont.CHUNKY)
+            ),
         )
 
     def include_router(self, router: Router) -> None:

@@ -19,10 +19,83 @@ If set to ``True``, text styling and ASCII graphics will be disabled, and system
 Welcome and Farewell Messages
 -----------------------------
 
-Welcome (``initial_message``) and farewell (``farewell_message``) messages are displayed as ASCII art by default.
+Welcome (``initial_message``) and farewell (``farewell_message``) messages are displayed as ASCII art by default, rendered with `FIGlet <https://www.figlet.org/>`_ fonts.
 
 .. warning::
-   The ``art`` library is designed to work with ASCII characters and **does not support Cyrillic**. This leads to distortion of Russian and other Cyrillic alphabet characters. If your message contains Cyrillic, it is recommended to disable formatting using ``override_system_messages=True`` or use only Latin characters.
+   The bundled fonts cover printable ASCII only and **do not support Cyrillic**. If a message contains characters missing from the font, ``MissingGlyphsException`` is raised when the ``App`` is created. For Cyrillic messages, provide a font with the needed glyphs (see below) or disable formatting using ``override_system_messages=True``.
+
+Custom Fonts
+------------
+
+What is an .flf font
+~~~~~~~~~~~~~~~~~~~~
+
+``Argenta`` renders banners in the `FIGlet <https://www.figlet.org/>`_ font format — the same one used by the classic ``figlet`` CLI and thousands of community fonts. An ``.flf`` file is a plain text file with a strict structure:
+
+*   **Header line** — starts with ``flf2a`` followed by a *hardblank* character, then space-separated fields: glyph height, baseline, max line length, layout mode and comment count.
+*   **Comment lines** — free-form metadata (author, license, description).
+*   **Glyph table** — a fixed-height block of rows per printable ASCII character (codes 32–126), in order. Every row ends with an *endmark* character (conventionally ``@``, doubled on the last row of a glyph); the hardblank marks a space that must survive rendering.
+
+A small fragment of a glyph table (font height 4, endmark ``@``):
+
+.. code-block:: text
+
+       $@
+      $ $@
+      $$  @@
+    __ __ $@
+   / / / /|@
+  | | | | @@
+
+Because the format is decades old and fully textual, font files are easy to inspect, version-control and diff — and there is a huge existing collection to pick from.
+
+Where to get fonts
+~~~~~~~~~~~~~~~~~~
+
+*   The official `FIGlet font database <https://www.figlet.org/fontdb.cgi>`_ — hundreds of fonts, previewed online.
+*   The `pyfiglet fonts collection <https://github.com/pwaller/pyfiglet/tree/master/pyfiglet/fonts>`_ on GitHub.
+*   Any ``figlet`` package installed on your system (``/usr/share/figlet/`` on most Linux distros).
+
+Argenta bundles two fonts: ``tarty1`` for ``initial_message`` and ``chunky`` for ``farewell_message``.
+
+Loading a custom font
+~~~~~~~~~~~~~~~~~~~~~
+
+Load an ``.flf`` file with ``FigletFontLoader`` and pass the result to ``App``:
+
+.. code-block:: python
+   :linenos:
+
+   from pathlib import Path
+
+   from argenta import App
+   from argenta.app.presentation.ascii_art import FigletFontLoader
+
+   font_loader = FigletFontLoader()
+   app = App(
+       initial_message="Argenta",
+       initial_message_font=font_loader.load(Path("fonts/slant.flf")),
+       farewell_message_font=font_loader.load(Path("fonts/mini.flf")),
+   )
+
+Fonts are loaded eagerly at ``App`` creation, so a broken font fails immediately, not mid-session.
+
+Error handling
+~~~~~~~~~~~~~~
+
+All font errors derive from ``FigletFontException``:
+
+*   ``UnreachableFigletFontException`` — the path does not exist or cannot be read.
+*   ``InvalidFigletFontException`` — the file is not a well-formed ``.flf`` (bad signature, malformed header, truncated glyph table, rows without endmarks).
+*   ``MissingGlyphsException`` — the font lacks glyphs for characters in the message (raised at ``App`` construction).
+
+See the :ref:`API reference <root_api_ascii_art>` for details.
+
+Limitations
+~~~~~~~~~~~
+
+*   Smushing rules from the font header are ignored — glyphs are laid out at full width, matching the classic ``banner``-style output.
+*   Only the printable-ASCII glyph table is required to be present; characters outside it are reported via ``MissingGlyphsException``.
 
 -----
 

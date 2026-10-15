@@ -24,6 +24,8 @@ Creates and configures an application instance.
     * ``override_system_messages``: If ``True``, standard formatting (colors, ASCII art) is disabled.
     * ``autocompleter``: Instance of the :ref:`AutoCompleter <root_api_app_autocompleter>` class responsible for command autocompletion.
     * ``print_func``: Function for outputting all system messages (defaults to ``rich.Console().print``).
+    * ``initial_message_font``: :ref:`FigletFont <root_api_ascii_art>` for the initial message banner (defaults to the bundled ``tarty1`` font).
+    * ``farewell_message_font``: :ref:`FigletFont <root_api_ascii_art>` for the farewell message banner (defaults to the bundled ``chunky`` font).
 
 -----
 
@@ -117,6 +119,7 @@ Handler Setup Methods
 
     autocompleter
     dividing_lines
+    ascii_art
 
 -----
 
