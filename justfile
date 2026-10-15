@@ -76,6 +76,13 @@ fuzz-smoke:
     mkdir -p fuzz/corpus fuzz/artifacts
     uv run --group fuzz python fuzz/parse_fuzzer.py fuzz/corpus -artifact_prefix=fuzz/artifacts/ -runs=1000
 
+# ── Font assets ───────────────────────────────────────────────────────────────
+
+# Recompile bundled .flf fonts into .flfd dumps (run after editing _fonts/*.flf)
+fonts-compile:
+    uv run argenta fonts compile src/argenta/app/presentation/ascii_art/_fonts/tarty1.flf
+    uv run argenta fonts compile src/argenta/app/presentation/ascii_art/_fonts/chunky.flf
+
 # ── Changelog (scriv) ─────────────────────────────────────────────────────────
 
 # Create a new changelog fragment and open it in $EDITOR
