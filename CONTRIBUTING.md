@@ -148,6 +148,8 @@ Unsure where to begin contributing to Argenta? You can start by looking through 
 
 To get started with your first code contribution, please follow these steps to set up your local development environment.
 
+> **Zero-install option:** the repository ships a [devcontainer](.devcontainer/devcontainer.json) — click **Code → Codespaces → Create codespace** on GitHub (or use the Dev Containers extension in your editor) and wait ~30 seconds; `uv` and `just` are installed and `uv sync` runs automatically.
+
 1.  Fork the `Argenta` repository on GitHub.
 2.  Clone your forked repository to your local machine:
     ```bash
