@@ -51,6 +51,9 @@ format-check:
 # Run all checks (format-check, mypy, ruff, wps) — never modifies files
 check-format: format-check mypy ruff wps
 
+# Run everything CI gates on — green here means green in the PR
+ci-check: tests-cov check-format docs-build
+
 # ── Documentation (Sphinx) ────────────────────────────────────────────────────
 
 # Build the documentation (fails on warnings, like CI)
