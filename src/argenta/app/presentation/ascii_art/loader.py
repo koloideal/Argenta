@@ -26,8 +26,11 @@ def _decode(raw_font: bytes) -> str:
         return raw_font.decode("latin-1")
 
 
+_FONTS_DIR = files(__name__).joinpath("_fonts")
+
+
 def _bundled_resource(font: BundledFont, suffix: str) -> Traversable:
-    return files(__name__).joinpath("_fonts", f"{font}{suffix}")
+    return _FONTS_DIR.joinpath(f"{font}{suffix}")
 
 
 def _read_source(font_path: Path) -> tuple[bytes, int]:

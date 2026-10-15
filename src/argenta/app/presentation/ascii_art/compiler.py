@@ -1,8 +1,7 @@
 import marshal
-from itertools import batched
 from typing import cast
 
-from argenta.app.presentation.ascii_art.entity import FigletFont, Glyph
+from argenta.app.presentation.ascii_art.entity import FigletFont, LazyGlyphs
 from argenta.app.presentation.ascii_art.exceptions import InvalidFigletFontException
 
 _MARSHAL_ERRORS: tuple[type[Exception], ...] = (
@@ -44,10 +43,4 @@ class FigletFontCompiler:
         mtime_ns, height, chars, blob = payload
         if expected_mtime_ns is not None and mtime_ns != expected_mtime_ns:
             raise InvalidFigletFontException("compiled font dump is outdated")
-        return FigletFont(height=height, glyphs=self._rebuild_glyphs(chars, blob, height))
-
-    def _rebuild_glyphs(self, chars: str, blob: str, height: int) -> dict[str, Glyph]:
-        lines = blob.split("\n")
-        if len(lines) != len(chars) * height:
-            raise InvalidFigletFontException("compiled font dump has mismatched glyph table")
-        return dict(zip(chars, batched(lines, height), strict=True))
+        return FigletFont(height=height, glyphs=LazyGlyphs(chars, blob, height))

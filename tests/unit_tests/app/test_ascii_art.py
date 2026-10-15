@@ -280,6 +280,41 @@ class TestFigletFontLoader:
         assert FigletFontLoader().load_bundled(bundled_font) == parsed
 
 
+class TestLazyGlyphs:
+    def make_glyphs(self) -> object:
+        return FigletFontCompiler().load(
+            FigletFontCompiler().dump(
+                FigletFont(height=2, glyphs={"a": ("a0", "a1"), "b": ("b0", "b1")}),
+                source_mtime_ns=0,
+            )
+        ).glyphs
+
+    def test_materializes_glyph_on_access(self) -> None:
+        assert self.make_glyphs()["a"] == ("a0", "a1")
+
+    def test_memoizes_materialized_glyph(self) -> None:
+        glyphs = self.make_glyphs()
+        assert glyphs["a"] is glyphs["a"]
+
+    def test_raises_key_error_on_unknown_char(self) -> None:
+        with pytest.raises(KeyError):
+            self.make_glyphs()["z"]
+
+    def test_supports_mapping_protocol(self) -> None:
+        glyphs = self.make_glyphs()
+        assert len(glyphs) == 2
+        assert set(glyphs) == {"a", "b"}
+        assert "a" in glyphs
+        assert "z" not in glyphs
+        assert glyphs.get("z") is None
+
+    def test_equals_plain_dict(self) -> None:
+        glyphs = self.make_glyphs()
+        assert glyphs == {"a": ("a0", "a1"), "b": ("b0", "b1")}
+        assert glyphs != {"a": ("x",)}
+        assert glyphs != "not a mapping"
+
+
 class TestAsciiArtRenderer:
     font = FigletFont(height=2, glyphs={"a": ("a1", "a2"), "b": ("b1", "b2")})
 
