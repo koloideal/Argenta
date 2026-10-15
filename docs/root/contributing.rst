@@ -192,6 +192,22 @@ To get started, set up a local development environment by following these steps.
 
 #. Open a `Pull Request` from your branch to the `main` branch of the official repository. Provide a clear description of the problem and your solution. Include the related issue number if there is one.
 
+.. rubric:: What CI will check
+
+Every pull request runs the full check suite, so it is best to run the same commands locally **before** pushing:
+
+* **Tests with coverage** — ``just tests-cov``. Coverage below **100%** fails the build — every new code path needs a test.
+* **Lint and type checks** — ``just check-format``. ``ruff`` + ``mypy --strict`` + ``wemake-python-styleguide``. WPS is intentionally strict and bans many common patterns (single-letter names, extra returns, high complexity) — never skip this step.
+* **Documentation build** — ``just docs-build``. Sphinx with warnings treated as errors; required if you touch ``docs/``.
+* **Changelog fragment** — ``just frag``. Required for **any** PR that changes ``src/`` — the CI job fails otherwise.
+
+Two less obvious cases:
+
+* If your change alters CLI output or rendered messages, the Syrupy snapshot tests will fail — regenerate the snapshots with ``just snapshot-update`` and **review the diff carefully** before committing.
+* The test matrix runs on Python 3.12–3.15, so avoid version-specific behavior or guard it explicitly.
+
+Commits inside a pull request do not need to be signed — all merges happen via squash on GitHub, which produces a signed commit automatically.
+
 -----
 
 .. _improving-documentation:
