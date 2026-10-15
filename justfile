@@ -19,6 +19,10 @@ tests-cov:
 tests-cov-html:
     uv run pytest --cov=argenta tests --cov-report=html
 
+# Regenerate Syrupy snapshots after intentional output changes
+snapshot-update:
+    uv run pytest tests --snapshot-update
+
 # ── Code quality ──────────────────────────────────────────────────────────────
 
 # Format code and fix imports (Ruff) — modifies files
