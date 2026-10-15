@@ -224,3 +224,54 @@ def test_build_target_rejects_non_python_file(tmp_path: Path) -> None:
     with pytest.raises(SystemExit) as exc:
         _resolve_build_target(str(not_py), None, console)
     assert exc.value.code == 1
+
+
+# ============================================================================
+# `argenta compile-font`
+# ============================================================================
+
+
+def _write_font(tmp_path: Path, height: int = 2) -> Path:
+    header = f"flf2a$ {height} {height} 10 0 0"
+    rows: list[str] = []
+    for codepoint in range(32, 127):
+        glyph = [f"{chr(codepoint)}{index}" for index in range(height)]
+        rows.extend(f"{row}@" for row in glyph[:-1])
+        rows.append(f"{glyph[-1]}@@")
+    font_path = tmp_path / "font.flf"
+    font_path.write_text("\n".join([header, *rows]) + "\n", encoding="utf-8")
+    return font_path
+
+
+def test_compile_font_writes_dump(tmp_path: Path) -> None:
+    font_path = _write_font(tmp_path)
+    result = runner.invoke(app, ["compile-font", str(font_path)])
+
+    assert result.exit_code == 0
+    assert "Compiled" in result.output
+    assert font_path.with_suffix(".flfd").read_bytes().startswith(b"FLFD")
+
+
+def test_compile_font_writes_to_explicit_output(tmp_path: Path) -> None:
+    font_path = _write_font(tmp_path)
+    target = tmp_path / "dump.flfd"
+    result = runner.invoke(app, ["compile-font", str(font_path), "-o", str(target)])
+
+    assert result.exit_code == 0
+    assert target.is_file()
+
+
+def test_compile_font_fails_on_missing_source(tmp_path: Path) -> None:
+    result = runner.invoke(app, ["compile-font", str(tmp_path / "missing.flf")])
+
+    assert result.exit_code == 1
+    assert "unreachable" in result.output
+
+
+def test_compile_font_fails_on_invalid_font(tmp_path: Path) -> None:
+    bad_font = tmp_path / "bad.flf"
+    bad_font.write_text("not a font")
+    result = runner.invoke(app, ["compile-font", str(bad_font)])
+
+    assert result.exit_code == 1
+    assert "Invalid" in result.output

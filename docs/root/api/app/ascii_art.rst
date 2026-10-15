@@ -23,12 +23,22 @@ Loads and parses ``.flf`` font files. The same loader serves both bundled and us
 
 .. automethod:: argenta.app.presentation.ascii_art.FigletFontLoader.load
 
-   Reads an ``.flf`` file from the filesystem and parses it into a :ref:`FigletFont <root_api_ascii_art>`. Validation happens immediately — a broken font raises before the ``App`` is created.
+   Loads a font from the filesystem. Given an ``.flf`` path, a compiled ``.flfd`` dump sitting next to it is used when present and up to date, and (re)written otherwise — see :ref:`Output Formatting <root_overriding_formatting>` for the details. ``.flfd`` paths are also accepted directly. Validation happens immediately — a broken font raises before the ``App`` is created.
 
-   :param path: Path to the ``.flf`` file (``pathlib.Path`` or ``str``).
+   :param path: Path to the ``.flf`` or ``.flfd`` file (``pathlib.Path`` or ``str``).
    :raises UnreachableFigletFontException: the path does not exist or cannot be read.
-   :raises InvalidFigletFontException: the file is not a well-formed ``.flf``.
+   :raises InvalidFigletFontException: the file is not a well-formed ``.flf`` or ``.flfd``.
    :return: Parsed ``FigletFont`` ready to be passed to ``App``.
+
+.. automethod:: argenta.app.presentation.ascii_art.FigletFontLoader.compile
+
+   Compiles an ``.flf`` font into an ``.flfd`` dump. Equivalent to the ``argenta compile-font`` CLI command; useful for building compiled fonts programmatically before packaging an application.
+
+   :param source_path: Path to the source ``.flf`` file (``pathlib.Path`` or ``str``).
+   :param target_path: Optional output path; defaults to ``<source>.flfd`` next to the source.
+   :raises UnreachableFigletFontException: the source cannot be read or the target cannot be written.
+   :raises InvalidFigletFontException: the source is not a well-formed ``.flf``.
+   :return: Path to the written ``.flfd`` file.
 
 .. automethod:: argenta.app.presentation.ascii_art.FigletFontLoader.load_bundled
 

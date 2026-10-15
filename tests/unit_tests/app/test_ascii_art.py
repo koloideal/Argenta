@@ -1,3 +1,6 @@
+import marshal
+import os
+from importlib.resources import files
 from pathlib import Path
 
 import pytest
@@ -14,6 +17,7 @@ from argenta.app.presentation.ascii_art import (
     MissingGlyphsException,
     UnreachableFigletFontException,
 )
+from argenta.app.presentation.ascii_art.compiler import FigletFontCompiler
 
 PRINTABLE_ASCII = [chr(codepoint) for codepoint in range(32, 127)]
 
@@ -120,6 +124,160 @@ class TestFigletFontLoader:
     def test_loads_every_bundled_font(self, bundled_font: BundledFont) -> None:
         font = FigletFontLoader().load_bundled(bundled_font)
         assert set("Argenta See you 0123456789").issubset(font.glyphs)
+
+    def test_compiles_dump_next_to_source(self, tmp_path: Path) -> None:
+        font_path = tmp_path / "custom.flf"
+        font_path.write_text(build_flf(), encoding="utf-8")
+        FigletFontLoader().load(font_path)
+        assert font_path.with_suffix(".flfd").is_file()
+
+    def test_reuses_existing_dump(self, tmp_path: Path) -> None:
+        font_path = tmp_path / "custom.flf"
+        font_path.write_text(build_flf(), encoding="utf-8")
+        original = FigletFontLoader().load(font_path)
+        recorded_mtime = font_path.stat().st_mtime_ns
+        font_path.write_text(build_flf(height=9), encoding="utf-8")
+        os.utime(font_path, ns=(recorded_mtime, recorded_mtime))
+        assert FigletFontLoader().load(font_path).glyphs == original.glyphs
+
+    def test_recompiles_outdated_dump(self, tmp_path: Path) -> None:
+        font_path = tmp_path / "custom.flf"
+        font_path.write_text(build_flf(), encoding="utf-8")
+        FigletFontLoader().load(font_path)
+        font_path.write_text(build_flf(height=9), encoding="utf-8")
+        assert FigletFontLoader().load(font_path).height == 9
+
+    def test_recovers_from_corrupted_dump(self, tmp_path: Path) -> None:
+        font_path = tmp_path / "custom.flf"
+        font_path.write_text(build_flf(height=4), encoding="utf-8")
+        font_path.with_suffix(".flfd").write_bytes(b"garbage")
+        assert FigletFontLoader().load(font_path).height == 4
+        assert FigletFontLoader().load(font_path.with_suffix(".flfd")).height == 4
+
+    def test_recovers_from_unreadable_dump(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        font_path = tmp_path / "custom.flf"
+        font_path.write_text(build_flf(), encoding="utf-8")
+        font_path.with_suffix(".flfd").write_bytes(b"")
+        original_read_bytes = Path.read_bytes
+
+        def flaky_read_bytes(self: Path) -> bytes:
+            if self.suffix == ".flfd":
+                raise OSError("denied")
+            return original_read_bytes(self)
+
+        monkeypatch.setattr(Path, "read_bytes", flaky_read_bytes)
+        assert FigletFontLoader().load(font_path).height == 2
+
+    def test_loads_dump_when_source_is_missing(self, tmp_path: Path) -> None:
+        font_path = tmp_path / "custom.flf"
+        font_path.write_text(build_flf(height=5), encoding="utf-8")
+        FigletFontLoader().load(font_path)
+        font_path.unlink()
+        assert FigletFontLoader().load(font_path).height == 5
+
+    def test_loads_dump_by_direct_path(self, tmp_path: Path) -> None:
+        font_path = tmp_path / "custom.flf"
+        font_path.write_text(build_flf(height=6), encoding="utf-8")
+        FigletFontLoader().load(font_path)
+        assert FigletFontLoader().load(font_path.with_suffix(".flfd")).height == 6
+
+    def test_rejects_malformed_dump_path(self, tmp_path: Path) -> None:
+        dump_path = tmp_path / "custom.flfd"
+        dump_path.write_bytes(b"not a dump")
+        with pytest.raises(InvalidFigletFontException, match="compiled font format"):
+            FigletFontLoader().load(dump_path)
+
+    def test_rejects_corrupted_dump_payload(self, tmp_path: Path) -> None:
+        dump_path = tmp_path / "custom.flfd"
+        dump_path.write_bytes(b"FLFD\x01not-marshal")
+        with pytest.raises(InvalidFigletFontException, match="corrupted"):
+            FigletFontLoader().load(dump_path)
+
+    def test_rejects_missing_dump_path(self, tmp_path: Path) -> None:
+        with pytest.raises(UnreachableFigletFontException):
+            FigletFontLoader().load(tmp_path / "missing.flfd")
+
+    def test_survives_unwritable_dump_location(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        font_path = tmp_path / "custom.flf"
+        font_path.write_text(build_flf(), encoding="utf-8")
+
+        def denied_write_bytes(self: Path, _data: bytes) -> int:
+            raise OSError("denied")
+
+        monkeypatch.setattr(Path, "write_bytes", denied_write_bytes)
+        assert FigletFontLoader().load(font_path).height == 2
+
+    def test_compile_writes_dump(self, tmp_path: Path) -> None:
+        font_path = tmp_path / "custom.flf"
+        font_path.write_text(build_flf(height=7), encoding="utf-8")
+        target = FigletFontLoader().compile(font_path)
+        assert target == font_path.with_suffix(".flfd")
+        assert FigletFontLoader().load(target).height == 7
+
+    def test_compile_writes_to_explicit_target(self, tmp_path: Path) -> None:
+        font_path = tmp_path / "custom.flf"
+        font_path.write_text(build_flf(height=3), encoding="utf-8")
+        target = tmp_path / "out" / "dump.flfd"
+        target.parent.mkdir()
+        assert FigletFontLoader().compile(font_path, target) == target
+        assert FigletFontLoader().load(target).height == 3
+
+    def test_compile_rejects_missing_source(self, tmp_path: Path) -> None:
+        with pytest.raises(UnreachableFigletFontException):
+            FigletFontLoader().compile(tmp_path / "missing.flf")
+
+    def test_compile_rejects_unwritable_target(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        font_path = tmp_path / "custom.flf"
+        font_path.write_text(build_flf(), encoding="utf-8")
+
+        def denied_write_bytes(self: Path, _data: bytes) -> int:
+            raise OSError("denied")
+
+        monkeypatch.setattr(Path, "write_bytes", denied_write_bytes)
+        with pytest.raises(UnreachableFigletFontException):
+            FigletFontLoader().compile(font_path)
+
+    def test_bundled_falls_back_to_source_on_bad_dump(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        def broken_load(self: object, *_args: object, **_kwargs: object) -> FigletFont:
+            raise InvalidFigletFontException("broken")
+
+        FigletFontLoader._bundled_fonts.clear()
+        monkeypatch.setattr(
+            "argenta.app.presentation.ascii_art.compiler.FigletFontCompiler.load", broken_load
+        )
+        font = FigletFontLoader().load_bundled(BundledFont.TARTY1)
+        assert set("Argenta").issubset(font.glyphs)
+        FigletFontLoader._bundled_fonts.clear()
+
+    def test_bundled_font_is_cached(self) -> None:
+        FigletFontLoader._bundled_fonts.clear()
+        loader = FigletFontLoader()
+        assert loader.load_bundled(BundledFont.TARTY1) is loader.load_bundled(BundledFont.TARTY1)
+        FigletFontLoader._bundled_fonts.clear()
+
+    def test_rejects_dump_with_mismatched_glyph_table(self, tmp_path: Path) -> None:
+        dump_path = tmp_path / "custom.flfd"
+        dump_path.write_bytes(b"FLFD\x01" + marshal.dumps((0, 2, "ab", "x")))
+        with pytest.raises(InvalidFigletFontException, match="mismatched"):
+            FigletFontLoader().load(dump_path)
+
+    @pytest.mark.parametrize("bundled_font", list(BundledFont))
+    def test_bundled_dump_matches_parsed_source(self, bundled_font: BundledFont) -> None:
+        fonts_dir = files("argenta.app.presentation.ascii_art").joinpath("_fonts")
+        parsed = FigletFontParser().parse(
+            fonts_dir.joinpath(f"{bundled_font}.flf").read_bytes().decode("utf-8")
+        )
+        dumped = FigletFontCompiler().load(fonts_dir.joinpath(f"{bundled_font}.flfd").read_bytes())
+        assert dumped == parsed
+        assert FigletFontLoader().load_bundled(bundled_font) == parsed
 
 
 class TestAsciiArtRenderer:

@@ -1,4 +1,5 @@
 from argenta._cli.commands.build import build_handler as build_handler
+from argenta._cli.commands.compile_font import compile_font_handler as compile_font_handler
 from argenta._cli.commands.info import info_handler as info_handler
 from argenta._cli.commands.init import init_handler as init_handler
 from argenta._cli.commands.new import new_handler as new_handler

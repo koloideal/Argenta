@@ -5,6 +5,7 @@ import typer
 
 from argenta._cli.commands import (
     build_handler,
+    compile_font_handler,
     info_handler,
     init_handler,
     new_handler,
@@ -137,6 +138,26 @@ def _build(
     ] = None,
 ) -> None:
     build_handler(ctx.obj, entry_point, output_name=output_name, extra_nuitka_args=ctx.args)
+
+
+@app.command(
+    name="compile-font",
+    help="Compile a .flf FIGlet font into a fast-loading .flfd dump.",
+    short_help="Compile a FIGlet font",
+    epilog=(
+        "Examples:\n"
+        "  argenta compile-font fonts/slant.flf\n"
+        "  argenta compile-font fonts/slant.flf --output dist/slant.flfd"
+    ),
+)
+def _compile_font(
+    ctx: typer.Context,
+    font_path: Annotated[str, typer.Argument(help="Path to the .flf font file")],
+    output_path: Annotated[
+        str | None, typer.Option("--output", "-o", help="Output .flfd file path")
+    ] = None,
+) -> None:
+    compile_font_handler(ctx.obj, font_path, output_path)
 
 
 def main() -> None:

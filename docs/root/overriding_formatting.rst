@@ -80,6 +80,27 @@ Load an ``.flf`` file with ``FigletFontLoader`` and pass the result to ``App``:
 
 Fonts are loaded eagerly at ``App`` creation, so a broken font fails immediately, not mid-session.
 
+Compiled fonts (.flfd)
+~~~~~~~~~~~~~~~~~~~~~~
+
+Parsing an ``.flf`` file takes a noticeable fraction of a millisecond. To make font loading nearly free, ``FigletFontLoader`` maintains a compiled dump next to the source file:
+
+*   ``load("fonts/slant.flf")`` looks for ``fonts/slant.flfd`` first. If the dump is present, has a valid header and matches the source file's modification time, it is deserialized directly — no parsing.
+*   If the dump is missing, corrupted or stale, the ``.flf`` is parsed and the dump is (re)written automatically, so the next load is fast.
+*   ``load("fonts/slant.flfd")`` loads a dump directly. A standalone ``.flfd`` with no ``.flf`` beside it works too — this is the recommended way to ship fonts when packaging your app into a binary.
+
+To compile a font ahead of time (for example before building a standalone binary), use the CLI:
+
+.. code-block:: bash
+
+   argenta compile-font fonts/slant.flf                 # writes fonts/slant.flfd
+   argenta compile-font fonts/slant.flf -o dist/slant.flfd
+
+The equivalent is available in Python as ``FigletFontLoader.compile(source, target)``.
+
+.. warning::
+   ``.flfd`` files contain serialized data intended only for fonts you compiled yourself or received bundled with Argenta. Never pass a ``.flfd`` obtained from an untrusted source to ``load`` — stick to plain ``.flf`` for third-party fonts, which is validated field by field.
+
 Error handling
 ~~~~~~~~~~~~~~
 
