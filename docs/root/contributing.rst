@@ -31,6 +31,7 @@ Contents
 * :ref:`Your First Code Contribution <your-first-code-contribution>`
 * :ref:`Improving Documentation <improving-documentation>`
 * :ref:`Style Guides <styleguide>`
+* :ref:`Governance <contributing-governance>`
 * :ref:`Join the Project Team <join-the-project-team>`
 
 .. _code-of-conduct:
@@ -38,7 +39,7 @@ Contents
 Code of Conduct
 ---------------
 
-This project and all its participants are governed by the :ref:`Argenta Code of Conduct <root_code_of_conduct>`. By participating, you are expected to uphold this code. Please report unacceptable behavior.
+This project and all its participants are governed by the :ref:`Argenta Code of Conduct <root_code_of_conduct>`. By participating, you are expected to uphold this code. Please report unacceptable behavior to ``kolo.is.main@gmail.com``.
 
 -----
 
@@ -94,7 +95,7 @@ A good bug report shouldn't require others to extract additional information fro
 
 .. note::
 
-   Never report security issues, vulnerabilities, or bugs with sensitive information in the public tracker. Use email for this purpose.
+   Never report security issues, vulnerabilities, or bugs with sensitive information in the public tracker. Report them privately by email to ``kolo.is.main@gmail.com`` or through a `private security advisory <https://github.com/koloideal/Argenta/security/advisories/new>`_.
 
 We use `GitHub Issues` to track bugs. If you encounter a problem:
 
@@ -105,9 +106,10 @@ We use `GitHub Issues` to track bugs. If you encounter a problem:
 
 Once the issue is created:
 
-* The project team will assign an appropriate label to the issue.
-* A team member will try to reproduce the issue. If there are no steps or they don't lead to the result, the team will ask you to provide them and mark the issue as `needs-repro`. Such issues will not be addressed until the problem is reproduced.
-* If the issue is reproduced, it will be marked as `needs-fix` (and possibly with other labels, such as `critical`), after which :ref:`anyone willing <your-first-code-contribution>` can take it on.
+* New issues enter the triage pipeline with the ``needs-triage`` label — the project team will evaluate the report.
+* If the report lacks reproduction steps or other needed information, the team will ask for them and mark the issue as ``needs-info``. Issues marked ``needs-info`` will not move forward until the reporter responds.
+* Once the issue is confirmed and fully specified, it will be marked ``ready-for-agent`` (a task an AI agent can pick up) or ``ready-for-human`` (requires human work), and left to be :ref:`implemented by someone <your-first-code-contribution>`.
+* If the issue is out of scope or won't be fixed, it will be marked ``wontfix``.
 
 -----
 
@@ -142,7 +144,7 @@ Enhancement suggestions are tracked in `GitHub Issues <https://github.com/koloid
 Your First Code Contribution
 ----------------------------
 
-Don't know where to start? Look at issues labeled `good first issue` and `help wanted` in our `GitHub` repository. They are well-suited for beginners.
+Don't know where to start? Look at issues labeled `good first issue <https://github.com/koloideal/Argenta/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22>`_ and `help wanted <https://github.com/koloideal/Argenta/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22help%20wanted%22>`_ in our `GitHub` repository. They are well-suited for beginners.
 
 To get started, set up a local development environment by following these steps.
 
@@ -154,23 +156,12 @@ To get started, set up a local development environment by following these steps.
       git clone https://github.com/<YOUR_USERNAME>/Argenta.git
       cd Argenta
 
-#. Create and activate a virtual environment.
+#. Install `uv <https://docs.astral.sh/uv/getting-started/installation/>`_ if you don't have it yet. The project also uses `just <https://github.com/casey/just#installation>`_ as a command runner — all commands below also work through plain ``uv run``, but ``just`` recipes are shorter.
+#. Sync the environment — this creates ``.venv`` and installs the project with all development dependencies pinned in ``uv.lock``:
 
    .. code-block:: bash
 
-      # For macOS/Linux
-      python3 -m venv .venv
-      source .venv/bin/activate
-
-      # For Windows
-      python -m venv .venv
-      .venv\Scripts\activate
-
-#. Install project dependencies, including development tools.
-
-   .. code-block:: bash
-
-      pip install -e .[dev]
+      uv sync
 
 #. Create a new branch for your feature or fix. Use a descriptive name, such as `fix/login-bug` or `feat/new-widget`.
 
@@ -183,7 +174,13 @@ To get started, set up a local development environment by following these steps.
 
    .. code-block:: bash
 
-      python -m pytest tests
+      just tests        # or: uv run python -m pytest tests
+
+   To check your code against the same linters that run in CI:
+
+   .. code-block:: bash
+
+      just check-format # ruff format + ruff check, mypy --strict, wemake-python-styleguide
 
 #. Commit following :ref:`our style guide <styleguide>` and push the changes to your fork.
 
@@ -211,18 +208,12 @@ Good documentation is crucial. We use `Sphinx` to generate it from source files 
 To improve documentation, you can follow a process similar to contributing code:
 
 #. Make sure your development environment is set up as described in the :ref:`Your First Code Contribution <your-first-code-contribution>` section.
-#. Navigate to the documentation directory.
-
-   .. code-block:: bash
-
-      cd docs
-
 #. Make changes to the documentation (`docs/index.rst` and/or `docs/root/*`).
-#. To build the documentation locally in auto-rebuild mode and see the changes, run:
+#. To build the documentation locally in auto-rebuild mode and see the changes, run from the repository root:
 
    .. code-block:: bash
 
-      just live
+      just docs-live
 
 #. Open `127.0.0.1:8000` in your browser to preview the generated documentation.
 #. When the changes are ready, commit and open a `Pull Request`. Use the `docs:` prefix in the commit message.
@@ -261,11 +252,28 @@ Each commit message consists of a **header**, **body**, and **footer**.
 * **test**: Adding missing tests or correcting existing tests.
 * **chore**: Changes to the build process or auxiliary tools and libraries.
 
+**API Stability**
+
+Argenta follows `Semantic Versioning <https://semver.org/>`_: the public API is stable and may only change in backwards-incompatible ways in major releases. Prefer deprecating an API over removing it outright, and flag any breaking change clearly in the changelog and PR description.
+
 .. rubric:: Examples
 
 Simple fix: ``fix: correct typo in user authentication flow``
 
 New feature with scope: ``feat(api): add new endpoint for user profiles``
+
+-----
+
+.. _contributing-governance:
+
+Governance
+----------
+
+Argenta is maintained by a single maintainer, `@koloideal <https://github.com/koloideal>`_, who reviews and merges pull requests, cuts releases, triages issues, and manages repository settings and credentials.
+
+All changes to ``main`` go through pull requests with required status checks — direct pushes are blocked by branch protection for everyone, including the maintainer.
+
+Contributors have no access to sensitive resources and need no elevated permissions. New collaborators are granted escalated permissions only after a maintainer review, based on a track record of sustained, high-quality contributions.
 
 -----
 
