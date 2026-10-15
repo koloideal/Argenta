@@ -305,6 +305,67 @@ The full flag list is in the `Nuitka documentation <https://nuitka.net/user-docu
 
 -----
 
+Managing fonts
+--------------
+
+The ``fonts`` command group
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Font management — browsing community collections, downloading fonts, and precompiling them into ``.flfd`` dumps — lives under the ``argenta fonts`` group. See :ref:`Output Formatting <root_overriding_formatting>` for the ``.flf``/``.flfd`` formats and how loaded fonts plug into ``App``.
+
+The ``fonts list`` command
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Lists the fonts available for download from the community collections known to Argenta. Requires network access.
+
+.. code-block:: shell
+
+    argenta fonts list
+
+The ``fonts fetch`` command
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Downloads an ``.flf`` font by name (the collections are tried in order, including capitalized spellings) or from a direct URL. The downloaded file is validated, and a compiled ``.flfd`` dump is written next to it automatically — invalid content is rejected and not kept.
+
+.. code-block:: shell
+
+    argenta fonts fetch <font> [--output-dir <dir>]
+
+*   ``font`` — font name (e.g. ``slant``) or a direct ``https://`` URL to an ``.flf`` file.
+*   ``--output-dir`` / ``-o`` — directory to save into (defaults to the current directory).
+
+**Examples:**
+
+.. code-block:: shell
+
+    argenta fonts fetch slant
+    argenta fonts fetch slant --output-dir fonts/
+    argenta fonts fetch https://example.com/fonts/doom.flf
+
+The ``fonts compile`` command
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Compiles an ``.flf`` font into an ``.flfd`` dump — a serialized font the loader reads without parsing. This is the recommended step before :ref:`building a binary <root_cli>`: the dump loads nearly free at startup, and a standalone ``.flfd`` (with no ``.flf`` beside it) can be shipped inside the binary.
+
+.. code-block:: shell
+
+    argenta fonts compile <font> [--output <file>]
+
+*   ``font`` — path to the source ``.flf`` file.
+*   ``--output`` / ``-o`` — output ``.flfd`` path (defaults to ``<font>.flfd`` next to the source).
+
+**Examples:**
+
+.. code-block:: shell
+
+    argenta fonts compile fonts/slant.flf
+    argenta fonts compile fonts/slant.flf -o dist/slant.flfd
+
+.. warning::
+   Only load ``.flfd`` files you compiled yourself or that come bundled with Argenta — the dump format is not hardened against untrusted input. Third-party fonts should be loaded as plain ``.flf``.
+
+-----
+
 Environment information
 -----------------------
 
