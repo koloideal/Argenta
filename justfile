@@ -21,7 +21,7 @@ tests-cov-html:
 
 # ── Code quality ──────────────────────────────────────────────────────────────
 
-# Format code (Ruff)
+# Format code and fix imports (Ruff) — modifies files
 format:
     uv run python -m ruff format ./src ./tests ./metrics ./examples
     uv run python -m ruff check --select I --fix ./src ./tests ./metrics ./examples
@@ -39,8 +39,23 @@ wps:
 ruff:
     uv run python -m ruff check ./src ./tests ./metrics ./examples
 
-# Run all checks (format, mypy, ruff, wps)
-check-format: format mypy ruff wps
+# Verify formatting without changing files
+format-check:
+    uv run python -m ruff format --check ./src ./tests ./metrics ./examples
+    uv run python -m ruff check --select I ./src ./tests ./metrics ./examples
+
+# Run all checks (format-check, mypy, ruff, wps) — never modifies files
+check-format: format-check mypy ruff wps
+
+# ── Documentation (Sphinx) ────────────────────────────────────────────────────
+
+# Build the documentation (fails on warnings, like CI)
+docs-build:
+    uv run sphinx-build -b html -W docs docs/_build
+
+# Live-reload documentation preview on 127.0.0.1:8000
+docs-live:
+    uv run sphinx-autobuild -b html docs docs/_build/html
 
 # ── Fuzzing (atheris) ─────────────────────────────────────────────────────────
 
