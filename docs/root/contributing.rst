@@ -220,6 +220,8 @@ Every pull request runs the full check suite, so it is best to run the same comm
 * **Documentation build** — ``just docs-build``. Sphinx with warnings treated as errors; required if you touch ``docs/``.
 * **Changelog fragment** — ``just frag``. Required for **any** PR that changes ``src/`` — the CI job fails otherwise.
 
+Everything above can be run in one shot: ``just ci-check`` (tests + coverage, all lint/type checks, docs build). If it is green locally, the PR will be green.
+
 Two less obvious cases:
 
 * If your change alters CLI output or rendered messages, the Syrupy snapshot tests will fail — regenerate the snapshots with ``just snapshot-update`` and **review the diff carefully** before committing.
