@@ -196,6 +196,21 @@ To get started, set up a local development environment by following these steps.
 
 #. Open a `Pull Request` from your branch to the `main` branch of the official repository. Provide a clear description of the problem and your solution. Include the related issue number if there is one.
 
+.. rubric:: Repository layout
+
+* ``src/argenta/app`` — ``App``, DI wiring, renderers, and behavior handlers.
+* ``src/argenta/router`` — ``Router``, command registration, and handlers.
+* ``src/argenta/command`` — ``Command``/``InputCommand``, flags, validation.
+* ``src/argenta/orchestrator`` — ``Orchestrator`` and startup argument parsing (``ArgParser``/``ArgSpace``/arguments).
+* ``src/argenta/response`` — ``Response`` and ``ResponseStatus``.
+* ``src/argenta/di`` — Dishka integration (``FromDishka``, ``inject``, providers).
+* ``src/argenta/data_bridge`` — session-scoped ``DataBridge``.
+* ``src/argenta/_cli`` — the ``argenta`` command-line tool (``init``, ``new``, ``run``, ``build``, ``info``, ``routes``).
+* ``tests/unit_tests`` / ``tests/system_tests`` — mirror the package layout; Syrupy snapshots live in ``__snapshots__`` directories.
+* ``metrics/`` — benchmark registry and the CI comparison harness.
+* ``fuzz/`` — the Atheris fuzz target for ``InputCommand.parse``.
+* ``docs/`` — Sphinx sources; ``changelog.d/`` — scriv fragments.
+
 .. rubric:: What CI will check
 
 Every pull request runs the full check suite, so it is best to run the same commands locally **before** pushing:
