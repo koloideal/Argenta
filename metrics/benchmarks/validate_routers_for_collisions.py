@@ -14,24 +14,46 @@ from argenta.router import Router
 from .entity import benchmarks
 
 
+def _handler(_res: Response) -> None:
+    pass
+
+
+def setup_app_with_routers(
+    router_count: int, commands_per_router: int = 1, aliases_per_command: int = 0
+) -> App:
+    app = App(override_system_messages=True)
+
+    for router_index in range(router_count):
+        router = Router()
+        for command_index in range(commands_per_router):
+            aliases = (
+                {
+                    f"alias{router_index}_{command_index}_{alias_index}"
+                    for alias_index in range(aliases_per_command)
+                }
+                if aliases_per_command
+                else set()
+            )
+            router.command(Command(f"cmd{router_index}_{command_index}", aliases=aliases))(_handler)
+        app.include_router(router)
+
+    app._setup_system_router()
+    return app
+
+
+_FEW_ROUTERS_APP = setup_app_with_routers(3)
+_MANY_ROUTERS_APP = setup_app_with_routers(10)
+_MANY_COMMANDS_APP = setup_app_with_routers(3, commands_per_router=10)
+_MANY_ALIASES_APP = setup_app_with_routers(3, commands_per_router=5, aliases_per_command=10)
+_EXTREME_APP = setup_app_with_routers(20, commands_per_router=10, aliases_per_command=20)
+
+
 @benchmarks.register(
     type_="validate_routers_for_collisions",
     description="With few routers (3 routers, 1 command each)",
 )
 def benchmark_few_routers() -> None:
-    app = App(override_system_messages=True)
-
-    for i in range(3):
-        router = Router()
-
-        @router.command(Command(f"cmd{i}"))
-        def handler(_res: Response) -> None:
-            pass
-
-        app.include_router(router)
-
-    app._setup_system_router()
-    app._validate_routers_for_collisions()
+    _FEW_ROUTERS_APP._validate_routers_for_collisions()
 
 
 @benchmarks.register(
@@ -39,19 +61,7 @@ def benchmark_few_routers() -> None:
     description="With many routers (10 routers, 1 command each)",
 )
 def benchmark_many_routers() -> None:
-    app = App(override_system_messages=True)
-
-    for i in range(10):
-        router = Router()
-
-        @router.command(Command(f"cmd{i}"))
-        def handler(_res: Response) -> None:
-            pass
-
-        app.include_router(router)
-
-    app._setup_system_router()
-    app._validate_routers_for_collisions()
+    _MANY_ROUTERS_APP._validate_routers_for_collisions()
 
 
 @benchmarks.register(
@@ -59,21 +69,7 @@ def benchmark_many_routers() -> None:
     description="With many commands per router (3 routers, 10 commands each)",
 )
 def benchmark_many_commands_per_router() -> None:
-    app = App(override_system_messages=True)
-
-    for i in range(3):
-        router = Router()
-
-        for j in range(10):
-
-            @router.command(Command(f"cmd{i}_{j}"))
-            def handler(_res: Response) -> None:
-                pass
-
-        app.include_router(router)
-
-    app._setup_system_router()
-    app._validate_routers_for_collisions()
+    _MANY_COMMANDS_APP._validate_routers_for_collisions()
 
 
 @benchmarks.register(
@@ -81,23 +77,7 @@ def benchmark_many_commands_per_router() -> None:
     description="With many aliases (3 routers, 5 commands, 10 aliases each)",
 )
 def benchmark_many_aliases_per_command() -> None:
-    app = App(override_system_messages=True)
-
-    for i in range(3):
-        router = Router()
-
-        for j in range(5):
-
-            @router.command(
-                Command(f"cmd{i}_{j}", aliases={f"alias{i}_{j}_{k}" for k in range(10)})
-            )
-            def handler(_res: Response) -> None:
-                pass
-
-        app.include_router(router)
-
-    app._setup_system_router()
-    app._validate_routers_for_collisions()
+    _MANY_ALIASES_APP._validate_routers_for_collisions()
 
 
 @benchmarks.register(
@@ -105,20 +85,4 @@ def benchmark_many_aliases_per_command() -> None:
     description="Extreme (20 routers, 10 commands, 20 aliases each)",
 )
 def benchmark_extreme_routers() -> None:
-    app = App(override_system_messages=True)
-
-    for i in range(20):
-        router = Router()
-
-        for j in range(10):
-
-            @router.command(
-                Command(f"cmd{i}_{j}", aliases={f"alias{i}_{j}_{k}" for k in range(20)})
-            )
-            def handler(_res: Response) -> None:
-                pass
-
-        app.include_router(router)
-
-    app._setup_system_router()
-    app._validate_routers_for_collisions()
+    _EXTREME_APP._validate_routers_for_collisions()
