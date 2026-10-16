@@ -325,14 +325,18 @@ Lists the fonts available for download from the community collections known to A
 The ``fonts fetch`` command
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Downloads an ``.flf`` font by name (the collections are tried in order, including capitalized spellings) or from a direct URL. The downloaded file is validated, and a compiled ``.flfd`` dump is written next to it automatically — invalid content is rejected and not kept.
+Downloads an ``.flf`` font by name (the collections are tried in order, including capitalized spellings) or from a direct URL. The downloaded file is validated, and a compiled ``.flfd`` dump is written next to it automatically — invalid content is rejected and not kept. Font names containing spaces or other URL-unsafe characters are handled transparently.
+
+Every downloaded font is stored in a local cache (``$XDG_CACHE_HOME/argenta/fonts``, or ``~/.cache/argenta/fonts``), so fetching the same font twice never hits the network again — the second call is served from the cache.
 
 .. code-block:: shell
 
-    argenta fonts fetch <font> [--output-dir <dir>]
+    argenta fonts fetch <font> [--output-dir <dir>] [--cache-dir <dir>] [--no-cache]
 
 *   ``font`` — font name (e.g. ``slant``) or a direct ``https://`` URL to an ``.flf`` file.
 *   ``--output-dir`` / ``-o`` — directory to save into (defaults to the current directory).
+*   ``--cache-dir`` — override the download cache location (defaults to ``$XDG_CACHE_HOME/argenta/fonts``).
+*   ``--no-cache`` — skip the cache entirely and download fresh every time.
 
 **Examples:**
 
@@ -341,6 +345,27 @@ Downloads an ``.flf`` font by name (the collections are tried in order, includin
     argenta fonts fetch slant
     argenta fonts fetch slant --output-dir fonts/
     argenta fonts fetch https://example.com/fonts/doom.flf
+
+The ``fonts preview`` command
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Renders a preview banner — the word ``Argenta`` — in the given font, so you can see what it looks like before wiring it into your ``App``. Accepts the same argument as ``fonts fetch``: a font name or a direct ``.flf`` URL. The font is resolved through the local download cache, so previewing repeatedly costs no network requests.
+
+.. code-block:: shell
+
+    argenta fonts preview <font> [--cache-dir <dir>] [--no-cache]
+
+*   ``font`` — font name (e.g. ``slant``, ``"ANSI Shadow"``) or a direct ``https://`` URL to an ``.flf`` file.
+*   ``--cache-dir`` — override the download cache location (defaults to ``$XDG_CACHE_HOME/argenta/fonts``).
+*   ``--no-cache`` — skip the cache entirely and download fresh into a temporary directory.
+
+**Examples:**
+
+.. code-block:: shell
+
+    argenta fonts preview slant
+    argenta fonts preview "ANSI Shadow"
+    argenta fonts preview https://example.com/fonts/doom.flf
 
 The ``fonts compile`` command
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

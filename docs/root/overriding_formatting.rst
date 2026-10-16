@@ -61,13 +61,16 @@ The CLI can browse community collections and download fonts directly:
 .. code-block:: bash
 
    argenta fonts list                          # list fonts available for download
+   argenta fonts preview slant                 # render "Argenta" in the font before downloading
    argenta fonts fetch slant                   # downloads slant.flf (+ compiled .flfd)
    argenta fonts fetch slant -o fonts/         # save into a specific directory
    argenta fonts fetch https://example.com/doom.flf   # direct URL also works
 
+Downloaded fonts land in a local cache (``$XDG_CACHE_HOME/argenta/fonts``), so ``preview`` and ``fetch`` never download the same font twice.
+
 Argenta bundles two fonts: ``tarty1`` for ``initial_message`` and ``chunky`` for ``farewell_message``.
 
-The typical workflow end to end: find a font (``argenta fonts list`` or the sources above), download it (``argenta fonts fetch``), load it into your ``App`` — and, when you are ready to ship a standalone binary, compile it into ``.flfd`` so the banner costs nothing at startup.
+The typical workflow end to end: find a font (``argenta fonts list`` or the sources above), preview it (``argenta fonts preview``), download it (``argenta fonts fetch``), load it into your ``App`` — and, when you are ready to ship a standalone binary, compile it into ``.flfd`` so the banner costs nothing at startup.
 
 Loading a custom font
 ~~~~~~~~~~~~~~~~~~~~~

@@ -1,5 +1,7 @@
 import importlib
+import io
 import os
+import runpy
 import sys
 from pathlib import Path
 from typing import Self
@@ -7,9 +9,14 @@ from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
+from rich.console import Console
 from typer.testing import CliRunner
 
+from argenta._cli import __main__ as cli_main
 from argenta._cli.__main__ import app
+from argenta._cli.commands.build import _resolve_build_target
+from argenta._cli.di import create_cli_container
+from argenta.app.presentation.ascii_art import fetcher as fetcher_module
 
 from .conftest import _APP_MODULE, _write_module
 
@@ -42,8 +49,6 @@ def test_info_command_shows_environment() -> None:
 
 
 def test_info_command_with_existing_context_object() -> None:
-    from argenta._cli.di import create_cli_container
-
     with create_cli_container() as container:
         result = runner.invoke(app, ["info"], obj=container)
     assert result.exit_code == 0
@@ -51,20 +56,15 @@ def test_info_command_with_existing_context_object() -> None:
 
 def test_main_entrypoint_runs(mocker: MockerFixture) -> None:
     mocker.patch.object(sys, "argv", ["argenta", "--version"])
-    from argenta._cli import __main__ as cli_main
-
     with pytest.raises(SystemExit) as exc:
         cli_main.main()
     assert exc.value.code == 0
 
 
 def test_module_runnable_as_script(mocker: MockerFixture) -> None:
-    import runpy
-
-    sys.modules.pop("argenta._cli.__main__", None)
     mocker.patch.object(sys, "argv", ["argenta", "--version"])
     with pytest.raises(SystemExit) as exc:
-        runpy.run_module("argenta._cli.__main__", run_name="__main__")
+        runpy.run_path(str(cli_main.__file__), run_name="__main__")
     assert exc.value.code == 0
 
 
@@ -212,12 +212,6 @@ def test_build_propagates_nuitka_failure(mocker: MockerFixture, tmp_path: Path) 
 
 
 def test_build_target_rejects_non_python_file(tmp_path: Path) -> None:
-    import io
-
-    from rich.console import Console
-
-    from argenta._cli.commands.build import _resolve_build_target
-
     not_py = tmp_path / "thing.txt"
     not_py.write_text("x")
     console = Console(file=io.StringIO())
@@ -284,8 +278,6 @@ def test_compile_font_fails_on_invalid_font(tmp_path: Path) -> None:
 
 
 def test_fetch_font_downloads(tmp_path: Path, mocker: MockerFixture) -> None:
-    from argenta.app.presentation.ascii_art import fetcher as fetcher_module
-
     class FakeResponse:
         def read(self) -> bytes:
             return _write_font(tmp_path).read_bytes()
@@ -297,7 +289,10 @@ def test_fetch_font_downloads(tmp_path: Path, mocker: MockerFixture) -> None:
             pass
 
     mocker.patch.object(fetcher_module, "urlopen", return_value=FakeResponse())
-    result = runner.invoke(app, ["fonts", "fetch", "slant", "-o", str(tmp_path)])
+    result = runner.invoke(
+        app,
+        ["fonts", "fetch", "slant", "-o", str(tmp_path), "--cache-dir", str(tmp_path / "cache")],
+    )
 
     assert result.exit_code == 0
     assert "Downloaded" in result.output
@@ -305,18 +300,25 @@ def test_fetch_font_downloads(tmp_path: Path, mocker: MockerFixture) -> None:
 
 
 def test_fetch_font_fails_when_download_fails(tmp_path: Path, mocker: MockerFixture) -> None:
-    from argenta.app.presentation.ascii_art import fetcher as fetcher_module
-
     mocker.patch.object(fetcher_module, "urlopen", side_effect=OSError("404"))
-    result = runner.invoke(app, ["fonts", "fetch", "nosuchfont", "-o", str(tmp_path)])
+    result = runner.invoke(
+        app,
+        [
+            "fonts",
+            "fetch",
+            "nosuchfont",
+            "-o",
+            str(tmp_path),
+            "--cache-dir",
+            str(tmp_path / "cache"),
+        ],
+    )
 
     assert result.exit_code == 1
     assert "Could not fetch" in result.output
 
 
 def test_fonts_list_shows_names(mocker: MockerFixture) -> None:
-    from argenta.app.presentation.ascii_art import fetcher as fetcher_module
-
     class FakeResponse:
         def read(self) -> bytes:
             return b'{"tree": [{"path": "fonts/slant.flf"}, {"path": "Slant2.flf"}]}'
@@ -336,10 +338,80 @@ def test_fonts_list_shows_names(mocker: MockerFixture) -> None:
 
 
 def test_fonts_list_fails_on_network_error(mocker: MockerFixture) -> None:
-    from argenta.app.presentation.ascii_art import fetcher as fetcher_module
-
     mocker.patch.object(fetcher_module, "urlopen", side_effect=OSError("down"))
     result = runner.invoke(app, ["fonts", "list"])
+
+    assert result.exit_code == 1
+    assert "Could not fetch" in result.output
+
+
+# ============================================================================
+# `argenta fonts preview`
+# ============================================================================
+
+
+class _FontResponse:
+    def __init__(self, body: bytes) -> None:
+        self._body = body
+
+    def read(self) -> bytes:
+        return self._body
+
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(self, *_args: object) -> None:
+        pass
+
+
+def test_preview_font_renders_banner(tmp_path: Path, mocker: MockerFixture) -> None:
+    mocker.patch.object(
+        fetcher_module,
+        "urlopen",
+        return_value=_FontResponse(_write_font(tmp_path).read_bytes()),
+    )
+    result = runner.invoke(
+        app, ["fonts", "preview", "slant", "--cache-dir", str(tmp_path / "cache")]
+    )
+
+    assert result.exit_code == 0
+    assert "A0" in result.output  # first glyph row of 'A' in "Argenta"
+
+
+def test_preview_font_serves_second_run_from_cache(tmp_path: Path, mocker: MockerFixture) -> None:
+    urlopen_mock = mocker.patch.object(
+        fetcher_module,
+        "urlopen",
+        return_value=_FontResponse(_write_font(tmp_path).read_bytes()),
+    )
+    cache_dir = str(tmp_path / "cache")
+    first = runner.invoke(app, ["fonts", "preview", "slant", "--cache-dir", cache_dir])
+    second = runner.invoke(app, ["fonts", "preview", "slant", "--cache-dir", cache_dir])
+
+    assert first.exit_code == 0
+    assert second.exit_code == 0
+    assert urlopen_mock.call_count == 1
+
+
+def test_preview_font_no_cache_downloads_every_time(tmp_path: Path, mocker: MockerFixture) -> None:
+    urlopen_mock = mocker.patch.object(
+        fetcher_module,
+        "urlopen",
+        return_value=_FontResponse(_write_font(tmp_path).read_bytes()),
+    )
+    first = runner.invoke(app, ["fonts", "preview", "slant", "--no-cache"])
+    second = runner.invoke(app, ["fonts", "preview", "slant", "--no-cache"])
+
+    assert first.exit_code == 0
+    assert second.exit_code == 0
+    assert urlopen_mock.call_count == 2
+
+
+def test_preview_font_fails_when_download_fails(tmp_path: Path, mocker: MockerFixture) -> None:
+    mocker.patch.object(fetcher_module, "urlopen", side_effect=OSError("down"))
+    result = runner.invoke(
+        app, ["fonts", "preview", "nosuchfont", "--cache-dir", str(tmp_path / "cache")]
+    )
 
     assert result.exit_code == 1
     assert "Could not fetch" in result.output

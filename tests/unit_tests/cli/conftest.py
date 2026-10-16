@@ -1,6 +1,5 @@
 import importlib
 import os
-import sys
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -9,12 +8,7 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def _clean_state() -> Iterator[None]:
-    modules_before = set(sys.modules)
-    path_before = list(sys.path)
     yield
-    for name in set(sys.modules) - modules_before:
-        sys.modules.pop(name, None)
-    sys.path[:] = path_before
     os.environ.pop("RUN_FROM_ARGENTA_RUNNER", None)
 
 
