@@ -37,7 +37,7 @@ def medians(runs: list[list[Measurement]]) -> dict[str, float]:
 
 def collect(
     base_python: str, head_python: str, *, rounds: int, measure_args: list[str]
-) -> list[Comparison]:
+) -> tuple[list[Comparison], list[Measurement], list[Measurement]]:
     base_runs: list[list[Measurement]] = []
     head_runs: list[list[Measurement]] = []
     for _ in range(rounds):
@@ -47,7 +47,10 @@ def collect(
         base_runs.append(run_measure(base_python, measure_args))
 
     base, head = medians(base_runs), medians(head_runs)
-    return [
+    head_names = {measurement.name for measurement in head_runs[0]}
+    base_names = {measurement.name for measurement in base_runs[0]}
+
+    comparisons = [
         Comparison(
             type_=measurement.type_,
             description=measurement.description,
@@ -55,7 +58,11 @@ def collect(
             head=head[measurement.name],
         )
         for measurement in base_runs[0]
+        if measurement.name in head
     ]
+    added = [m for m in head_runs[0] if m.name not in base_names]
+    removed = [m for m in base_runs[0] if m.name not in head_names]
+    return comparisons, added, removed
 
 
 def format_time(seconds: float) -> str:
@@ -83,7 +90,49 @@ def cpu_name() -> str:
     return platform.processor() or platform.machine()
 
 
-def render(comparisons: list[Comparison], *, threshold: float, rounds: int) -> str:
+def render_set_changes(added: list[Measurement], removed: list[Measurement]) -> str:
+    sections = []
+    if added:
+        sections.append(
+            "\n".join(
+                [
+                    "#### 🆕 Added benchmarks",
+                    "",
+                    "| Benchmark | this branch |",
+                    "|---|--:|",
+                    *(
+                        f"| `{item.type_}` — {item.description} | {format_time(item.seconds)} |"
+                        for item in added
+                    ),
+                ]
+            )
+        )
+    if removed:
+        sections.append(
+            "\n".join(
+                [
+                    "#### 🗑 Removed benchmarks",
+                    "",
+                    "| Benchmark | main |",
+                    "|---|--:|",
+                    *(
+                        f"| `{item.type_}` — {item.description} | {format_time(item.seconds)} |"
+                        for item in removed
+                    ),
+                ]
+            )
+        )
+    return "\n\n".join(sections)
+
+
+def render(
+    comparisons: list[Comparison],
+    added: list[Measurement],
+    removed: list[Measurement],
+    *,
+    threshold: float,
+    rounds: int,
+) -> str:
     groups: defaultdict[str, list[Comparison]] = defaultdict(list)
     for comparison in comparisons:
         groups[comparison.type_].append(comparison)
@@ -104,13 +153,17 @@ def render(comparisons: list[Comparison], *, threshold: float, rounds: int) -> s
         )
         for type_, group in groups.items()
     ]
+    set_changes = render_set_changes(added, removed)
+    if set_changes:
+        sections.append(set_changes)
 
     faster = sum(item.ratio >= threshold for item in comparisons)
     slower = sum(item.ratio <= 1 / threshold for item in comparisons)
     noise_percent = round((threshold - 1) * 100)
+    set_summary = f" · {len(added)} added · {len(removed)} removed" if added or removed else ""
     summary = (
-        f"🟢 {faster} faster · 🔴 {slower} slower · {len(comparisons)} benchmarks"
-        f" · changes within ±{noise_percent}% are treated as noise"
+        f"🟢 {faster} faster · 🔴 {slower} slower · {len(comparisons)} benchmarks compared"
+        f"{set_summary} · changes within ±{noise_percent}% are treated as noise"
     )
     footer = (
         f"<sub>Runner: {cpu_name()} · {platform.python_implementation()} "
@@ -134,13 +187,13 @@ def main() -> None:
     parser.add_argument("--repeats", type=int, default=5)
     args = parser.parse_args()
 
-    comparisons = collect(
+    comparisons, added, removed = collect(
         args.base_python,
         args.head_python,
         rounds=args.rounds,
         measure_args=["--batch-seconds", str(args.batch_seconds), "--repeats", str(args.repeats)],
     )
-    report = render(comparisons, threshold=args.threshold, rounds=args.rounds)
+    report = render(comparisons, added, removed, threshold=args.threshold, rounds=args.rounds)
     args.output.write_text(report, encoding="utf-8")
     sys.stdout.write(report)
 
