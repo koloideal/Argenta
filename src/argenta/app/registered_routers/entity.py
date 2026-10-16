@@ -1,4 +1,5 @@
 from collections.abc import Iterator
+from itertools import chain
 
 from argenta.router import Router
 
@@ -20,7 +21,7 @@ class RegisteredRouters:
         :return: None
         """
         self.registered_routers.append(router)
-        for trigger in router.aliases | router.triggers:
+        for trigger in chain(router.triggers, router.aliases):
             self._paired_trigger_router[trigger] = router
 
     def get_router_by_trigger(self, trigger: str) -> Router | None:

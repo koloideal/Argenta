@@ -1,4 +1,4 @@
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from typing import Never
 
 from argenta.app.protocols import HandlerFunc
@@ -39,18 +39,21 @@ class CommandHandlers:
             for command_handler in command_handlers
         }
 
-    def add_handler(self, command_handler: CommandHandler) -> None:
+    def add_handler(
+        self,
+        command_handler: CommandHandler,
+        lowered_trigger: str,
+        lowered_aliases: Iterable[str],
+    ) -> None:
         """
         Private. Adds a CommandHandler to the list of CommandHandlers
         :param command_handler: CommandHandler to be added
         :return: None
         """
         self.command_handlers.append(command_handler)
-        self.paired_command_handler_trigger[command_handler.handled_command.trigger.lower()] = (
-            command_handler
-        )
-        for alias in command_handler.handled_command.aliases:
-            self.paired_command_handler_trigger[alias.lower()] = command_handler
+        self.paired_command_handler_trigger[lowered_trigger] = command_handler
+        for alias in lowered_aliases:
+            self.paired_command_handler_trigger[alias] = command_handler
 
     def get_command_handler_by_trigger(self, trigger: str) -> CommandHandler | None:
         return self.paired_command_handler_trigger.get(trigger)

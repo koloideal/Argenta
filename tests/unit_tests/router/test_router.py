@@ -1,3 +1,4 @@
+import functools
 import re
 import warnings
 
@@ -110,6 +111,27 @@ def test_validate_func_args_ignores_later_argument_type_hints() -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         _validate_func_args(func)
+
+
+def test_validate_func_args_accepts_callable_without_code_object() -> None:
+    def func(response: Response) -> None:
+        pass
+
+    partial_handler = functools.partial(func)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        _validate_func_args(partial_handler)
+
+
+def test_validate_func_args_rejects_partial_with_all_args_bound() -> None:
+    def func(response: Response) -> None:
+        pass
+
+    bound_handler = functools.partial(func, Response(ResponseStatus.ALL_FLAGS_VALID))
+
+    with pytest.raises(RequiredArgumentNotPassedException):
+        _validate_func_args(bound_handler)
 
 
 def test_wrong_type_hint_warning_points_to_handler_registration() -> None:

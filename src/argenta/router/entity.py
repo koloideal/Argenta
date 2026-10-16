@@ -17,16 +17,19 @@ from argenta.router.exceptions import (
 )
 
 
-def _ensure_unique_command_name(command_name: str, triggers: set[str], aliases: set[str]) -> None:
-    lowered_name = command_name.lower()
+def _ensure_unique_command_name(lowered_name: str, triggers: set[str], aliases: set[str]) -> None:
     if lowered_name in triggers:
         raise RepeatedTriggerNameException({lowered_name})
     if lowered_name in aliases:
         raise RepeatedAliasNameException({lowered_name})
 
 
-def _ensure_unique_aliases(aliases: Iterable[str], taken_names: set[str]) -> None:
-    overlapping_aliases = taken_names & {alias.lower() for alias in aliases}
+def _ensure_unique_aliases(
+    lowered_aliases: Iterable[str], triggers: set[str], aliases: set[str]
+) -> None:
+    overlapping_aliases = {
+        alias for alias in lowered_aliases if alias in triggers or alias in aliases
+    }
     if overlapping_aliases:
         raise RepeatedAliasNameException(overlapping_aliases)
 
@@ -71,13 +74,15 @@ class Router:
         """
         redefined_command = Command(command) if isinstance(command, str) else command
 
-        self._validate_command(redefined_command)
-        self.aliases.update({alias.lower() for alias in redefined_command.aliases})
-        self.triggers.add(redefined_command.trigger.lower())
+        lowered_trigger, lowered_aliases = self._validate_command(redefined_command)
+        self.aliases.update(lowered_aliases)
+        self.triggers.add(lowered_trigger)
 
         def decorator(func: HandlerFunc) -> HandlerFunc:
             _validate_func_args(func)
-            self.command_handlers.add_handler(CommandHandler(func, redefined_command))
+            self.command_handlers.add_handler(
+                CommandHandler(func, redefined_command), lowered_trigger, lowered_aliases
+            )
             return func
 
         return decorator
@@ -127,19 +132,21 @@ class Router:
                 response = Response(ResponseStatus.ALL_FLAGS_VALID)
                 command_handler.handling(response)
 
-    def _validate_command(self, command: Command) -> None:
+    def _validate_command(self, command: Command) -> tuple[str, set[str]]:
         """
         Private. Validates the command registered in handler
         :param command: validated command
-        :return: None if command is valid else raise exception
+        :return: normalized trigger and aliases if command is valid else raise exception
         """
-        command_name: str = command.trigger
-        if any(char.isspace() for char in command_name):
+        if any(char.isspace() for char in command.trigger):
             raise TriggerContainSpacesException()
 
-        _ensure_unique_command_name(command_name, self.triggers, self.aliases)
-        _ensure_unique_aliases(command.aliases, self.aliases | self.triggers)
+        lowered_trigger = command.trigger.lower()
+        lowered_aliases = {alias.lower() for alias in command.aliases}
+        _ensure_unique_command_name(lowered_trigger, self.triggers, self.aliases)
+        _ensure_unique_aliases(lowered_aliases, self.triggers, self.aliases)
         _ensure_unique_flag_names(command)
+        return lowered_trigger, lowered_aliases
 
 
 def _structuring_input_flags(handled_command: Command, input_flags: InputFlags) -> Response:
@@ -172,12 +179,18 @@ def _validate_func_args(func: HandlerFunc) -> None:
     :param func: entity of the handler func
     :return: None if func is valid else raise exception
     """
-    transferred_args = getfullargspec(func).args
-    if len(transferred_args) == 0:
-        raise RequiredArgumentNotPassedException()
-
-    response_arg: str = transferred_args[0]
-    func_annotations: dict[str, None] = get_annotations(func)
+    func_code = getattr(func, "__code__", None)
+    if func_code is None:
+        transferred_args = getfullargspec(func).args
+        if len(transferred_args) == 0:
+            raise RequiredArgumentNotPassedException()
+        response_arg: str = transferred_args[0]
+        func_annotations: dict[str, object] = get_annotations(func)
+    else:
+        if func_code.co_argcount == 0:
+            raise RequiredArgumentNotPassedException()
+        response_arg = func_code.co_varnames[0]
+        func_annotations = getattr(func, "__annotations__", {})
 
     response_arg_annotation = func_annotations.get(response_arg)
 
