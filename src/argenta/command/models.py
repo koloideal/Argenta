@@ -104,6 +104,9 @@ class InputCommand:
 
 
 def _tokenize_command(raw_command: str) -> list[str]:
+    if '"' not in raw_command and "'" not in raw_command and "\\" not in raw_command:
+        return raw_command.split()
+
     lexer = shlex.shlex(raw_command, posix=True)
     lexer.whitespace_split = True
     lexer.commenters = ""
@@ -116,14 +119,16 @@ def _tokenize_command(raw_command: str) -> list[str]:
 
 def _parse_flag_tokens(tokens: list[str]) -> InputFlags:
     flags: InputFlags = InputFlags()
+    seen_names: set[str] = set()
     token_index = 0
 
     while token_index < len(tokens):
         input_flag, token_index = _parse_flag_token(tokens, token_index)
 
-        if input_flag in flags:
+        if input_flag.name in seen_names:
             raise RepeatedInputFlagsException(input_flag)
 
+        seen_names.add(input_flag.name)
         flags.add_flag(input_flag)
 
     return flags
