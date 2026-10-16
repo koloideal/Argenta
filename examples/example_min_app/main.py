@@ -1,9 +1,7 @@
-# main.py
 from argenta import App, Orchestrator
+from examples.example_min_app.routers import router
 
-from .routers import router
-
-app: App = App(prompt=">>> ", dividing_line=None)
+app: App = App(prompt=">>> ")
 orchestrator: Orchestrator = Orchestrator()
 
 

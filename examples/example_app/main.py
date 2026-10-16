@@ -6,7 +6,7 @@ app: App = App(dividing_line=StaticDividingLine("~"))
 orchestrator: Orchestrator = Orchestrator()
 
 
-def main():
+def main() -> None:
     app.include_router(work_router)
 
     app.add_message_on_startup(PredefinedMessages.USAGE)
