@@ -124,6 +124,7 @@ per-file-ignores = """
 *argparser/arguments/models.py:WPS110,WPS211
 *entrypoint_resolver/exceptions.py:WPS118
 *autocompleter/entity.py:WPS421
+*autocompleter/_ext_features_impl.py:WPS201
 *app/models.py:WPS201,WPS211,WPS214,WPS421
 *_cli/__main__.py:WPS202
 """

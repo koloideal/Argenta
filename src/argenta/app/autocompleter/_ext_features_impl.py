@@ -1,3 +1,4 @@
+import bisect
 from collections.abc import Callable, Iterable
 from functools import partial
 
@@ -40,18 +41,28 @@ class HistoryCompleter(Completer):
     def __init__(self, history_container: History, static_commands: set[str]) -> None:
         self.history_container: History = history_container
         self.static_commands: set[str] = static_commands
+        self._candidates_cache: list[str] = []
+        self._cached_history_size: int = -1
 
     def get_completions(
         self, document: Document, complete_event: CompleteEvent
     ) -> Iterable[Completion]:
         text: str = document.text_before_cursor
-        history_items: set[str] = set(self.history_container.load_history_strings())
-        all_candidates: set[str] = history_items.union(self.static_commands)
-        matches: list[str] = sorted(cmd for cmd in all_candidates if cmd.startswith(text))
+        candidates = self._candidates()
+        index = bisect.bisect_left(candidates, text)
 
-        if matches:
-            for match in matches:
-                yield Completion(match, start_position=-len(text), display=match)
+        while index < len(candidates) and candidates[index].startswith(text):
+            yield Completion(
+                candidates[index], start_position=-len(text), display=candidates[index]
+            )
+            index += 1
+
+    def _candidates(self) -> list[str]:
+        history_strings = list(self.history_container.load_history_strings())
+        if len(history_strings) != self._cached_history_size:
+            self._candidates_cache = sorted(self.static_commands | set(history_strings))
+            self._cached_history_size = len(history_strings)
+        return self._candidates_cache
 
 
 def find_common_prefix(matches: list[str]) -> str:
