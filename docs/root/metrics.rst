@@ -64,9 +64,15 @@ Displays a list of all available benchmark types with the number of tests in eac
 
    Available benchmark types:
 
+     • app_startup (5 benchmarks)
+     • command_autocomplete (3 benchmarks)
+     • command_dispatch (3 benchmarks)
+     • command_groups_render (2 benchmarks)
+     • finds_appropriate_handler (5 benchmarks)
      • flag_validation (9 benchmarks)
      • input_command_parse (7 benchmarks)
-     • finds_appropriate_handler (5 benchmarks)
+     • most_similar_command (5 benchmarks)
+     • validate_routers_for_collisions (5 benchmarks)
 
 -----
 
