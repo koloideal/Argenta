@@ -270,7 +270,7 @@ class App(BaseApp):
             repeat_command_groups_printing=repeat_command_groups_printing,
             override_system_messages=override_system_messages,
             autocompleter=autocompleter or AutoCompleter(),
-            printer=printer or Console().print,
+            printer=printer or Console(highlight=False).print,
             initial_message_font=(
                 initial_message_font or font_loader.load_bundled(BundledFont.TARTY1)
             ),

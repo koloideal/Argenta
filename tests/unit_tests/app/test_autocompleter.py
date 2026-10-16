@@ -190,6 +190,20 @@ def test_history_completer_returns_early_when_no_matches() -> None:
     assert completions == []
 
 
+def test_history_completer_picks_up_new_history_entries() -> None:
+    history = InMemoryHistory()
+    completer = HistoryCompleter(history, {"status"})
+
+    assert not list(completer.get_completions(Document("re"), CompleteEvent()))
+
+    history.append_string("restart server")
+    completions = list(completer.get_completions(Document("re"), CompleteEvent()))
+    assert [c.text for c in completions] == ["restart server"]
+
+    cached = completer._candidates()
+    assert completer._candidates() is cached
+
+
 def test_autocompleter_initial_setup_with_commands() -> None:
     completer = AutoCompleter()
 
