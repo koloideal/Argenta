@@ -153,13 +153,15 @@ def _list_fonts(ctx: typer.Context) -> None:
 
 @fonts_app.command(
     name="fetch",
-    help="Download a FIGlet font (.flf) from a community collection or a direct URL.",
+    help="Download a FIGlet font (.flf) from a community collection or a direct URL. "
+    "Fonts already downloaded once are served from the local cache.",
     short_help="Download a FIGlet font",
     epilog=(
         "Examples:\n"
         "  argenta fonts fetch slant\n"
         "  argenta fonts fetch slant --output-dir fonts/\n"
-        "  argenta fonts fetch https://example.com/fonts/doom.flf"
+        "  argenta fonts fetch https://example.com/fonts/doom.flf\n"
+        "  argenta fonts fetch slant --no-cache"
     ),
 )
 def _fetch_font(
@@ -168,8 +170,38 @@ def _fetch_font(
     output_dir: Annotated[
         str | None, typer.Option("--output-dir", "-o", help="Directory to save the font")
     ] = None,
+    cache_dir: Annotated[
+        str | None, typer.Option("--cache-dir", help="Override the font download cache")
+    ] = None,
+    no_cache: Annotated[
+        bool, typer.Option("--no-cache", help="Download fresh, bypassing the cache")
+    ] = False,
 ) -> None:
-    commands.fetch_font_handler(ctx.obj, font, output_dir)
+    commands.fetch_font_handler(ctx.obj, font, output_dir, cache_dir, no_cache)
+
+
+@fonts_app.command(
+    name="preview",
+    help="Render a preview banner in a FIGlet font, downloading it to the cache if needed.",
+    short_help="Preview a FIGlet font",
+    epilog=(
+        "Examples:\n"
+        "  argenta fonts preview slant\n"
+        '  argenta fonts preview "ANSi Shadow"\n'
+        "  argenta fonts preview https://example.com/fonts/doom.flf"
+    ),
+)
+def _preview_font(
+    ctx: typer.Context,
+    font: Annotated[str, typer.Argument(help="Font name or direct .flf URL")],
+    cache_dir: Annotated[
+        str | None, typer.Option("--cache-dir", help="Override the font download cache")
+    ] = None,
+    no_cache: Annotated[
+        bool, typer.Option("--no-cache", help="Download fresh, bypassing the cache")
+    ] = False,
+) -> None:
+    commands.preview_font_handler(ctx.obj, font, cache_dir, no_cache)
 
 
 @fonts_app.command(

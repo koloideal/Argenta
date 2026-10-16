@@ -1,11 +1,11 @@
 import importlib
 import io
 import sys
-from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
 import pytest
+from pytest_mock import MockerFixture
 from rich.console import Console
 
 from argenta import App
@@ -28,16 +28,6 @@ from argenta._cli.infrastructure.entrypoint_resolver.exceptions import (
     EntrypointNotCallableError,
     ResolveFromStringError,
 )
-
-
-@pytest.fixture(autouse=True)
-def _clean_import_state() -> Iterator[None]:
-    modules_before = set(sys.modules)
-    path_before = list(sys.path)
-    yield
-    for name in set(sys.modules) - modules_before:
-        sys.modules.pop(name, None)
-    sys.path[:] = path_before
 
 
 def _write_module(tmp_path: Path, name: str, body: str) -> Path:
@@ -104,11 +94,9 @@ def test_resolve_location_walks_up_package_dirs(tmp_path: Path) -> None:
     assert location.resolved_source_path == str(mod)
 
 
-def test_module_location_inserts_cwd_into_syspath(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_module_location_inserts_cwd_into_syspath(tmp_path: Path, mocker: MockerFixture) -> None:
     cwd = str(Path.cwd())
-    monkeypatch.setattr(sys, "path", [p for p in sys.path if p != cwd])
+    mocker.patch.object(sys, "path", [p for p in sys.path if p != cwd])
 
     resolve_module_location("clipkg_anymod")
 
@@ -189,9 +177,9 @@ def test_resolver_raises_when_module_import_fails(tmp_path: Path) -> None:
         EntrypointResolver[CallableEntryPoint](str(path)).parse_entrypoint_with_type("main")
 
 
-def test_resolver_resolves_module_by_name(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_resolver_resolves_module_by_name(tmp_path: Path, mocker: MockerFixture) -> None:
     _write_module(tmp_path, "clipkg_bymodname", "def main():\n    return 'by-name'\n")
-    monkeypatch.chdir(tmp_path)
+    mocker.patch.object(sys, "path", [str(tmp_path), *sys.path])
 
     resolved = EntrypointResolver[CallableEntryPoint](
         "clipkg_bymodname"

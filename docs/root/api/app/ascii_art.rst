@@ -56,18 +56,30 @@ FigletFontFetcher
 
 Downloads fonts from the community collections known to Argenta (the upstream ``figlet`` repository and the `figlet-fonts <https://github.com/xero/figlet-fonts>`_ collection) or from a direct URL. Powers the ``argenta fonts`` CLI commands.
 
+Downloaded fonts are stored in a local cache — ``$XDG_CACHE_HOME/argenta/fonts`` by default, or ``~/.cache/argenta/fonts`` — so a font is downloaded at most once; repeated fetches and previews are served from disk. Pass ``cache_dir`` to the constructor to override the location, or ``use_cache=False`` to bypass the cache entirely. Cached entries are validated on first download; corrupt content is never kept.
+
 **Methods:**
 
 .. automethod:: argenta.app.presentation.ascii_art.FigletFontFetcher.fetch
 
-   Downloads a font by name (trying the known collections, including capitalized spellings) or from a direct URL. The downloaded file is validated and a compiled ``.flfd`` dump is written next to it automatically. Invalid content is rejected and the file is not kept.
+   Downloads a font by name (trying the known collections, including capitalized spellings) or from a direct URL and writes it into ``target_dir``. The font is validated and a compiled ``.flfd`` dump is written next to it automatically. Invalid content is rejected and the file is not kept. If the font is already in the download cache, no network request is made.
 
-   :param font: Font name (e.g. ``"slant"``) or a direct ``https://`` URL to an ``.flf`` file.
+   :param font: Font name (e.g. ``"slant"``) or a direct ``https://`` URL to an ``.flf`` file. Names containing spaces are encoded automatically.
    :param target_dir: Directory to save the font into; defaults to the current directory.
    :raises UnreachableFigletFontException: the target directory is not writable.
    :raises InvalidFigletFontException: the name is invalid or the downloaded file is not a well-formed ``.flf``.
    :raises FigletFontFetchException: the font could not be downloaded from any source.
    :return: Path to the downloaded ``.flf`` file.
+
+.. automethod:: argenta.app.presentation.ascii_art.FigletFontFetcher.fetch_cached
+
+   Resolves a font to a local ``.flf`` path inside the download cache, downloading it on first use. Unlike ``fetch``, nothing is copied into the working directory — useful for previewing a font without saving it. The cached file is validated on download and gets a compiled ``.flfd`` sibling, so loading it afterwards is cheap.
+
+   :param font: Font name or a direct ``https://`` URL to an ``.flf`` file.
+   :raises UnreachableFigletFontException: the cache directory is not writable.
+   :raises InvalidFigletFontException: the name is invalid or the downloaded file is not a well-formed ``.flf``.
+   :raises FigletFontFetchException: the font could not be downloaded from any source.
+   :return: Path to the cached ``.flf`` file.
 
 .. automethod:: argenta.app.presentation.ascii_art.FigletFontFetcher.list_available
 

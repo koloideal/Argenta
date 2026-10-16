@@ -7,10 +7,17 @@ from rich.console import Console
 from argenta.app.presentation.ascii_art import FigletFontException, FigletFontFetcher
 
 
-def fetch_font_handler(container: Container, font: str, output_dir: str | None) -> None:
+def fetch_font_handler(
+    container: Container,
+    font: str,
+    output_dir: str | None,
+    cache_dir: str | None,
+    no_cache: bool,
+) -> None:
     console = container.get(Console)
+    fetcher = FigletFontFetcher(cache_dir=cache_dir, use_cache=not no_cache)
     try:
-        target = FigletFontFetcher().fetch(font, Path(output_dir) if output_dir else ".")
+        target = fetcher.fetch(font, Path(output_dir) if output_dir else ".")
     except FigletFontException as error:
         console.print(f"[bold red]Error:[/bold red] {error}")
         sys.exit(1)
