@@ -2,8 +2,7 @@ import difflib
 from functools import partial
 from typing import Never
 
-from rich.console import Console
-
+from argenta.app._default_printer import DefaultPrinter
 from argenta.app.autocompleter import AutoCompleter
 from argenta.app.behavior_handlers.models import (
     BehaviorHandlersFabric,
@@ -270,7 +269,7 @@ class App(BaseApp):
             repeat_command_groups_printing=repeat_command_groups_printing,
             override_system_messages=override_system_messages,
             autocompleter=autocompleter or AutoCompleter(),
-            printer=printer or Console(highlight=False).print,
+            printer=printer or DefaultPrinter(),
             initial_message_font=(
                 initial_message_font or font_loader.load_bundled(BundledFont.TARTY1)
             ),
