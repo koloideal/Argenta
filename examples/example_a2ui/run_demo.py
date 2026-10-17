@@ -9,7 +9,7 @@ from rich.console import Console
 
 def main() -> None:
     """
-    Spawns the agent (`argenta a2ui --transport ws`) and a static
+    Spawns the agent (`argenta a2ui --verbose`) and a static
     file server for the Lit client, then waits; Ctrl+C stops both
     :return: None
     """
@@ -21,8 +21,6 @@ def main() -> None:
             "-m",
             "argenta._cli",
             "a2ui",
-            "--transport",
-            "ws",
             "--verbose",
             "examples.example_a2ui.main:main",
         ],

@@ -74,10 +74,10 @@ def _a2ui(  # noqa: WPS211
         typer.Option(
             "--transport",
             "-t",
-            help="A2UI transport: 'stdio' JSONL (default) or 'ws' WebSocket server "
-            "(requires the 'websockets' package).",
+            help="A2UI transport: 'ws' WebSocket server (default) or 'stdio' JSONL "
+            "for machine clients driving the agent over stdin/stdout.",
         ),
-    ] = "stdio",
+    ] = "ws",
     port: Annotated[
         int | None,
         typer.Option("--port", "-p", help="WebSocket listen port for --transport ws."),

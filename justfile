@@ -98,7 +98,7 @@ release version:
 
 # Run the A2UI example agent over WebSocket ws://127.0.0.1:8765
 a2ui-example-agent:
-    uv run --extra a2ui argenta a2ui --transport ws --verbose examples/example_a2ui/main.py:main
+    uv run --extra a2ui argenta a2ui --verbose examples/example_a2ui/main.py:main
 
 # Serve the A2UI Lit client on http://127.0.0.1:8080
 a2ui-example-client:

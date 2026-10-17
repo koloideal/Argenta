@@ -12,6 +12,6 @@ class VerboseLog:
         self._enabled = enabled
         self._console = Console(stderr=True, markup=False, log_path=False)
 
-    def report(self, event: str, *, always: bool = False) -> None:
+    def report(self, event: str, *, always: bool = False, style: str | None = None) -> None:
         if self._enabled or always:
-            self._console.log(f"a2ui: {event}")
+            self._console.log(f"a2ui: {event}", style=style)

@@ -120,14 +120,22 @@ def test_a2ui_ws_transport_sets_env(tmp_path: Path) -> None:
     assert os.environ["ARGENTA_A2UI_WS_PORT"] == "9999"
 
 
-def test_a2ui_transport_defaults_to_stdio(tmp_path: Path) -> None:
+def test_a2ui_transport_defaults_to_ws(tmp_path: Path) -> None:
     path = _write_module(tmp_path, "climod_run_std", "def main():\n    pass\n")
     result = runner.invoke(app, ["a2ui", f"{path}:main"])
 
     assert result.exit_code == 0
-    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "stdio"
+    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "ws"
     assert "ARGENTA_A2UI_WS_PORT" not in os.environ
     assert "ARGENTA_A2UI_VERBOSE" not in os.environ
+
+
+def test_a2ui_stdio_transport_sets_env(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_stdio", "def main():\n    pass\n")
+    result = runner.invoke(app, ["a2ui", "--transport", "stdio", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "stdio"
 
 
 def test_a2ui_verbose_sets_env(tmp_path: Path) -> None:

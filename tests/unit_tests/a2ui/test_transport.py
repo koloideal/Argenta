@@ -1,6 +1,8 @@
 import json
 from io import StringIO
 
+import pytest
+
 from argenta.a2ui.transport import MemoryTransport, StdioTransport
 
 
@@ -42,6 +44,43 @@ def test_stdio_actions_skips_blank_and_malformed() -> None:
     messages = list(transport.actions())
 
     assert messages == [{"action": {"name": "a"}}]
+
+
+class _TTYIO(StringIO):
+    """Private. A StringIO that pretends to be a terminal"""
+
+    def isatty(self) -> bool:
+        return True
+
+
+def test_stdio_announces_on_stderr(capsys: pytest.CaptureFixture[str]) -> None:
+    StdioTransport(out=StringIO(), inp=StringIO())
+
+    assert "stdio transport" in capsys.readouterr().err
+
+
+def test_stdio_warns_when_driven_by_a_terminal(capsys: pytest.CaptureFixture[str]) -> None:
+    StdioTransport(out=StringIO(), inp=_TTYIO())
+
+    assert "machine transport" in capsys.readouterr().err
+
+
+def test_stdio_pretty_prints_when_stdout_is_a_tty() -> None:
+    out = _TTYIO()
+
+    StdioTransport(out=out, inp=StringIO()).send(
+        {"version": "v0.9", "createSurface": {"surfaceId": "main"}}
+    )
+
+    assert '  "version": "v0.9",' in out.getvalue()
+
+
+def test_stdio_verbose_reports_sent_kinds(capsys: pytest.CaptureFixture[str]) -> None:
+    transport = StdioTransport(out=StringIO(), inp=StringIO(), verbose=True)
+
+    transport.send({"version": "v0.9", "createSurface": {"surfaceId": "main"}})
+
+    assert "sent 'createSurface'" in capsys.readouterr().err
 
 
 def test_stdio_close_flushes_output() -> None:

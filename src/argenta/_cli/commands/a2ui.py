@@ -18,7 +18,7 @@ from argenta.orchestrator.entity import RunnerConfig
 class A2UIRunOptions:
     """Private. Options of the `argenta a2ui` command"""
 
-    transport: str = "stdio"
+    transport: str = "ws"
     port: int | None = None
     verbose: bool = False
     hot_reload: bool = False
@@ -56,8 +56,9 @@ def _reload_supervised(
             "[bold red]Error:[/bold red] cannot resolve a directory to watch for --reload"
         )
         sys.exit(1)
-    console.print(f"a2ui: watching {watch_root} for changes")
-    sys.exit(supervise_cli(_child_args(entrypoint_path, options), watch_root, console))
+    stderr = Console(stderr=True)
+    stderr.print(f"a2ui: watching {watch_root} for changes")
+    sys.exit(supervise_cli(_child_args(entrypoint_path, options), watch_root, stderr))
 
 
 def a2ui_handler(container: Container, entrypoint_path: str, options: A2UIRunOptions) -> None:

@@ -112,12 +112,12 @@ class Orchestrator:
     def _resolve_agent_transport(self) -> Transport:
         """Private. Builds the agent transport selected via `argenta run` flags"""
         config = self._runner_config
+        verbose = bool(os.getenv(config.a2ui_verbose_env_var))
         if os.getenv(config.a2ui_transport_env_var) == config.a2ui_ws_transport:
             port_raw = os.getenv(config.a2ui_ws_port_env_var)
             port = int(port_raw) if port_raw else config.a2ui_ws_default_port
-            verbose = bool(os.getenv(config.a2ui_verbose_env_var))
             return self._build_ws_transport(config.a2ui_ws_default_host, port, verbose)
-        return StdioTransport()
+        return StdioTransport(verbose=verbose)
 
     def _build_ws_transport(self, host: str, port: int, verbose: bool) -> Transport:
         """Private. Builds the WebSocket transport; `websockets` is an optional

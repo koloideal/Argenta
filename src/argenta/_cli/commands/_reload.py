@@ -34,7 +34,7 @@ def _terminate(child: subprocess.Popen[bytes] | None) -> None:
 
 def _spawn_and_monitor(child_args: list[str], stop: threading.Event) -> subprocess.Popen[bytes]:
     """Private. Spawns the child and sets ``stop`` once it exits on its own"""
-    child = subprocess.Popen(child_args, stdin=subprocess.DEVNULL)
+    child = subprocess.Popen(child_args)
     threading.Thread(target=_monitor_child, args=(child, stop), daemon=True).start()
     return child
 
