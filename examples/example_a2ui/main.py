@@ -1,14 +1,22 @@
 from argenta import App, Orchestrator
-from argenta.app import PredefinedMessages, StaticDividingLine
+from argenta.app import StaticDividingLine
+from argenta.app.presentation.ascii_art import AsciiArtRenderer, BundledFont, FigletFontLoader
 from examples.example_a2ui.routers import release_router
 
-app: App = App(dividing_line=StaticDividingLine("~"))
+_banner: str = AsciiArtRenderer().render(
+    "Argenta", FigletFontLoader().load_bundled(BundledFont.TARTY1)
+)
+app: App = App(
+    initial_message=_banner,
+    dividing_line=StaticDividingLine("~"),
+    override_system_messages=True,
+    printer=print,
+)
 orchestrator: Orchestrator = Orchestrator()
 
 
 def main() -> None:
     app.include_router(release_router)
-    app.add_message_on_startup(PredefinedMessages.HELP)
     orchestrator.run_repl(app)
 
 

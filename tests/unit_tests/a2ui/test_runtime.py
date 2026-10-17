@@ -55,6 +55,15 @@ def test_run_emits_initial_messages_and_cleanup() -> None:
     assert _section(transport.sent[-1], "deleteSurface") == {"surfaceId": "main"}
 
 
+def test_run_sends_initial_message_to_log() -> None:
+    app = App(override_system_messages=True, initial_message="Welcome banner", printer=print)
+    transport = MemoryTransport(incoming=[{"action": {"name": "q", "context": {}}}])
+
+    AgentRuntime(app, transport).run()
+
+    assert "Welcome banner" in _log_updates(transport)[0]
+
+
 def test_action_dispatches_and_captures_output() -> None:
     def handler(_response: Response) -> None:
         print("handler output")

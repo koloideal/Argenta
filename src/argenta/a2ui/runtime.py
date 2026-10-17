@@ -52,6 +52,9 @@ class AgentRuntime:
         Public. Emits the surface and enters the action dispatch loop
         :return: None
         """
+        self._capture_into_log(
+            lambda: self._app.viewer.view_initial_message(self._app.initial_message)
+        )
         self._capture_into_log(self._app.prepare_for_run)
 
         components, data_model = build_surface(self._app.registered_routers, self._config)

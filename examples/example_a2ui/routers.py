@@ -6,8 +6,8 @@ from argenta import Command, Response, Router
 from argenta.command import Flag, Flags
 from argenta.command.flag import PossibleValues, ValidationStatus
 
-release_router: Router = Router(title="Release commands:")
-console = Console()
+release_router: Router = Router(title="\nRelease commands:\n")
+console = Console(highlight=False)
 
 
 def _flag_value(response: Response, name: str) -> str:
@@ -33,9 +33,7 @@ def deploy_handler(response: Response) -> None:
     env_value = _flag_value(response, "env")
     tag_value = _flag_value(response, "tag")
     force_text = "yes" if force_flag else "no"
-    console.print(
-        f"[bold green]Deploying[/bold green] env={env_value} force={force_text} tag={tag_value}"
-    )
+    console.print(f"Deploying env={env_value} force={force_text} tag={tag_value}")
 
 
 @release_router.command(
@@ -47,4 +45,4 @@ def deploy_handler(response: Response) -> None:
 )
 def rollback_handler(response: Response) -> None:
     to_value = _flag_value(response, "to")
-    console.print(f"[bold yellow]Rolling back[/bold yellow] to={to_value}")
+    console.print(f"Rolling back to={to_value}")

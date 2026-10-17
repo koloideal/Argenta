@@ -79,6 +79,10 @@ class Orchestrator:
         Public. Runs the application as an A2UI agent: emits a surface built
         from the registered commands and dispatches incoming actions through
         the regular command handling path
+
+        Construct the App with ``override_system_messages=True`` so system
+        output is rendered as plain text — Rich markup is meaningless for
+        non-terminal renderers
         :param app: a running application
         :param transport: the A2UI message transport
         :param config: optional A2UI surface and envelope configuration
