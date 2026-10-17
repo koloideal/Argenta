@@ -1,6 +1,5 @@
 from argenta import App, Command, Orchestrator
-
-from .handlers import router
+from metrics.handlers import router
 
 app = App(initial_message="metrics", exit_command=Command("exit", aliases=["quit"]))
 

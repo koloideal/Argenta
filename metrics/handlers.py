@@ -1,27 +1,36 @@
 import re
-from datetime import UTC, datetime
 from importlib.metadata import version
-from pathlib import Path
 
-from rich.console import Console
-
+from argenta import Command, Response, Router
 from argenta.command import Flag, Flags, PossibleValues
 from argenta.command.flag import ValidationStatus
-from argenta.command.models import Command
-from argenta.response import Response
-from argenta.router import Router
+from metrics.benchmarks.core.models import (
+    BenchmarkGroupResult,
+    run_benchmarks_by_type,
+    run_benchmarks_grouped_by_type,
+)
+from metrics.benchmarks.entity import benchmarks as registered_benchmarks
+from metrics.cli_helpers import (
+    console,
+    diagrams_output_dir,
+    generate_group_diagrams,
+    is_flag_enabled,
+    print_system_info,
+    report_unknown_type,
+    resolve_iterations,
+)
+from metrics.services import (
+    DiagramGenerator,
+    ReleaseGenerator,
+    ReportTableGenerator,
+    get_system_info,
+)
 
-from .benchmarks.core.models import BenchmarkGroupResult
-from .benchmarks.entity import benchmarks as registered_benchmarks
-from .services.diagram_generator import DiagramGenerator
-from .services.release_generator import ReleaseGenerator
-from .services.report_table_generator import ReportTableGenerator
-from .services.system_info_reader import get_system_info
-
-console = Console()
 router = Router(title="Metrics commands:", disable_redirect_stdout=True)
 
 POSITIVE_INTEGER_PATTERN = re.compile(r"^[1-9]\d*$")
+_WITHOUT_GC_FLAG = "without-gc"
+_WITHOUT_SYSTEM_INFO_FLAG = "without-system-info"
 
 
 @router.command(
@@ -30,8 +39,8 @@ POSITIVE_INTEGER_PATTERN = re.compile(r"^[1-9]\d*$")
         description="Print all benchmarks results",
         flags=Flags(
             [
-                Flag("without-gc", possible_values=PossibleValues.NEITHER),
-                Flag("without-system-info", possible_values=PossibleValues.NEITHER),
+                Flag(_WITHOUT_GC_FLAG, possible_values=PossibleValues.NEITHER),
+                Flag(_WITHOUT_SYSTEM_INFO_FLAG, possible_values=PossibleValues.NEITHER),
             ]
         ),
     )
@@ -39,18 +48,12 @@ POSITIVE_INTEGER_PATTERN = re.compile(r"^[1-9]\d*$")
 def all_print_handler(response: Response) -> None:
     report_generator = ReportTableGenerator(get_system_info())
 
-    without_system_info = response.input_flags.get_flag_by_name(
-        "without-system-info", with_status=ValidationStatus.VALID
-    )
-    if not without_system_info:
-        console.print(report_generator.generate_system_info_header())
-        console.print(report_generator.generate_system_info_table())
+    if not is_flag_enabled(response, _WITHOUT_SYSTEM_INFO_FLAG):
+        print_system_info(report_generator)
 
-    is_gc_disabled = response.input_flags.get_flag_by_name(
-        "without-gc", with_status=ValidationStatus.VALID
-    )
-    type_grouped_benchmarks: list[BenchmarkGroupResult] = (
-        registered_benchmarks.run_benchmarks_grouped_by_type(is_gc_disabled=bool(is_gc_disabled))
+    type_grouped_benchmarks: list[BenchmarkGroupResult] = run_benchmarks_grouped_by_type(
+        registered_benchmarks,
+        is_gc_disabled=is_flag_enabled(response, _WITHOUT_GC_FLAG),
     )
 
     for benchmark_group_result in type_grouped_benchmarks:
@@ -79,8 +82,8 @@ def list_types_handler(_: Response) -> None:
         flags=Flags(
             [
                 Flag("type", possible_values=registered_benchmarks.get_types()),
-                Flag("without-gc", possible_values=PossibleValues.NEITHER),
-                Flag("without-system-info", possible_values=PossibleValues.NEITHER),
+                Flag(_WITHOUT_GC_FLAG, possible_values=PossibleValues.NEITHER),
+                Flag(_WITHOUT_SYSTEM_INFO_FLAG, possible_values=PossibleValues.NEITHER),
             ]
         ),
     )
@@ -93,30 +96,19 @@ def run_type_handler(response: Response) -> None:
         console.print("[yellow]Usage: run-type --type <type_name>[/yellow]")
         return
 
-    benchmark_type = type_flag.input_value
-
     if type_flag.status != ValidationStatus.VALID:
-        console.print(f"[red]Error: No benchmarks found for type '{benchmark_type}'[/red]")
-        console.print("\n[yellow]Available types:[/yellow]")
-        types = registered_benchmarks.get_types()
-        for t in types:
-            console.print(f"  • {t}")
+        report_unknown_type(type_flag.input_value)
         return
 
     report_generator = ReportTableGenerator(get_system_info())
 
-    without_system_info = response.input_flags.get_flag_by_name(
-        "without-system-info", with_status=ValidationStatus.VALID
-    )
-    if not without_system_info:
-        console.print(report_generator.generate_system_info_header())
-        console.print(report_generator.generate_system_info_table())
+    if not is_flag_enabled(response, _WITHOUT_SYSTEM_INFO_FLAG):
+        print_system_info(report_generator)
 
-    is_gc_disabled = response.input_flags.get_flag_by_name(
-        "without-gc", with_status=ValidationStatus.VALID, default=False
-    )
-    benchmark_group_result = registered_benchmarks.run_benchmarks_by_type(
-        benchmark_type, is_gc_disabled=bool(is_gc_disabled)
+    benchmark_group_result = run_benchmarks_by_type(
+        registered_benchmarks,
+        type_flag.input_value,
+        is_gc_disabled=is_flag_enabled(response, _WITHOUT_GC_FLAG),
     )
 
     console.print(report_generator.generate_benchmark_table_header(benchmark_group_result))
@@ -130,8 +122,8 @@ def release_generate_handler(_: Response) -> None:
     console.print(f"[cyan]Generating release report for version:[/cyan] [bold]{lib_version}[/bold]")
     console.print("[dim]Running benchmarks (1000 iterations, GC disabled)...[/dim]\n")
 
-    type_grouped_benchmarks: list[BenchmarkGroupResult] = (
-        registered_benchmarks.run_benchmarks_grouped_by_type(iterations=1000, is_gc_disabled=True)
+    type_grouped_benchmarks: list[BenchmarkGroupResult] = run_benchmarks_grouped_by_type(
+        registered_benchmarks, iterations=1000, is_gc_disabled=True
     )
 
     release_generator = ReleaseGenerator(lib_version)
@@ -154,49 +146,26 @@ def release_generate_handler(_: Response) -> None:
         description="Generate diagrams for all benchmarks",
         flags=Flags(
             [
-                Flag("without-gc", possible_values=PossibleValues.NEITHER),
+                Flag(_WITHOUT_GC_FLAG, possible_values=PossibleValues.NEITHER),
                 Flag("iterations", possible_values=POSITIVE_INTEGER_PATTERN),
             ]
         ),
     )
 )
 def diagrams_generate_handler(response: Response) -> None:
-    iterations = 100
-    iterations_flag = response.input_flags.get_flag_by_name(
-        "iterations", with_status=ValidationStatus.VALID
-    )
-    if iterations_flag:
-        iterations = int(iterations_flag.input_value)
-
-    is_gc_disabled = bool(
-        response.input_flags.get_flag_by_name("without-gc", with_status=ValidationStatus.VALID)
-    )
+    iterations = resolve_iterations(response)
+    is_gc_disabled = is_flag_enabled(response, _WITHOUT_GC_FLAG)
 
     console.print("[cyan]Running all benchmarks...[/cyan]")
     console.print(f"[dim]Iterations: {iterations}, GC Disabled: {is_gc_disabled}[/dim]\n")
 
-    type_grouped_benchmarks: list[BenchmarkGroupResult] = (
-        registered_benchmarks.run_benchmarks_grouped_by_type(
-            iterations=iterations, is_gc_disabled=is_gc_disabled
-        )
+    output_dir = diagrams_output_dir()
+    generated_count = generate_group_diagrams(
+        run_benchmarks_grouped_by_type(
+            registered_benchmarks, iterations=iterations, is_gc_disabled=is_gc_disabled
+        ),
+        DiagramGenerator(output_dir),
     )
-
-    timestamp = datetime.now(UTC).strftime("%Y-%m-%d_%H-%M-%S")
-    output_dir = Path("metrics/reports/diagrams") / timestamp
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    diagram_generator = DiagramGenerator(output_dir)
-
-    console.print("[green]✓[/green] Benchmarks completed. Generating diagrams...\n")
-
-    generated_count = 0
-
-    for benchmark_group in type_grouped_benchmarks:
-        console.print(f"[cyan]Generating diagram for:[/cyan] [bold]{benchmark_group.type_}[/bold]")
-
-        comparison_path = diagram_generator.generate_comparison_diagram(benchmark_group)
-        generated_count += 1
-        console.print(f"  [green]✓[/green] {comparison_path.name}\n")
 
     console.print(f"[bold green]✓ Successfully generated {generated_count} diagrams[/bold green]")
     console.print(f"[cyan]Output directory:[/cyan] [bold]{output_dir}[/bold]")

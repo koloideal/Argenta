@@ -1,11 +1,30 @@
-__all__ = ["ReleaseGenerator"]
-
 import json
 import shutil
 from pathlib import Path
 
-from ..benchmarks.core.models import BenchmarkGroupResult
-from .diagram_generator import DiagramGenerator
+from metrics.benchmarks.core.models import BenchmarkGroupResult
+from metrics.services.diagram_generator import DiagramGenerator
+
+
+def _dump_group_json(benchmark_group: BenchmarkGroupResult, type_dir: Path) -> None:
+    json_data = {
+        "type": benchmark_group.type_,
+        "iterations": benchmark_group.iterations,
+        "gc_disabled": benchmark_group.is_gc_disabled,
+        "benchmarks": [
+            {
+                "name": bench_result.name,
+                "description": bench_result.description,
+                "avg_time": bench_result.avg_time,
+                "median_time": bench_result.median_time,
+                "std_dev": bench_result.std_dev,
+            }
+            for bench_result in benchmark_group.benchmark_results
+        ],
+    }
+    json_path = type_dir / f"{benchmark_group.type_}.json"
+    with json_path.open("w", encoding="utf-8") as json_file:
+        json.dump(json_data, json_file, indent=2, ensure_ascii=False)
 
 
 class ReleaseGenerator:
@@ -22,28 +41,7 @@ class ReleaseGenerator:
         for benchmark_group in benchmark_groups:
             type_dir = self.output_dir / benchmark_group.type_
             type_dir.mkdir(exist_ok=True)
-
-            diagram_generator = DiagramGenerator(type_dir)
-            diagram_generator.generate_comparison_diagram(benchmark_group)
-
-            json_data = {
-                "type": benchmark_group.type_,
-                "iterations": benchmark_group.iterations,
-                "gc_disabled": benchmark_group.is_gc_disabled,
-                "benchmarks": [
-                    {
-                        "name": br.name,
-                        "description": br.description,
-                        "avg_time": br.avg_time,
-                        "median_time": br.median_time,
-                        "std_dev": br.std_dev,
-                    }
-                    for br in benchmark_group.benchmark_results
-                ],
-            }
-
-            json_path = type_dir / f"{benchmark_group.type_}.json"
-            with open(json_path, "w", encoding="utf-8") as f:
-                json.dump(json_data, f, indent=2, ensure_ascii=False)
+            DiagramGenerator(type_dir).generate_comparison_diagram(benchmark_group)
+            _dump_group_json(benchmark_group, type_dir)
 
         return self.output_dir

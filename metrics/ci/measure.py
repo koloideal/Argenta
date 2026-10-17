@@ -16,6 +16,8 @@ from metrics.benchmarks.core.models import FuncForBenchmark
 from metrics.benchmarks.entity import benchmarks
 from metrics.ci.models import Measurement
 
+_DEFAULT_BATCH_SECONDS = 0.02
+
 
 def time_per_call(func: FuncForBenchmark, *, batch_seconds: float, repeats: int) -> float:
     timer = timeit.Timer(func)
@@ -39,7 +41,7 @@ def measure_all(*, batch_seconds: float, repeats: int) -> list[Measurement]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--batch-seconds", type=float, default=0.02)
+    parser.add_argument("--batch-seconds", type=float, default=_DEFAULT_BATCH_SECONDS)
     parser.add_argument("--repeats", type=int, default=5)
     args = parser.parse_args()
 

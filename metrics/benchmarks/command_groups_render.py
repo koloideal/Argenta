@@ -1,18 +1,11 @@
-__all__ = [
-    "benchmark_render_few_commands",
-    "benchmark_render_many_commands",
-]
-
 from argenta import App
 from argenta.command.models import Command
 from argenta.response import Response
 from argenta.router import Router
+from metrics.benchmarks.entity import benchmarks
 
-from .entity import benchmarks
 
-
-def _handler(_res: Response) -> None:
-    pass
+def _command_handler(_res: Response) -> None: ...
 
 
 def setup_app(router_count: int, commands_per_router: int) -> App:
@@ -25,7 +18,7 @@ def setup_app(router_count: int, commands_per_router: int) -> App:
                     f"cmd{router_index}_{command_index}",
                     description=f"Does work {router_index}_{command_index}",
                 )
-            )(_handler)
+            )(_command_handler)
         app.include_router(router)
     return app
 

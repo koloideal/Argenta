@@ -1,23 +1,20 @@
-__all__ = [
-    "benchmark_autocomplete_extreme",
-    "benchmark_autocomplete_many_commands",
-    "benchmark_autocomplete_no_match",
-]
-
 from prompt_toolkit.completion import CompleteEvent
 from prompt_toolkit.document import Document
 from prompt_toolkit.history import InMemoryHistory
 
 from argenta.app.autocompleter._ext_features_impl import HistoryCompleter
+from metrics.benchmarks.entity import benchmarks
 
-from .entity import benchmarks
+_HISTORY_ENTRIES_COUNT = 20
+_MANY_COMMANDS_COUNT = 50
+_EXTREME_COMMANDS_COUNT = 2100
 
 
 def _completer_with_commands(command_count: int) -> HistoryCompleter:
     history = InMemoryHistory()
-    for history_index in range(20):
+    for history_index in range(_HISTORY_ENTRIES_COUNT):
         history.append_string(f"old{history_index} --flag value")
-    static_commands = {f"command{i}" for i in range(command_count)}
+    static_commands = {f"command{command_index}" for command_index in range(command_count)}
     return HistoryCompleter(history, static_commands)
 
 
@@ -25,8 +22,8 @@ def _complete(completer: HistoryCompleter, text: str) -> None:
     list(completer.get_completions(Document(text), CompleteEvent()))
 
 
-_MANY_COMPLETER = _completer_with_commands(50)
-_EXTREME_COMPLETER = _completer_with_commands(2100)
+_MANY_COMPLETER = _completer_with_commands(_MANY_COMMANDS_COUNT)
+_EXTREME_COMPLETER = _completer_with_commands(_EXTREME_COMMANDS_COUNT)
 
 
 @benchmarks.register(

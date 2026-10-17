@@ -114,7 +114,6 @@ max-line-length = 100
 per-file-ignores = """
 *__init__.py:F401,F403
 *tests/*:WPS
-*metrics/*:WPS
 *integration.py:WPS410
 *app/presentation/renderers.py:WPS602,WPS118,WPS214
 *command/flag/defaults.py:WPS115
