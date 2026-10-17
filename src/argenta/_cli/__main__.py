@@ -70,14 +70,15 @@ def _a2ui(  # noqa: WPS211
         str, typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>")
     ],
     transport: Annotated[
-        Literal["stdio", "ws", "sse", "socket"],
+        Literal["stdio", "ws", "sse", "socket", "poll"],
         typer.Option(
             "--transport",
             "-t",
             help="A2UI transport: 'ws' WebSocket server (default), 'sse' HTTP "
-            "Server-Sent Events + POST actions, 'socket' JSONL over TCP or a "
-            "Unix socket for native clients, or 'stdio' JSONL for machine "
-            "clients driving the agent over stdin/stdout.",
+            "Server-Sent Events + POST actions, 'poll' HTTP long-polling for "
+            "proxies that block streaming, 'socket' JSONL over TCP or a Unix "
+            "socket for native clients, or 'stdio' JSONL for machine clients "
+            "driving the agent over stdin/stdout.",
         ),
     ] = "ws",
     port: Annotated[

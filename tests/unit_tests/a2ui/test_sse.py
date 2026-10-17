@@ -4,7 +4,7 @@ from collections.abc import Iterator
 
 import pytest
 
-from argenta.a2ui.transport.sse import SSETransport
+from argenta.a2ui.transport.http.sse import SSETransport
 
 
 @pytest.fixture

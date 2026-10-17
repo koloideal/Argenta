@@ -5,7 +5,13 @@ from dishka import Provider
 from pytest_mock import MockerFixture
 
 from argenta import App, Router
-from argenta.a2ui import A2UIConfig, SocketTransport, SSETransport, StdioTransport
+from argenta.a2ui import (
+    A2UIConfig,
+    LongPollTransport,
+    SocketTransport,
+    SSETransport,
+    StdioTransport,
+)
 from argenta.a2ui.transport.websocket import WebSocketTransport
 from argenta.command import Command
 from argenta.orchestrator import Orchestrator, RunnerConfig
@@ -292,6 +298,25 @@ def test_run_repl_a2ui_socket_unix_path(
 
     called_transport = mock_run_agent.call_args.args[1]
     assert isinstance(called_transport, SocketTransport)
+    called_transport.close()
+
+
+def test_run_repl_a2ui_poll_transport_selected(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that ARGENTA_A2UI_TRANSPORT=poll picks the long-poll transport"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    monkeypatch.setenv("ARGENTA_A2UI_TRANSPORT", "poll")
+    monkeypatch.setenv("ARGENTA_A2UI_PORT", "0")
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+
+    Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
+
+    called_transport = mock_run_agent.call_args.args[1]
+    assert isinstance(called_transport, LongPollTransport)
     called_transport.close()
 
 

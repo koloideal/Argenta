@@ -4,12 +4,11 @@ import threading
 from collections.abc import Iterator
 from contextlib import suppress
 from http import HTTPStatus
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from io import BufferedIOBase
 
 from argenta.a2ui._verbose import VerboseLog
-from argenta.a2ui.messages import decode_message
 from argenta.a2ui.models import Message
+from argenta.a2ui.transport.http.base import A2UIHttpHandler, A2UIHttpServer
 
 
 def _write_frame(writer: BufferedIOBase, payload: str) -> bool:
@@ -21,33 +20,16 @@ def _write_frame(writer: BufferedIOBase, payload: str) -> bool:
     return False
 
 
-class _SSEServer(ThreadingHTTPServer):
-    daemon_threads = True
-
-    def __init__(self, address: tuple[str, int], transport: "SSETransport") -> None:
-        super().__init__(address, _SSEHandler)
-        self.transport = transport
+class _SSEServer(A2UIHttpServer):
+    transport: "SSETransport"
 
 
-class _SSEHandler(BaseHTTPRequestHandler):
-    """Private. Serves the SSE stream (GET /events) and the action
-    ingress endpoint (POST /actions)"""
+class _SSEHandler(A2UIHttpHandler):
+    """Private. Serves the SSE stream on GET /events"""
 
     server: _SSEServer
-    protocol_version = "HTTP/1.1"
 
-    def do_GET(self) -> None:
-        if self.path == "/":
-            index = (
-                b"Argenta A2UI agent (SSE transport)\n"
-                b"GET /events   -- A2UI messages stream\n"
-                b"POST /actions -- client action messages\n"
-            )
-            self._respond(HTTPStatus.OK, body=index)
-            return
-        if self.path != "/events":
-            self._respond(HTTPStatus.NOT_FOUND)
-            return
+    def serve_events(self) -> None:
         transport = self.server.transport
         client = transport.register_client()
         self._send_stream_headers()
@@ -56,41 +38,6 @@ class _SSEHandler(BaseHTTPRequestHandler):
             if payload is None or not _write_frame(self.wfile, payload):
                 break
         transport.unregister_client(client)
-
-    def do_POST(self) -> None:
-        if self.path != "/actions":
-            self._respond(HTTPStatus.NOT_FOUND)
-            return
-        length = int(self.headers.get("Content-Length") or 0)
-        message = decode_message(self.rfile.read(length))
-        if message is None:
-            self._respond(HTTPStatus.BAD_REQUEST)
-            return
-        self.server.transport.incoming.put(message)
-        self._respond(HTTPStatus.ACCEPTED)
-
-    def do_OPTIONS(self) -> None:
-        self.send_response(HTTPStatus.NO_CONTENT)
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.send_header("Content-Length", "0")
-        self.end_headers()
-
-    def end_headers(self) -> None:
-        # the demo client is served from a different port
-        self.send_header("Access-Control-Allow-Origin", "*")
-        super().end_headers()
-
-    def log_message(self, msg_format: str, *args: object) -> None:
-        message = msg_format % args
-        self.server.transport.verbose.report(f"http: {message}")
-
-    def _respond(self, status: HTTPStatus, body: bytes = b"") -> None:
-        self.send_response(status)
-        self.send_header("Content-Type", "text/plain; charset=utf-8")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
 
     def _send_stream_headers(self) -> None:
         self.send_response(HTTPStatus.OK)
@@ -116,7 +63,7 @@ class SSETransport:
         self._clients: list[queue.Queue[str | None]] = []
         self._history: list[str] = []
         self._lock = threading.Lock()
-        self._server = _SSEServer((host, port), self)
+        self._server = _SSEServer((host, port), _SSEHandler, self)
         self.port = int(self._server.socket.getsockname()[1])  # Private. Actual bound port
         self._thread = threading.Thread(target=self._server.serve_forever, daemon=True)
         self._thread.start()

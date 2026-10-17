@@ -7,9 +7,11 @@ import { renderMarkdown } from '@a2ui/markdown-it';
 const DEFAULT_AGENT_URL = 'ws://127.0.0.1:8765';
 
 /**
- * Two transports: ?agent=ws://host:port (WebSocket) or
- * ?agent=http://host:port (SSE stream + POST /actions).
- * A ws:// URL that never opens falls back to SSE on the same host:port.
+ * Three transports: ?agent=ws://host:port (WebSocket),
+ * ?agent=http://host:port (SSE stream + POST /actions) or
+ * ?agent=poll://host:port (long-poll batches + POST /actions).
+ * Fallback chain: ws:// that never opens → SSE → long poll,
+ * all on the same host:port.
  */
 
 /**
@@ -68,6 +70,10 @@ class ArgentaA2uiApp extends LitElement {
 
   connect() {
     const url = this.agentUrl();
+    if (url.startsWith('poll://')) {
+      this.connectPoll(url.replace(/^poll/, 'http'));
+      return;
+    }
     if (url.startsWith('http')) {
       this.connectSse(url);
       return;
@@ -99,7 +105,9 @@ class ArgentaA2uiApp extends LitElement {
   connectSse(url) {
     this.sseUrl = url;
     const source = new EventSource(`${url}/events`);
+    let opened = false;
     source.addEventListener('open', () => {
+      opened = true;
       this.status = 'connected';
     });
     source.addEventListener('message', (event) => {
@@ -107,8 +115,33 @@ class ArgentaA2uiApp extends LitElement {
     });
     // EventSource reconnects by itself; the transport replays history
     source.addEventListener('error', () => {
+      if (!opened) {
+        // not an SSE endpoint — retry the same address as a long poll
+        source.close();
+        this.connectPoll(url);
+        return;
+      }
       this.status = 'disconnected, reconnecting…';
     });
+  }
+
+  async connectPoll(url) {
+    this.sseUrl = url;
+    let cursor = 0;
+    for (;;) {
+      try {
+        const response = await fetch(`${url}/events?after=${cursor}`);
+        const batch = await response.json();
+        for (const message of batch.messages) {
+          this.processor.processMessages(message);
+        }
+        cursor = batch.next;
+        this.status = 'connected';
+      } catch {
+        this.status = 'disconnected, reconnecting…';
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+    }
   }
 
   send(message) {

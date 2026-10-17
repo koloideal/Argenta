@@ -6,6 +6,7 @@ from dishka import Provider, make_container
 from argenta.a2ui import (
     A2UIConfig,
     AgentRuntime,
+    LongPollTransport,
     SocketTransport,
     SSETransport,
     StdioTransport,
@@ -33,6 +34,7 @@ class RunnerConfig:
     a2ui_ws_transport: str = "ws"
     a2ui_sse_transport: str = "sse"
     a2ui_socket_transport: str = "socket"
+    a2ui_poll_transport: str = "poll"
     a2ui_socket_path_env_var: str = "ARGENTA_A2UI_SOCKET_PATH"
     a2ui_port_env_var: str = "ARGENTA_A2UI_PORT"
     a2ui_default_host: str = "127.0.0.1"
@@ -136,6 +138,10 @@ class Orchestrator:
                 port=self._server_port(),
                 path=os.getenv(config.a2ui_socket_path_env_var),
                 verbose=verbose,
+            )
+        if transport_name == config.a2ui_poll_transport:
+            return LongPollTransport(
+                host=config.a2ui_default_host, port=self._server_port(), verbose=verbose
             )
         return StdioTransport(verbose=verbose)
 
