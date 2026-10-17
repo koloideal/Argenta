@@ -85,6 +85,23 @@ def test_run_invokes_entrypoint_callable(tmp_path: Path) -> None:
     assert os.environ["RUN_FROM_ARGENTA_RUNNER"] == "1"
 
 
+def test_run_a2ui_sets_agent_mode_env(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_a2ui", "def main():\n    pass\n")
+    result = runner.invoke(app, ["run", "--a2ui", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert os.environ["RUN_FROM_ARGENTA_RUNNER"] == "1"
+    assert os.environ["ARGENTA_RUN_MODE"] == "a2ui"
+
+
+def test_run_without_a2ui_leaves_mode_env_unset(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_plain", "def main():\n    pass\n")
+    result = runner.invoke(app, ["run", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert "ARGENTA_RUN_MODE" not in os.environ
+
+
 def test_run_fails_on_malformed_spec() -> None:
     result = runner.invoke(app, ["run", "no_colon_here"])
     assert result.exit_code == 1

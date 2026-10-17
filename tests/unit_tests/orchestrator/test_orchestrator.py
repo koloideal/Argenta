@@ -3,9 +3,9 @@ from dishka import Provider
 from pytest_mock import MockerFixture
 
 from argenta import App, Router
-from argenta.a2ui import A2UIConfig
+from argenta.a2ui import A2UIConfig, StdioTransport
 from argenta.command import Command
-from argenta.orchestrator import Orchestrator
+from argenta.orchestrator import Orchestrator, RunnerConfig
 from argenta.orchestrator.argparser import ArgParser
 from argenta.response import Response
 
@@ -168,6 +168,46 @@ def test_run_repl_includes_custom_providers_in_container(
     # Check that custom_provider was passed to make_container
     call_args = mock_make_container.call_args[0]
     assert custom_provider in call_args
+
+
+def test_run_repl_delegates_to_run_agent_in_a2ui_mode(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that run_repl delegates to run_agent when ARGENTA_RUN_MODE=a2ui"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+    mock_repl_runtime = mocker.patch("argenta.orchestrator.entity.REPLRuntime")
+
+    orchestrator = Orchestrator(arg_parser=mock_argparser)
+    orchestrator.run_repl(sample_app)
+
+    mock_run_agent.assert_called_once()
+    called_app, called_transport = mock_run_agent.call_args.args
+    assert called_app is sample_app
+    assert isinstance(called_transport, StdioTransport)
+    mock_repl_runtime.assert_not_called()
+
+
+def test_run_repl_delegates_with_custom_runner_config(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that a custom RunnerConfig changes the mode env var read"""
+    monkeypatch.setenv("CUSTOM_RUN_MODE", "a2ui")
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+
+    orchestrator = Orchestrator(
+        arg_parser=mock_argparser,
+        runner_config=RunnerConfig(mode_env_var="CUSTOM_RUN_MODE"),
+    )
+    orchestrator.run_repl(sample_app)
+
+    mock_run_agent.assert_called_once()
 
 
 # ============================================================================

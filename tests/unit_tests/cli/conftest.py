@@ -10,6 +10,7 @@ import pytest
 def _clean_state() -> Iterator[None]:
     yield
     os.environ.pop("RUN_FROM_ARGENTA_RUNNER", None)
+    os.environ.pop("ARGENTA_RUN_MODE", None)
 
 
 def _write_module(tmp_path: Path, name: str, body: str) -> Path:

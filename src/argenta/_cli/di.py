@@ -7,11 +7,17 @@ from dishka import (
 )
 from rich.console import Console
 
+from argenta.orchestrator.entity import RunnerConfig
+
 
 class CliProvider(Provider):
     @provide(scope=Scope.APP)
     def get_console(self) -> Console:
         return Console()
+
+    @provide(scope=Scope.APP)
+    def get_runner_config(self) -> RunnerConfig:
+        return RunnerConfig()
 
 
 def create_cli_container() -> Container:

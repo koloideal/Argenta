@@ -49,8 +49,16 @@ def _run(
     entrypoint_path: Annotated[
         str, typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>")
     ],
+    a2ui: Annotated[
+        bool,
+        typer.Option(
+            "--a2ui",
+            help="Run as an A2UI agent: emit the command surface and dispatch "
+            "actions over stdio JSONL instead of the interactive REPL.",
+        ),
+    ] = False,
 ) -> None:
-    commands.run_handler(ctx.obj, entrypoint_path)
+    commands.run_handler(ctx.obj, entrypoint_path, a2ui=a2ui)
 
 
 @app.command(
