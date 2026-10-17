@@ -3,6 +3,7 @@ from dishka import Provider
 from pytest_mock import MockerFixture
 
 from argenta import App, Router
+from argenta.a2ui import A2UIConfig
 from argenta.command import Command
 from argenta.orchestrator import Orchestrator
 from argenta.orchestrator.argparser import ArgParser
@@ -167,6 +168,92 @@ def test_run_repl_includes_custom_providers_in_container(
     # Check that custom_provider was passed to make_container
     call_args = mock_make_container.call_args[0]
     assert custom_provider in call_args
+
+
+# ============================================================================
+# Tests for run_agent method
+# ============================================================================
+
+
+def test_run_agent_creates_dishka_container(
+    mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
+) -> None:
+    """Test that run_agent creates a dishka container"""
+    mock_make_container = mocker.patch("argenta.orchestrator.entity.make_container")
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mocker.patch("argenta.orchestrator.entity.AgentRuntime")
+
+    orchestrator = Orchestrator(arg_parser=mock_argparser)
+    orchestrator.run_agent(sample_app, mocker.MagicMock())
+
+    mock_make_container.assert_called_once()
+
+
+def test_run_agent_calls_setup_dishka(
+    mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
+) -> None:
+    """Test that run_agent calls setup_dishka"""
+    mock_container = mocker.MagicMock()
+    mocker.patch("argenta.orchestrator.entity.make_container", return_value=mock_container)
+    mock_setup_dishka = mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mocker.patch("argenta.orchestrator.entity.AgentRuntime")
+
+    orchestrator = Orchestrator(arg_parser=mock_argparser)
+    orchestrator.run_agent(sample_app, mocker.MagicMock())
+
+    mock_setup_dishka.assert_called_once_with(sample_app, mock_container, auto_inject=True)
+
+
+def test_run_agent_runs_agent_runtime(
+    mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
+) -> None:
+    """Test that run_agent instantiates and runs AgentRuntime"""
+    mocker.patch("argenta.orchestrator.entity.make_container")
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mock_runtime_cls = mocker.patch("argenta.orchestrator.entity.AgentRuntime")
+    transport = mocker.MagicMock()
+
+    orchestrator = Orchestrator(arg_parser=mock_argparser)
+    orchestrator.run_agent(sample_app, transport)
+
+    call_args = mock_runtime_cls.call_args[0]
+    assert call_args[0] is sample_app
+    assert call_args[1] is transport
+    mock_runtime_cls.return_value.run.assert_called_once()
+
+
+def test_run_agent_passes_config_to_container_context(
+    mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
+) -> None:
+    """Test that run_agent puts A2UIConfig into the container context"""
+    mock_make_container = mocker.patch("argenta.orchestrator.entity.make_container")
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mocker.patch("argenta.orchestrator.entity.AgentRuntime")
+    config = A2UIConfig(surface_id="custom")
+
+    orchestrator = Orchestrator(arg_parser=mock_argparser)
+    orchestrator.run_agent(sample_app, mocker.MagicMock(), config=config)
+
+    assert mock_make_container.call_args[1]["context"][A2UIConfig] is config
+
+
+def test_run_agent_closes_container_when_runtime_raises(
+    mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
+) -> None:
+    """Test that run_agent closes the dishka container even if the runtime raises"""
+    mock_container = mocker.MagicMock()
+    mocker.patch("argenta.orchestrator.entity.make_container", return_value=mock_container)
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mock_container.__exit__.return_value = False
+    mocker.patch(
+        "argenta.orchestrator.entity.AgentRuntime",
+        return_value=mocker.MagicMock(run=mocker.MagicMock(side_effect=RuntimeError("x"))),
+    )
+
+    with pytest.raises(RuntimeError, match="x"):
+        Orchestrator(arg_parser=mock_argparser).run_agent(sample_app, mocker.MagicMock())
+
+    mock_container.__exit__.assert_called_once()
 
 
 # ============================================================================

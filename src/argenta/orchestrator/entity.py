@@ -2,6 +2,8 @@ import os
 
 from dishka import Provider, make_container
 
+from argenta.a2ui import A2UIConfig, AgentRuntime, Transport
+from argenta.a2ui.provider import A2UIProvider
 from argenta.app import App
 from argenta.di.integration import setup_dishka
 from argenta.di.providers import SystemProvider
@@ -43,3 +45,24 @@ class Orchestrator:
 
         with container:
             app._run_repl()
+
+    def run_agent(self, app: App, transport: Transport, config: A2UIConfig | None = None) -> None:
+        """
+        Public. Runs the application as an A2UI agent: emits a surface built
+        from the registered commands and dispatches incoming actions through
+        the regular command handling path
+        :param app: a running application
+        :param transport: the A2UI message transport
+        :param config: optional A2UI surface and envelope configuration
+        :return: None
+        """
+        container = make_container(
+            SystemProvider(),
+            A2UIProvider(),
+            *self._custom_providers,
+            context={ArgParser: self._arg_parser, A2UIConfig: config or A2UIConfig()},
+        )
+        setup_dishka(app, container, auto_inject=self._auto_inject_handlers)
+
+        with container:
+            AgentRuntime(app, transport, container.get(A2UIConfig)).run()

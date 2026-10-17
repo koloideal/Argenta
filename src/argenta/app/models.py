@@ -207,6 +207,9 @@ class BaseApp(BehaviorHandlersSettersMixin):
             )
             return False
 
+        return self._dispatch_input_command(input_command)
+
+    def _dispatch_input_command(self, input_command: InputCommand) -> bool:
         if self._is_unknown_command(input_command):
             self._viewer.view_framed_text_from_generator(
                 output_text_generator=partial(self._unknown_command_handler, input_command)
