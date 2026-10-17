@@ -74,7 +74,24 @@ def test_quiet_by_default(capsys: pytest.CaptureFixture[str]) -> None:
 
     AgentRuntime(app, transport).run()
 
-    assert capsys.readouterr().err == ""
+    err = capsys.readouterr().err
+    assert "surface deleted, shutting down" in err
+    assert "received" not in err
+
+
+def test_keyboard_interrupt_graceful_shutdown(capsys: pytest.CaptureFixture[str]) -> None:
+    class _InterruptingTransport(MemoryTransport):
+        def actions(self) -> Iterator[Message]:
+            yield {"action": {"name": "hello", "context": {}}}
+            raise KeyboardInterrupt
+
+    app = _app_with()
+    transport = _InterruptingTransport()
+
+    AgentRuntime(app, transport).run()
+
+    assert _kinds(transport)[-1] == "deleteSurface"
+    assert "interrupted" in capsys.readouterr().err
 
 
 def test_run_sends_initial_message_to_log() -> None:

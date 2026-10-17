@@ -28,6 +28,13 @@ def _find_command(app: App, trigger: str) -> Command | None:
     return command_handler.handled_command
 
 
+def _consume_actions(transport: Transport, dispatch: Callable[[Message], bool]) -> None:
+    for message in transport.actions():
+        action = extract_action(message)
+        if action is not None and dispatch(action):
+            break
+
+
 def _context_flags(command: Command, context: Message) -> InputFlags:
     input_flags = InputFlags()
     for flag in command.registered_flags:
@@ -76,12 +83,12 @@ class AgentRuntime:
         self._startup()
 
         with closing(self._transport):
-            for message in self._transport.actions():
-                action = extract_action(message)
-                if action is not None and self._dispatch_action(action):
-                    break
+            try:
+                _consume_actions(self._transport, self._dispatch_action)
+            except KeyboardInterrupt:
+                self._verbose.report("interrupted", always=True)
             self._transport.send(self._messages.delete_surface())
-            self._verbose.report("surface deleted, shutting down")
+            self._verbose.report("surface deleted, shutting down", always=True)
 
     def _startup(self) -> None:
         self._capture_into_log(

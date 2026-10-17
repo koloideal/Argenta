@@ -56,7 +56,7 @@ def _reload_supervised(
             "[bold red]Error:[/bold red] cannot resolve a directory to watch for --reload"
         )
         sys.exit(1)
-    console.print(f"[dim]a2ui: watching {watch_root} for changes[/dim]")
+    console.print(f"a2ui: watching {watch_root} for changes")
     sys.exit(supervise_cli(_child_args(entrypoint_path, options), watch_root, console))
 
 

@@ -54,7 +54,7 @@ def _watch_until_change(
         if child.poll() is not None:
             return False
         changed = sorted(path for _change, path in changes)
-        console.print(f"[dim]a2ui: {Path(changed[0]).name} changed, restarting[/dim]")
+        console.print(f"a2ui: {Path(changed[0]).name} changed, restarting")
         return True
     return False
 
@@ -72,9 +72,9 @@ def supervise_cli(child_args: list[str], watch_root: Path, console: Console) -> 
             else:
                 break
     except KeyboardInterrupt:
-        console.print("[dim]a2ui: interrupted, shutting down[/dim]")
+        console.print("a2ui: interrupted, shutting down")
     finally:
         _terminate(child)
     if child is None:
         return 0
-    return child.returncode or 0
+    return max(child.returncode or 0, 0)
