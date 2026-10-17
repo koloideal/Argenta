@@ -1,11 +1,20 @@
+from dataclasses import dataclass
+from types import SimpleNamespace
+
 from argenta import App
 from argenta.command.models import Command
-from argenta.response import Response
 from argenta.router import Router
+from metrics.benchmarks._scenarios import command_handler
 from metrics.benchmarks.entity import benchmarks
 
 
-def _command_handler(_res: Response) -> None: ...
+@dataclass(frozen=True, slots=True)
+class CommandGroupsRenderConfig:
+    benchmark_type: str = "command_groups_render"
+    few_router_count: int = 3
+    few_commands_per_router: int = 3
+    many_router_count: int = 10
+    many_commands_per_router: int = 10
 
 
 def setup_app(router_count: int, commands_per_router: int) -> App:
@@ -18,28 +27,31 @@ def setup_app(router_count: int, commands_per_router: int) -> App:
                     f"cmd{router_index}_{command_index}",
                     description=f"Does work {router_index}_{command_index}",
                 )
-            )(_command_handler)
+            )(command_handler)
         app.include_router(router)
     return app
 
 
-_FEW_APP = setup_app(3, 3)
-_MANY_APP = setup_app(10, 10)
+_CONFIG = CommandGroupsRenderConfig()
+_APPS = SimpleNamespace(
+    few=setup_app(_CONFIG.few_router_count, _CONFIG.few_commands_per_router),
+    many=setup_app(_CONFIG.many_router_count, _CONFIG.many_commands_per_router),
+)
 
 
 @benchmarks.register(
-    type_="command_groups_render", description="Few routers (3 routers, 3 commands each)"
+    type_=_CONFIG.benchmark_type, description="Few routers (3 routers, 3 commands each)"
 )
 def benchmark_render_few_commands() -> None:
-    _FEW_APP._viewer.view_command_groups_description(
-        _FEW_APP._description_message_generator, _FEW_APP.registered_routers
+    _APPS.few.viewer.view_command_groups_description(
+        _APPS.few.description_message_generator, _APPS.few.registered_routers
     )
 
 
 @benchmarks.register(
-    type_="command_groups_render", description="Many routers (10 routers, 10 commands each)"
+    type_=_CONFIG.benchmark_type, description="Many routers (10 routers, 10 commands each)"
 )
 def benchmark_render_many_commands() -> None:
-    _MANY_APP._viewer.view_command_groups_description(
-        _MANY_APP._description_message_generator, _MANY_APP.registered_routers
+    _APPS.many.viewer.view_command_groups_description(
+        _APPS.many.description_message_generator, _APPS.many.registered_routers
     )

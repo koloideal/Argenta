@@ -1,10 +1,20 @@
+from pathlib import Path
+
 import pytest
 from dishka import Provider
 from pytest_mock import MockerFixture
 
 from argenta import App, Router
+from argenta.a2ui import (
+    A2UIConfig,
+    LongPollTransport,
+    SocketTransport,
+    SSETransport,
+    StdioTransport,
+)
+from argenta.a2ui.transport.websocket import WebSocketTransport
 from argenta.command import Command
-from argenta.orchestrator import Orchestrator
+from argenta.orchestrator import Orchestrator, RunnerConfig
 from argenta.orchestrator.argparser import ArgParser
 from argenta.response import Response
 
@@ -99,7 +109,7 @@ def test_run_repl_creates_dishka_container(
     """Test that run_repl creates a dishka container"""
     mock_make_container = mocker.patch("argenta.orchestrator.entity.make_container")
     mocker.patch("argenta.orchestrator.entity.setup_dishka")
-    mocker.patch.object(sample_app, "_run_repl")
+    mocker.patch("argenta.orchestrator.entity.REPLRuntime")
 
     orchestrator = Orchestrator(arg_parser=mock_argparser)
     orchestrator.run_repl(sample_app)
@@ -115,7 +125,7 @@ def test_run_repl_calls_setup_dishka_with_auto_inject_enabled(
     mock_container = mocker.MagicMock()
     mocker.patch("argenta.orchestrator.entity.make_container", return_value=mock_container)
     mock_setup_dishka = mocker.patch("argenta.orchestrator.entity.setup_dishka")
-    mocker.patch.object(sample_app, "_run_repl")
+    mocker.patch("argenta.orchestrator.entity.REPLRuntime")
 
     orchestrator = Orchestrator(arg_parser=mock_argparser, auto_inject_handlers=True)
     orchestrator.run_repl(sample_app)
@@ -130,7 +140,7 @@ def test_run_repl_calls_setup_dishka_with_auto_inject_disabled(
     mock_container = mocker.MagicMock()
     mocker.patch("argenta.orchestrator.entity.make_container", return_value=mock_container)
     mock_setup_dishka = mocker.patch("argenta.orchestrator.entity.setup_dishka")
-    mocker.patch.object(sample_app, "_run_repl")
+    mocker.patch("argenta.orchestrator.entity.REPLRuntime")
 
     orchestrator = Orchestrator(arg_parser=mock_argparser, auto_inject_handlers=False)
     orchestrator.run_repl(sample_app)
@@ -144,12 +154,12 @@ def test_run_repl_calls_app_run_repl(
     """Test that run_repl calls app.run_polling()"""
     mocker.patch("argenta.orchestrator.entity.make_container")
     mocker.patch("argenta.orchestrator.entity.setup_dishka")
-    mock_run_repl = mocker.patch.object(sample_app, "_run_repl")
+    mock_runtime_cls = mocker.patch("argenta.orchestrator.entity.REPLRuntime")
 
     orchestrator = Orchestrator(arg_parser=mock_argparser)
     orchestrator.run_repl(sample_app)
 
-    mock_run_repl.assert_called_once()
+    mock_runtime_cls.return_value.run.assert_called_once()
 
 
 def test_run_repl_includes_custom_providers_in_container(
@@ -159,7 +169,7 @@ def test_run_repl_includes_custom_providers_in_container(
     custom_provider = Provider()
     mock_make_container = mocker.patch("argenta.orchestrator.entity.make_container")
     mocker.patch("argenta.orchestrator.entity.setup_dishka")
-    mocker.patch.object(sample_app, "_run_repl")
+    mocker.patch("argenta.orchestrator.entity.REPLRuntime")
 
     orchestrator = Orchestrator(arg_parser=mock_argparser, custom_providers=[custom_provider])
     orchestrator.run_repl(sample_app)
@@ -167,6 +177,283 @@ def test_run_repl_includes_custom_providers_in_container(
     # Check that custom_provider was passed to make_container
     call_args = mock_make_container.call_args[0]
     assert custom_provider in call_args
+
+
+def test_run_repl_delegates_to_run_agent_in_a2ui_mode(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that run_repl delegates to run_agent when ARGENTA_RUN_MODE=a2ui"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+    mock_repl_runtime = mocker.patch("argenta.orchestrator.entity.REPLRuntime")
+
+    orchestrator = Orchestrator(arg_parser=mock_argparser)
+    orchestrator.run_repl(sample_app)
+
+    mock_run_agent.assert_called_once()
+    called_app, called_transport = mock_run_agent.call_args.args
+    assert called_app is sample_app
+    assert isinstance(called_transport, StdioTransport)
+    mock_repl_runtime.assert_not_called()
+
+
+def test_run_repl_a2ui_ws_transport_selected(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that ARGENTA_A2UI_TRANSPORT=ws picks the WebSocket transport"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    monkeypatch.setenv("ARGENTA_A2UI_TRANSPORT", "ws")
+    monkeypatch.setenv("ARGENTA_A2UI_PORT", "0")
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+
+    Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
+
+    called_transport = mock_run_agent.call_args.args[1]
+    assert isinstance(called_transport, WebSocketTransport)
+    called_transport.close()
+
+
+def test_run_repl_a2ui_ws_custom_port(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that the default ws port from RunnerConfig is used without an env override"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    monkeypatch.setenv("ARGENTA_A2UI_TRANSPORT", "ws")
+    monkeypatch.delenv("ARGENTA_A2UI_PORT", raising=False)
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+
+    orchestrator = Orchestrator(
+        arg_parser=mock_argparser,
+        runner_config=RunnerConfig(a2ui_default_port=0),
+    )
+    orchestrator.run_repl(sample_app)
+
+    called_transport = mock_run_agent.call_args.args[1]
+    assert isinstance(called_transport, WebSocketTransport)
+    assert called_transport.port != 0
+    called_transport.close()
+
+
+def test_run_repl_a2ui_sse_transport_selected(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that ARGENTA_A2UI_TRANSPORT=sse picks the SSE transport"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    monkeypatch.setenv("ARGENTA_A2UI_TRANSPORT", "sse")
+    monkeypatch.setenv("ARGENTA_A2UI_PORT", "0")
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+
+    Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
+
+    called_transport = mock_run_agent.call_args.args[1]
+    assert isinstance(called_transport, SSETransport)
+    called_transport.close()
+
+
+def test_run_repl_a2ui_socket_transport_selected(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that ARGENTA_A2UI_TRANSPORT=socket picks the socket transport"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    monkeypatch.setenv("ARGENTA_A2UI_TRANSPORT", "socket")
+    monkeypatch.setenv("ARGENTA_A2UI_PORT", "0")
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+
+    Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
+
+    called_transport = mock_run_agent.call_args.args[1]
+    assert isinstance(called_transport, SocketTransport)
+    called_transport.close()
+
+
+def test_run_repl_a2ui_socket_unix_path(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Test that ARGENTA_A2UI_SOCKET_PATH switches the socket transport to a Unix socket"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    monkeypatch.setenv("ARGENTA_A2UI_TRANSPORT", "socket")
+    monkeypatch.setenv("ARGENTA_A2UI_SOCKET_PATH", str(tmp_path / "agent.sock"))
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+
+    Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
+
+    called_transport = mock_run_agent.call_args.args[1]
+    assert isinstance(called_transport, SocketTransport)
+    called_transport.close()
+
+
+def test_run_repl_a2ui_poll_transport_selected(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that ARGENTA_A2UI_TRANSPORT=poll picks the long-poll transport"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    monkeypatch.setenv("ARGENTA_A2UI_TRANSPORT", "poll")
+    monkeypatch.setenv("ARGENTA_A2UI_PORT", "0")
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+
+    Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
+
+    called_transport = mock_run_agent.call_args.args[1]
+    assert isinstance(called_transport, LongPollTransport)
+    called_transport.close()
+
+
+def test_run_repl_a2ui_verbose_propagates(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that ARGENTA_A2UI_VERBOSE=1 reaches run_agent as verbose=True"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    monkeypatch.setenv("ARGENTA_A2UI_VERBOSE", "1")
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+
+    Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
+
+    assert mock_run_agent.call_args.kwargs["verbose"] is True
+
+
+def test_run_repl_a2ui_ws_missing_dependency(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that ws mode without the optional websockets package fails clearly"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    monkeypatch.setenv("ARGENTA_A2UI_TRANSPORT", "ws")
+    mocker.patch.dict("sys.modules", {"argenta.a2ui.transport.websocket": None})
+
+    with pytest.raises(RuntimeError, match="websockets"):
+        Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
+
+
+def test_run_repl_delegates_with_custom_runner_config(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that a custom RunnerConfig changes the mode env var read"""
+    monkeypatch.setenv("CUSTOM_RUN_MODE", "a2ui")
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+
+    orchestrator = Orchestrator(
+        arg_parser=mock_argparser,
+        runner_config=RunnerConfig(mode_env_var="CUSTOM_RUN_MODE"),
+    )
+    orchestrator.run_repl(sample_app)
+
+    mock_run_agent.assert_called_once()
+
+
+# ============================================================================
+# Tests for run_agent method
+# ============================================================================
+
+
+def test_run_agent_creates_dishka_container(
+    mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
+) -> None:
+    """Test that run_agent creates a dishka container"""
+    mock_make_container = mocker.patch("argenta.orchestrator.entity.make_container")
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mocker.patch("argenta.orchestrator.entity.AgentRuntime")
+
+    orchestrator = Orchestrator(arg_parser=mock_argparser)
+    orchestrator.run_agent(sample_app, mocker.MagicMock())
+
+    mock_make_container.assert_called_once()
+
+
+def test_run_agent_calls_setup_dishka(
+    mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
+) -> None:
+    """Test that run_agent calls setup_dishka"""
+    mock_container = mocker.MagicMock()
+    mocker.patch("argenta.orchestrator.entity.make_container", return_value=mock_container)
+    mock_setup_dishka = mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mocker.patch("argenta.orchestrator.entity.AgentRuntime")
+
+    orchestrator = Orchestrator(arg_parser=mock_argparser)
+    orchestrator.run_agent(sample_app, mocker.MagicMock())
+
+    mock_setup_dishka.assert_called_once_with(sample_app, mock_container, auto_inject=True)
+
+
+def test_run_agent_runs_agent_runtime(
+    mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
+) -> None:
+    """Test that run_agent instantiates and runs AgentRuntime"""
+    mocker.patch("argenta.orchestrator.entity.make_container")
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mock_runtime_cls = mocker.patch("argenta.orchestrator.entity.AgentRuntime")
+    transport = mocker.MagicMock()
+
+    orchestrator = Orchestrator(arg_parser=mock_argparser)
+    orchestrator.run_agent(sample_app, transport)
+
+    call_args = mock_runtime_cls.call_args[0]
+    assert call_args[0] is sample_app
+    assert call_args[1] is transport
+    mock_runtime_cls.return_value.run.assert_called_once()
+
+
+def test_run_agent_passes_config_to_container_context(
+    mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
+) -> None:
+    """Test that run_agent puts A2UIConfig into the container context"""
+    mock_make_container = mocker.patch("argenta.orchestrator.entity.make_container")
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mocker.patch("argenta.orchestrator.entity.AgentRuntime")
+    config = A2UIConfig(surface_id="custom")
+
+    orchestrator = Orchestrator(arg_parser=mock_argparser)
+    orchestrator.run_agent(sample_app, mocker.MagicMock(), config=config)
+
+    assert mock_make_container.call_args[1]["context"][A2UIConfig] is config
+
+
+def test_run_agent_closes_container_when_runtime_raises(
+    mocker: MockerFixture, mock_argparser: ArgParser, sample_app: App
+) -> None:
+    """Test that run_agent closes the dishka container even if the runtime raises"""
+    mock_container = mocker.MagicMock()
+    mocker.patch("argenta.orchestrator.entity.make_container", return_value=mock_container)
+    mocker.patch("argenta.orchestrator.entity.setup_dishka")
+    mock_container.__exit__.return_value = False
+    mocker.patch(
+        "argenta.orchestrator.entity.AgentRuntime",
+        return_value=mocker.MagicMock(run=mocker.MagicMock(side_effect=RuntimeError("x"))),
+    )
+
+    with pytest.raises(RuntimeError, match="x"):
+        Orchestrator(arg_parser=mock_argparser).run_agent(sample_app, mocker.MagicMock())
+
+    mock_container.__exit__.assert_called_once()
 
 
 # ============================================================================
@@ -180,14 +467,14 @@ def test_orchestrator_integrates_with_app_with_router(
     """Test that Orchestrator properly integrates with App that has routers"""
     mocker.patch("argenta.orchestrator.entity.make_container")
     mocker.patch("argenta.orchestrator.entity.setup_dishka")
-    mock_run_repl = mocker.patch.object(sample_app, "_run_repl")
+    mock_runtime_cls = mocker.patch("argenta.orchestrator.entity.REPLRuntime")
 
     sample_app.include_router(sample_router)
 
     orchestrator = Orchestrator(arg_parser=mock_argparser)
     orchestrator.run_repl(sample_app)
 
-    mock_run_repl.assert_called_once()
+    mock_runtime_cls.return_value.run.assert_called_once()
     assert len(sample_app.registered_routers.registered_routers) == 1
 
 
@@ -202,7 +489,7 @@ def test_orchestrator_passes_argparser_to_container_context(
     """Test that Orchestrator passes ArgParser instance to container context"""
     mock_make_container = mocker.patch("argenta.orchestrator.entity.make_container")
     mocker.patch("argenta.orchestrator.entity.setup_dishka")
-    mocker.patch.object(sample_app, "_run_repl")
+    mocker.patch("argenta.orchestrator.entity.REPLRuntime")
 
     orchestrator = Orchestrator(arg_parser=mock_argparser)
     orchestrator.run_repl(sample_app)
@@ -225,7 +512,10 @@ def test_orchestrator_handles_app_run_repl_exception(
     """Test that Orchestrator propagates exceptions from app.run_polling()"""
     mocker.patch("argenta.orchestrator.entity.make_container")
     mocker.patch("argenta.orchestrator.entity.setup_dishka")
-    mocker.patch.object(sample_app, "_run_repl", side_effect=RuntimeError("Test error"))
+    mocker.patch(
+        "argenta.orchestrator.entity.REPLRuntime",
+        return_value=mocker.MagicMock(run=mocker.MagicMock(side_effect=RuntimeError("Test error"))),
+    )
 
     orchestrator = Orchestrator(arg_parser=mock_argparser)
 
@@ -241,7 +531,7 @@ def test_run_repl_closes_container_after_repl_finishes(
     mocker.patch("argenta.orchestrator.entity.make_container", return_value=mock_container)
     mocker.patch("argenta.orchestrator.entity.setup_dishka")
     mock_container.__exit__.return_value = False
-    mocker.patch.object(sample_app, "_run_repl")
+    mocker.patch("argenta.orchestrator.entity.REPLRuntime")
 
     Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
 
@@ -256,7 +546,10 @@ def test_run_repl_closes_container_when_repl_raises(
     mocker.patch("argenta.orchestrator.entity.make_container", return_value=mock_container)
     mocker.patch("argenta.orchestrator.entity.setup_dishka")
     mock_container.__exit__.return_value = False
-    mocker.patch.object(sample_app, "_run_repl", side_effect=RuntimeError("Test error"))
+    mocker.patch(
+        "argenta.orchestrator.entity.REPLRuntime",
+        return_value=mocker.MagicMock(run=mocker.MagicMock(side_effect=RuntimeError("Test error"))),
+    )
 
     with pytest.raises(RuntimeError, match="Test error"):
         Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
@@ -277,7 +570,7 @@ def test_orchestrator_accepts_multiple_custom_providers(
     provider2 = Provider()
     mock_make_container = mocker.patch("argenta.orchestrator.entity.make_container")
     mocker.patch("argenta.orchestrator.entity.setup_dishka")
-    mocker.patch.object(sample_app, "_run_repl")
+    mocker.patch("argenta.orchestrator.entity.REPLRuntime")
 
     orchestrator = Orchestrator(arg_parser=mock_argparser, custom_providers=[provider1, provider2])
     orchestrator.run_repl(sample_app)

@@ -7,10 +7,12 @@ from argenta._cli.commands._entrypoint import (
     resolve_callable_entrypoint,
     split_entrypoint_spec,
 )
+from argenta.orchestrator.entity import RunnerConfig
 
 
 def run_handler(container: Container, entrypoint_path: str) -> None:
-    os.environ["RUN_FROM_ARGENTA_RUNNER"] = "1"
+    runner_config = container.get(RunnerConfig)
+    os.environ[runner_config.runner_env_var] = "1"
     console = container.get(Console)
     spec = split_entrypoint_spec(
         entrypoint_path,
