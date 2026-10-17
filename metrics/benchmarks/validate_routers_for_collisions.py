@@ -1,21 +1,15 @@
-__all__ = [
-    "benchmark_extreme_routers",
-    "benchmark_few_routers",
-    "benchmark_many_aliases_per_command",
-    "benchmark_many_commands_per_router",
-    "benchmark_many_routers",
-]
-
 from argenta import App
 from argenta.command.models import Command
 from argenta.response import Response
 from argenta.router import Router
+from metrics.benchmarks.entity import benchmarks
 
-from .entity import benchmarks
+_BENCHMARK_TYPE = "validate_routers_for_collisions"
+_EXTREME_ROUTERS_COUNT = 20
+_EXTREME_ALIASES_COUNT = 20
 
 
-def _handler(_res: Response) -> None:
-    pass
+def _command_handler(_res: Response) -> None: ...
 
 
 def setup_app_with_routers(
@@ -34,7 +28,9 @@ def setup_app_with_routers(
                 if aliases_per_command
                 else set()
             )
-            router.command(Command(f"cmd{router_index}_{command_index}", aliases=aliases))(_handler)
+            router.command(Command(f"cmd{router_index}_{command_index}", aliases=aliases))(
+                _command_handler
+            )
         app.include_router(router)
 
     app._setup_system_router()
@@ -45,11 +41,13 @@ _FEW_ROUTERS_APP = setup_app_with_routers(3)
 _MANY_ROUTERS_APP = setup_app_with_routers(10)
 _MANY_COMMANDS_APP = setup_app_with_routers(3, commands_per_router=10)
 _MANY_ALIASES_APP = setup_app_with_routers(3, commands_per_router=5, aliases_per_command=10)
-_EXTREME_APP = setup_app_with_routers(20, commands_per_router=10, aliases_per_command=20)
+_EXTREME_APP = setup_app_with_routers(
+    _EXTREME_ROUTERS_COUNT, commands_per_router=10, aliases_per_command=_EXTREME_ALIASES_COUNT
+)
 
 
 @benchmarks.register(
-    type_="validate_routers_for_collisions",
+    type_=_BENCHMARK_TYPE,
     description="With few routers (3 routers, 1 command each)",
 )
 def benchmark_few_routers() -> None:
@@ -57,7 +55,7 @@ def benchmark_few_routers() -> None:
 
 
 @benchmarks.register(
-    type_="validate_routers_for_collisions",
+    type_=_BENCHMARK_TYPE,
     description="With many routers (10 routers, 1 command each)",
 )
 def benchmark_many_routers() -> None:
@@ -65,7 +63,7 @@ def benchmark_many_routers() -> None:
 
 
 @benchmarks.register(
-    type_="validate_routers_for_collisions",
+    type_=_BENCHMARK_TYPE,
     description="With many commands per router (3 routers, 10 commands each)",
 )
 def benchmark_many_commands_per_router() -> None:
@@ -73,7 +71,7 @@ def benchmark_many_commands_per_router() -> None:
 
 
 @benchmarks.register(
-    type_="validate_routers_for_collisions",
+    type_=_BENCHMARK_TYPE,
     description="With many aliases (3 routers, 5 commands, 10 aliases each)",
 )
 def benchmark_many_aliases_per_command() -> None:
@@ -81,7 +79,7 @@ def benchmark_many_aliases_per_command() -> None:
 
 
 @benchmarks.register(
-    type_="validate_routers_for_collisions",
+    type_=_BENCHMARK_TYPE,
     description="Extreme (20 routers, 10 commands, 20 aliases each)",
 )
 def benchmark_extreme_routers() -> None:

@@ -2,8 +2,8 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
-from ..benchmarks.core.models import BenchmarkGroupResult
-from .system_info_reader import SystemInfo
+from metrics.benchmarks.core.models import BenchmarkGroupResult
+from metrics.services.system_models import SystemInfo
 
 
 class ReportTableGenerator:
@@ -15,7 +15,8 @@ class ReportTableGenerator:
     def generate_benchmark_report_table(
         self, benchmark_group_result: BenchmarkGroupResult
     ) -> Table:
-        if cached_result := self._cached_benchmark_tables.get(id(benchmark_group_result)):
+        cached_result = self._cached_benchmark_tables.get(id(benchmark_group_result))
+        if cached_result is not None:
             return cached_result
 
         table = Table(
@@ -36,13 +37,14 @@ class ReportTableGenerator:
         self._cached_benchmark_tables[id(benchmark_group_result)] = table
         return table
 
-    @staticmethod
-    def generate_benchmark_table_header(benchmark_group_result: BenchmarkGroupResult) -> Panel:
+    def generate_benchmark_table_header(
+        self, benchmark_group_result: BenchmarkGroupResult
+    ) -> Panel:
+        type_name = benchmark_group_result.type_.upper()
+        gc_state = "DISABLED" if benchmark_group_result.is_gc_disabled else "ENABLED"
         header_text = Text(
-            f"TYPE: {benchmark_group_result.type_.upper()} ; "
-            f"ITERATIONS: {benchmark_group_result.iterations} ; "
-            f"GC {'DISABLED' if benchmark_group_result.is_gc_disabled else 'ENABLED'} ; "
-            f"ALL TIME IN MS",
+            f"TYPE: {type_name} ; ITERATIONS: {benchmark_group_result.iterations} ; "
+            f"GC {gc_state} ; ALL TIME IN MS",
             style="bold magenta",
         )
         return Panel(header_text, expand=False, border_style="magenta")
@@ -57,24 +59,33 @@ class ReportTableGenerator:
         table.add_column("Parameter", style="green")
         table.add_column("Value", style="yellow")
 
-        table.add_row("OS Name", self.system_info.os_info.name)
-        table.add_row("OS Kernel Version", self.system_info.os_info.kernel_version)
-        table.add_row("Architecture", self.system_info.cpu_info.architecture)
-        table.add_row("CPU", self.system_info.cpu_info.name)
-        table.add_row("CPU Physical Cores", str(self.system_info.cpu_info.physical_cores))
-        table.add_row("CPU Logical Cores", str(self.system_info.cpu_info.logical_cores))
-        table.add_row("CPU Max Frequency", str(self.system_info.cpu_info.max_frequency) + " GHz")
-        table.add_row("Total RAM", str(self.system_info.memory_info.total_ram) + " GB")
-        table.add_row("Used RAM", str(self.system_info.memory_info.used_ram) + " GB")
-        table.add_row("Available RAM", str(self.system_info.memory_info.available_ram) + " GB")
-        table.add_row("Python Version", self.system_info.python_info.version)
-        table.add_row("Python Implementation", self.system_info.python_info.implementation)
-        table.add_row("Python Compiler", self.system_info.python_info.compiler)
+        for parameter, row_text in self._system_info_rows():
+            table.add_row(parameter, row_text)
 
         self._cached_system_info_table = table
         return table
 
-    @staticmethod
-    def generate_system_info_header() -> Panel:
+    def generate_system_info_header(self) -> Panel:
         header_text = Text("SYSTEM INFO", style="bold magenta")
         return Panel(header_text, expand=False, border_style="magenta")
+
+    def _system_info_rows(self) -> list[tuple[str, str]]:
+        os_info = self.system_info.os_info
+        cpu_info = self.system_info.cpu_info
+        memory_info = self.system_info.memory_info
+        python_info = self.system_info.python_info
+        return [
+            ("OS Name", os_info.name),
+            ("OS Kernel Version", os_info.kernel_version),
+            ("Architecture", cpu_info.architecture),
+            ("CPU", cpu_info.name),
+            ("CPU Physical Cores", str(cpu_info.physical_cores)),
+            ("CPU Logical Cores", str(cpu_info.logical_cores)),
+            ("CPU Max Frequency", f"{cpu_info.max_frequency} GHz"),
+            ("Total RAM", f"{memory_info.total_ram} GB"),
+            ("Used RAM", f"{memory_info.used_ram} GB"),
+            ("Available RAM", f"{memory_info.available_ram} GB"),
+            ("Python Version", python_info.version),
+            ("Python Implementation", python_info.implementation),
+            ("Python Compiler", python_info.compiler),
+        ]

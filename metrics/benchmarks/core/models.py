@@ -1,5 +1,3 @@
-__all__ = ["Benchmark", "BenchmarkGroupResult", "BenchmarkResult", "Benchmarks"]
-
 import gc
 import io
 import statistics
@@ -9,7 +7,11 @@ from contextlib import redirect_stdout
 from dataclasses import dataclass
 from typing import override
 
-from .exceptions import BenchmarkNotFound, BenchmarksNotFound, BenchmarksWithSameNameAlreadyExists
+from metrics.benchmarks.core.exceptions import (
+    BenchmarkNotFound,
+    BenchmarksNotFound,
+    BenchmarksWithSameNameAlreadyExists,
+)
 
 FuncForBenchmark = Callable[[], None]
 MILLISECONDS_IN_SECONDS = 1000
@@ -104,10 +106,7 @@ class Benchmarks:
         if not benchmark:
             raise BenchmarkNotFound(name)
         run_attempts: tuple[float, ...] = benchmark.multiple_runs(iterations, is_gc_disables)
-
-        avg = round(statistics.mean(run_attempts), 4)
-        median = round(statistics.median(run_attempts), 4)
-        std_dev = round(statistics.stdev(run_attempts) if len(run_attempts) > 1 else 0, 4)
+        avg, median, std_dev = _statistics_for(run_attempts)
 
         return BenchmarkResult(
             type_=benchmark.type_,
@@ -120,32 +119,6 @@ class Benchmarks:
             std_dev=std_dev,
         )
 
-    def run_benchmarks_by_type(
-        self, type_: str, iterations: int = 100, is_gc_disabled: bool = False
-    ) -> BenchmarkGroupResult:
-        benchmarks = self.get_benchmarks_by_type(type_)
-        if not benchmarks:
-            raise BenchmarksNotFound(type_)
-        benchmark_results = [
-            self.run_benchmark_by_name(benchmark.name, iterations, is_gc_disabled)
-            for benchmark in benchmarks
-        ]
-
-        return BenchmarkGroupResult(
-            type_=type_,
-            iterations=iterations,
-            is_gc_disabled=is_gc_disabled,
-            benchmark_results=benchmark_results,
-        )
-
-    def run_benchmarks_grouped_by_type(
-        self, iterations: int = 100, is_gc_disabled: bool = False
-    ) -> list[BenchmarkGroupResult]:
-        return [
-            self.run_benchmarks_by_type(type_, iterations, is_gc_disabled)
-            for type_ in self._benchmarks_grouped_by_type
-        ]
-
     def get_all_benchmarks(self) -> list[Benchmark]:
         return list(self._benchmarks)
 
@@ -157,3 +130,40 @@ class Benchmarks:
 
     def get_types(self) -> set[str]:
         return set(self._benchmarks_grouped_by_type.keys())
+
+
+def _statistics_for(run_attempts: tuple[float, ...]) -> tuple[float, float, float]:
+    spread = statistics.stdev(run_attempts) if len(run_attempts) > 1 else 0
+    return (
+        round(statistics.mean(run_attempts), 4),
+        round(statistics.median(run_attempts), 4),
+        round(spread, 4),
+    )
+
+
+def run_benchmarks_by_type(
+    registry: Benchmarks, type_: str, iterations: int = 100, is_gc_disabled: bool = False
+) -> BenchmarkGroupResult:
+    benchmarks_of_type = registry.get_benchmarks_by_type(type_)
+    if not benchmarks_of_type:
+        raise BenchmarksNotFound(type_)
+    benchmark_results = [
+        registry.run_benchmark_by_name(benchmark.name, iterations, is_gc_disabled)
+        for benchmark in benchmarks_of_type
+    ]
+
+    return BenchmarkGroupResult(
+        type_=type_,
+        iterations=iterations,
+        is_gc_disabled=is_gc_disabled,
+        benchmark_results=benchmark_results,
+    )
+
+
+def run_benchmarks_grouped_by_type(
+    registry: Benchmarks, iterations: int = 100, is_gc_disabled: bool = False
+) -> list[BenchmarkGroupResult]:
+    return [
+        run_benchmarks_by_type(registry, type_, iterations, is_gc_disabled)
+        for type_ in registry.get_types()
+    ]
