@@ -70,7 +70,8 @@ class ArgentaA2uiApp extends LitElement {
       this.processor.processMessages(JSON.parse(event.data));
     });
     socket.addEventListener('close', () => {
-      this.status = 'disconnected';
+      this.status = 'disconnected, reconnecting…';
+      setTimeout(() => this.connect(), 1000);
     });
     socket.addEventListener('error', () => {
       this.status = 'connection error';

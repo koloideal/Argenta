@@ -3,6 +3,7 @@ from collections.abc import Callable
 from contextlib import closing, redirect_stdout
 from io import StringIO
 
+from argenta.a2ui._verbose import VerboseLog
 from argenta.a2ui.catalog import build_surface
 from argenta.a2ui.messages import MessageFactory, extract_action
 from argenta.a2ui.models import A2UIConfig, JsonValue, Message
@@ -27,6 +28,17 @@ def _find_command(app: App, trigger: str) -> Command | None:
     return command_handler.handled_command
 
 
+def _context_flags(command: Command, context: Message) -> InputFlags:
+    input_flags = InputFlags()
+    for flag in command.registered_flags:
+        flag_value = context.get(flag.name)
+        if isinstance(flag_value, list):
+            flag_value = flag_value[0] if flag_value else None
+        if flag_value and not isinstance(flag_value, dict):
+            input_flags.add_flag(_to_input_flag(flag, flag_value))
+    return input_flags
+
+
 class AgentRuntime:
     """
     Public. Runs an App as an A2UI agent: emits a surface built from the
@@ -34,11 +46,19 @@ class AgentRuntime:
     command dispatch path
     """
 
-    def __init__(self, app: App, transport: Transport, config: A2UIConfig | None = None) -> None:
+    def __init__(
+        self,
+        app: App,
+        transport: Transport,
+        config: A2UIConfig | None = None,
+        *,
+        verbose: bool = False,
+    ) -> None:
         """
         :param app: the application to expose as an A2UI agent
         :param transport: message transport
         :param config: surface and envelope configuration
+        :param verbose: log the agent lifecycle to stderr
         """
         self._app = app
         self._transport = transport
@@ -46,12 +66,24 @@ class AgentRuntime:
         self._messages = MessageFactory(self._config)
         self._log_lines: list[str] = []
         self._log_dirty = False
+        self._verbose = VerboseLog(verbose)
 
     def run(self) -> None:
         """
         Public. Emits the surface and enters the action dispatch loop
         :return: None
         """
+        self._startup()
+
+        with closing(self._transport):
+            for message in self._transport.actions():
+                action = extract_action(message)
+                if action is not None and self._dispatch_action(action):
+                    break
+            self._transport.send(self._messages.delete_surface())
+            self._verbose.report("surface deleted, shutting down")
+
+    def _startup(self) -> None:
         self._capture_into_log(
             lambda: self._app.viewer.view_initial_message(self._app.initial_message)
         )
@@ -62,13 +94,8 @@ class AgentRuntime:
         self._transport.send(self._messages.update_components(components))
         self._transport.send(self._messages.update_data_model("/", data_model))
         self._flush_log()
-
-        with closing(self._transport):
-            for message in self._transport.actions():
-                action = extract_action(message)
-                if action is not None and self._dispatch_action(action):
-                    break
-            self._transport.send(self._messages.delete_surface())
+        surface_id = self._config.surface_id
+        self._verbose.report(f"surface '{surface_id}' emitted")
 
     def _capture_into_log[ResultT](self, func: Callable[[], ResultT]) -> ResultT:
         buffer = StringIO()
@@ -93,14 +120,19 @@ class AgentRuntime:
 
     def _dispatch_action(self, action: Message) -> bool:
         input_command = self._build_input_command(action)
+        self._verbose.report(f"action '{input_command.trigger}' received")
         try:
             is_exit = self._capture_into_log(
                 lambda: self._app.dispatch_input_command(input_command)
             )
         except Exception:  # noqa: BLE001
             self._log_lines.extend(traceback.format_exc().splitlines())
+            self._verbose.report(
+                f"action '{input_command.trigger}' raised, traceback sent to the log"
+            )
             is_exit = False
         self._flush_log()
+        self._verbose.report(f"action '{input_command.trigger}' dispatched")
         return is_exit
 
     def _build_input_command(self, action: Message) -> InputCommand:
@@ -109,15 +141,5 @@ class AgentRuntime:
         command = _find_command(self._app, trigger)
 
         if command is not None and isinstance(context, dict):
-            return InputCommand(trigger=trigger, input_flags=self._context_flags(command, context))
+            return InputCommand(trigger=trigger, input_flags=_context_flags(command, context))
         return InputCommand(trigger=trigger, input_flags=InputFlags())
-
-    def _context_flags(self, command: Command, context: Message) -> InputFlags:
-        input_flags = InputFlags()
-        for flag in command.registered_flags:
-            flag_value = context.get(flag.name)
-            if isinstance(flag_value, list):
-                flag_value = flag_value[0] if flag_value else None
-            if flag_value and not isinstance(flag_value, dict):
-                input_flags.add_flag(_to_input_flag(flag, flag_value))
-        return input_flags

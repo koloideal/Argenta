@@ -27,6 +27,7 @@ class RunnerConfig:
     a2ui_ws_port_env_var: str = "ARGENTA_A2UI_WS_PORT"
     a2ui_ws_default_host: str = "127.0.0.1"
     a2ui_ws_default_port: int = 8765
+    a2ui_verbose_env_var: str = "ARGENTA_A2UI_VERBOSE"
 
 
 class Orchestrator:
@@ -63,7 +64,8 @@ class Orchestrator:
         :return: None
         """
         if os.getenv(self._runner_config.mode_env_var) == self._runner_config.a2ui_mode:
-            self.run_agent(app, self._resolve_agent_transport())
+            verbose = bool(os.getenv(self._runner_config.a2ui_verbose_env_var))
+            self.run_agent(app, self._resolve_agent_transport(), verbose=verbose)
             return
 
         container = make_container(
@@ -74,7 +76,14 @@ class Orchestrator:
         with container:
             REPLRuntime(app).run()
 
-    def run_agent(self, app: App, transport: Transport, config: A2UIConfig | None = None) -> None:
+    def run_agent(
+        self,
+        app: App,
+        transport: Transport,
+        config: A2UIConfig | None = None,
+        *,
+        verbose: bool = False,
+    ) -> None:
         """
         Public. Runs the application as an A2UI agent: emits a surface built
         from the registered commands and dispatches incoming actions through
@@ -86,6 +95,7 @@ class Orchestrator:
         :param app: a running application
         :param transport: the A2UI message transport
         :param config: optional A2UI surface and envelope configuration
+        :param verbose: log the agent lifecycle to stderr
         :return: None
         """
         container = make_container(
@@ -97,7 +107,7 @@ class Orchestrator:
         setup_dishka(app, container, auto_inject=self._auto_inject_handlers)
 
         with container:
-            AgentRuntime(app, transport, container.get(A2UIConfig)).run()
+            AgentRuntime(app, transport, container.get(A2UIConfig), verbose=verbose).run()
 
     def _resolve_agent_transport(self) -> Transport:
         """Private. Builds the agent transport selected via `argenta run` flags"""
@@ -105,10 +115,11 @@ class Orchestrator:
         if os.getenv(config.a2ui_transport_env_var) == config.a2ui_ws_transport:
             port_raw = os.getenv(config.a2ui_ws_port_env_var)
             port = int(port_raw) if port_raw else config.a2ui_ws_default_port
-            return self._build_ws_transport(config.a2ui_ws_default_host, port)
+            verbose = bool(os.getenv(config.a2ui_verbose_env_var))
+            return self._build_ws_transport(config.a2ui_ws_default_host, port, verbose)
         return StdioTransport()
 
-    def _build_ws_transport(self, host: str, port: int) -> Transport:
+    def _build_ws_transport(self, host: str, port: int, verbose: bool) -> Transport:
         """Private. Builds the WebSocket transport; `websockets` is an optional
         dependency, so the module is imported only when ws mode is requested"""
         try:
@@ -118,4 +129,4 @@ class Orchestrator:
                 "A2UI WebSocket transport requires the 'websockets' package: "
                 "pip install 'argenta[a2ui]'"
             ) from error
-        return WebSocketTransport(host=host, port=port)
+        return WebSocketTransport(host=host, port=port, verbose=verbose)

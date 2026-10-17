@@ -49,32 +49,63 @@ def _run(
     entrypoint_path: Annotated[
         str, typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>")
     ],
-    a2ui: Annotated[
-        bool,
-        typer.Option(
-            "--a2ui",
-            help="Run as an A2UI agent: emit the command surface and dispatch "
-            "actions over stdio JSONL instead of the interactive REPL.",
-        ),
-    ] = False,
-    a2ui_transport: Annotated[
+) -> None:
+    commands.run_handler(ctx.obj, entrypoint_path)
+
+
+@app.command(
+    "a2ui",
+    help="Start the app as an A2UI agent: emit the command surface and dispatch "
+    "incoming actions over a JSONL/WebSocket transport instead of the interactive REPL.",
+    short_help="Run as an A2UI agent",
+    epilog=(
+        "Examples:\n"
+        "  argenta a2ui app/main.py:main\n"
+        "  argenta a2ui app/main.py:main --transport ws --port 8765 --verbose"
+    ),
+)
+def _a2ui(  # noqa: WPS211
+    ctx: typer.Context,
+    entrypoint_path: Annotated[
+        str, typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>")
+    ],
+    transport: Annotated[
         Literal["stdio", "ws"],
         typer.Option(
-            "--a2ui-transport",
+            "--transport",
+            "-t",
             help="A2UI transport: 'stdio' JSONL (default) or 'ws' WebSocket server "
             "(requires the 'websockets' package).",
         ),
     ] = "stdio",
-    a2ui_port: Annotated[
+    port: Annotated[
         int | None,
-        typer.Option(
-            "--a2ui-port",
-            help="WebSocket listen port for --a2ui-transport ws.",
-        ),
+        typer.Option("--port", "-p", help="WebSocket listen port for --transport ws."),
     ] = None,
+    verbose: Annotated[
+        bool,
+        typer.Option(
+            "--verbose",
+            "-v",
+            help="Log the agent lifecycle (actions received, messages sent, "
+            "client connections) to stderr.",
+        ),
+    ] = False,
+    hot_reload: Annotated[
+        bool,
+        typer.Option(
+            "--reload",
+            "-r",
+            help="Restart the agent when python files around the entrypoint change.",
+        ),
+    ] = False,
 ) -> None:
-    commands.run_handler(
-        ctx.obj, entrypoint_path, a2ui=a2ui, a2ui_transport=a2ui_transport, a2ui_port=a2ui_port
+    commands.a2ui_handler(
+        ctx.obj,
+        entrypoint_path,
+        commands.A2UIRunOptions(
+            transport=transport, port=port, verbose=verbose, hot_reload=hot_reload
+        ),
     )
 
 

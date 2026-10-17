@@ -55,6 +55,28 @@ def test_run_emits_initial_messages_and_cleanup() -> None:
     assert _section(transport.sent[-1], "deleteSurface") == {"surfaceId": "main"}
 
 
+def test_verbose_reports_lifecycle_to_stderr(capsys: pytest.CaptureFixture[str]) -> None:
+    app = _app_with()
+    transport = MemoryTransport(incoming=[{"action": {"name": "q", "context": {}}}])
+
+    AgentRuntime(app, transport, verbose=True).run()
+
+    err = capsys.readouterr().err
+    assert "surface 'main' emitted" in err
+    assert "action 'q' received" in err
+    assert "action 'q' dispatched" in err
+    assert "surface deleted, shutting down" in err
+
+
+def test_quiet_by_default(capsys: pytest.CaptureFixture[str]) -> None:
+    app = _app_with()
+    transport = MemoryTransport(incoming=[{"action": {"name": "q", "context": {}}}])
+
+    AgentRuntime(app, transport).run()
+
+    assert capsys.readouterr().err == ""
+
+
 def test_run_sends_initial_message_to_log() -> None:
     app = App(override_system_messages=True, initial_message="Welcome banner", printer=print)
     transport = MemoryTransport(incoming=[{"action": {"name": "q", "context": {}}}])

@@ -49,6 +49,7 @@ dependencies = [
 
 [package.optional-dependencies]
 a2ui = [
+    { name = "watchfiles" },
     { name = "websockets" },
 ]
 cli = [
@@ -79,6 +80,7 @@ dev = [
     { name = "sphinx-sitemap" },
     { name = "syrupy" },
     { name = "typer" },
+    { name = "watchfiles" },
     { name = "websockets" },
     { name = "wemake-python-styleguide" },
 ]
@@ -112,6 +114,7 @@ tests = [
     { name = "pytest-mock" },
     { name = "syrupy" },
     { name = "typer" },
+    { name = "watchfiles" },
     { name = "websockets" },
 ]
 typecheckers = [
@@ -125,6 +128,7 @@ requires-dist = [
     { name = "prompt-toolkit", specifier = ">=3.0.52" },
     { name = "rich", specifier = ">=14.0.0,<16.0.0" },
     { name = "typer", marker = "extra == 'cli'", specifier = ">=0.9,!=0.12,<=0.27.3" },
+    { name = "watchfiles", marker = "extra == 'a2ui'", specifier = ">=1.0,<2" },
     { name = "websockets", marker = "extra == 'a2ui'", specifier = ">=15,<16" },
 ]
 provides-extras = ["a2ui", "cli"]
@@ -152,6 +156,7 @@ dev = [
     { name = "sphinx-sitemap", specifier = ">=2.6" },
     { name = "syrupy", specifier = ">=4" },
     { name = "typer", specifier = ">=0.9,!=0.12,<=0.27.3" },
+    { name = "watchfiles", specifier = ">=1.0,<2" },
     { name = "websockets", specifier = ">=15,<16" },
     { name = "wemake-python-styleguide", specifier = ">=1.0.0" },
 ]
@@ -183,6 +188,7 @@ tests = [
     { name = "pytest-mock", specifier = ">=3.15.1" },
     { name = "syrupy", specifier = ">=4" },
     { name = "typer", specifier = ">=0.9,!=0.12,<=0.27.3" },
+    { name = "watchfiles", specifier = ">=1.0,<2" },
     { name = "websockets", specifier = ">=15,<16" },
 ]
 typecheckers = [{ name = "mypy", specifier = ">=1.14.1" }]

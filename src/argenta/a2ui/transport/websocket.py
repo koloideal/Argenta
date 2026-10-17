@@ -10,6 +10,7 @@ from typing import Final, cast
 from websockets.exceptions import ConnectionClosed
 from websockets.sync.server import Server, ServerConnection, serve
 
+from argenta.a2ui._verbose import VerboseLog
 from argenta.a2ui.models import JsonValue, Message
 
 
@@ -30,8 +31,9 @@ class WebSocketTransport:
     Requires the optional ``websockets`` dependency (``pip install 'argenta[a2ui]'``).
     """
 
-    def __init__(self, host: str = "127.0.0.1", port: int = 8765) -> None:
+    def __init__(self, host: str = "127.0.0.1", port: int = 8765, *, verbose: bool = False) -> None:
         self._stop: Final = cast("Message", object())
+        self._verbose = VerboseLog(verbose)
         self._incoming: queue.Queue[Message] = queue.Queue()
         self._connections: set[ServerConnection] = set()
         self._history: list[str] = []
@@ -39,6 +41,7 @@ class WebSocketTransport:
         self._server: Server = serve(self._handle_client, host, port)
         self._thread = threading.Thread(target=self._server.serve_forever, daemon=True)
         self._thread.start()
+        self._verbose.report(f"listening on ws://{host}:{self.port}", always=True)
 
     @property
     def port(self) -> int:
@@ -48,6 +51,7 @@ class WebSocketTransport:
     def send(self, message: Message) -> None:
         """Broadcasts an A2UI message to all connected clients"""
         payload = json.dumps(message, ensure_ascii=False)
+        kind = next(key for key in message if key != "version")
         with self._lock:
             self._history.append(payload)
             connections = tuple(self._connections)
@@ -56,6 +60,7 @@ class WebSocketTransport:
                 connection.send(payload)
             except ConnectionClosed:
                 self._drop(connection)
+        self._verbose.report(f"sent '{kind}' to {len(connections)} client(s)")
 
     def actions(self) -> Iterator[Message]:
         """Yields decoded action messages received from connected clients;
@@ -77,6 +82,7 @@ class WebSocketTransport:
                 except ConnectionClosed:
                     return
             self._connections.add(connection)
+        self._verbose.report("client connected")
         with suppress(ConnectionClosed):
             for raw in connection:
                 decoded = _decode_message(raw)
@@ -88,3 +94,4 @@ class WebSocketTransport:
         """Private. Removes a connection from the broadcast set"""
         with self._lock:
             self._connections.discard(connection)
+        self._verbose.report("client disconnected")

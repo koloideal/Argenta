@@ -235,6 +235,22 @@ def test_run_repl_a2ui_ws_custom_port(
     called_transport.close()
 
 
+def test_run_repl_a2ui_verbose_propagates(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that ARGENTA_A2UI_VERBOSE=1 reaches run_agent as verbose=True"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    monkeypatch.setenv("ARGENTA_A2UI_VERBOSE", "1")
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+
+    Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
+
+    assert mock_run_agent.call_args.kwargs["verbose"] is True
+
+
 def test_run_repl_a2ui_ws_missing_dependency(
     mocker: MockerFixture,
     mock_argparser: ArgParser,

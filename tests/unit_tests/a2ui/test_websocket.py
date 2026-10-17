@@ -1,4 +1,6 @@
 import json
+import re
+import time
 from collections.abc import Iterator
 
 import pytest
@@ -73,6 +75,34 @@ def test_send_drops_failed_connection(transport: WebSocketTransport, mocker: Moc
     transport.send({"a": 1})
 
     assert fake not in transport._connections
+
+
+def test_verbose_reports_lifecycle_to_stderr(capsys: pytest.CaptureFixture[str]) -> None:
+    ws_transport = WebSocketTransport(port=0, verbose=True)
+    try:
+        with _client(ws_transport):
+            for _ in range(100):
+                if ws_transport._connections:
+                    break
+                time.sleep(0.01)
+            ws_transport.send({"version": "v0.9", "createSurface": {"surfaceId": "main"}})
+    finally:
+        ws_transport.close()
+
+    err = capsys.readouterr().err
+    assert "listening on ws://" in err
+    assert "client connected" in err
+    assert "sent 'createSurface' to 1 client(s)" in err
+    assert re.search(r"\[\d{2}:\d{2}:\d{2}\]", err) is not None
+
+
+def test_listening_reported_without_verbose(capsys: pytest.CaptureFixture[str]) -> None:
+    ws_transport = WebSocketTransport(port=0)
+    ws_transport.close()
+
+    err = capsys.readouterr().err
+    assert "listening on ws://" in err
+    assert "client connected" not in err
 
 
 def test_late_joiner_replays_history(transport: WebSocketTransport) -> None:

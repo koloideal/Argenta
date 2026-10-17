@@ -3,6 +3,8 @@ import io
 import os
 import runpy
 import sys
+import threading
+import time
 from pathlib import Path
 from typing import Self
 from unittest.mock import MagicMock
@@ -14,6 +16,7 @@ from typer.testing import CliRunner
 
 from argenta._cli import __main__ as cli_main
 from argenta._cli.__main__ import app
+from argenta._cli.commands._reload import resolve_watch_root, supervise_cli
 from argenta._cli.commands.build import _resolve_build_target
 from argenta._cli.di import create_cli_container
 from argenta.app.presentation.ascii_art import fetcher as fetcher_module
@@ -85,16 +88,7 @@ def test_run_invokes_entrypoint_callable(tmp_path: Path) -> None:
     assert os.environ["RUN_FROM_ARGENTA_RUNNER"] == "1"
 
 
-def test_run_a2ui_sets_agent_mode_env(tmp_path: Path) -> None:
-    path = _write_module(tmp_path, "climod_run_a2ui", "def main():\n    pass\n")
-    result = runner.invoke(app, ["run", "--a2ui", f"{path}:main"])
-
-    assert result.exit_code == 0
-    assert os.environ["RUN_FROM_ARGENTA_RUNNER"] == "1"
-    assert os.environ["ARGENTA_RUN_MODE"] == "a2ui"
-
-
-def test_run_without_a2ui_leaves_mode_env_unset(tmp_path: Path) -> None:
+def test_run_leaves_a2ui_env_unset(tmp_path: Path) -> None:
     path = _write_module(tmp_path, "climod_run_plain", "def main():\n    pass\n")
     result = runner.invoke(app, ["run", f"{path}:main"])
 
@@ -103,24 +97,131 @@ def test_run_without_a2ui_leaves_mode_env_unset(tmp_path: Path) -> None:
     assert "ARGENTA_A2UI_TRANSPORT" not in os.environ
 
 
-def test_run_a2ui_ws_transport_sets_env(tmp_path: Path) -> None:
+# ============================================================================
+# `argenta a2ui`
+# ============================================================================
+
+
+def test_a2ui_sets_agent_mode_env(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_a2ui", "def main():\n    pass\n")
+    result = runner.invoke(app, ["a2ui", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert os.environ["RUN_FROM_ARGENTA_RUNNER"] == "1"
+    assert os.environ["ARGENTA_RUN_MODE"] == "a2ui"
+
+
+def test_a2ui_ws_transport_sets_env(tmp_path: Path) -> None:
     path = _write_module(tmp_path, "climod_run_ws", "def main():\n    pass\n")
-    result = runner.invoke(
-        app, ["run", "--a2ui", "--a2ui-transport", "ws", "--a2ui-port", "9999", f"{path}:main"]
-    )
+    result = runner.invoke(app, ["a2ui", "--transport", "ws", "--port", "9999", f"{path}:main"])
 
     assert result.exit_code == 0
     assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "ws"
     assert os.environ["ARGENTA_A2UI_WS_PORT"] == "9999"
 
 
-def test_run_a2ui_transport_defaults_to_stdio(tmp_path: Path) -> None:
+def test_a2ui_transport_defaults_to_stdio(tmp_path: Path) -> None:
     path = _write_module(tmp_path, "climod_run_std", "def main():\n    pass\n")
-    result = runner.invoke(app, ["run", "--a2ui", f"{path}:main"])
+    result = runner.invoke(app, ["a2ui", f"{path}:main"])
 
     assert result.exit_code == 0
     assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "stdio"
     assert "ARGENTA_A2UI_WS_PORT" not in os.environ
+    assert "ARGENTA_A2UI_VERBOSE" not in os.environ
+
+
+def test_a2ui_verbose_sets_env(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_verbose", "def main():\n    pass\n")
+    result = runner.invoke(app, ["a2ui", "-v", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert os.environ["ARGENTA_A2UI_VERBOSE"] == "1"
+
+
+def test_a2ui_fails_on_malformed_spec() -> None:
+    result = runner.invoke(app, ["a2ui", "no_colon_here"])
+    assert result.exit_code == 1
+    assert "must be in format" in result.output
+
+
+def test_a2ui_reload_supervises_and_exits(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_reload_ok", "def main():\n    pass\n")
+    result = runner.invoke(app, ["a2ui", "--reload", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert "watching" in result.output
+    assert "ARGENTA_RUN_MODE" not in os.environ  # env bridge lives in the child
+
+
+def test_a2ui_reload_fails_on_unresolvable_module(tmp_path: Path) -> None:
+    result = runner.invoke(app, ["a2ui", "--reload", "no_such_module_xyz:main"])
+
+    assert result.exit_code == 1
+    assert "cannot resolve a directory" in result.output
+
+
+# ============================================================================
+# `argenta a2ui --reload` supervisor
+# ============================================================================
+
+
+def test_resolve_watch_root_for_file(tmp_path: Path) -> None:
+    module_path = tmp_path / "watched.py"
+    module_path.write_text("x = 1")
+    assert resolve_watch_root(str(module_path)) == tmp_path.resolve()
+
+
+def test_resolve_watch_root_for_module() -> None:
+    import argenta.app
+
+    expected = Path(argenta.app.__file__).resolve().parent
+    assert resolve_watch_root("argenta.app") == expected
+
+
+def test_resolve_watch_root_unresolvable() -> None:
+    assert resolve_watch_root("no_such_module_xyz.deep") is None
+
+
+def test_supervise_restarts_on_file_change(tmp_path: Path) -> None:
+    watched = tmp_path / "mod.py"
+    watched.write_text("x = 1")
+    counter = tmp_path / "count.txt"
+    script = (
+        "import pathlib, time\n"
+        f"p = pathlib.Path({str(counter)!r})\n"
+        "n = int(p.read_text()) + 1 if p.exists() else 1\n"
+        "p.write_text(str(n))\n"
+        "time.sleep(0 if n >= 2 else 30)\n"
+    )
+    args = [sys.executable, "-c", script]
+    supervisor = threading.Thread(
+        target=supervise_cli,
+        args=(args, tmp_path, Console()),
+    )
+    supervisor.start()
+    time.sleep(0.6)
+    watched.write_text("x = 2")
+    supervisor.join(timeout=20)
+
+    assert not supervisor.is_alive()
+    assert counter.read_text() == "2"
+
+
+def test_supervise_stops_on_keyboard_interrupt(tmp_path: Path, mocker: MockerFixture) -> None:
+    mocker.patch("watchfiles.watch", side_effect=KeyboardInterrupt)
+    args = [sys.executable, "-c", "import time; time.sleep(30)"]
+
+    supervise_cli(args, tmp_path, Console())  # terminates the sleeping child
+
+
+def test_a2ui_fails_without_extra(mocker: MockerFixture, tmp_path: Path) -> None:
+    mocker.patch("argenta._cli.commands.a2ui.find_spec", return_value=None)
+    path = _write_module(tmp_path, "climod_no_extra", "def main():\n    pass\n")
+
+    result = runner.invoke(app, ["a2ui", f"{path}:main"])
+
+    assert result.exit_code == 1
+    assert "argenta[a2ui]" in result.output
 
 
 def test_run_fails_on_malformed_spec() -> None:
