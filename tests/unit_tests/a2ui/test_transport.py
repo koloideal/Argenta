@@ -1,4 +1,5 @@
 import json
+import threading
 from io import StringIO
 
 import pytest
@@ -113,3 +114,48 @@ def test_memory_transport_empty_by_default() -> None:
 
     assert list(transport.actions()) == []
     assert transport.sent == []
+
+
+def test_memory_messages_streams_outgoing() -> None:
+    transport = MemoryTransport()
+    transport.send({"a": 1})
+    transport.send({"b": 2})
+    transport.close()
+
+    assert list(transport.messages()) == [{"a": 1}, {"b": 2}]
+
+
+def test_memory_live_mode_streams_pushed_actions() -> None:
+    transport = MemoryTransport(live=True)
+    transport.push({"action": {"name": "a"}})
+    transport.push({"action": {"name": "b"}})
+
+    stream = transport.actions()
+    assert next(stream) == {"action": {"name": "a"}}
+    transport.close()
+    assert next(stream) == {"action": {"name": "b"}}
+    assert list(stream) == []
+
+
+def test_memory_live_push_while_consuming() -> None:
+    transport = MemoryTransport(live=True)
+    stream = transport.actions()
+
+    threading.Timer(0.1, lambda: transport.push({"action": {"name": "late"}})).start()
+
+    assert next(stream) == {"action": {"name": "late"}}
+
+
+def test_memory_live_actions_end_on_close() -> None:
+    transport = MemoryTransport(live=True)
+    transport.close()
+
+    assert list(transport.actions()) == []
+    assert list(transport.messages()) == []
+
+
+def test_memory_script_mode_drops_pushed_actions() -> None:
+    transport = MemoryTransport(incoming=[{"action": {"name": "preloaded"}}])
+    transport.push({"action": {"name": "dropped"}})
+
+    assert list(transport.actions()) == [{"action": {"name": "preloaded"}}]
