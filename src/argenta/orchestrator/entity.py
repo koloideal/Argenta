@@ -3,7 +3,14 @@ from dataclasses import dataclass
 
 from dishka import Provider, make_container
 
-from argenta.a2ui import A2UIConfig, AgentRuntime, SSETransport, StdioTransport, Transport
+from argenta.a2ui import (
+    A2UIConfig,
+    AgentRuntime,
+    SocketTransport,
+    SSETransport,
+    StdioTransport,
+    Transport,
+)
 from argenta.a2ui.provider import A2UIProvider
 from argenta.app import App
 from argenta.di.integration import setup_dishka
@@ -25,6 +32,8 @@ class RunnerConfig:
     a2ui_transport_env_var: str = "ARGENTA_A2UI_TRANSPORT"
     a2ui_ws_transport: str = "ws"
     a2ui_sse_transport: str = "sse"
+    a2ui_socket_transport: str = "socket"
+    a2ui_socket_path_env_var: str = "ARGENTA_A2UI_SOCKET_PATH"
     a2ui_port_env_var: str = "ARGENTA_A2UI_PORT"
     a2ui_default_host: str = "127.0.0.1"
     a2ui_default_port: int = 8765
@@ -120,6 +129,13 @@ class Orchestrator:
         if transport_name == config.a2ui_sse_transport:
             return SSETransport(
                 host=config.a2ui_default_host, port=self._server_port(), verbose=verbose
+            )
+        if transport_name == config.a2ui_socket_transport:
+            return SocketTransport(
+                host=config.a2ui_default_host,
+                port=self._server_port(),
+                path=os.getenv(config.a2ui_socket_path_env_var),
+                verbose=verbose,
             )
         return StdioTransport(verbose=verbose)
 

@@ -130,6 +130,18 @@ def test_a2ui_transport_defaults_to_ws(tmp_path: Path) -> None:
     assert "ARGENTA_A2UI_VERBOSE" not in os.environ
 
 
+def test_a2ui_socket_transport_sets_env(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_sock", "def main():\n    pass\n")
+    result = runner.invoke(
+        app,
+        ["a2ui", "-t", "socket", "--socket-path", "/tmp/agent.sock", f"{path}:main"],
+    )
+
+    assert result.exit_code == 0
+    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "socket"
+    assert os.environ["ARGENTA_A2UI_SOCKET_PATH"] == "/tmp/agent.sock"
+
+
 def test_a2ui_stdio_transport_sets_env(tmp_path: Path) -> None:
     path = _write_module(tmp_path, "climod_run_stdio", "def main():\n    pass\n")
     result = runner.invoke(app, ["a2ui", "--transport", "stdio", f"{path}:main"])

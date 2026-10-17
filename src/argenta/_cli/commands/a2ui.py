@@ -20,6 +20,7 @@ class A2UIRunOptions:
 
     transport: str = "ws"
     port: int | None = None
+    socket_path: str | None = None
     verbose: bool = False
     hot_reload: bool = False
 
@@ -41,6 +42,8 @@ def _child_args(entrypoint_path: str, options: A2UIRunOptions) -> list[str]:
     args = [sys.executable, "-m", "argenta._cli", "a2ui", "--transport", options.transport]
     if options.port is not None:
         args += ["--port", str(options.port)]
+    if options.socket_path is not None:
+        args += ["--socket-path", options.socket_path]
     if options.verbose:
         args += ["--verbose"]
     args.append(entrypoint_path)
@@ -77,6 +80,8 @@ def a2ui_handler(container: Container, entrypoint_path: str, options: A2UIRunOpt
     os.environ[runner_config.a2ui_transport_env_var] = options.transport
     if options.port is not None:
         os.environ[runner_config.a2ui_port_env_var] = str(options.port)
+    if options.socket_path is not None:
+        os.environ[runner_config.a2ui_socket_path_env_var] = options.socket_path
     if options.verbose:
         os.environ[runner_config.a2ui_verbose_env_var] = "1"
     resolve_callable_entrypoint(spec, console).instance_object()
