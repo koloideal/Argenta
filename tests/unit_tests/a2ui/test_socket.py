@@ -1,5 +1,7 @@
 import json
 import socket
+import struct
+import time
 from collections.abc import Iterator
 from io import BufferedReader
 from pathlib import Path
@@ -53,6 +55,19 @@ def test_socket_malformed_lines_are_skipped(transport: SocketTransport) -> None:
 
     assert next(transport.actions()) == {"action": {"name": "deploy"}}
     conn.close()
+
+
+def test_socket_client_reset_is_quiet(
+    transport: SocketTransport, capsys: pytest.CaptureFixture[str]
+) -> None:
+    conn, _reader = _connect(transport)
+    # SO_LINGER with a zero timeout makes close() send RST instead of FIN
+    conn.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER, struct.pack("ii", 1, 0))
+    conn.close()
+    time.sleep(0.2)
+    transport.send({"version": "v0.9", "ping": {}})
+
+    assert "Traceback" not in capsys.readouterr().err
 
 
 def test_socket_drops_disconnected_client(transport: SocketTransport) -> None:

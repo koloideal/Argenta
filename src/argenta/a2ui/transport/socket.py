@@ -52,14 +52,17 @@ class _SocketHandler(socketserver.StreamRequestHandler):
         self._client = self.server.transport.register_client(self.connection, self.wfile)
 
     def handle(self) -> None:  # noqa: WPS110 — socketserver handler API
-        for raw in self.rfile:
-            decoded = decode_message(raw)
-            if decoded is not None:
-                self.server.transport.incoming.put(decoded)
+        # a client resetting the connection mid-read is routine, not an error
+        with suppress(OSError):
+            for raw in self.rfile:
+                decoded = decode_message(raw)
+                if decoded is not None:
+                    self.server.transport.incoming.put(decoded)
 
     def finish(self) -> None:
         self.server.transport.unregister_client(self._client)
-        super().finish()
+        with suppress(OSError):
+            super().finish()
 
 
 class SocketTransport:
