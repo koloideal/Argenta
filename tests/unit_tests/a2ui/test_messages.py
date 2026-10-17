@@ -1,14 +1,14 @@
 from argenta.a2ui.messages import MessageFactory, extract_action
 from argenta.a2ui.models import A2UIConfig, Message
 
-_CATALOG_URL = "https://a2ui.org/specification/v0_9_1/catalogs/basic/catalog.json"
+_CATALOG_URL = "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
 
 
 def test_create_surface_defaults() -> None:
     message = MessageFactory(A2UIConfig()).create_surface()
 
     assert message == {
-        "version": "v0.9.1",
+        "version": "v0.9",
         "createSurface": {"surfaceId": "main", "catalogId": _CATALOG_URL},
     }
 
@@ -20,8 +20,7 @@ def test_create_surface_with_theme() -> None:
 
     surface = message["createSurface"]
     assert isinstance(surface, dict)
-    assert surface["primaryColor"] == "#fff"
-    assert surface["agentDisplayName"] == "Bot"
+    assert surface["theme"] == {"primaryColor": "#fff", "agentDisplayName": "Bot"}
 
 
 def test_create_surface_custom_surface_and_catalog() -> None:
@@ -41,7 +40,7 @@ def test_update_components() -> None:
     message = MessageFactory(A2UIConfig()).update_components(components)
 
     assert message == {
-        "version": "v0.9.1",
+        "version": "v0.9",
         "updateComponents": {"surfaceId": "main", "components": components},
     }
 
@@ -50,7 +49,7 @@ def test_update_data_model() -> None:
     message = MessageFactory(A2UIConfig()).update_data_model("/log", "line")
 
     assert message == {
-        "version": "v0.9.1",
+        "version": "v0.9",
         "updateDataModel": {"surfaceId": "main", "path": "/log", "value": "line"},
     }
 
@@ -59,7 +58,7 @@ def test_delete_surface() -> None:
     message = MessageFactory(A2UIConfig()).delete_surface()
 
     assert message == {
-        "version": "v0.9.1",
+        "version": "v0.9",
         "deleteSurface": {"surfaceId": "main"},
     }
 

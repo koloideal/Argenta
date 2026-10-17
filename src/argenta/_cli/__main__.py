@@ -57,8 +57,25 @@ def _run(
             "actions over stdio JSONL instead of the interactive REPL.",
         ),
     ] = False,
+    a2ui_transport: Annotated[
+        Literal["stdio", "ws"],
+        typer.Option(
+            "--a2ui-transport",
+            help="A2UI transport: 'stdio' JSONL (default) or 'ws' WebSocket server "
+            "(requires the 'websockets' package).",
+        ),
+    ] = "stdio",
+    a2ui_port: Annotated[
+        int | None,
+        typer.Option(
+            "--a2ui-port",
+            help="WebSocket listen port for --a2ui-transport ws.",
+        ),
+    ] = None,
 ) -> None:
-    commands.run_handler(ctx.obj, entrypoint_path, a2ui=a2ui)
+    commands.run_handler(
+        ctx.obj, entrypoint_path, a2ui=a2ui, a2ui_transport=a2ui_transport, a2ui_port=a2ui_port
+    )
 
 
 @app.command(

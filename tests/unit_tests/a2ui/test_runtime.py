@@ -1,3 +1,6 @@
+from collections.abc import Iterator
+
+import pytest
 from pytest_mock import MockerFixture
 
 from argenta import App, Command, Response, Router
@@ -108,6 +111,71 @@ def test_context_becomes_flags() -> None:
     AgentRuntime(app, transport).run()
 
     assert captured == [("prod", True)]
+
+
+def test_list_context_value_unwrapped() -> None:
+    captured: list[str | None] = []
+
+    def handler(response: Response) -> None:
+        env = response.input_flags.get_flag_by_name("env")
+        captured.append(env.input_value if env else None)
+
+    app = App()
+    router = Router()
+    router.command(Command("deploy", flags=Flags([Flag("env", possible_values=["prod", "dev"])])))(
+        handler
+    )
+    app.include_router(router)
+
+    transport = MemoryTransport(
+        incoming=[
+            {"action": {"name": "deploy", "context": {"env": ["prod"]}}},
+            {"action": {"name": "deploy", "context": {"env": []}}},
+            {"action": {"name": "q", "context": {}}},
+        ]
+    )
+
+    AgentRuntime(app, transport).run()
+
+    assert captured == ["prod", None]
+
+
+def test_transport_closed_after_run() -> None:
+    class _SpyTransport(MemoryTransport):
+        def __init__(self) -> None:
+            super().__init__(incoming=[])
+            self.closed = False
+
+        def close(self) -> None:
+            self.closed = True
+
+    app = _app_with()
+    transport = _SpyTransport()
+
+    AgentRuntime(app, transport).run()
+
+    assert transport.closed
+
+
+def test_transport_closed_when_stream_raises() -> None:
+    class _BrokenTransport(MemoryTransport):
+        def __init__(self) -> None:
+            super().__init__()
+            self.closed = False
+
+        def actions(self) -> Iterator[Message]:
+            raise RuntimeError("stream died")
+
+        def close(self) -> None:
+            self.closed = True
+
+    app = _app_with()
+    transport = _BrokenTransport()
+
+    with pytest.raises(RuntimeError, match="stream died"):
+        AgentRuntime(app, transport).run()
+
+    assert transport.closed
 
 
 def test_checkbox_false_skips_flag() -> None:
@@ -338,4 +406,4 @@ def test_theme_propagated_to_create_surface() -> None:
 
     surface = _section(transport.sent[0], "createSurface")
     assert surface["surfaceId"] == "ui2"
-    assert surface["primaryColor"] == "#7C4DFF"
+    assert surface["theme"] == {"primaryColor": "#7C4DFF"}

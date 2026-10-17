@@ -100,6 +100,27 @@ def test_run_without_a2ui_leaves_mode_env_unset(tmp_path: Path) -> None:
 
     assert result.exit_code == 0
     assert "ARGENTA_RUN_MODE" not in os.environ
+    assert "ARGENTA_A2UI_TRANSPORT" not in os.environ
+
+
+def test_run_a2ui_ws_transport_sets_env(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_ws", "def main():\n    pass\n")
+    result = runner.invoke(
+        app, ["run", "--a2ui", "--a2ui-transport", "ws", "--a2ui-port", "9999", f"{path}:main"]
+    )
+
+    assert result.exit_code == 0
+    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "ws"
+    assert os.environ["ARGENTA_A2UI_WS_PORT"] == "9999"
+
+
+def test_run_a2ui_transport_defaults_to_stdio(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_std", "def main():\n    pass\n")
+    result = runner.invoke(app, ["run", "--a2ui", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "stdio"
+    assert "ARGENTA_A2UI_WS_PORT" not in os.environ
 
 
 def test_run_fails_on_malformed_spec() -> None:

@@ -7,10 +7,8 @@ from argenta.command.flag.models import Flag, PossibleValues
 from argenta.router.entity import Router
 
 type ContextBinding = dict[str, str]
-type FlagDefaults = dict[str, bool | str]
+type FlagDefaults = dict[str, bool | str | list[str]]
 type SurfaceParts = tuple[list[Message], dict[str, JsonValue]]
-
-_TEXT_KIND = "Text"
 
 
 def _escape_pointer(segment: str) -> str:
@@ -27,6 +25,18 @@ def _path_binding(path: str) -> ContextBinding:
 
 def _component(component_id: str, kind: str, **properties: JsonValue) -> Message:
     return {"id": component_id, "component": kind, **properties}
+
+
+def _flag_default(flag: Flag) -> bool | str | list[str]:
+    """Private. Initial data model value matching the bound component:
+    bool for CheckBox, string list for ChoicePicker, string otherwise"""
+    if flag.possible_values is PossibleValues.NEITHER:
+        return False
+    if isinstance(flag.possible_values, Iterable) and not isinstance(
+        flag.possible_values, (str, Pattern)
+    ):
+        return []
+    return ""
 
 
 class CatalogBuilder:
@@ -60,7 +70,7 @@ class CatalogBuilder:
             [
                 _component(
                     self._config.log_text_id,
-                    _TEXT_KIND,
+                    self._config.text_component,
                     text=_path_binding(self._config.log_model_path),
                 ),
                 _component(self._config.log_card_id, "Card", child=self._config.log_text_id),
@@ -78,15 +88,12 @@ class CatalogBuilder:
     ) -> list[Message]:
         title_id = f"router_title_{index}"
         children.append(title_id)
-        parts = [_component(title_id, _TEXT_KIND, text=router.title, variant="h4")]
+        parts = [_component(title_id, self._config.text_component, text=router.title, variant="h4")]
 
         for command_handler in router.command_handlers:
             command = command_handler.handled_command
             flags = list(command.registered_flags)
-            forms_model[command.trigger] = {
-                flag.name: (False if flag.possible_values is PossibleValues.NEITHER else "")
-                for flag in flags
-            }
+            forms_model[command.trigger] = {flag.name: _flag_default(flag) for flag in flags}
             children.append(f"card_{command.trigger}")
             parts.extend(self._command_components(command.trigger, command.description, flags))
         return parts
@@ -97,7 +104,12 @@ class CatalogBuilder:
         children = [f"desc_{trigger}"]
         action_context: dict[str, ContextBinding] = {}
         components = [
-            _component(f"desc_{trigger}", _TEXT_KIND, text=description, variant="caption")
+            _component(
+                f"desc_{trigger}",
+                self._config.text_component,
+                text=description,
+                variant="caption",
+            )
         ]
 
         for flag in flags:
@@ -109,7 +121,11 @@ class CatalogBuilder:
         children.append(f"btn_{trigger}")
         components.extend(
             [
-                _component(f"btn_label_{trigger}", _TEXT_KIND, text=f"Run {trigger}"),
+                _component(
+                    f"btn_label_{trigger}",
+                    self._config.text_component,
+                    text=f"Run {trigger}",
+                ),
                 _component(
                     f"btn_{trigger}",
                     "Button",
@@ -151,13 +167,7 @@ class CatalogBuilder:
             "TextField",
             label=flag.string_entity,
             value=_path_binding(path),
-            checks=[
-                {
-                    "call": "regex",
-                    "args": {"value": _path_binding(path), "pattern": pattern.pattern},
-                    "message": f"Value must match {pattern.pattern}",
-                }
-            ],
+            validationRegexp=pattern.pattern,
         )
 
     def _picker(self, field_id: str, flag: Flag, path: str, options: Iterable[str]) -> Message:

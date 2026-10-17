@@ -68,12 +68,12 @@ docs-live:
 
 # Fuzz InputCommand.parse for N seconds (usage: just fuzz 300)
 fuzz seconds="60":
-    mkdir -p fuzz/corpus fuzz/artifacts
+    uv run python -c "from pathlib import Path; Path('fuzz/corpus').mkdir(parents=True, exist_ok=True); Path('fuzz/artifacts').mkdir(parents=True, exist_ok=True)"
     uv run --group fuzz python fuzz/parse_fuzzer.py fuzz/corpus -artifact_prefix=fuzz/artifacts/ -max_total_time={{ seconds }}
 
 # Quick smoke run of the fuzzer (1000 iterations)
 fuzz-smoke:
-    mkdir -p fuzz/corpus fuzz/artifacts
+    uv run python -c "from pathlib import Path; Path('fuzz/corpus').mkdir(parents=True, exist_ok=True); Path('fuzz/artifacts').mkdir(parents=True, exist_ok=True)"
     uv run --group fuzz python fuzz/parse_fuzzer.py fuzz/corpus -artifact_prefix=fuzz/artifacts/ -runs=1000
 
 # ── Font assets ───────────────────────────────────────────────────────────────
@@ -87,9 +87,23 @@ fonts-compile:
 
 # Create a new changelog fragment and open it in $EDITOR
 frag:
-    mkdir -p changelog.d
+    uv run python -c "from pathlib import Path; Path('changelog.d').mkdir(exist_ok=True)"
     uv run scriv create --add
 
 # Collect fragments into CHANGELOG.md for release  (usage: just release 1.2.3)
 release version:
     uv run scriv collect --version {{ version }} --add
+
+# ── A2UI Lit example ──────────────────────────────────────────────────────────
+
+# Run the A2UI example agent over WebSocket ws://127.0.0.1:8765
+a2ui-example-agent:
+    uv run --extra a2ui argenta run --a2ui --a2ui-transport ws examples/example_a2ui/main.py:main
+
+# Serve the A2UI Lit client on http://127.0.0.1:8080
+a2ui-example-client:
+    uv run python -m http.server 8080 --directory examples/example_a2ui/client
+
+# Run the full A2UI Lit demo: agent (ws://127.0.0.1:8765) + client (http://127.0.0.1:8080), Ctrl-C stops both
+a2ui-example:
+    uv run --extra a2ui python examples/example_a2ui/run_demo.py

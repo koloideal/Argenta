@@ -20,7 +20,7 @@ class MessageFactory:
         """
         payload: Message = {"catalogId": self._config.catalog_id}
         if self._config.theme:
-            payload.update(self._config.theme)
+            payload["theme"] = self._config.theme
         return self._envelope("createSurface", payload)
 
     def update_components(self, components: list[Message]) -> Message:

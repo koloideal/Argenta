@@ -8,8 +8,8 @@ def test_stdio_send_writes_json_lines() -> None:
     out = StringIO()
     transport = StdioTransport(out=out, inp=StringIO())
 
-    transport.send({"version": "v0.9.1", "createSurface": {"surfaceId": "main"}})
-    transport.send({"version": "v0.9.1", "deleteSurface": {"surfaceId": "main"}})
+    transport.send({"version": "v0.9", "createSurface": {"surfaceId": "main"}})
+    transport.send({"version": "v0.9", "deleteSurface": {"surfaceId": "main"}})
 
     lines = out.getvalue().split("\n")
     assert json.loads(lines[0])["createSurface"]["surfaceId"] == "main"
@@ -42,6 +42,16 @@ def test_stdio_actions_skips_blank_and_malformed() -> None:
     messages = list(transport.actions())
 
     assert messages == [{"action": {"name": "a"}}]
+
+
+def test_stdio_close_flushes_output() -> None:
+    out = StringIO()
+    transport = StdioTransport(out=out, inp=StringIO())
+
+    transport.send({"a": 1})
+    transport.close()
+
+    assert out.getvalue().endswith("\n")
 
 
 def test_memory_transport_stores_sent() -> None:

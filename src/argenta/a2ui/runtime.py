@@ -1,6 +1,6 @@
 import traceback
 from collections.abc import Callable
-from contextlib import redirect_stdout
+from contextlib import closing, redirect_stdout
 from io import StringIO
 
 from argenta.a2ui.catalog import build_surface
@@ -60,11 +60,12 @@ class AgentRuntime:
         self._transport.send(self._messages.update_data_model("/", data_model))
         self._flush_log()
 
-        for message in self._transport.actions():
-            action = extract_action(message)
-            if action is not None and self._dispatch_action(action):
-                break
-        self._transport.send(self._messages.delete_surface())
+        with closing(self._transport):
+            for message in self._transport.actions():
+                action = extract_action(message)
+                if action is not None and self._dispatch_action(action):
+                    break
+            self._transport.send(self._messages.delete_surface())
 
     def _capture_into_log[ResultT](self, func: Callable[[], ResultT]) -> ResultT:
         buffer = StringIO()
@@ -112,6 +113,8 @@ class AgentRuntime:
         input_flags = InputFlags()
         for flag in command.registered_flags:
             flag_value = context.get(flag.name)
+            if isinstance(flag_value, list):
+                flag_value = flag_value[0] if flag_value else None
             if flag_value and not isinstance(flag_value, dict):
                 input_flags.add_flag(_to_input_flag(flag, flag_value))
         return input_flags

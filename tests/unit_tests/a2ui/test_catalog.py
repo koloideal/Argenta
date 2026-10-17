@@ -111,13 +111,7 @@ def test_text_field_with_regex_check() -> None:
 
     field = _component_by_id(components, "field_c_n")
     assert field["component"] == "TextField"
-    assert field["checks"] == [
-        {
-            "call": "regex",
-            "args": {"value": {"path": "/forms/c/n"}, "pattern": r"^\d+$"},
-            "message": r"Value must match ^\d+$",
-        }
-    ]
+    assert field["validationRegexp"] == r"^\d+$"
 
 
 def test_choice_picker_for_list_values() -> None:
@@ -126,7 +120,7 @@ def test_choice_picker_for_list_values() -> None:
         _handler
     )
 
-    components, _ = build_surface(_registered(router), A2UIConfig())
+    components, model = build_surface(_registered(router), A2UIConfig())
 
     field = _component_by_id(components, "field_c_env")
     assert field["component"] == "ChoicePicker"
@@ -135,6 +129,9 @@ def test_choice_picker_for_list_values() -> None:
         {"label": "dev", "value": "dev"},
         {"label": "prod", "value": "prod"},
     ]
+    forms = model["forms"]
+    assert isinstance(forms, dict)
+    assert forms["c"] == {"env": []}
 
 
 def test_plain_text_field_for_all_and_str_values() -> None:
@@ -155,7 +152,7 @@ def test_plain_text_field_for_all_and_str_values() -> None:
 
     field_a = _component_by_id(components, "field_c_a")
     assert field_a["component"] == "TextField"
-    assert "checks" not in field_a
+    assert "validationRegexp" not in field_a
     assert _component_by_id(components, "field_c_b")["component"] == "TextField"
 
 

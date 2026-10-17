@@ -22,6 +22,11 @@ class RunnerConfig:
     runner_env_var: str = "RUN_FROM_ARGENTA_RUNNER"
     mode_env_var: str = "ARGENTA_RUN_MODE"
     a2ui_mode: str = "a2ui"
+    a2ui_transport_env_var: str = "ARGENTA_A2UI_TRANSPORT"
+    a2ui_ws_transport: str = "ws"
+    a2ui_ws_port_env_var: str = "ARGENTA_A2UI_WS_PORT"
+    a2ui_ws_default_host: str = "127.0.0.1"
+    a2ui_ws_default_port: int = 8765
 
 
 class Orchestrator:
@@ -53,12 +58,12 @@ class Orchestrator:
     def run_repl(self, app: App) -> None:
         """
         Public. Starting the user input processing cycle; when started
-        via `argenta run --a2ui`, delegates to run_agent over stdio JSONL
+        via `argenta run --a2ui`, delegates to run_agent over the selected transport
         :param app: a running application
         :return: None
         """
         if os.getenv(self._runner_config.mode_env_var) == self._runner_config.a2ui_mode:
-            self.run_agent(app, StdioTransport())
+            self.run_agent(app, self._resolve_agent_transport())
             return
 
         container = make_container(
@@ -89,3 +94,24 @@ class Orchestrator:
 
         with container:
             AgentRuntime(app, transport, container.get(A2UIConfig)).run()
+
+    def _resolve_agent_transport(self) -> Transport:
+        """Private. Builds the agent transport selected via `argenta run` flags"""
+        config = self._runner_config
+        if os.getenv(config.a2ui_transport_env_var) == config.a2ui_ws_transport:
+            port_raw = os.getenv(config.a2ui_ws_port_env_var)
+            port = int(port_raw) if port_raw else config.a2ui_ws_default_port
+            return self._build_ws_transport(config.a2ui_ws_default_host, port)
+        return StdioTransport()
+
+    def _build_ws_transport(self, host: str, port: int) -> Transport:
+        """Private. Builds the WebSocket transport; `websockets` is an optional
+        dependency, so the module is imported only when ws mode is requested"""
+        try:
+            from argenta.a2ui.transport.websocket import WebSocketTransport
+        except ImportError as error:
+            raise RuntimeError(
+                "A2UI WebSocket transport requires the 'websockets' package: "
+                "pip install 'argenta[a2ui]'"
+            ) from error
+        return WebSocketTransport(host=host, port=port)

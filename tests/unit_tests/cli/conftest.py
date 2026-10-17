@@ -11,6 +11,8 @@ def _clean_state() -> Iterator[None]:
     yield
     os.environ.pop("RUN_FROM_ARGENTA_RUNNER", None)
     os.environ.pop("ARGENTA_RUN_MODE", None)
+    os.environ.pop("ARGENTA_A2UI_TRANSPORT", None)
+    os.environ.pop("ARGENTA_A2UI_WS_PORT", None)
 
 
 def _write_module(tmp_path: Path, name: str, body: str) -> Path:
