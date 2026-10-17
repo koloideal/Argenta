@@ -28,7 +28,7 @@ def _startup(aliases_per_command: tuple[set[str], ...]) -> None:
     for command_index, aliases in enumerate(aliases_per_command):
         router.command(Command(f"command{command_index}", aliases=aliases))(_command_handler)
     app.include_router(router)
-    app._pre_cycle_setup()
+    app.prepare_for_run()
 
 
 @benchmarks.register(type_=_BENCHMARK_TYPE, description="With no aliases")

@@ -52,7 +52,7 @@ class AgentRuntime:
         Public. Emits the surface and enters the action dispatch loop
         :return: None
         """
-        self._capture_into_log(self._app._pre_cycle_setup)
+        self._capture_into_log(self._app.prepare_for_run)
 
         components, data_model = build_surface(self._app.registered_routers, self._config)
         self._transport.send(self._messages.create_surface())
@@ -91,7 +91,7 @@ class AgentRuntime:
         input_command = self._build_input_command(action)
         try:
             is_exit = self._capture_into_log(
-                lambda: self._app._dispatch_input_command(input_command)
+                lambda: self._app.dispatch_input_command(input_command)
             )
         except Exception:  # noqa: BLE001
             self._log_lines.extend(traceback.format_exc().splitlines())

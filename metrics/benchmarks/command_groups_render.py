@@ -31,8 +31,8 @@ _MANY_APP = setup_app(10, 10)
     type_="command_groups_render", description="Few routers (3 routers, 3 commands each)"
 )
 def benchmark_render_few_commands() -> None:
-    _FEW_APP._viewer.view_command_groups_description(
-        _FEW_APP._description_message_generator, _FEW_APP.registered_routers
+    _FEW_APP.viewer.view_command_groups_description(
+        _FEW_APP.description_message_generator, _FEW_APP.registered_routers
     )
 
 
@@ -40,6 +40,6 @@ def benchmark_render_few_commands() -> None:
     type_="command_groups_render", description="Many routers (10 routers, 10 commands each)"
 )
 def benchmark_render_many_commands() -> None:
-    _MANY_APP._viewer.view_command_groups_description(
-        _MANY_APP._description_message_generator, _MANY_APP.registered_routers
+    _MANY_APP.viewer.view_command_groups_description(
+        _MANY_APP.description_message_generator, _MANY_APP.registered_routers
     )
