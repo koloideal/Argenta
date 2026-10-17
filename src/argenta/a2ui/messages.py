@@ -1,4 +1,20 @@
+import json
+from contextlib import suppress
+
 from argenta.a2ui.models import A2UIConfig, JsonValue, Message
+
+
+def decode_message(raw: str | bytes) -> Message | None:
+    """
+    Private. Decodes a client frame
+    :param raw: raw client payload
+    :return: message dict or None for malformed or non-object payloads
+    """
+    with suppress(json.JSONDecodeError):
+        decoded: JsonValue = json.loads(raw)
+        if isinstance(decoded, dict):
+            return decoded
+    return None
 
 
 class MessageFactory:

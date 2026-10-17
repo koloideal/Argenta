@@ -62,6 +62,7 @@ def test_verbose_reports_lifecycle_to_stderr(capsys: pytest.CaptureFixture[str])
     AgentRuntime(app, transport, verbose=True).run()
 
     err = capsys.readouterr().err
+    assert "[agent]" in err
     assert "surface 'main' emitted" in err
     assert "action 'q' received" in err
     assert "action 'q' dispatched" in err

@@ -3,7 +3,7 @@ from dishka import Provider
 from pytest_mock import MockerFixture
 
 from argenta import App, Router
-from argenta.a2ui import A2UIConfig, StdioTransport
+from argenta.a2ui import A2UIConfig, SSETransport, StdioTransport
 from argenta.a2ui.transport.websocket import WebSocketTransport
 from argenta.command import Command
 from argenta.orchestrator import Orchestrator, RunnerConfig
@@ -201,7 +201,7 @@ def test_run_repl_a2ui_ws_transport_selected(
     """Test that ARGENTA_A2UI_TRANSPORT=ws picks the WebSocket transport"""
     monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
     monkeypatch.setenv("ARGENTA_A2UI_TRANSPORT", "ws")
-    monkeypatch.setenv("ARGENTA_A2UI_WS_PORT", "0")
+    monkeypatch.setenv("ARGENTA_A2UI_PORT", "0")
     mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
 
     Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
@@ -220,18 +220,37 @@ def test_run_repl_a2ui_ws_custom_port(
     """Test that the default ws port from RunnerConfig is used without an env override"""
     monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
     monkeypatch.setenv("ARGENTA_A2UI_TRANSPORT", "ws")
-    monkeypatch.delenv("ARGENTA_A2UI_WS_PORT", raising=False)
+    monkeypatch.delenv("ARGENTA_A2UI_PORT", raising=False)
     mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
 
     orchestrator = Orchestrator(
         arg_parser=mock_argparser,
-        runner_config=RunnerConfig(a2ui_ws_default_port=0),
+        runner_config=RunnerConfig(a2ui_default_port=0),
     )
     orchestrator.run_repl(sample_app)
 
     called_transport = mock_run_agent.call_args.args[1]
     assert isinstance(called_transport, WebSocketTransport)
     assert called_transport.port != 0
+    called_transport.close()
+
+
+def test_run_repl_a2ui_sse_transport_selected(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that ARGENTA_A2UI_TRANSPORT=sse picks the SSE transport"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    monkeypatch.setenv("ARGENTA_A2UI_TRANSPORT", "sse")
+    monkeypatch.setenv("ARGENTA_A2UI_PORT", "0")
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+
+    Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
+
+    called_transport = mock_run_agent.call_args.args[1]
+    assert isinstance(called_transport, SSETransport)
     called_transport.close()
 
 

@@ -117,7 +117,7 @@ def test_a2ui_ws_transport_sets_env(tmp_path: Path) -> None:
 
     assert result.exit_code == 0
     assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "ws"
-    assert os.environ["ARGENTA_A2UI_WS_PORT"] == "9999"
+    assert os.environ["ARGENTA_A2UI_PORT"] == "9999"
 
 
 def test_a2ui_transport_defaults_to_ws(tmp_path: Path) -> None:
@@ -126,7 +126,7 @@ def test_a2ui_transport_defaults_to_ws(tmp_path: Path) -> None:
 
     assert result.exit_code == 0
     assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "ws"
-    assert "ARGENTA_A2UI_WS_PORT" not in os.environ
+    assert "ARGENTA_A2UI_PORT" not in os.environ
     assert "ARGENTA_A2UI_VERBOSE" not in os.environ
 
 

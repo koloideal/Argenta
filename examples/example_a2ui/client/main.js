@@ -7,6 +7,11 @@ import { renderMarkdown } from '@a2ui/markdown-it';
 const DEFAULT_AGENT_URL = 'ws://127.0.0.1:8765';
 
 /**
+ * Two transports: ?agent=ws://host:port (WebSocket) or
+ * ?agent=http://host:port (SSE stream + POST /actions)
+ */
+
+/**
  * A2UI renderer shell: keeps a WebSocket connection to the Python agent,
  * feeds incoming messages into the MessageProcessor and renders the
  * current surface through the official <a2ui-surface> Lit element.
@@ -61,7 +66,12 @@ class ArgentaA2uiApp extends LitElement {
   }
 
   connect() {
-    const socket = new WebSocket(this.agentUrl());
+    const url = this.agentUrl();
+    if (url.startsWith('http')) {
+      this.connectSse(url);
+      return;
+    }
+    const socket = new WebSocket(url);
     this.socket = socket;
     socket.addEventListener('open', () => {
       this.status = 'connected';
@@ -78,7 +88,31 @@ class ArgentaA2uiApp extends LitElement {
     });
   }
 
+  connectSse(url) {
+    const source = new EventSource(`${url}/events`);
+    this.eventSource = source;
+    source.addEventListener('open', () => {
+      this.status = 'connected';
+    });
+    source.addEventListener('message', (event) => {
+      this.processor.processMessages(JSON.parse(event.data));
+    });
+    // EventSource reconnects by itself; the transport replays history
+    source.addEventListener('error', () => {
+      this.status = 'disconnected, reconnecting…';
+    });
+  }
+
   send(message) {
+    const url = this.agentUrl();
+    if (url.startsWith('http')) {
+      fetch(`${url}/actions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(message),
+      });
+      return;
+    }
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(message));
     }

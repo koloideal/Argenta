@@ -73,7 +73,7 @@ class AgentRuntime:
         self._messages = MessageFactory(self._config)
         self._log_lines: list[str] = []
         self._log_dirty = False
-        self._verbose = VerboseLog(verbose)
+        self._verbose = VerboseLog(verbose, "agent")
 
     def run(self) -> None:
         """

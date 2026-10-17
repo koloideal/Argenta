@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import json
 import queue
 import threading
@@ -11,16 +9,8 @@ from websockets.exceptions import ConnectionClosed
 from websockets.sync.server import Server, ServerConnection, serve
 
 from argenta.a2ui._verbose import VerboseLog
-from argenta.a2ui.models import JsonValue, Message
-
-
-def _decode_message(raw: str | bytes) -> Message | None:
-    """Private. Decodes a client frame; returns None for malformed or non-object payloads"""
-    with suppress(json.JSONDecodeError):
-        decoded: JsonValue = json.loads(raw)
-        if isinstance(decoded, dict):
-            return decoded
-    return None
+from argenta.a2ui.messages import decode_message
+from argenta.a2ui.models import Message
 
 
 class WebSocketTransport:
@@ -33,7 +23,7 @@ class WebSocketTransport:
 
     def __init__(self, host: str = "127.0.0.1", port: int = 8765, *, verbose: bool = False) -> None:
         self._stop: Final = cast("Message", object())
-        self._verbose = VerboseLog(verbose)
+        self._verbose = VerboseLog(verbose, "ws")
         self._incoming: queue.Queue[Message] = queue.Queue()
         self._connections: set[ServerConnection] = set()
         self._history: list[str] = []
@@ -85,7 +75,7 @@ class WebSocketTransport:
         self._verbose.report("client connected")
         with suppress(ConnectionClosed):
             for raw in connection:
-                decoded = _decode_message(raw)
+                decoded = decode_message(raw)
                 if decoded is not None:
                     self._incoming.put(decoded)
         self._drop(connection)

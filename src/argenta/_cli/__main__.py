@@ -70,17 +70,18 @@ def _a2ui(  # noqa: WPS211
         str, typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>")
     ],
     transport: Annotated[
-        Literal["stdio", "ws"],
+        Literal["stdio", "ws", "sse"],
         typer.Option(
             "--transport",
             "-t",
-            help="A2UI transport: 'ws' WebSocket server (default) or 'stdio' JSONL "
-            "for machine clients driving the agent over stdin/stdout.",
+            help="A2UI transport: 'ws' WebSocket server (default), 'sse' HTTP "
+            "Server-Sent Events + POST actions, or 'stdio' JSONL for machine "
+            "clients driving the agent over stdin/stdout.",
         ),
     ] = "ws",
     port: Annotated[
         int | None,
-        typer.Option("--port", "-p", help="WebSocket listen port for --transport ws."),
+        typer.Option("--port", "-p", help="Listen port for the ws/sse server transports."),
     ] = None,
     verbose: Annotated[
         bool,

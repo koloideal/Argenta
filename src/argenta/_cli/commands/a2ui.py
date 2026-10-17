@@ -76,7 +76,7 @@ def a2ui_handler(container: Container, entrypoint_path: str, options: A2UIRunOpt
     os.environ[runner_config.mode_env_var] = runner_config.a2ui_mode
     os.environ[runner_config.a2ui_transport_env_var] = options.transport
     if options.port is not None:
-        os.environ[runner_config.a2ui_ws_port_env_var] = str(options.port)
+        os.environ[runner_config.a2ui_port_env_var] = str(options.port)
     if options.verbose:
         os.environ[runner_config.a2ui_verbose_env_var] = "1"
     resolve_callable_entrypoint(spec, console).instance_object()

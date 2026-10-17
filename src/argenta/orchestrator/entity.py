@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from dishka import Provider, make_container
 
-from argenta.a2ui import A2UIConfig, AgentRuntime, StdioTransport, Transport
+from argenta.a2ui import A2UIConfig, AgentRuntime, SSETransport, StdioTransport, Transport
 from argenta.a2ui.provider import A2UIProvider
 from argenta.app import App
 from argenta.di.integration import setup_dishka
@@ -24,9 +24,10 @@ class RunnerConfig:
     a2ui_mode: str = "a2ui"
     a2ui_transport_env_var: str = "ARGENTA_A2UI_TRANSPORT"
     a2ui_ws_transport: str = "ws"
-    a2ui_ws_port_env_var: str = "ARGENTA_A2UI_WS_PORT"
-    a2ui_ws_default_host: str = "127.0.0.1"
-    a2ui_ws_default_port: int = 8765
+    a2ui_sse_transport: str = "sse"
+    a2ui_port_env_var: str = "ARGENTA_A2UI_PORT"
+    a2ui_default_host: str = "127.0.0.1"
+    a2ui_default_port: int = 8765
     a2ui_verbose_env_var: str = "ARGENTA_A2UI_VERBOSE"
 
 
@@ -110,14 +111,23 @@ class Orchestrator:
             AgentRuntime(app, transport, container.get(A2UIConfig), verbose=verbose).run()
 
     def _resolve_agent_transport(self) -> Transport:
-        """Private. Builds the agent transport selected via `argenta run` flags"""
+        """Private. Builds the agent transport selected via `argenta a2ui` flags"""
         config = self._runner_config
         verbose = bool(os.getenv(config.a2ui_verbose_env_var))
-        if os.getenv(config.a2ui_transport_env_var) == config.a2ui_ws_transport:
-            port_raw = os.getenv(config.a2ui_ws_port_env_var)
-            port = int(port_raw) if port_raw else config.a2ui_ws_default_port
-            return self._build_ws_transport(config.a2ui_ws_default_host, port, verbose)
+        transport_name = os.getenv(config.a2ui_transport_env_var)
+        if transport_name == config.a2ui_ws_transport:
+            return self._build_ws_transport(config.a2ui_default_host, self._server_port(), verbose)
+        if transport_name == config.a2ui_sse_transport:
+            return SSETransport(
+                host=config.a2ui_default_host, port=self._server_port(), verbose=verbose
+            )
         return StdioTransport(verbose=verbose)
+
+    def _server_port(self) -> int:
+        """Private. Port for the network transports, env override or default"""
+        config = self._runner_config
+        port_raw = os.getenv(config.a2ui_port_env_var)
+        return int(port_raw) if port_raw else config.a2ui_default_port
 
     def _build_ws_transport(self, host: str, port: int, verbose: bool) -> Transport:
         """Private. Builds the WebSocket transport; `websockets` is an optional

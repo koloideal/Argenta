@@ -22,7 +22,7 @@ class StdioTransport:
         self._out = out
         self._inp = inp
         self._indent: int | None = 2 if out.isatty() else None
-        self._verbose = VerboseLog(verbose)
+        self._verbose = VerboseLog(verbose, "stdio")
         if inp.isatty():
             self._verbose.report(
                 "stdio is a machine transport — usually driven by a parent process "

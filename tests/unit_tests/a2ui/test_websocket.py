@@ -90,6 +90,7 @@ def test_verbose_reports_lifecycle_to_stderr(capsys: pytest.CaptureFixture[str])
         ws_transport.close()
 
     err = capsys.readouterr().err
+    assert "[ws]" in err
     assert "listening on ws://" in err
     assert "client connected" in err
     assert "sent 'createSurface' to 1 client(s)" in err
