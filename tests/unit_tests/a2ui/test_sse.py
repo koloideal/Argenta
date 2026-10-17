@@ -68,6 +68,18 @@ def test_sse_malformed_post_gets_400(transport: SSETransport) -> None:
     assert response.status == 400
 
 
+def test_sse_root_serves_endpoint_index(transport: SSETransport) -> None:
+    conn = http.client.HTTPConnection("127.0.0.1", transport.port, timeout=5)
+    conn.request("GET", "/")
+    response = conn.getresponse()
+    body = response.read()
+    conn.close()
+
+    assert response.status == 200
+    assert b"GET /events" in body
+    assert b"POST /actions" in body
+
+
 def test_sse_unknown_paths_get_404(transport: SSETransport) -> None:
     get_response = _post(transport, "/nope", "{}")
 

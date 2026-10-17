@@ -37,8 +37,16 @@ class _SSEHandler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
 
     def do_GET(self) -> None:
+        if self.path == "/":
+            index = (
+                b"Argenta A2UI agent (SSE transport)\n"
+                b"GET /events   -- A2UI messages stream\n"
+                b"POST /actions -- client action messages\n"
+            )
+            self._respond(HTTPStatus.OK, body=index)
+            return
         if self.path != "/events":
-            self.send_error(HTTPStatus.NOT_FOUND)
+            self._respond(HTTPStatus.NOT_FOUND)
             return
         transport = self.server.transport
         client = transport.register_client()
@@ -51,17 +59,15 @@ class _SSEHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         if self.path != "/actions":
-            self.send_error(HTTPStatus.NOT_FOUND)
+            self._respond(HTTPStatus.NOT_FOUND)
             return
         length = int(self.headers.get("Content-Length") or 0)
         message = decode_message(self.rfile.read(length))
         if message is None:
-            self.send_error(HTTPStatus.BAD_REQUEST)
+            self._respond(HTTPStatus.BAD_REQUEST)
             return
         self.server.transport.incoming.put(message)
-        self.send_response(HTTPStatus.ACCEPTED)
-        self.send_header("Content-Length", "0")
-        self.end_headers()
+        self._respond(HTTPStatus.ACCEPTED)
 
     def do_OPTIONS(self) -> None:
         self.send_response(HTTPStatus.NO_CONTENT)
@@ -78,6 +84,13 @@ class _SSEHandler(BaseHTTPRequestHandler):
     def log_message(self, msg_format: str, *args: object) -> None:
         message = msg_format % args
         self.server.transport.verbose.report(f"http: {message}")
+
+    def _respond(self, status: HTTPStatus, body: bytes = b"") -> None:
+        self.send_response(status)
+        self.send_header("Content-Type", "text/plain; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
     def _send_stream_headers(self) -> None:
         self.send_response(HTTPStatus.OK)

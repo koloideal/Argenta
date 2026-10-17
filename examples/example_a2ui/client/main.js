@@ -8,7 +8,8 @@ const DEFAULT_AGENT_URL = 'ws://127.0.0.1:8765';
 
 /**
  * Two transports: ?agent=ws://host:port (WebSocket) or
- * ?agent=http://host:port (SSE stream + POST /actions)
+ * ?agent=http://host:port (SSE stream + POST /actions).
+ * A ws:// URL that never opens falls back to SSE on the same host:port.
  */
 
 /**
@@ -73,13 +74,20 @@ class ArgentaA2uiApp extends LitElement {
     }
     const socket = new WebSocket(url);
     this.socket = socket;
+    let opened = false;
     socket.addEventListener('open', () => {
+      opened = true;
       this.status = 'connected';
     });
     socket.addEventListener('message', (event) => {
       this.processor.processMessages(JSON.parse(event.data));
     });
     socket.addEventListener('close', () => {
+      if (!opened) {
+        // not a WebSocket endpoint — retry the same address as SSE
+        this.connectSse(url.replace(/^ws/, 'http'));
+        return;
+      }
       this.status = 'disconnected, reconnecting…';
       setTimeout(() => this.connect(), 1000);
     });
@@ -89,8 +97,8 @@ class ArgentaA2uiApp extends LitElement {
   }
 
   connectSse(url) {
+    this.sseUrl = url;
     const source = new EventSource(`${url}/events`);
-    this.eventSource = source;
     source.addEventListener('open', () => {
       this.status = 'connected';
     });
@@ -104,9 +112,8 @@ class ArgentaA2uiApp extends LitElement {
   }
 
   send(message) {
-    const url = this.agentUrl();
-    if (url.startsWith('http')) {
-      fetch(`${url}/actions`, {
+    if (this.sseUrl) {
+      fetch(`${this.sseUrl}/actions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(message),
