@@ -5,6 +5,7 @@ import pytest
 from argenta.app import App
 from argenta.app.protocols import DescriptionMessageGenerator, NonStandardBehaviorHandler
 from argenta.command.models import Command, InputCommand
+from argenta.repl import REPLRuntime
 from argenta.response import Response
 from argenta.response.status import ResponseStatus
 from argenta.router import Router
@@ -55,7 +56,7 @@ def test_dispatch_command_invokes_exit_handler_exactly_once() -> None:
     app.set_exit_command_handler(custom_handler)
     app._setup_system_router()
 
-    assert app._dispatch_command("q") is True
+    assert REPLRuntime(app)._dispatch_command("q") is True
     assert call_tracker["count"] == 1
 
 
@@ -71,7 +72,7 @@ def test_dispatch_command_processes_registered_command_exactly_once() -> None:
     app.include_router(router)
     app._setup_system_router()
 
-    assert app._dispatch_command("run") is False
+    assert REPLRuntime(app)._dispatch_command("run") is False
     assert call_tracker["count"] == 1
 
 

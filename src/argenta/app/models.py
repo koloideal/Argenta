@@ -171,44 +171,6 @@ class BaseApp(BehaviorHandlersSettersMixin):
             is_stdout_redirected_by_router=processing_router.is_redirect_stdout_disabled,
         )
 
-    def _run_repl(self) -> None:
-        self._viewer.view_initial_message(self._initial_message)
-        self._pre_cycle_setup()
-        while True:
-            if self._repeat_command_groups_printing:
-                self._viewer.view_command_groups_description(
-                    self._description_message_generator, self.registered_routers
-                )
-
-            raw_command = self._read_command()
-            if raw_command is not None and self._dispatch_command(raw_command):
-                return
-
-    def _read_command(self) -> str | None:
-        try:
-            return self._prompt_for_command()
-        except KeyboardInterrupt:
-            return None
-        except EOFError:
-            return self._exit_command.trigger
-
-    def _prompt_for_command(self) -> str:
-        self._printer("")  # pre-prompt gap
-        raw_command: str = self._autocompleter.prompt(self._renderer.render_prompt(self._prompt))
-        self._printer("")  # post-prompt gap
-        return raw_command
-
-    def _dispatch_command(self, raw_command: str) -> bool:
-        try:
-            input_command = InputCommand.parse(raw_command=raw_command)
-        except InputCommandException as error:
-            self._viewer.view_framed_text_from_generator(
-                output_text_generator=partial(self._error_handler, error, raw_command)
-            )
-            return False
-
-        return self._dispatch_input_command(input_command)
-
     def _dispatch_input_command(self, input_command: InputCommand) -> bool:
         if self._is_unknown_command(input_command):
             self._viewer.view_framed_text_from_generator(

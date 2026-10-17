@@ -1,6 +1,7 @@
 from argenta import App
 from argenta.command import Flag, Flags
 from argenta.command.models import Command
+from argenta.repl import REPLRuntime
 from argenta.response import Response
 from argenta.router import Router
 from metrics.benchmarks.entity import benchmarks
@@ -25,18 +26,19 @@ def setup_app(command_count: int = 20) -> App:
 
 
 _APP = setup_app()
+_RUNTIME = REPLRuntime(_APP)
 
 
 @benchmarks.register(type_="command_dispatch", description="Simple command, no flags")
 def benchmark_dispatch_simple() -> None:
-    _APP._dispatch_command("cmd5")
+    _RUNTIME._dispatch_command("cmd5")
 
 
 @benchmarks.register(type_="command_dispatch", description="Command with flags and a value")
 def benchmark_dispatch_flags_and_values() -> None:
-    _APP._dispatch_command("cmd5 --verbose --output result.txt")
+    _RUNTIME._dispatch_command("cmd5 --verbose --output result.txt")
 
 
 @benchmarks.register(type_="command_dispatch", description="Unknown command (suggestion path)")
 def benchmark_dispatch_unknown_command() -> None:
-    _APP._dispatch_command("commd5")
+    _RUNTIME._dispatch_command("commd5")

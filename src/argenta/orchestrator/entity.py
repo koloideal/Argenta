@@ -8,6 +8,7 @@ from argenta.app import App
 from argenta.di.integration import setup_dishka
 from argenta.di.providers import SystemProvider
 from argenta.orchestrator.argparser import ArgParser
+from argenta.repl import REPLRuntime
 
 
 class Orchestrator:
@@ -44,7 +45,7 @@ class Orchestrator:
         setup_dishka(app, container, auto_inject=self._auto_inject_handlers)
 
         with container:
-            app._run_repl()
+            REPLRuntime(app).run()
 
     def run_agent(self, app: App, transport: Transport, config: A2UIConfig | None = None) -> None:
         """
