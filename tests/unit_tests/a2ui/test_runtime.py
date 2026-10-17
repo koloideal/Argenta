@@ -360,6 +360,21 @@ def test_handler_without_output_does_not_send_log() -> None:
     assert len(_log_updates(transport)) == 2
 
 
+def test_log_flush_emits_full_buffer() -> None:
+    def handler(_response: Response) -> None:
+        for index in range(30):
+            print(f"line{index}")
+
+    app = _app_with(handler)
+    transport = MemoryTransport(incoming=[{"action": {"name": "hello", "context": {}}}])
+
+    AgentRuntime(app, transport).run()
+
+    last_log = _log_updates(transport)[-1]
+    assert "line0" in last_log
+    assert "line29" in last_log
+
+
 def test_log_capped_at_max_lines() -> None:
     def handler(_response: Response) -> None:
         for index in range(600):

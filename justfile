@@ -103,7 +103,3 @@ a2ui-example-agent:
 # Serve the A2UI Lit client on http://127.0.0.1:8080
 a2ui-example-client:
     uv run python -m http.server 8080 --directory examples/example_a2ui/client
-
-# Run the full A2UI Lit demo: agent (ws://127.0.0.1:8765) + client (http://127.0.0.1:8080), Ctrl-C stops both
-a2ui-example:
-    uv run --extra a2ui python examples/example_a2ui/run_demo.py

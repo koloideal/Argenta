@@ -1,7 +1,7 @@
 import re
 
 from argenta import Command, Response, Router
-from argenta.a2ui.catalog import _escape_pointer, build_surface
+from argenta.a2ui.catalog import _flag_path, build_surface
 from argenta.a2ui.models import A2UIConfig, JsonValue, Message
 from argenta.app.registered_routers.entity import RegisteredRouters
 from argenta.command.flag import Flag, Flags, PossibleValues
@@ -40,8 +40,8 @@ def _children(component: Message, key: str) -> list[JsonValue]:
     return value
 
 
-def test_escape_pointer() -> None:
-    assert _escape_pointer("a/b~c") == "a~1b~0c"
+def test_flag_path_escapes_segments() -> None:
+    assert _flag_path("a/b", "c~d") == "/forms/a~1b/c~0d"
 
 
 def test_router_titles() -> None:
@@ -190,7 +190,37 @@ def test_log_card_bound_to_log_path() -> None:
     assert log_text["text"] == {"path": A2UIConfig().log_model_path}
     assert _component_by_id(components, "a2ui_log_card")["child"] == "a2ui_log_text"
     assert model["log"] == ""
-    assert "a2ui_log_card" in _children(_component_by_id(components, "root"), "children")
+    assert _children(_component_by_id(components, "root"), "children")[0] == "a2ui_log_card"
+
+
+def test_command_cards_pair_into_rows() -> None:
+    router = Router()
+    router.command("alpha")(_handler)
+    router.command("beta")(_handler)
+    router.command("gamma")(_handler)
+
+    components, _ = build_surface(_registered(router), A2UIConfig())
+
+    root_children = _children(_component_by_id(components, "root"), "children")
+    assert "card_alpha" not in root_children
+    first_row = _component_by_id(components, "card_row_0_0")
+    second_row = _component_by_id(components, "card_row_0_1")
+    assert first_row["component"] == "Row"
+    assert _children(first_row, "children") == ["card_alpha", "card_beta"]
+    assert _children(second_row, "children") == ["card_gamma"]
+    assert root_children == ["a2ui_log_card", "router_title_0", "card_row_0_0", "card_row_0_1"]
+
+
+def test_cards_per_row_is_configurable() -> None:
+    router = Router()
+    router.command("alpha")(_handler)
+    router.command("beta")(_handler)
+    router.command("gamma")(_handler)
+
+    components, _ = build_surface(_registered(router), A2UIConfig(cards_per_row=3))
+
+    first_row = _component_by_id(components, "card_row_0_0")
+    assert _children(first_row, "children") == ["card_alpha", "card_beta", "card_gamma"]
 
 
 def test_multiple_routers_get_separate_titles() -> None:

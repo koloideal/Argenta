@@ -19,5 +19,6 @@ class A2UIConfig:
     log_text_id: str = "a2ui_log_text"
     log_model_path: str = "/log"
     max_log_lines: int = 500
+    cards_per_row: int = 2
     text_component: str = "Text"
     theme: Mapping[str, JsonValue] | None = None

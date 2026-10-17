@@ -5,19 +5,96 @@ import { A2uiSurface, Context, basicCatalog } from '@a2ui/lit/v0_9';
 import { renderMarkdown } from '@a2ui/markdown-it';
 
 const DEFAULT_AGENT_URL = 'ws://127.0.0.1:8765';
+const RECONNECT_DELAY_MS = 1000;
+const END = Symbol('stream end');
 
 /**
- * Three transports: ?agent=ws://host:port (WebSocket),
- * ?agent=http://host:port (SSE stream + POST /actions) or
- * ?agent=poll://host:port (long-poll batches + POST /actions).
- * Fallback chain: ws:// that never opens → SSE → long poll,
- * all on the same host:port.
+ * ?agent=ws://host:port | http://host:port (SSE) | poll://host:port.
+ * Every connector resolves to {send, messages}, where messages is an
+ * async iterable of A2UI messages; unavailability rejects the promise
+ * and the next transport on the same host:port gets a turn.
  */
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Adapts an event-driven source into an async iterable of messages. */
+function messageQueue() {
+  const items = [];
+  const waiters = [];
+  return {
+    push(item) {
+      const waiter = waiters.shift();
+      if (waiter) waiter(item);
+      else items.push(item);
+    },
+    close() {
+      this.push(END);
+    },
+    async *[Symbol.asyncIterator]() {
+      for (;;) {
+        const item = items.length
+          ? items.shift()
+          : await new Promise((resolve) => waiters.push(resolve));
+        if (item === END) return;
+        yield item;
+      }
+    },
+  };
+}
+
+const postAction = (url, message) =>
+  fetch(`${url}/actions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(message),
+  }).catch(() => {});
+
+function viaWebSocket(url) {
+  return new Promise((resolve, reject) => {
+    const socket = new WebSocket(url);
+    const queue = messageQueue();
+    socket.onopen = () =>
+      resolve({ send: (m) => socket.send(JSON.stringify(m)), messages: queue });
+    socket.onmessage = (event) => queue.push(JSON.parse(event.data));
+    socket.onerror = () => reject(new Error('websocket unavailable'));
+    socket.onclose = () => queue.close();
+  });
+}
+
+function viaEventSource(url) {
+  return new Promise((resolve, reject) => {
+    const source = new EventSource(`${url}/events`);
+    const queue = messageQueue();
+    source.onopen = () => resolve({ send: (m) => postAction(url, m), messages: queue });
+    source.onmessage = (event) => queue.push(JSON.parse(event.data));
+    source.onerror = () => {
+      if (source.readyState === EventSource.CLOSED) {
+        source.close();
+        reject(new Error('event stream unavailable'));
+      }
+    };
+  });
+}
+
+function viaPoll(url) {
+  const messages = {
+    async *[Symbol.asyncIterator]() {
+      let cursor = 0;
+      for (;;) {
+        const response = await fetch(`${url}/events?after=${cursor}`);
+        const batch = await response.json();
+        for (const message of batch.messages) yield message;
+        cursor = batch.next;
+      }
+    },
+  };
+  return { send: (m) => postAction(url, m), messages };
+}
+
 /**
- * A2UI renderer shell: keeps a WebSocket connection to the Python agent,
- * feeds incoming messages into the MessageProcessor and renders the
- * current surface through the official <a2ui-surface> Lit element.
+ * A2UI renderer shell: connects to the Python agent, feeds incoming
+ * messages into the MessageProcessor and renders the current surface
+ * through the official <a2ui-surface> Lit element.
  */
 class ArgentaA2uiApp extends LitElement {
   static properties = {
@@ -35,6 +112,16 @@ class ArgentaA2uiApp extends LitElement {
       font-size: 0.875rem;
       opacity: 0.6;
     }
+    /* the output card is the first child of the root column: fix its
+       height and let the log scroll inside instead of growing the page */
+    a2ui-surface > a2ui-basic-column > a2ui-card:first-of-type {
+      display: block;
+      max-height: 16rem;
+      overflow-y: auto;
+    }
+    a2ui-surface > a2ui-basic-column > a2ui-card:first-of-type pre {
+      margin: 0;
+    }
   `;
 
   processor = new MessageProcessor([basicCatalog], (action) => {
@@ -45,7 +132,7 @@ class ArgentaA2uiApp extends LitElement {
     super();
     this.surface = undefined;
     this.status = 'connecting';
-    this.socket = undefined;
+    this.outbound = undefined;
     new ContextProvider(this, {
       context: Context.markdown,
       initialValue: renderMarkdown,
@@ -56,106 +143,78 @@ class ArgentaA2uiApp extends LitElement {
     super.connectedCallback();
     this.processor.onSurfaceCreated((surface) => {
       this.surface = surface;
-      this.status = 'connected';
     });
     this.processor.onSurfaceDeleted(() => {
       this.surface = undefined;
     });
-    this.connect();
+    void this.run();
   }
 
   agentUrl() {
     return new URLSearchParams(location.search).get('agent') || DEFAULT_AGENT_URL;
   }
 
-  connect() {
+  /** Tries each transport on the agent address; null when none answers. */
+  async openTransport() {
     const url = this.agentUrl();
-    if (url.startsWith('poll://')) {
-      this.connectPoll(url.replace(/^poll/, 'http'));
-      return;
-    }
-    if (url.startsWith('http')) {
-      this.connectSse(url);
-      return;
-    }
-    const socket = new WebSocket(url);
-    this.socket = socket;
-    let opened = false;
-    socket.addEventListener('open', () => {
-      opened = true;
-      this.status = 'connected';
-    });
-    socket.addEventListener('message', (event) => {
-      this.processor.processMessages(JSON.parse(event.data));
-    });
-    socket.addEventListener('close', () => {
-      if (!opened) {
-        // not a WebSocket endpoint — retry the same address as SSE
-        this.connectSse(url.replace(/^ws/, 'http'));
-        return;
-      }
-      this.status = 'disconnected, reconnecting…';
-      setTimeout(() => this.connect(), 1000);
-    });
-    socket.addEventListener('error', () => {
-      this.status = 'connection error';
-    });
-  }
-
-  connectSse(url) {
-    this.sseUrl = url;
-    const source = new EventSource(`${url}/events`);
-    let opened = false;
-    source.addEventListener('open', () => {
-      opened = true;
-      this.status = 'connected';
-    });
-    source.addEventListener('message', (event) => {
-      this.processor.processMessages(JSON.parse(event.data));
-    });
-    // EventSource reconnects by itself; the transport replays history
-    source.addEventListener('error', () => {
-      if (!opened) {
-        // not an SSE endpoint — retry the same address as a long poll
-        source.close();
-        this.connectPoll(url);
-        return;
-      }
-      this.status = 'disconnected, reconnecting…';
-    });
-  }
-
-  async connectPoll(url) {
-    this.sseUrl = url;
-    let cursor = 0;
-    for (;;) {
+    const httpUrl = url.replace(/^\w+/, 'http');
+    const connectors = url.startsWith('ws')
+      ? [() => viaWebSocket(url), () => viaEventSource(httpUrl), () => viaPoll(httpUrl)]
+      : [() => viaEventSource(httpUrl), () => viaPoll(httpUrl)];
+    for (const connect of connectors) {
       try {
-        const response = await fetch(`${url}/events?after=${cursor}`);
-        const batch = await response.json();
-        for (const message of batch.messages) {
-          this.processor.processMessages(message);
-        }
-        cursor = batch.next;
-        this.status = 'connected';
+        return await connect();
       } catch {
-        this.status = 'disconnected, reconnecting…';
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // transport unavailable — try the next one
       }
+    }
+    return null;
+  }
+
+  async run() {
+    for (;;) {
+      const conn = await this.openTransport();
+      this.outbound = conn?.send;
+      this.status = conn ? 'connected' : 'unreachable, retrying…';
+      if (conn) {
+        try {
+          for await (const message of conn.messages) {
+            this.processor.processMessages(message);
+            this.pinLogScroll();
+          }
+        } catch {
+          // the transport dropped mid-stream — reconnect
+        }
+        this.status = 'disconnected, reconnecting…';
+      }
+      await sleep(RECONNECT_DELAY_MS);
     }
   }
 
   send(message) {
-    if (this.sseUrl) {
-      fetch(`${this.sseUrl}/actions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(message),
+    this.outbound?.(message);
+  }
+
+  /**
+   * Keeps the output card glued to the log tail. Once the user scrolls
+   * up, the pin releases until they return to the bottom.
+   */
+  pinLogScroll() {
+    const card = this.shadowRoot?.querySelector(
+      'a2ui-surface > a2ui-basic-column > a2ui-card',
+    );
+    if (!card) return;
+    if (!card.dataset.pinHooked) {
+      card.dataset.pinHooked = '1';
+      card.addEventListener('scroll', () => {
+        this._logPinned =
+          card.scrollTop + card.clientHeight >= card.scrollHeight - 24;
       });
-      return;
     }
-    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(message));
-    }
+    if (this._logPinned === false) return;
+    requestAnimationFrame(() => {
+      card.scrollTop = card.scrollHeight;
+    });
   }
 
   render() {

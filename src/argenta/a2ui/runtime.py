@@ -118,10 +118,12 @@ class AgentRuntime:
 
     def _flush_log(self) -> None:
         if self._log_dirty:
+            # renderers get the whole capped buffer inside a fenced block;
+            # windowing/scrolling of the output card is a client concern
+            window = "\n".join(self._log_lines)
+            rendered = f"````\n{window}\n````"
             self._transport.send(
-                self._messages.update_data_model(
-                    self._config.log_model_path, "\n".join(self._log_lines)
-                )
+                self._messages.update_data_model(self._config.log_model_path, rendered)
             )
             self._log_dirty = False
 

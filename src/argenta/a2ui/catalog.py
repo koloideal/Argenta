@@ -1,4 +1,5 @@
 from collections.abc import Iterable
+from itertools import batched
 from re import Pattern
 
 from argenta.a2ui.models import A2UIConfig, JsonValue, Message
@@ -9,14 +10,14 @@ from argenta.router.entity import Router
 type ContextBinding = dict[str, str]
 type FlagDefaults = dict[str, bool | str | list[str]]
 type SurfaceParts = tuple[list[Message], dict[str, JsonValue]]
-
-
-def _escape_pointer(segment: str) -> str:
-    return segment.replace("~", "~0").replace("/", "~1")
+type _ComponentList = list[Message]
+type _IdList = list[str]
 
 
 def _flag_path(trigger: str, flag_name: str) -> str:
-    return f"/forms/{_escape_pointer(trigger)}/{_escape_pointer(flag_name)}"
+    escaped_trigger = trigger.replace("~", "~0").replace("/", "~1")
+    escaped_name = flag_name.replace("~", "~0").replace("/", "~1")
+    return f"/forms/{escaped_trigger}/{escaped_name}"
 
 
 def _path_binding(path: str) -> ContextBinding:
@@ -59,13 +60,11 @@ class CatalogBuilder:
         :return: (components, initial_data_model)
         """
         components: list[Message] = []
-        children: list[str] = []
+        children: list[str] = [self._config.log_card_id]  # output first, commands below
         forms_model: dict[str, FlagDefaults] = {}
 
         for index, router in enumerate(registered_routers):
             components.extend(self._router_components(router, index, forms_model, children))
-
-        children.append(self._config.log_card_id)
         components.extend(
             [
                 _component(
@@ -86,17 +85,39 @@ class CatalogBuilder:
         forms_model: dict[str, FlagDefaults],
         children: list[str],
     ) -> list[Message]:
-        title_id = f"router_title_{index}"
-        children.append(title_id)
-        parts = [_component(title_id, self._config.text_component, text=router.title, variant="h4")]
+        children.append(f"router_title_{index}")
+        parts = [
+            _component(
+                f"router_title_{index}",
+                self._config.text_component,
+                text=router.title,
+                variant="h4",
+            )
+        ]
 
+        card_ids: list[str] = []
         for command_handler in router.command_handlers:
             command = command_handler.handled_command
             flags = list(command.registered_flags)
             forms_model[command.trigger] = {flag.name: _flag_default(flag) for flag in flags}
-            children.append(f"card_{command.trigger}")
+            card_ids.append(f"card_{command.trigger}")
             parts.extend(self._command_components(command.trigger, command.description, flags))
+        self._card_rows(index, card_ids, children, parts)
         return parts
+
+    def _card_rows(
+        self,
+        router_index: int,
+        card_ids: _IdList,
+        children: _IdList,
+        parts: _ComponentList,
+    ) -> None:
+        """Private. Groups command cards into rows so commands
+        do not stretch the full surface width"""
+        for row_index, pair in enumerate(batched(card_ids, self._config.cards_per_row)):
+            row_id = f"card_row_{router_index}_{row_index}"
+            children.append(row_id)
+            parts.append(_component(row_id, "Row", children=list(pair), justify="stretch"))
 
     def _command_components(
         self, trigger: str, description: str, flags: list[Flag]
@@ -150,25 +171,17 @@ class CatalogBuilder:
                 label=flag.string_entity,
                 value=_path_binding(path),
             )
-        if isinstance(possible_values, Pattern):
-            return self._regex_field(field_id, flag, path, possible_values)
-        if isinstance(possible_values, Iterable) and not isinstance(possible_values, str):
+        if isinstance(possible_values, Iterable) and not isinstance(
+            possible_values, (str, Pattern)
+        ):
             return self._picker(field_id, flag, path, possible_values)
-        return _component(
-            field_id,
-            "TextField",
-            label=flag.string_entity,
-            value=_path_binding(path),
-        )
-
-    def _regex_field(self, field_id: str, flag: Flag, path: str, pattern: Pattern[str]) -> Message:
-        return _component(
-            field_id,
-            "TextField",
-            label=flag.string_entity,
-            value=_path_binding(path),
-            validationRegexp=pattern.pattern,
-        )
+        properties: dict[str, JsonValue] = {
+            "label": flag.string_entity,
+            "value": _path_binding(path),
+        }
+        if isinstance(possible_values, Pattern):
+            properties["validationRegexp"] = possible_values.pattern
+        return _component(field_id, "TextField", **properties)
 
     def _picker(self, field_id: str, flag: Flag, path: str, options: Iterable[str]) -> Message:
         return _component(
