@@ -83,10 +83,10 @@ In this case, ``input()`` will work as usual, and the user will immediately see 
 Types of Dividing Lines
 -----------------------
 
-``Argenta`` supports two types of dividers, which are configured during ``App`` initialization:
+``Argenta`` supports two types of dividers, configured on the REPL runtime via :ref:`REPLConfig <root_api_repl>`:
 
 1.  **``DynamicDividingLine()``**
-	*  Default behavior. The line length dynamically adjusts to the longest text in the output.
+	*  The line length dynamically adjusts to the longest text in the output.
 	*  Requires enabled ``stdout`` interception (``disable_redirect_stdout=False`` in the router).
 
 2.  **``StaticDividingLine(length: int = 25)``**
@@ -95,10 +95,10 @@ Types of Dividing Lines
 
 -----
 
-Configuring the Dividing Line in ``App``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Configuring the Dividing Line
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can globally set the divider type for the entire application via the ``dividing_line`` argument in the ``App`` constructor.
+The dividing line is part of the REPL runtime layout, not of the ``App``: set it for the whole session via ``REPLConfig(dividing_line=...)`` passed to ``Orchestrator.run_repl``. An A2UI agent never draws dividing lines — its renderer lays out output entries itself.
 
 **Usage example:**
 
@@ -116,7 +116,7 @@ Resulting Behavior
    :header-rows: 1
 
    * - ``disable_redirect_stdout`` on ``Router``
-     - Line type in ``App``
+     - Line type in ``REPLConfig``
      - Actual behavior
      - Does ``input()`` work correctly?
    * - ``False`` (default)

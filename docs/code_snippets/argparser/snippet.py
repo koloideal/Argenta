@@ -1,11 +1,7 @@
 from argenta import App, Orchestrator
 from argenta.orchestrator.argparser import ArgParser, BooleanArgument
 
-arg_parser = ArgParser(
-    processed_args=[
-        BooleanArgument("dev")
-    ]
-)
+arg_parser = ArgParser(processed_args=[BooleanArgument("dev")])
 orchestrator = Orchestrator(
     arg_parser=arg_parser,
 )

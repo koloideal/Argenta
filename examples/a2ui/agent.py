@@ -1,5 +1,4 @@
 from argenta import App, Orchestrator
-from argenta.app import StaticDividingLine
 from argenta.app.presentation.ascii_art import AsciiArtRenderer, BundledFont, FigletFontLoader
 from examples.a2ui.routers import release_router
 
@@ -8,7 +7,6 @@ _banner: str = AsciiArtRenderer().render(
 )
 app: App = App(
     initial_message=_banner,
-    dividing_line=StaticDividingLine("~"),
     override_system_messages=True,
     printer=print,
 )

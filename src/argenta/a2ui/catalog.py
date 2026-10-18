@@ -44,7 +44,7 @@ class CatalogBuilder:
     """
     Private. Builds the surface component graph and initial data model
     from the registered routers: one card per command, one input per flag,
-    plus a log text component bound to the configured log data model path
+    plus a log list templated over the entries at the log data model path
     """
 
     def __init__(self, config: A2UIConfig) -> None:
@@ -68,15 +68,23 @@ class CatalogBuilder:
         components.extend(
             [
                 _component(
-                    self._config.log_text_id,
+                    self._config.log_entry_id,
                     self._config.text_component,
-                    text=_path_binding(self._config.log_model_path),
+                    text=_path_binding("markdown"),  # scoped to the templated log entry
                 ),
-                _component(self._config.log_card_id, "Card", child=self._config.log_text_id),
+                _component(
+                    self._config.log_list_id,
+                    "List",
+                    children={
+                        "componentId": self._config.log_entry_id,
+                        "path": self._config.log_model_path,
+                    },
+                ),
+                _component(self._config.log_card_id, "Card", child=self._config.log_list_id),
                 _component(self._config.surface_root_id, "Column", children=children),
             ]
         )
-        return components, {"forms": forms_model, "log": ""}
+        return components, {"forms": forms_model, "log": []}
 
     def _router_components(
         self,

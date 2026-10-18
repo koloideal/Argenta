@@ -10,16 +10,22 @@ from argenta.a2ui.runtime import _find_command
 from argenta.command.flag import Flag, Flags, PossibleValues
 
 
-def _log_updates(transport: MemoryTransport) -> list[str]:
-    logs: list[str] = []
+def _log_entries(transport: MemoryTransport) -> list[list[Message]]:
+    updates: list[list[Message]] = []
     for message in transport.sent:
         update = message.get("updateDataModel")
-        if not isinstance(update, dict):
+        if not isinstance(update, dict) or update.get("path") != A2UIConfig().log_model_path:
             continue
-        value = update.get("value")
-        if update.get("path") == A2UIConfig().log_model_path and isinstance(value, str):
-            logs.append(value)
-    return logs
+        entries = update.get("value")
+        assert isinstance(entries, list)
+        updates.append([entry for entry in entries if isinstance(entry, dict)])
+    return updates
+
+
+def _log_updates(transport: MemoryTransport) -> list[str]:
+    return [
+        "\n".join(str(entry["text"]) for entry in entries) for entries in _log_entries(transport)
+    ]
 
 
 def _kinds(transport: MemoryTransport) -> list[str]:
@@ -375,24 +381,52 @@ def test_log_flush_emits_full_buffer() -> None:
     assert "line29" in last_log
 
 
-def test_log_capped_at_max_lines() -> None:
+def test_log_capped_at_max_entries() -> None:
+    counter = iter(range(100))
+
     def handler(_response: Response) -> None:
-        for index in range(600):
-            print(f"line{index}")
+        print(f"run{next(counter)}")
 
     app = _app_with(handler)
+    transport = MemoryTransport(incoming=[{"action": {"name": "hello", "context": {}}}] * 5)
+
+    AgentRuntime(app, transport, A2UIConfig(max_log_entries=3)).run()
+
+    last = _log_entries(transport)[-1]
+    assert [entry["text"] for entry in last] == ["run2", "run3", "run4"]
+    assert [entry["id"] for entry in last] == [4, 5, 6]  # banner and groups took ids 0 and 1
+
+
+def test_entries_carry_kind_text_and_fenced_markdown() -> None:
+    def handler(_response: Response) -> None:
+        print("deployed")
+
+    app = App(override_system_messages=True, initial_message="Banner", printer=print)
+    router = Router(title="Main")
+    router.command("hello")(handler)
+    app.include_router(router)
     transport = MemoryTransport(
         incoming=[
             {"action": {"name": "hello", "context": {}}},
+            {"action": {"name": "bogus", "context": {}}},
             {"action": {"name": "q", "context": {}}},
         ]
     )
 
     AgentRuntime(app, transport).run()
 
-    last_log = _log_updates(transport)[-1]
-    assert len(last_log.split("\n")) <= 700
-    assert "line0" not in last_log
+    entries = _log_entries(transport)[-1]
+    assert [entry["kind"] for entry in entries] == [
+        "banner",
+        "command_groups",
+        "output",
+        "system",
+        "farewell",
+    ]
+    output = entries[2]
+    assert output["text"] == "deployed"
+    assert output["markdown"] == "````\ndeployed\n````"
+    assert len({entry["id"] for entry in entries}) == len(entries)
 
 
 def test_exit_action_breaks_loop() -> None:
@@ -435,6 +469,7 @@ def test_handler_exception_logged_and_loop_continues() -> None:
 
     logs = _log_updates(transport)
     assert any("RuntimeError" in log for log in logs)
+    assert any(entry["kind"] == "error" for entry in _log_entries(transport)[-1])
     assert _kinds(transport)[-1] == "deleteSurface"
 
 

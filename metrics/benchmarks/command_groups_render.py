@@ -3,6 +3,7 @@ from types import SimpleNamespace
 
 from argenta import App
 from argenta.command.models import Command
+from argenta.repl import REPLConfig, TerminalLayout
 from argenta.router import Router
 from metrics.benchmarks._scenarios import command_handler
 from metrics.benchmarks.entity import benchmarks
@@ -37,21 +38,21 @@ _APPS = SimpleNamespace(
     few=setup_app(_CONFIG.few_router_count, _CONFIG.few_commands_per_router),
     many=setup_app(_CONFIG.many_router_count, _CONFIG.many_commands_per_router),
 )
+_LAYOUTS = SimpleNamespace(
+    few=TerminalLayout(_APPS.few.printer, _APPS.few.renderer, REPLConfig()),
+    many=TerminalLayout(_APPS.many.printer, _APPS.many.renderer, REPLConfig()),
+)
 
 
 @benchmarks.register(
     type_=_CONFIG.benchmark_type, description="Few routers (3 routers, 3 commands each)"
 )
 def benchmark_render_few_commands() -> None:
-    _APPS.few.viewer.view_command_groups_description(
-        _APPS.few.description_message_generator, _APPS.few.registered_routers
-    )
+    _APPS.few.present_command_groups(_LAYOUTS.few)
 
 
 @benchmarks.register(
     type_=_CONFIG.benchmark_type, description="Many routers (10 routers, 10 commands each)"
 )
 def benchmark_render_many_commands() -> None:
-    _APPS.many.viewer.view_command_groups_description(
-        _APPS.many.description_message_generator, _APPS.many.registered_routers
-    )
+    _APPS.many.present_command_groups(_LAYOUTS.many)

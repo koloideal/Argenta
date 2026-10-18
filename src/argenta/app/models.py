@@ -9,10 +9,9 @@ from argenta.app.behavior_handlers.models import (
     BehaviorHandlersFabric,
     BehaviorHandlersSettersMixin,
 )
-from argenta.app.dividing_line.models import DynamicDividingLine, StaticDividingLine
 from argenta.app.presentation.ascii_art import BundledFont, FigletFont, FigletFontLoader
+from argenta.app.presentation.layout import BlockKind, Layout
 from argenta.app.presentation.renderers import PlainRenderer, Renderer, RichRenderer
-from argenta.app.presentation.viewers import Viewer
 from argenta.app.protocols import Printer
 from argenta.app.registered_routers.entity import RegisteredRouters
 from argenta.command.exceptions import (
@@ -38,7 +37,6 @@ class App(BehaviorHandlersSettersMixin):
         farewell_message: str = "See you",
         exit_command: Command = DEFAULT_EXIT_COMMAND,
         system_router_title: str = "System points:",
-        dividing_line: StaticDividingLine | DynamicDividingLine | None = None,
         repeat_command_groups_printing: bool = False,
         override_system_messages: bool = False,
         autocompleter: AutoCompleter | None = None,
@@ -55,7 +53,6 @@ class App(BehaviorHandlersSettersMixin):
         :param farewell_message: displayed at the end of the app
         :param exit_command: the entity of the command that will be terminated when entered
         :param system_router_title: system router title
-        :param dividing_line: the entity of the dividing line
         :param repeat_command_groups_printing: whether to repeat
                the available commands and their description
         :param override_system_messages: whether to redefine
@@ -77,7 +74,6 @@ class App(BehaviorHandlersSettersMixin):
         self._printer: Printer = printer or DefaultPrinter()
         self._exit_command: Command = exit_command
         self._autocompleter: AutoCompleter = autocompleter or AutoCompleter()
-        self._dividing_line: StaticDividingLine | DynamicDividingLine | None = dividing_line
         self._override_system_messages: bool = override_system_messages
         self._system_router: Router = Router(title=system_router_title)
         self._messages_on_startup: list[str] = []
@@ -91,12 +87,6 @@ class App(BehaviorHandlersSettersMixin):
             )
         )
 
-        self._viewer: Viewer = Viewer(
-            printer=self._printer,
-            renderer=self._renderer,
-            dividing_line=self._dividing_line,
-            override_system_messages=self._override_system_messages,
-        )
         self._handlers_fabric: BehaviorHandlersFabric = BehaviorHandlersFabric(
             printer=self._printer,
             renderer=self._renderer,
@@ -158,11 +148,6 @@ class App(BehaviorHandlersSettersMixin):
         return self._renderer
 
     @property
-    def viewer(self) -> Viewer:
-        """Public. Viewer used by runtimes to present framed output"""
-        return self._viewer
-
-    @property
     def exit_command(self) -> Command:
         """Public. The command whose trigger exits the running application"""
         return self._exit_command
@@ -180,51 +165,67 @@ class App(BehaviorHandlersSettersMixin):
         """
         self._messages_on_startup.append(message)
 
-    def prepare_for_run(self) -> None:
+    def prepare_for_run(self, layout: Layout) -> None:
         """
         Public. Registers the system router, validates router collisions
-        and shows the configured startup presentation; called by runtimes
-        once before entering their run loop
+        and presents the startup blocks (banner, startup messages, command
+        groups); called by runtimes once before entering their run loop
+        :param layout: the runtime layout receiving the blocks
         :return: None
         """
         self._setup_system_router()
         self._validate_routers_for_collisions()
 
+        layout.present(BlockKind.BANNER, partial(self._printer, self._initial_message))
         if self._messages_on_startup:
-            self._viewer.view_messages_on_startup(self._messages_on_startup)
-
+            startup_messages = self._renderer.render_messages_on_startup(self._messages_on_startup)
+            layout.present(BlockKind.STARTUP_MESSAGES, partial(self._printer, startup_messages))
         if not self.repeat_command_groups_printing:
-            self._viewer.view_command_groups_description(
-                self.description_message_generator, self.registered_routers
-            )
+            self.present_command_groups(layout)
 
-    def dispatch_input_command(self, input_command: InputCommand) -> bool:
+    def present_command_groups(self, layout: Layout) -> None:
+        """
+        Public. Presents the available commands grouped by router
+        :param layout: the runtime layout receiving the block
+        :return: None
+        """
+        command_groups = self._renderer.render_command_groups_description(
+            self.description_message_generator, self.registered_routers
+        )
+        layout.present(BlockKind.COMMAND_GROUPS, partial(self._printer, command_groups))
+
+    def dispatch_input_command(self, input_command: InputCommand, layout: Layout) -> bool:
         """
         Public. Routes an entered command through the dispatch path:
         unknown and exit commands go to their behavior handlers, valid
         commands go to the appropriate router handler
         :param input_command: the command to dispatch
+        :param layout: the runtime layout receiving the produced block
         :return: True when the exit command was dispatched
         """
         if self._is_unknown_command(input_command):
-            self._viewer.view_framed_text_from_generator(
-                output_text_generator=partial(self._unknown_command_handler, input_command)
-            )
+            layout.present(BlockKind.SYSTEM, partial(self._unknown_command_handler, input_command))
             return False
 
         if self._is_exit_command(input_command):
-            self._system_router.finds_appropriate_handler(input_command)
+            layout.present(
+                BlockKind.FAREWELL,
+                partial(self._system_router.finds_appropriate_handler, input_command),
+            )
             return True
 
-        self._process_exist_and_valid_command(input_command)
+        self._process_exist_and_valid_command(input_command, layout)
         return False
 
-    def handle_input_error(self, error: InputCommandException, raw_command: str) -> None:
+    def handle_input_error(
+        self, error: InputCommandException, raw_command: str, layout: Layout
+    ) -> None:
         """
         Public. Routes an input parsing error to the configured
-        behavior handler and presents it framed
+        behavior handler and presents its output as a system block
         :param error: the parsing error
         :param raw_command: the raw input that failed to parse
+        :param layout: the runtime layout receiving the produced block
         :return: None
         """
         output_generator: Callable[[], None]
@@ -234,7 +235,7 @@ class App(BehaviorHandlersSettersMixin):
             output_generator = partial(self._repeated_input_flags_handler, raw_command)
         else:
             output_generator = self._empty_input_command_handler
-        self._viewer.view_framed_text_from_generator(output_text_generator=output_generator)
+        layout.present(BlockKind.SYSTEM, output_generator)
 
     def _is_exit_command(self, command: InputCommand) -> bool:
         return (
@@ -271,7 +272,7 @@ class App(BehaviorHandlersSettersMixin):
         self._system_router.command(self.exit_command)(self._exit_command_handler)
         self.registered_routers.add_registered_router(self._system_router)
 
-    def _process_exist_and_valid_command(self, input_command: InputCommand) -> None:
+    def _process_exist_and_valid_command(self, input_command: InputCommand, layout: Layout) -> None:
         processing_router = self.registered_routers.get_router_by_trigger(
             input_command.trigger.lower()
         )
@@ -279,9 +280,8 @@ class App(BehaviorHandlersSettersMixin):
         if not processing_router:
             raise RuntimeError(f"Router for '{input_command.trigger}' not found. Panic!")
 
-        self.viewer.view_framed_text_from_generator(
-            output_text_generator=lambda: processing_router.finds_appropriate_handler(
-                input_command
-            ),
-            is_stdout_redirected_by_router=processing_router.is_redirect_stdout_disabled,
+        layout.present(
+            BlockKind.OUTPUT,
+            partial(processing_router.finds_appropriate_handler, input_command),
+            capturable=not processing_router.is_redirect_stdout_disabled,
         )

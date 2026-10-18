@@ -180,16 +180,21 @@ def test_action_context_binds_flag_paths() -> None:
     }
 
 
-def test_log_card_bound_to_log_path() -> None:
+def test_log_card_lists_entries_from_log_path() -> None:
     router = Router()
     router.command("a")(_handler)
 
     components, model = build_surface(_registered(router), A2UIConfig())
 
-    log_text = _component_by_id(components, "a2ui_log_text")
-    assert log_text["text"] == {"path": A2UIConfig().log_model_path}
-    assert _component_by_id(components, "a2ui_log_card")["child"] == "a2ui_log_text"
-    assert model["log"] == ""
+    log_list = _component_by_id(components, "a2ui_log_list")
+    assert log_list["component"] == "List"
+    assert log_list["children"] == {
+        "componentId": "a2ui_log_entry",
+        "path": A2UIConfig().log_model_path,
+    }
+    assert _component_by_id(components, "a2ui_log_entry")["text"] == {"path": "markdown"}
+    assert _component_by_id(components, "a2ui_log_card")["child"] == "a2ui_log_list"
+    assert model["log"] == []
     assert _children(_component_by_id(components, "root"), "children")[0] == "a2ui_log_card"
 
 

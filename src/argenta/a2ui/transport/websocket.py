@@ -1,7 +1,7 @@
 import json
 import queue
 import threading
-from collections.abc import Callable, Iterator
+from collections.abc import Iterator
 from contextlib import suppress
 from typing import Final, cast
 
@@ -16,21 +16,19 @@ from argenta.a2ui.models import Message
 _UPGRADE_REQUIRED_STATUS = 426
 
 
-def _http_probe_guard(
-    verbose: VerboseLog,
-) -> Callable[[ServerConnection, Request], Response | None]:
+class _HttpProbeGuard:
     """Private. Intercepts the opening handshake: plain HTTP requests
     (stale SSE/poll probes, healthchecks) get 426 Upgrade Required
-    instead of a crashing handshake"""
+    instead of a crashing handshake; real websocket upgrades pass"""
 
-    def reject(connection: ServerConnection, request: Request) -> Response | None:
-        """Private. Lets only real websocket upgrades through"""
+    def __init__(self, verbose: VerboseLog) -> None:
+        self._verbose = verbose
+
+    def __call__(self, connection: ServerConnection, request: Request) -> Response | None:
         if request.headers.get("Upgrade", "").lower() == "websocket":
             return None
-        verbose.report("rejected a plain HTTP request")
+        self._verbose.report("rejected a plain HTTP request")
         return connection.respond(_UPGRADE_REQUIRED_STATUS, "Upgrade Required\n")
-
-    return reject
 
 
 class WebSocketTransport:
@@ -49,7 +47,10 @@ class WebSocketTransport:
         self._history: list[str] = []
         self._lock = threading.Lock()
         self._server: Server = serve(
-            self._handle_client, host, port, process_request=_http_probe_guard(self._verbose)
+            self._handle_client,
+            host,
+            port,
+            process_request=_HttpProbeGuard(self._verbose),
         )
         self._thread = threading.Thread(target=self._server.serve_forever, daemon=True)
         self._thread.start()

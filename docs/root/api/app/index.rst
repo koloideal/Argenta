@@ -19,7 +19,6 @@ Creates and configures an application instance.
     * ``farewell_message``: Message displayed when exiting the application.
     * ``exit_command``: Command that is marked as a trigger for exiting the application.
     * ``system_router_title``: Title for the system router (contains the exit command).
-    * ``dividing_line``: Type of dividing line (``StaticDividingLine`` or ``DynamicDividingLine``).
     * ``repeat_command_groups_printing``: If ``True``, the list of available commands is displayed before each input.
     * ``override_system_messages``: If ``True``, standard formatting (colors, ASCII art) is disabled.
     * ``autocompleter``: Instance of the :ref:`AutoCompleter <root_api_app_autocompleter>` class responsible for command autocompletion.
@@ -118,7 +117,6 @@ Handler Setup Methods
     :hidden:
 
     autocompleter
-    dividing_lines
     ascii_art
 
 -----

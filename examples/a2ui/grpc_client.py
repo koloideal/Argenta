@@ -27,35 +27,39 @@ class ClientConfig:
     address: str = "127.0.0.1:8765"
     protocol_version: str = "v0.9"
     log_path: str = "/log"
-    log_fence: str = "````"
+    separator_style: str = "dim"
 
 
 class _LogView:
-    """Private. Mirrors the agent log and renders only the appended tail"""
+    """Private. Terminal layout of the agent log: entries the client has
+    not seen yet (by id) are printed with one rule between neighbours"""
 
     def __init__(self, console: Console, config: ClientConfig) -> None:
         self._console = console
         self._config = config
-        self._lines: list[str] = []
+        self._last_id = -1
 
     def render(self, message: Message) -> None:
-        """Private. Prints log lines added since the previous update;
+        """Private. Prints log entries added since the previous update;
         non-log frames are skipped"""
         update = message.get("updateDataModel")
-        if isinstance(update, dict) and update.get("path") == self._config.log_path:
-            self._show(update.get("value", ""))
+        if not isinstance(update, dict):
+            return
+        entries = update.get("value")
+        if update.get("path") == self._config.log_path and isinstance(entries, list):
+            for entry in entries:
+                if isinstance(entry, dict):
+                    self._show(entry)
 
-    def _show(self, raw_log: object) -> None:
-        """Private. Diffs the log model and prints the appended tail"""
-        text = str(raw_log).replace(self._config.log_fence, "")
-        current = text.strip().splitlines()
-        size = len(self._lines)
-        fresh = current
-        if current[:size] == self._lines:
-            fresh = current[size:]
-        for line in fresh:
-            self._console.print(line)
-        self._lines = current
+    def _show(self, entry: Message) -> None:
+        """Private. Prints one unseen entry, separated from the previous one"""
+        entry_id = entry.get("id")
+        if not isinstance(entry_id, int) or entry_id <= self._last_id:
+            return
+        if self._last_id >= 0:
+            self._console.rule(style=self._config.separator_style)
+        self._console.print(str(entry.get("text", "")), markup=False)
+        self._last_id = entry_id
 
 
 def _context_flags(tail: str) -> dict[str, str]:

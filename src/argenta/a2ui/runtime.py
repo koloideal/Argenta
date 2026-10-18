@@ -1,10 +1,10 @@
 import traceback
 from collections.abc import Callable
-from contextlib import closing, redirect_stdout
-from io import StringIO
+from contextlib import closing
 
 from argenta.a2ui._verbose import VerboseLog
 from argenta.a2ui.catalog import build_surface
+from argenta.a2ui.log import EntryLog
 from argenta.a2ui.messages import MessageFactory, extract_action
 from argenta.a2ui.models import A2UIConfig, JsonValue, Message
 from argenta.a2ui.transport import Transport
@@ -71,8 +71,7 @@ class AgentRuntime:
         self._transport = transport
         self._config = config or A2UIConfig()
         self._messages = MessageFactory(self._config)
-        self._log_lines: list[str] = []
-        self._log_dirty = False
+        self._log = EntryLog(self._config)
         self._verbose = VerboseLog(verbose, "agent")
 
     def run(self) -> None:
@@ -91,10 +90,7 @@ class AgentRuntime:
             self._verbose.report("surface deleted, shutting down", always=True)
 
     def _startup(self) -> None:
-        self._capture_into_log(
-            lambda: self._app.viewer.view_initial_message(self._app.initial_message)
-        )
-        self._capture_into_log(self._app.prepare_for_run)
+        self._app.prepare_for_run(self._log)
 
         components, data_model = build_surface(self._app.registered_routers, self._config)
         self._transport.send(self._messages.create_surface())
@@ -104,38 +100,22 @@ class AgentRuntime:
         surface_id = self._config.surface_id
         self._verbose.report(f"surface '{surface_id}' emitted")
 
-    def _capture_into_log[ResultT](self, func: Callable[[], ResultT]) -> ResultT:
-        buffer = StringIO()
-        with redirect_stdout(buffer):
-            func_result = func()
-        output = buffer.getvalue().strip("\n")
-        if output:
-            max_lines = self._config.max_log_lines
-            self._log_lines.extend(output.split("\n"))
-            self._log_lines = self._log_lines[-max_lines:]
-            self._log_dirty = True
-        return func_result
-
     def _flush_log(self) -> None:
-        if self._log_dirty:
-            # renderers get the whole capped buffer inside a fenced block;
-            # windowing/scrolling of the output card is a client concern
-            window = "\n".join(self._log_lines)
-            rendered = f"````\n{window}\n````"
+        # the whole capped entry list is resent: renderers lay entries out
+        # and scroll the output card themselves
+        entries = self._log.take_update()
+        if entries is not None:
             self._transport.send(
-                self._messages.update_data_model(self._config.log_model_path, rendered)
+                self._messages.update_data_model(self._config.log_model_path, entries)
             )
-            self._log_dirty = False
 
     def _dispatch_action(self, action: Message) -> bool:
         input_command = self._build_input_command(action)
         self._verbose.report(f"action '{input_command.trigger}' received")
         try:
-            is_exit = self._capture_into_log(
-                lambda: self._app.dispatch_input_command(input_command)
-            )
+            is_exit = self._app.dispatch_input_command(input_command, self._log)
         except Exception:  # noqa: BLE001
-            self._log_lines.extend(traceback.format_exc().splitlines())
+            self._log.append_error(traceback.format_exc())
             self._verbose.report(
                 f"action '{input_command.trigger}' raised, traceback sent to the log"
             )

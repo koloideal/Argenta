@@ -129,7 +129,7 @@ per-file-ignores = """
 *app/presentation/renderers.py:WPS602,WPS118,WPS214
 *command/flag/defaults.py:WPS115
 *behavior_handlers/models.py:WPS615,WPS211
-*dividing_line/models.py:WPS615
+*repl/dividing_line.py:WPS615
 *argparser/arguments/models.py:WPS110,WPS211
 *entrypoint_resolver/exceptions.py:WPS118
 *transport/grpc/*_pb2*.py:F,E,W,WPS

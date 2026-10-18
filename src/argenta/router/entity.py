@@ -52,7 +52,8 @@ class Router:
         Public. Directly configures and manages handlers
         :param title: the title of the router, displayed when displaying the available commands
         :param disable_redirect_stdout: Disables stdout forwarding, if the argument value is True,
-               the StaticDividingLine will be forced to be used as a line separator for this router,
+               the REPL frames this router's output with a static dividing line
+               (a dynamic line cannot be sized without capturing the output),
                disabled forwarding is needed when there is text output in conjunction
                with a text input request (for example, input()),
                if the argument value is True, the output of the input() prompt is intercepted

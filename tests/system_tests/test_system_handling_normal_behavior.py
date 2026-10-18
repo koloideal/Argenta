@@ -336,4 +336,5 @@ def test_prompt_gaps_are_written_through_custom_printer(
     output = capsys.readouterr().out
 
     assert output.strip("\n") == "test command"
-    assert printed.count("") == 4
+    # two prompt cycles x (pre + post) gaps, plus the gap before the command groups
+    assert printed.count("") == 6

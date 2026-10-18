@@ -14,7 +14,7 @@ from argenta.di.providers import SystemProvider
 from argenta.orchestrator._transports import resolve_agent_transport
 from argenta.orchestrator.argparser import ArgParser
 from argenta.orchestrator.config import RunnerConfig
-from argenta.repl import REPLRuntime
+from argenta.repl import REPLConfig, REPLRuntime
 
 
 class Orchestrator:
@@ -43,11 +43,12 @@ class Orchestrator:
         if self._arg_parser is not None:
             self._arg_parser._parse_args()
 
-    def run_repl(self, app: App) -> None:
+    def run_repl(self, app: App, config: REPLConfig | None = None) -> None:
         """
         Public. Starting the user input processing cycle; when started
         via `argenta a2ui`, delegates to run_agent over the selected transport
         :param app: a running application
+        :param config: terminal layout of the REPL, ignored in A2UI agent mode
         :return: None
         """
         if os.getenv(self._runner_config.mode_env_var) == self._runner_config.a2ui_mode:
@@ -61,7 +62,7 @@ class Orchestrator:
         setup_dishka(app, container, auto_inject=self._auto_inject_handlers)
 
         with container:
-            REPLRuntime(app).run()
+            REPLRuntime(app, config).run()
 
     def run_agent(
         self,

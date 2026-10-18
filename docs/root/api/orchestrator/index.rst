@@ -30,6 +30,7 @@ Main Methods
    This is the main method that starts the application. It launches an infinite input -> output loop.
 
    :param app: ``App`` instance to be launched.
+   :param config: optional :ref:`REPLConfig <root_api_repl>` — terminal layout of the REPL (dividing line, gaps). Ignored when the app runs as an A2UI agent.
 
 -----
    

@@ -16,9 +16,11 @@ class A2UIConfig:
     surface_id: str = "main"
     surface_root_id: str = "root"
     log_card_id: str = "a2ui_log_card"
-    log_text_id: str = "a2ui_log_text"
+    log_list_id: str = "a2ui_log_list"
+    log_entry_id: str = "a2ui_log_entry"
     log_model_path: str = "/log"
-    max_log_lines: int = 500
+    log_fence: str = "````"
+    max_log_entries: int = 200
     cards_per_row: int = 2
     text_component: str = "Text"
     theme: Mapping[str, JsonValue] | None = None

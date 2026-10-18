@@ -123,9 +123,19 @@ class ArgentaA2uiApp extends LitElement {
       display: block;
       max-height: 16rem;
       overflow-y: auto;
+      --a2ui-list-padding: 0;
+      --a2ui-list-gap: 0;
     }
     a2ui-surface > a2ui-basic-column > a2ui-card:first-of-type pre {
       margin: 0;
+    }
+    /* the agent sends one log entry per block: the client owns the
+       separators, so a rule sits only between neighbouring entries */
+    a2ui-surface > a2ui-basic-column > a2ui-card:first-of-type
+      .a2ui-list-item-none + .a2ui-list-item-none {
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
     }
   `;
 

@@ -3,6 +3,7 @@ from types import SimpleNamespace
 
 from argenta import App
 from argenta.command.models import Command
+from argenta.repl import REPLConfig, TerminalLayout
 from argenta.router import Router
 from metrics.benchmarks._scenarios import alias_sets, command_handler
 from metrics.benchmarks.entity import benchmarks
@@ -22,7 +23,7 @@ def _startup(aliases_per_command: tuple[set[str], ...]) -> None:
     for command_index, aliases in enumerate(aliases_per_command):
         router.command(Command(f"command{command_index}", aliases=aliases))(command_handler)
     app.include_router(router)
-    app.prepare_for_run()
+    app.prepare_for_run(TerminalLayout(app.printer, app.renderer, REPLConfig()))
 
 
 _CONFIG = AppStartupConfig()

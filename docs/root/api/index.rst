@@ -63,15 +63,25 @@ All main library components are available for direct import from the root packag
 
    from argenta.app import (
        AutoCompleter, 
-       StaticDividingLine, 
-       DynamicDividingLine,
        PredefinedMessages
    )
 
 * :ref:`AutoCompleter <root_api_app_autocompleter>` - Class for configuring autocompletion.
-* :ref:`StaticDividingLine <root_api_app_dividing_lines>` — Static dividing line for output formatting.
-* :ref:`DynamicDividingLine <root_api_app_dividing_lines>` — Dynamic dividing line for output formatting.
 * :ref:`PredefinedMessages <root_api_predefined_messages>` — Ready-made messages for output at application startup.
+
+.. rubric:: REPL Runtime
+
+.. code-block:: python
+
+   from argenta.repl import (
+       REPLConfig,
+       StaticDividingLine,
+       DynamicDividingLine
+   )
+
+* :ref:`REPLConfig <root_api_repl>` — Terminal layout of the REPL: dividing line and gaps.
+* :ref:`StaticDividingLine <root_api_repl>` — Static dividing line framing command output.
+* :ref:`DynamicDividingLine <root_api_repl>` — Dynamic dividing line framing command output.
 
 .. rubric:: Dependency Injection
 
@@ -90,6 +100,7 @@ All main library components are available for direct import from the root packag
     :hidden:
     
     app/index
+    repl
     router
     orchestrator/index
     command/index
