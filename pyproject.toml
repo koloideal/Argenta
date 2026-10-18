@@ -42,12 +42,14 @@ argenta = "argenta._cli.__main__:main"
 
 [project.optional-dependencies]
 a2ui = [
-    "watchfiles>=1.0,<2",
+    "grpcio>=1.83.1,<2",
+    "protobuf>=7.35.1,<8",
     "websockets>=15,<16",
 ]
 cli = [
     "nuitka[onefile]>=4.0.5",
     "typer>=0.9,!=0.12,<=0.27.3",
+    "watchfiles>=1.0,<2",
 ]
 
 [dependency-groups]
@@ -84,6 +86,8 @@ tests = [
     "typer>=0.9,!=0.12,<=0.27.3",
     "watchfiles>=1.0,<2",
     "websockets>=15,<16",
+    "grpcio>=1.83.1,<2",
+    "protobuf>=7.35.1,<8",
 ]
 metrics = [
     "matplotlib>=3.10.8",
@@ -98,6 +102,7 @@ fuzz = [
 
 [tool.ruff]
 line-length = 100
+extend-exclude = ["*_pb2*"]
 
 [tool.ruff.lint]
 extend-select = [
@@ -127,6 +132,7 @@ per-file-ignores = """
 *dividing_line/models.py:WPS615
 *argparser/arguments/models.py:WPS110,WPS211
 *entrypoint_resolver/exceptions.py:WPS118
+*transport/grpc/*_pb2*.py:F,E,W,WPS
 *autocompleter/entity.py:WPS421
 *autocompleter/_ext_features_impl.py:WPS201
 *app/models.py:WPS201,WPS211,WPS214,WPS421
@@ -140,7 +146,8 @@ fail_under = 100
 branch = true
 omit = [
     "src/argenta/app/protocols.py",
-    "src/argenta/*/exceptions.py"
+    "src/argenta/*/exceptions.py",
+    "src/argenta/a2ui/transport/grpc/*_pb2*.py"
 ]
 
 [tool.pytest.ini_options]
@@ -168,6 +175,13 @@ disable_error_code = "import-untyped"
 [[tool.mypy.overrides]]
 module = ["typer", "typer.*"]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "argenta.a2ui.transport.grpc.agent_pb2",
+    "argenta.a2ui.transport.grpc.agent_pb2_grpc",
+]
+ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = "argenta._cli.*"

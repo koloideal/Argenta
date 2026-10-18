@@ -27,13 +27,11 @@ class A2UIRunOptions:
 
 def _ensure_a2ui_extra(console: Console) -> None:
     """Private. The a2ui command needs the optional extra installed"""
-    missing = [pkg for pkg in ("websockets", "watchfiles") if find_spec(pkg) is None]
-    if missing:
-        missing_report = ", ".join(missing)
+    if find_spec("websockets") is None:
         console.print(
-            "[bold red]Error:[/bold red] the a2ui command requires optional "
-            f"dependencies (missing: {missing_report}) — "
-            r"install them with `pip install 'argenta\[a2ui]'`"
+            "[bold red]Error:[/bold red] the a2ui command requires the optional "
+            "'websockets' dependency — "
+            r"install it with `pip install 'argenta\[a2ui]'`"
         )
         sys.exit(1)
 

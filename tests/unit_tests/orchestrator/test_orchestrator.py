@@ -12,6 +12,7 @@ from argenta.a2ui import (
     SSETransport,
     StdioTransport,
 )
+from argenta.a2ui.transport.grpc import GrpcTransport
 from argenta.a2ui.transport.websocket import WebSocketTransport
 from argenta.command import Command
 from argenta.orchestrator import Orchestrator, RunnerConfig
@@ -318,6 +319,40 @@ def test_run_repl_a2ui_poll_transport_selected(
     called_transport = mock_run_agent.call_args.args[1]
     assert isinstance(called_transport, LongPollTransport)
     called_transport.close()
+
+
+def test_run_repl_a2ui_grpc_transport_selected(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that ARGENTA_A2UI_TRANSPORT=grpc picks the gRPC transport"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    monkeypatch.setenv("ARGENTA_A2UI_TRANSPORT", "grpc")
+    monkeypatch.setenv("ARGENTA_A2UI_PORT", "0")
+    mock_run_agent = mocker.patch.object(Orchestrator, "run_agent")
+
+    Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
+
+    called_transport = mock_run_agent.call_args.args[1]
+    assert isinstance(called_transport, GrpcTransport)
+    called_transport.close()
+
+
+def test_run_repl_a2ui_grpc_without_grpcio_fails(
+    mocker: MockerFixture,
+    mock_argparser: ArgParser,
+    sample_app: App,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that grpc mode without the optional grpcio package fails clearly"""
+    monkeypatch.setenv("ARGENTA_RUN_MODE", "a2ui")
+    monkeypatch.setenv("ARGENTA_A2UI_TRANSPORT", "grpc")
+    mocker.patch.dict("sys.modules", {"argenta.a2ui.transport.grpc": None})
+
+    with pytest.raises(RuntimeError, match="grpcio"):
+        Orchestrator(arg_parser=mock_argparser).run_repl(sample_app)
 
 
 def test_run_repl_a2ui_verbose_propagates(

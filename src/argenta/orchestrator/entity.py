@@ -1,10 +1,12 @@
 import os
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from dishka import Provider, make_container
 
 from argenta.a2ui import (
     A2UIConfig,
+    A2UIProvider,
     AgentRuntime,
     LongPollTransport,
     SocketTransport,
@@ -12,7 +14,6 @@ from argenta.a2ui import (
     StdioTransport,
     Transport,
 )
-from argenta.a2ui.provider import A2UIProvider
 from argenta.app import App
 from argenta.di.integration import setup_dishka
 from argenta.di.providers import SystemProvider
@@ -35,11 +36,59 @@ class RunnerConfig:
     a2ui_sse_transport: str = "sse"
     a2ui_socket_transport: str = "socket"
     a2ui_poll_transport: str = "poll"
+    a2ui_grpc_transport: str = "grpc"
     a2ui_socket_path_env_var: str = "ARGENTA_A2UI_SOCKET_PATH"
     a2ui_port_env_var: str = "ARGENTA_A2UI_PORT"
     a2ui_default_host: str = "127.0.0.1"
     a2ui_default_port: int = 8765
     a2ui_verbose_env_var: str = "ARGENTA_A2UI_VERBOSE"
+
+
+def _build_ws_transport(host: str, port: int, verbose: bool) -> Transport:
+    """Private. Builds the WebSocket transport; `websockets` is an optional
+    dependency, so the module is imported only when ws mode is requested"""
+    try:
+        from argenta.a2ui.transport.websocket import WebSocketTransport
+    except ImportError as error:
+        raise RuntimeError(
+            "A2UI WebSocket transport requires the 'websockets' package: "
+            "pip install 'argenta[a2ui]'"
+        ) from error
+    return WebSocketTransport(host=host, port=port, verbose=verbose)
+
+
+def _build_grpc_transport(host: str, port: int, verbose: bool) -> Transport:
+    """Private. Builds the gRPC transport; `grpcio` is an optional
+    dependency, so the module is imported only when grpc mode is requested"""
+    try:
+        from argenta.a2ui.transport.grpc import GrpcTransport
+    except ImportError as error:
+        raise RuntimeError(
+            "A2UI gRPC transport requires the 'grpcio' and 'protobuf' packages: "
+            "pip install 'argenta[a2ui]'"
+        ) from error
+    return GrpcTransport(host=host, port=port, verbose=verbose)
+
+
+def _transport_builders(
+    config: RunnerConfig, host: str, port: int, verbose: bool
+) -> dict[str, Callable[[], Transport]]:
+    """Private. Transport factories keyed by their `--transport` names;
+    only the selected one is instantiated"""
+    return {
+        config.a2ui_ws_transport: lambda: _build_ws_transport(host, port, verbose),
+        config.a2ui_sse_transport: lambda: SSETransport(host=host, port=port, verbose=verbose),
+        config.a2ui_socket_transport: lambda: SocketTransport(
+            host=host,
+            port=port,
+            path=os.getenv(config.a2ui_socket_path_env_var),
+            verbose=verbose,
+        ),
+        config.a2ui_poll_transport: lambda: LongPollTransport(
+            host=host, port=port, verbose=verbose
+        ),
+        config.a2ui_grpc_transport: lambda: _build_grpc_transport(host, port, verbose),
+    }
 
 
 class Orchestrator:
@@ -126,39 +175,16 @@ class Orchestrator:
         config = self._runner_config
         verbose = bool(os.getenv(config.a2ui_verbose_env_var))
         transport_name = os.getenv(config.a2ui_transport_env_var)
-        if transport_name == config.a2ui_ws_transport:
-            return self._build_ws_transport(config.a2ui_default_host, self._server_port(), verbose)
-        if transport_name == config.a2ui_sse_transport:
-            return SSETransport(
-                host=config.a2ui_default_host, port=self._server_port(), verbose=verbose
-            )
-        if transport_name == config.a2ui_socket_transport:
-            return SocketTransport(
-                host=config.a2ui_default_host,
-                port=self._server_port(),
-                path=os.getenv(config.a2ui_socket_path_env_var),
-                verbose=verbose,
-            )
-        if transport_name == config.a2ui_poll_transport:
-            return LongPollTransport(
-                host=config.a2ui_default_host, port=self._server_port(), verbose=verbose
-            )
-        return StdioTransport(verbose=verbose)
+        builders = _transport_builders(
+            config, config.a2ui_default_host, self._server_port(), verbose
+        )
+        builder = builders.get(transport_name or "")
+        if builder is None:
+            return StdioTransport(verbose=verbose)
+        return builder()
 
     def _server_port(self) -> int:
         """Private. Port for the network transports, env override or default"""
         config = self._runner_config
         port_raw = os.getenv(config.a2ui_port_env_var)
         return int(port_raw) if port_raw else config.a2ui_default_port
-
-    def _build_ws_transport(self, host: str, port: int, verbose: bool) -> Transport:
-        """Private. Builds the WebSocket transport; `websockets` is an optional
-        dependency, so the module is imported only when ws mode is requested"""
-        try:
-            from argenta.a2ui.transport.websocket import WebSocketTransport
-        except ImportError as error:
-            raise RuntimeError(
-                "A2UI WebSocket transport requires the 'websockets' package: "
-                "pip install 'argenta[a2ui]'"
-            ) from error
-        return WebSocketTransport(host=host, port=port, verbose=verbose)

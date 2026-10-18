@@ -156,7 +156,7 @@ Starts the ``Argenta`` interactive REPL from a callable entrypoint. It is an alt
 
 Entrypoint format — see :ref:`Entrypoint format <cli_entrypoint>`.
 
-*   ``--reload`` / ``-r`` — watches the entrypoint's directory for ``.py`` changes and restarts the REPL process automatically (requires ``watchfiles``, bundled in the ``[a2ui]`` extra).
+*   ``--reload`` / ``-r`` — watches the entrypoint's directory for ``.py`` changes and restarts the REPL process automatically (requires ``watchfiles``, bundled in the ``[cli]`` extra).
 
 **Examples:**
 
@@ -175,15 +175,15 @@ Entrypoint format — see :ref:`Entrypoint format <cli_entrypoint>`.
 The ``a2ui`` command
 ~~~~~~~~~~~~~~~~~~~~
 
-Runs the application as an `A2UI <https://a2ui.org/>`_ agent instead of an interactive REPL: the registered commands are emitted as a declarative UI surface (one card per command, one input per flag), and client ``action`` messages are dispatched back through the same command-handling path. Requires the ``[a2ui]`` extra.
+Runs the application as an `A2UI <https://a2ui.org/>`_ agent instead of an interactive REPL: the registered commands are emitted as a declarative UI surface (one card per command, one input per flag), and client ``action`` messages are dispatched back through the same command-handling path. Requires the ``[cli]`` and ``[a2ui]`` extras.
 
 .. code-block:: shell
 
-    argenta a2ui <entrypoint> [--transport <ws|sse|poll|socket|stdio>] [--port <n>]
+    argenta a2ui <entrypoint> [--transport <ws|sse|poll|socket|grpc|stdio>] [--port <n>]
                               [--socket-path <path>] [--verbose] [--reload]
 
-*   ``--transport`` / ``-t`` — ``ws`` WebSocket server (default, for browser clients), ``sse`` HTTP Server-Sent Events + POST actions, ``poll`` HTTP long-polling for proxies that block streaming, ``socket`` JSON Lines over TCP or a Unix socket for native clients, ``stdio`` JSON Lines over stdin/stdout for machine clients.
-*   ``--port`` / ``-p`` — listen port for the ``ws``/``sse``/``socket`` transports (default ``8765``).
+*   ``--transport`` / ``-t`` — ``ws`` WebSocket server (default, for browser clients), ``sse`` HTTP Server-Sent Events + POST actions, ``poll`` HTTP long-polling for proxies that block streaming, ``socket`` JSON Lines over TCP or a Unix socket for native clients, ``grpc`` bidirectional gRPC stream (``argenta.a2ui.AgentChannel/Channel``, one JSON message per ``Frame``) for native clients that already speak gRPC, ``stdio`` JSON Lines over stdin/stdout for machine clients.
+*   ``--port`` / ``-p`` — listen port for the ``ws``/``sse``/``socket``/``grpc`` transports (default ``8765``).
 *   ``--socket-path`` — Unix domain socket path for the ``socket`` transport; without it the transport listens on TCP.
 *   ``--verbose`` / ``-v`` — log the agent lifecycle (actions received, messages sent, client connections) to stderr.
 *   ``--reload`` / ``-r`` — watch the entrypoint's directory for ``.py`` changes and restart the agent process automatically.

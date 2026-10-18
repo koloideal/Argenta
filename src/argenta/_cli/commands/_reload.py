@@ -48,7 +48,7 @@ def _watch_until_change(
 ) -> bool:
     """Private. Blocks on file changes; True means the child must be
     respawned, False means it exited on its own"""
-    from watchfiles import watch  # optional dependency of the a2ui extra
+    from watchfiles import watch  # optional dependency of the cli extra
 
     for changes in watch(
         watch_root,

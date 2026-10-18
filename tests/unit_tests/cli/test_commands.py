@@ -174,6 +174,15 @@ def test_a2ui_socket_transport_sets_env(tmp_path: Path) -> None:
     assert os.environ["ARGENTA_A2UI_SOCKET_PATH"] == "/tmp/agent.sock"
 
 
+def test_a2ui_grpc_transport_sets_env(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_grpc", "def main():\n    pass\n")
+    result = runner.invoke(app, ["a2ui", "-t", "grpc", "-p", "9998", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "grpc"
+    assert os.environ["ARGENTA_A2UI_PORT"] == "9998"
+
+
 def test_a2ui_stdio_transport_sets_env(tmp_path: Path) -> None:
     path = _write_module(tmp_path, "climod_run_stdio", "def main():\n    pass\n")
     result = runner.invoke(app, ["a2ui", "--transport", "stdio", f"{path}:main"])

@@ -27,7 +27,7 @@ def _ensure_watchfiles(console: Console) -> None:
         console.print(
             "[bold red]Error:[/bold red] --reload requires the optional "
             "'watchfiles' dependency — install it with `pip install watchfiles` "
-            r"or `pip install 'argenta\[a2ui]'`"
+            r"or `pip install 'argenta\[cli]'`"
         )
         sys.exit(1)
 
