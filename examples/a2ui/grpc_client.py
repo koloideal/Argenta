@@ -91,7 +91,7 @@ def _pump(
     config: ClientConfig,
 ) -> None:
     """Private. Renders incoming agent frames until the stream ends"""
-    stub = agent_pb2_grpc.AgentChannelStub(channel)
+    stub = agent_pb2_grpc.AgentChannelStub(channel)  # type: ignore[no-untyped-call]
     view = _LogView(console, config)
     try:
         for frame in stub.Channel(iter(outgoing.get, None)):
@@ -101,12 +101,12 @@ def _pump(
         console.print(f"[yellow]agent stream ended: {status}[/]")
 
 
-def main() -> None:
+def main(address: str | None = None) -> None:
     """Connects to the agent's gRPC transport, prints agent output and
     forwards `<command> flag=value` lines as actions"""
     config = ClientConfig()
-    if len(sys.argv) > 1:
-        config = replace(config, address=sys.argv[1])
+    if address is not None:
+        config = replace(config, address=address)
     channel = grpc.insecure_channel(config.address)
     outgoing: queue.Queue[agent_pb2.Frame | None] = queue.Queue()
     console = Console(highlight=False)
@@ -124,4 +124,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli_address = sys.argv[1] if len(sys.argv) > 1 else None
+    main(cli_address)

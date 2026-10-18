@@ -197,7 +197,31 @@ Runs the application as an `A2UI <https://a2ui.org/>`_ agent instead of an inter
     argenta a2ui app/main.py:main -t socket --socket-path /tmp/agent.sock
     argenta a2ui app/main.py:main --reload
 
-A permanent Lit browser client lives in ``examples/a2ui/lit_client`` — serve it statically (for example ``python -m http.server 8080 --directory examples/a2ui/lit_client``) and it connects to the agent with automatic ``ws → sse → poll`` fallback. For the ``grpc`` transport there is a terminal client at ``examples/a2ui/grpc_client.py`` — it streams the agent log and accepts ``<command> flag=value`` lines as actions.
+A permanent Lit browser client lives in ``examples/a2ui/lit_client`` — ``argenta example a2ui client`` serves it on ``http://127.0.0.1:8080``, and it connects to the agent with automatic ``ws → sse → poll`` fallback. For the ``grpc`` transport there is a terminal client at ``examples/a2ui/grpc_client.py`` — ``argenta example a2ui client grpc`` streams the agent log and accepts ``<command> flag=value`` lines as actions.
+
+The ``example`` command
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Runs the bundled examples without writing any application code: a REPL demo, the A2UI example agent or one of the A2UI clients. The agent always starts in ``--verbose`` mode. The examples are not shipped with the package — this command is a shortcut for developers running it inside an Argenta repository checkout (``examples/`` must exist in the current directory).
+
+.. code-block:: shell
+
+    argenta example repl
+    argenta example a2ui agent [--transport <ws|sse|poll|socket|grpc|stdio>]
+    argenta example a2ui client [lit|grpc]
+
+*   ``repl`` — starts the example REPL application; takes no further arguments.
+*   ``a2ui agent`` — starts the example A2UI agent with ``--verbose``; ``--transport``/``-t`` selects the transport (default ``sse``).
+*   ``a2ui client`` — connects to a running agent: ``lit`` (default) serves the Lit browser client on ``http://127.0.0.1:8080``, ``grpc`` runs the terminal gRPC client (requires the agent to run with ``-t grpc`` and the ``[a2ui]`` extra).
+
+**Examples:**
+
+.. code-block:: shell
+
+    argenta example repl
+    argenta example a2ui agent -t grpc
+    argenta example a2ui client
+    argenta example a2ui client grpc
 
 -----
 

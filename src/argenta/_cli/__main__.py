@@ -136,6 +136,54 @@ def _a2ui(  # noqa: WPS211
 
 
 @app.command(
+    "example",
+    help="Run a bundled example: the REPL app, the A2UI agent or an A2UI client.",
+    short_help="Run a bundled example",
+    epilog=(
+        "Examples:\n"
+        "  argenta example repl\n"
+        "  argenta example a2ui agent --transport ws\n"
+        "  argenta example a2ui client grpc"
+    ),
+)
+def _example(
+    ctx: typer.Context,
+    kind: Annotated[
+        Literal["repl", "a2ui"],
+        typer.Argument(help="Example kind: 'repl' for the REPL app, 'a2ui' for the agent demo."),
+    ],
+    target: Annotated[
+        Literal["agent", "client"] | None,
+        typer.Argument(
+            help="A2UI side: 'agent' starts the example server, 'client' connects "
+            "to a running agent. Required for 'a2ui'."
+        ),
+    ] = None,
+    client_kind: Annotated[
+        Literal["lit", "grpc"] | None,
+        typer.Argument(
+            help="A2UI client: 'lit' serves the browser client (default), "
+            "'grpc' runs the terminal gRPC client."
+        ),
+    ] = None,
+    transport: Annotated[
+        Literal["stdio", "ws", "sse", "socket", "poll", "grpc"],
+        typer.Option(
+            "--transport",
+            "-t",
+            help="A2UI agent transport. Default: 'sse' "
+            "(standard library only; ws/grpc need the a2ui extra).",
+        ),
+    ] = "sse",
+) -> None:
+    commands.example_handler(
+        ctx.obj,
+        kind,
+        commands.ExampleOptions(target=target, client_kind=client_kind, transport=transport),
+    )
+
+
+@app.command(
     "init",
     help="Scaffold a flat or src boilerplate in the current project directory.",
     short_help="Initialize architecture in existing project",

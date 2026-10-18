@@ -20,6 +20,7 @@ from argenta._cli.__main__ import app
 from argenta._cli.commands._reload import resolve_watch_root, supervise_cli
 from argenta._cli.commands.a2ui import A2UIRunOptions, _child_args
 from argenta._cli.commands.build import _resolve_build_target
+from argenta._cli.commands.repl import ReplRunOptions
 from argenta._cli.di import create_cli_container
 from argenta.app.presentation.ascii_art import fetcher as fetcher_module
 
@@ -681,3 +682,96 @@ def test_preview_font_fails_when_download_fails(tmp_path: Path, mocker: MockerFi
 
     assert result.exit_code == 1
     assert "Could not fetch" in result.output
+
+
+# ============================================================================
+# `argenta example`
+# ============================================================================
+
+
+def test_example_repl_runs_bundled_app(mocker: MockerFixture) -> None:
+    repl_mock = mocker.patch("argenta._cli.commands.example.repl_handler")
+    result = runner.invoke(app, ["example", "repl"])
+
+    assert result.exit_code == 0
+    call_args = repl_mock.call_args.args
+    assert call_args[1] == "examples/repl/app/main.py:main"
+    assert call_args[2] == ReplRunOptions()
+
+
+def test_example_repl_rejects_extra_args() -> None:
+    result = runner.invoke(app, ["example", "repl", "agent"])
+
+    assert result.exit_code == 1
+    assert "no further arguments" in result.output
+
+
+def test_example_a2ui_requires_target() -> None:
+    result = runner.invoke(app, ["example", "a2ui"])
+
+    assert result.exit_code == 1
+    assert "requires a target" in result.output
+
+
+def test_example_a2ui_agent_runs_verbose_sse_by_default(mocker: MockerFixture) -> None:
+    a2ui_mock = mocker.patch("argenta._cli.commands.example.a2ui_handler")
+    result = runner.invoke(app, ["example", "a2ui", "agent"])
+
+    assert result.exit_code == 0
+    call_args = a2ui_mock.call_args.args
+    options = call_args[2]
+    assert call_args[1] == "examples/a2ui/agent.py:main"
+    assert options.transport == "sse"
+    assert options.verbose is True
+
+
+def test_example_a2ui_agent_accepts_transport_flag(mocker: MockerFixture) -> None:
+    a2ui_mock = mocker.patch("argenta._cli.commands.example.a2ui_handler")
+    result = runner.invoke(app, ["example", "a2ui", "agent", "-t", "grpc"])
+
+    assert result.exit_code == 0
+    assert a2ui_mock.call_args.args[2].transport == "grpc"
+
+
+def test_example_a2ui_agent_rejects_client_kind() -> None:
+    result = runner.invoke(app, ["example", "a2ui", "agent", "lit"])
+
+    assert result.exit_code == 1
+    assert "client kind" in result.output
+
+
+def test_example_a2ui_client_serves_lit_by_default(mocker: MockerFixture) -> None:
+    server_mock = mocker.patch("argenta._cli.commands.example.ThreadingHTTPServer")
+    result = runner.invoke(app, ["example", "a2ui", "client"])
+
+    assert result.exit_code == 0
+    assert "http://127.0.0.1:8080" in result.output
+    handler = server_mock.call_args.args[1]
+    assert handler.keywords["directory"].endswith("lit_client")
+    server_mock.return_value.__enter__.return_value.serve_forever.assert_called_once()
+
+
+def test_example_a2ui_client_grpc_runs_terminal_client(mocker: MockerFixture) -> None:
+    resolve_mock = mocker.patch("argenta._cli.commands.example.resolve_callable_entrypoint")
+    result = runner.invoke(app, ["example", "a2ui", "client", "grpc"])
+
+    assert result.exit_code == 0
+    spec = resolve_mock.call_args.args[0]
+    assert spec.file_path == "examples/a2ui/grpc_client.py"
+    assert spec.callable_name == "main"
+
+
+def test_example_a2ui_client_grpc_fails_without_extra(mocker: MockerFixture) -> None:
+    mocker.patch("argenta._cli.commands.a2ui.find_spec", return_value=None)
+    result = runner.invoke(app, ["example", "a2ui", "client", "grpc"])
+
+    assert result.exit_code == 1
+    assert "grpc" in result.output
+
+
+def test_example_fails_outside_checkout(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    result = runner.invoke(app, ["example", "repl"])
+
+    assert result.exit_code == 1
+    assert "examples" in result.output
