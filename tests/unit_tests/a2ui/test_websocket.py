@@ -1,3 +1,4 @@
+import http.client
 import json
 import re
 import time
@@ -116,3 +117,14 @@ def test_late_joiner_replays_history(transport: WebSocketTransport) -> None:
 
     assert "createSurface" in first
     assert "updateDataModel" in second
+
+
+def test_plain_http_probe_gets_426_and_ws_still_works(transport: WebSocketTransport) -> None:
+    connection = http.client.HTTPConnection("127.0.0.1", transport.port)
+    connection.request("GET", "/events")
+    response = connection.getresponse()
+    connection.close()
+
+    assert response.status == 426
+    with _client(transport):  # the websocket handshake still succeeds after the probe
+        pass

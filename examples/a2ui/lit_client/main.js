@@ -62,26 +62,31 @@ function viaWebSocket(url) {
 }
 
 function viaEventSource(url) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const source = new EventSource(`${url}/events`);
     const queue = messageQueue();
     source.onopen = () => resolve({ send: (m) => postAction(url, m), messages: queue });
     source.onmessage = (event) => queue.push(JSON.parse(event.data));
     source.onerror = () => {
-      if (source.readyState === EventSource.CLOSED) {
-        source.close();
-        reject(new Error('event stream unavailable'));
-      }
+      // cut EventSource's own auto-reconnect: a dead agent or a transport
+      // switch hands control back to the fallback chain, which re-probes
+      // every connector from the start
+      source.close();
+      queue.close();
+      resolve(null); // no-op once the connection resolved
     };
   });
 }
 
-function viaPoll(url) {
+async function viaPoll(url) {
+  const probe = await fetch(`${url}/events?after=0`);
+  if (!probe.ok) throw new Error('poll unavailable');
   const messages = {
     async *[Symbol.asyncIterator]() {
       let cursor = 0;
       for (;;) {
         const response = await fetch(`${url}/events?after=${cursor}`);
+        if (!response.ok) return; // a dead agent hands control back to the fallback chain
         const batch = await response.json();
         for (const message of batch.messages) yield message;
         cursor = batch.next;
@@ -163,7 +168,8 @@ class ArgentaA2uiApp extends LitElement {
       : [() => viaEventSource(httpUrl), () => viaPoll(httpUrl)];
     for (const connect of connectors) {
       try {
-        return await connect();
+        const conn = await connect();
+        if (conn) return conn;
       } catch {
         // transport unavailable — try the next one
       }
