@@ -16,7 +16,7 @@ import grpc
 from rich.console import Console
 from rich.panel import Panel
 
-from argenta.a2ui.models import JsonValue, Message
+from argenta.a2ui.models import Message
 from argenta.a2ui.transport.grpc import agent_pb2, agent_pb2_grpc
 
 
@@ -27,13 +27,11 @@ class ClientConfig:
     address: str = "127.0.0.1:8765"
     protocol_version: str = "v0.9"
     log_path: str = "/log"
-    log_fence: str = "```"
-    prompt: str = "a2ui>"
+    log_fence: str = "````"
 
 
 class _LogView:
-    """Private. Mirrors the agent log and renders only the appended tail;
-    structural messages collapse into a dim marker line"""
+    """Private. Mirrors the agent log and renders only the appended tail"""
 
     def __init__(self, console: Console, config: ClientConfig) -> None:
         self._console = console
@@ -41,18 +39,16 @@ class _LogView:
         self._lines: list[str] = []
 
     def render(self, message: Message) -> None:
-        """Private. Routes a decoded agent frame to the matching view"""
+        """Private. Prints log lines added since the previous update;
+        non-log frames are skipped"""
         update = message.get("updateDataModel")
         if isinstance(update, dict) and update.get("path") == self._config.log_path:
-            self._show_log(update.get("value", ""))
-            return
-        kinds = ", ".join(key for key in message if key != "version")
-        self._console.print(f"[dim]· {kinds}[/]")
+            self._show(update.get("value", ""))
 
-    def _show_log(self, raw_log: JsonValue) -> None:
-        """Private. Prints log lines added since the previous update"""
+    def _show(self, raw_log: object) -> None:
+        """Private. Diffs the log model and prints the appended tail"""
         text = str(raw_log).replace(self._config.log_fence, "")
-        current = [line for line in text.splitlines() if line.strip("`")]
+        current = text.strip().splitlines()
         size = len(self._lines)
         fresh = current
         if current[:size] == self._lines:
@@ -80,18 +76,12 @@ def _action_frame(line: str, config: ClientConfig) -> agent_pb2.Frame:
     return agent_pb2.Frame(json=json.dumps(message))
 
 
-def _read_actions(
-    outgoing: queue.Queue[agent_pb2.Frame | None], console: Console, config: ClientConfig
-) -> None:
+def _read_actions(outgoing: queue.Queue[agent_pb2.Frame | None], config: ClientConfig) -> None:
     """Private. Feeds stdin lines into the request stream; EOF ends it"""
-    while True:
-        try:
-            line = console.input(f"[bold cyan]{config.prompt}[/] ")
-        except EOFError:
-            outgoing.put(None)
-            return
+    for line in sys.stdin:
         if line.strip():
             outgoing.put(_action_frame(line.strip(), config))
+    outgoing.put(None)
 
 
 def _pump(
@@ -120,8 +110,6 @@ def main() -> None:
     channel = grpc.insecure_channel(config.address)
     outgoing: queue.Queue[agent_pb2.Frame | None] = queue.Queue()
     console = Console(highlight=False)
-    reader = threading.Thread(target=_read_actions, args=(outgoing, console, config), daemon=True)
-    reader.start()
     console.print(
         Panel.fit(
             "type [bold]<command> flag=value[/] lines · Ctrl+D to quit",
@@ -129,6 +117,8 @@ def main() -> None:
             border_style="cyan",
         )
     )
+    reader = threading.Thread(target=_read_actions, args=(outgoing, config), daemon=True)
+    reader.start()
     _pump(console, channel, outgoing, config)
     channel.close()
 
