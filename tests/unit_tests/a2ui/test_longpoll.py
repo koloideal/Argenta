@@ -110,6 +110,21 @@ def test_poll_close_ends_actions_and_wakes_polls(transport: LongPollTransport) -
     assert transport.poll(0) == ([], 0)
 
 
+def test_poll_handle_error_reports_real_errors(
+    transport: LongPollTransport, capsys: pytest.CaptureFixture[str]
+) -> None:
+    request = socket.socket()
+    try:
+        raise RuntimeError("simulated handler bug")
+    except RuntimeError:
+        transport._server.handle_error(request, ("127.0.0.1", 0))
+    request.close()
+
+    err = capsys.readouterr().err
+    assert "RuntimeError" in err
+    assert "connection dropped" not in err
+
+
 def test_poll_client_reset_is_quiet(
     transport: LongPollTransport, capsys: pytest.CaptureFixture[str]
 ) -> None:

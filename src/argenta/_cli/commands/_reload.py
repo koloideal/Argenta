@@ -40,7 +40,11 @@ def _spawn_and_monitor(child_args: list[str], stop: threading.Event) -> subproce
 
 
 def _watch_until_change(
-    child: subprocess.Popen[bytes], watch_root: Path, stop: threading.Event, console: Console
+    child: subprocess.Popen[bytes],
+    watch_root: Path,
+    stop: threading.Event,
+    console: Console,
+    label: str,
 ) -> bool:
     """Private. Blocks on file changes; True means the child must be
     respawned, False means it exited on its own"""
@@ -54,25 +58,27 @@ def _watch_until_change(
         if child.poll() is not None:
             return False
         changed = sorted(path for _change, path in changes)
-        console.print(f"a2ui: {Path(changed[0]).name} changed, restarting")
+        console.print(f"{label}: {Path(changed[0]).name} changed, restarting")
         return True
     return False
 
 
-def supervise_cli(child_args: list[str], watch_root: Path, console: Console) -> int:
-    """Private. Runs the `argenta a2ui` child process and respawns it whenever
+def supervise_cli(
+    child_args: list[str], watch_root: Path, console: Console, label: str = "cli"
+) -> int:
+    """Private. Runs the child process and respawns it whenever
     python files under ``watch_root`` change; exits with the last child's code"""
     child: subprocess.Popen[bytes] | None = None
     try:
         while True:
             stop = threading.Event()
             child = _spawn_and_monitor(child_args, stop)
-            if _watch_until_change(child, watch_root, stop, console):
+            if _watch_until_change(child, watch_root, stop, console, label):
                 _terminate(child)
             else:
                 break
     except KeyboardInterrupt:
-        console.print("a2ui: interrupted, shutting down")
+        console.print(f"{label}: interrupted, shutting down")
     finally:
         _terminate(child)
     if child is None:

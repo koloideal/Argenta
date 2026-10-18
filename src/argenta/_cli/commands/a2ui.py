@@ -61,7 +61,7 @@ def _reload_supervised(
         sys.exit(1)
     stderr = Console(stderr=True)
     stderr.print(f"a2ui: watching {watch_root} for changes")
-    sys.exit(supervise_cli(_child_args(entrypoint_path, options), watch_root, stderr))
+    sys.exit(supervise_cli(_child_args(entrypoint_path, options), watch_root, stderr, "a2ui"))
 
 
 def a2ui_handler(container: Container, entrypoint_path: str, options: A2UIRunOptions) -> None:

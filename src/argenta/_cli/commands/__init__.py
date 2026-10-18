@@ -8,5 +8,6 @@ from argenta._cli.commands.init import init_handler as init_handler
 from argenta._cli.commands.list_fonts import list_fonts_handler as list_fonts_handler
 from argenta._cli.commands.new import new_handler as new_handler
 from argenta._cli.commands.preview_font import preview_font_handler as preview_font_handler
+from argenta._cli.commands.repl import ReplRunOptions as ReplRunOptions
+from argenta._cli.commands.repl import repl_handler as repl_handler
 from argenta._cli.commands.routes import routes_handler as routes_handler
-from argenta._cli.commands.run import run_handler as run_handler

@@ -23,7 +23,7 @@ from argenta.repl import REPLRuntime
 @dataclass(frozen=True, slots=True)
 class RunnerConfig:
     """
-    Environment bridge between `argenta run` and the Orchestrator:
+    Environment bridge between the `argenta` CLI commands and the Orchestrator:
     the CLI sets these variables and the Orchestrator reads them
     """
 
@@ -55,7 +55,7 @@ class Orchestrator:
         of an integrated system, one level higher than the App
         :param arg_parser: Cmd argument parser and configurator at startup
         :param runner_config: environment bridge configuration used
-               when the application is started via `argenta run`
+               when the application is started via `argenta repl`/`argenta a2ui`
         :return: None
         """
         self._runner_config: RunnerConfig = runner_config or RunnerConfig()
@@ -71,7 +71,7 @@ class Orchestrator:
     def run_repl(self, app: App) -> None:
         """
         Public. Starting the user input processing cycle; when started
-        via `argenta run --a2ui`, delegates to run_agent over the selected transport
+        via `argenta a2ui`, delegates to run_agent over the selected transport
         :param app: a running application
         :return: None
         """

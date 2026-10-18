@@ -54,7 +54,7 @@ Equivalently, via the short flag:
 Entrypoint format
 -----------------
 
-The ``run``, ``routes`` and ``build`` commands accept an **entrypoint** — a pointer to an object inside the project to run, inspect, or build. The shared format is documented here once instead of repeating it in each command.
+The ``repl``, ``a2ui``, ``routes`` and ``build`` commands accept an **entrypoint** — a pointer to an object inside the project to run, inspect, or build. The shared format is documented here once instead of repeating it in each command.
 
 Entrypoint format:
 
@@ -80,7 +80,7 @@ If a directory path containing ``__main__.py`` is passed, it is resolved automat
    my_project.application:main
    my_project/application/__main__.py:main
 
-The expected object type depends on the command: ``run`` and ``build`` expect a callable, ``routes`` expects an ``App`` instance or a callable returning ``App``.
+The expected object type depends on the command: ``repl``, ``a2ui`` and ``build`` expect a callable, ``routes`` expects an ``App`` instance or a callable returning ``App``.
 
 -----
 
@@ -145,29 +145,59 @@ Does the same as ``new``, but in the current directory. Convenient when the proj
 Running an application
 ----------------------
 
-The ``run`` command
-~~~~~~~~~~~~~~~~~~~
+The ``repl`` command
+~~~~~~~~~~~~~~~~~~~~
 
-Starts the ``Argenta`` orchestrator from a callable entrypoint. It is an alternative to calling ``python main.py`` directly, but with automatic environment setup.
+Starts the ``Argenta`` interactive REPL from a callable entrypoint. It is an alternative to calling ``python main.py`` directly, but with automatic environment setup.
 
 .. code-block:: shell
 
-    argenta run <entrypoint>
+    argenta repl <entrypoint> [--reload]
 
 Entrypoint format — see :ref:`Entrypoint format <cli_entrypoint>`.
+
+*   ``--reload`` / ``-r`` — watches the entrypoint's directory for ``.py`` changes and restarts the REPL process automatically (requires ``watchfiles``, bundled in the ``[a2ui]`` extra).
 
 **Examples:**
 
 .. code-block:: shell
 
-    argenta run app/main.py:main
-    argenta run my_project.application:main
+    argenta repl app/main.py:main
+    argenta repl my_project.application:main
+    argenta repl app/main.py:main --reload
 
 .. image:: /_static/cli-run.png
-   :alt: argenta run command output
+   :alt: argenta repl command output
 
 .. note::
-   The ``run`` command sets the ``RUN_FROM_ARGENTA_RUNNER=1`` environment variable. ``ArgParser`` sees this flag and skips parsing ``sys.argv``, so the ``argenta`` arguments themselves (such as ``--help``, ``--version``) do not conflict with the arguments of the application being launched. The REPL starts cleanly, with no errors about unknown flags.
+   The ``repl`` command sets the ``RUN_FROM_ARGENTA_RUNNER=1`` environment variable. ``ArgParser`` sees this flag and skips parsing ``sys.argv``, so the ``argenta`` arguments themselves (such as ``--help``, ``--version``) do not conflict with the arguments of the application being launched. The REPL starts cleanly, with no errors about unknown flags.
+
+The ``a2ui`` command
+~~~~~~~~~~~~~~~~~~~~
+
+Runs the application as an `A2UI <https://a2ui.org/>`_ agent instead of an interactive REPL: the registered commands are emitted as a declarative UI surface (one card per command, one input per flag), and client ``action`` messages are dispatched back through the same command-handling path. Requires the ``[a2ui]`` extra.
+
+.. code-block:: shell
+
+    argenta a2ui <entrypoint> [--transport <ws|sse|poll|socket|stdio>] [--port <n>]
+                              [--socket-path <path>] [--verbose] [--reload]
+
+*   ``--transport`` / ``-t`` — ``ws`` WebSocket server (default, for browser clients), ``sse`` HTTP Server-Sent Events + POST actions, ``poll`` HTTP long-polling for proxies that block streaming, ``socket`` JSON Lines over TCP or a Unix socket for native clients, ``stdio`` JSON Lines over stdin/stdout for machine clients.
+*   ``--port`` / ``-p`` — listen port for the ``ws``/``sse``/``socket`` transports (default ``8765``).
+*   ``--socket-path`` — Unix domain socket path for the ``socket`` transport; without it the transport listens on TCP.
+*   ``--verbose`` / ``-v`` — log the agent lifecycle (actions received, messages sent, client connections) to stderr.
+*   ``--reload`` / ``-r`` — watch the entrypoint's directory for ``.py`` changes and restart the agent process automatically.
+
+**Examples:**
+
+.. code-block:: shell
+
+    argenta a2ui app/main.py:main
+    argenta a2ui app/main.py:main --transport ws --port 8765 --verbose
+    argenta a2ui app/main.py:main -t socket --socket-path /tmp/agent.sock
+    argenta a2ui app/main.py:main --reload
+
+A permanent Lit browser client lives in ``examples/example_a2ui/client`` — serve it statically (for example ``python -m http.server 8080 --directory examples/example_a2ui/client``) and it connects to ``ws://127.0.0.1:8765`` with automatic ``ws → sse → poll`` fallback.
 
 -----
 

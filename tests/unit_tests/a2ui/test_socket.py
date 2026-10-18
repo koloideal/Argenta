@@ -1,3 +1,4 @@
+import io
 import json
 import socket
 import struct
@@ -75,6 +76,20 @@ def test_socket_drops_disconnected_client(transport: SocketTransport) -> None:
     conn.close()
     transport.send({"version": "v0.9", "ping": {}})
     transport.send({"version": "v0.9", "ping2": {}})
+
+
+def test_socket_send_unregisters_client_with_dead_writer(
+    transport: SocketTransport,
+) -> None:
+    dead_conn = socket.socket()
+    writer = io.BytesIO()
+    client = transport.register_client(dead_conn, writer)
+    writer.close()
+
+    transport.send({"version": "v0.9", "ping": {}})
+
+    assert client not in transport._clients
+    dead_conn.close()
 
 
 def test_socket_unix_path(tmp_path: Path) -> None:

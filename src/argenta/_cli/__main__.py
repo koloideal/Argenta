@@ -39,18 +39,26 @@ def _root(
 
 
 @app.command(
-    "run",
-    help="Start the orchestrator REPL from a callable entrypoint.",
-    short_help="Start the orchestrator REPL",
-    epilog="Example: argenta run app/main.py:main",
+    "repl",
+    help="Start the interactive orchestrator REPL from a callable entrypoint.",
+    short_help="Start the interactive REPL",
+    epilog=("Examples:\n  argenta repl app/main.py:main\n  argenta repl app/main.py:main --reload"),
 )
-def _run(
+def _repl(
     ctx: typer.Context,
     entrypoint_path: Annotated[
         str, typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>")
     ],
+    hot_reload: Annotated[
+        bool,
+        typer.Option(
+            "--reload",
+            "-r",
+            help="Restart the REPL when python files around the entrypoint change.",
+        ),
+    ] = False,
 ) -> None:
-    commands.run_handler(ctx.obj, entrypoint_path)
+    commands.repl_handler(ctx.obj, entrypoint_path, commands.ReplRunOptions(hot_reload))
 
 
 @app.command(
