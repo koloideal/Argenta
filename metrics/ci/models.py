@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass
 
 
@@ -7,6 +8,18 @@ class Measurement:
     type_: str
     description: str
     seconds: float
+
+
+@dataclass(frozen=True, slots=True)
+class Side:
+    python: str
+    directory: str
+
+    @classmethod
+    def from_cli(cls, python: str, directory: str) -> "Side":
+        # abspath, not resolve(): venv pythons are symlinks — resolving
+        # them would escape the venv and lose the installed argenta
+        return cls(os.path.abspath(python), os.path.abspath(directory))
 
 
 @dataclass(frozen=True, slots=True)
