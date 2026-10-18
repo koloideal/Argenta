@@ -94,12 +94,16 @@ frag:
 release version:
     uv run scriv collect --version {{ version }} --add
 
-# ── A2UI Lit example ──────────────────────────────────────────────────────────
+# ── A2UI example ──────────────────────────────────────────────────────────────
 
-# Run the A2UI example agent over WebSocket ws://127.0.0.1:8765
+# Run the A2UI example agent (default sse; -t ws/socket/stdio/grpc to switch)
 a2ui-example-agent:
-    uv run --extra a2ui argenta a2ui --verbose examples/example_a2ui/main.py:main
+    uv run --extra a2ui argenta a2ui --verbose examples/a2ui/agent.py:main
 
-# Serve the A2UI Lit client on http://127.0.0.1:8080
+# Serve the A2UI Lit browser client on http://127.0.0.1:8080
 a2ui-example-client:
-    uv run python -m http.server 8080 --directory examples/example_a2ui/client
+    uv run python -m http.server 8080 --directory examples/a2ui/lit_client
+
+# Run the terminal gRPC client against the agent started with -t grpc
+a2ui-example-grpc-client:
+    uv run --extra a2ui python examples/a2ui/grpc_client.py

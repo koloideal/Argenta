@@ -1,7 +1,7 @@
 from argenta import App, Orchestrator
 from argenta.app import StaticDividingLine
 from argenta.app.presentation.ascii_art import AsciiArtRenderer, BundledFont, FigletFontLoader
-from examples.example_a2ui.routers import release_router
+from examples.a2ui.routers import release_router
 
 _banner: str = AsciiArtRenderer().render(
     "Argenta", FigletFontLoader().load_bundled(BundledFont.TARTY1)

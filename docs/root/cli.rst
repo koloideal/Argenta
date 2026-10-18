@@ -197,7 +197,7 @@ Runs the application as an `A2UI <https://a2ui.org/>`_ agent instead of an inter
     argenta a2ui app/main.py:main -t socket --socket-path /tmp/agent.sock
     argenta a2ui app/main.py:main --reload
 
-A permanent Lit browser client lives in ``examples/example_a2ui/client`` — serve it statically (for example ``python -m http.server 8080 --directory examples/example_a2ui/client``) and it connects to ``ws://127.0.0.1:8765`` with automatic ``ws → sse → poll`` fallback.
+A permanent Lit browser client lives in ``examples/a2ui/lit_client`` — serve it statically (for example ``python -m http.server 8080 --directory examples/a2ui/lit_client``) and it connects to the agent with automatic ``ws → sse → poll`` fallback. For the ``grpc`` transport there is a terminal client at ``examples/a2ui/grpc_client.py`` — it streams the agent log and accepts ``<command> flag=value`` lines as actions.
 
 -----
 

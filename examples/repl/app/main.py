@@ -1,6 +1,6 @@
 from argenta import App, Orchestrator
 from argenta.app import PredefinedMessages, StaticDividingLine
-from examples.example_app.routers import work_router
+from examples.repl.app.routers import work_router
 
 app: App = App(dividing_line=StaticDividingLine("~"))
 orchestrator: Orchestrator = Orchestrator()
