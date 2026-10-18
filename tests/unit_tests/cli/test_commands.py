@@ -152,12 +152,12 @@ def test_a2ui_ws_transport_sets_env(tmp_path: Path) -> None:
     assert os.environ["ARGENTA_A2UI_PORT"] == "9999"
 
 
-def test_a2ui_transport_defaults_to_ws(tmp_path: Path) -> None:
+def test_a2ui_transport_defaults_to_sse(tmp_path: Path) -> None:
     path = _write_module(tmp_path, "climod_run_std", "def main():\n    pass\n")
     result = runner.invoke(app, ["a2ui", f"{path}:main"])
 
     assert result.exit_code == 0
-    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "ws"
+    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "sse"
     assert "ARGENTA_A2UI_PORT" not in os.environ
     assert "ARGENTA_A2UI_VERBOSE" not in os.environ
 
@@ -325,14 +325,36 @@ def test_a2ui_child_args_include_options() -> None:
     assert args[-1] == "app/main.py:main"
 
 
-def test_a2ui_fails_without_extra(mocker: MockerFixture, tmp_path: Path) -> None:
+def test_a2ui_ws_fails_without_extra(mocker: MockerFixture, tmp_path: Path) -> None:
     mocker.patch("argenta._cli.commands.a2ui.find_spec", return_value=None)
     path = _write_module(tmp_path, "climod_no_extra", "def main():\n    pass\n")
 
-    result = runner.invoke(app, ["a2ui", f"{path}:main"])
+    result = runner.invoke(app, ["a2ui", "-t", "ws", f"{path}:main"])
 
     assert result.exit_code == 1
+    assert "websockets" in result.output
     assert "argenta[a2ui]" in result.output
+
+
+def test_a2ui_grpc_fails_without_extra(mocker: MockerFixture, tmp_path: Path) -> None:
+    mocker.patch("argenta._cli.commands.a2ui.find_spec", side_effect=ModuleNotFoundError)
+    path = _write_module(tmp_path, "climod_no_grpc", "def main():\n    pass\n")
+
+    result = runner.invoke(app, ["a2ui", "-t", "grpc", f"{path}:main"])
+
+    assert result.exit_code == 1
+    assert "google.protobuf" in result.output
+    assert "argenta[a2ui]" in result.output
+
+
+def test_a2ui_sse_runs_without_extra(mocker: MockerFixture, tmp_path: Path) -> None:
+    mocker.patch("argenta._cli.commands.a2ui.find_spec", return_value=None)
+    path = _write_module(tmp_path, "climod_sse_stdlib", "def main():\n    pass\n")
+
+    result = runner.invoke(app, ["a2ui", "-t", "sse", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "sse"
 
 
 def test_repl_fails_on_missing_file() -> None:

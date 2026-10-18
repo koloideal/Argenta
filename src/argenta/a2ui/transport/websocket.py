@@ -18,7 +18,7 @@ class WebSocketTransport:
     Public. Broadcasts A2UI messages to every connected renderer client
     and yields decoded action messages received over WebSocket.
 
-    Requires the optional ``websockets`` dependency (``pip install 'argenta[a2ui]'``).
+    Requires the optional ``websockets`` dependency (``uv add 'argenta[a2ui]'``).
     """
 
     def __init__(self, host: str = "127.0.0.1", port: int = 8765, *, verbose: bool = False) -> None:

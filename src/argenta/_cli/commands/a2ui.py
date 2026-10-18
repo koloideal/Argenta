@@ -11,27 +11,40 @@ from argenta._cli.commands._entrypoint import (
     split_entrypoint_spec,
 )
 from argenta._cli.commands._reload import resolve_watch_root, supervise_cli
-from argenta.orchestrator.entity import RunnerConfig
+from argenta.orchestrator.config import RunnerConfig
 
 
 @dataclass(frozen=True, slots=True)
 class A2UIRunOptions:
     """Private. Options of the `argenta a2ui` command"""
 
-    transport: str = "ws"
+    transport: str = "sse"
     port: int | None = None
     socket_path: str | None = None
     verbose: bool = False
     hot_reload: bool = False
 
 
-def _ensure_a2ui_extra(console: Console) -> None:
-    """Private. The a2ui command needs the optional extra installed"""
-    if find_spec("websockets") is None:
+def _has_module(name: str) -> bool:
+    """Private. find_spec raises ModuleNotFoundError for missing
+    parents of dotted names (e.g. `google.protobuf`)"""
+    try:
+        return find_spec(name) is not None
+    except ModuleNotFoundError:
+        return False
+
+
+def _ensure_transport_modules(console: Console, transport: str) -> None:
+    """Private. ws/grpc need optional dependencies; the other transports
+    are standard-library only"""
+    modules = {"ws": ("websockets",), "grpc": ("grpc", "google.protobuf")}
+    missing = [name for name in modules.get(transport, ()) if not _has_module(name)]
+    if missing:
+        missing_report = ", ".join(missing)
         console.print(
-            "[bold red]Error:[/bold red] the a2ui command requires the optional "
-            "'websockets' dependency — "
-            r"install it with `pip install 'argenta\[a2ui]'`"
+            f"[bold red]Error:[/bold red] the '{transport}' transport is missing "
+            f"optional modules: {missing_report} — "
+            r"install them with `uv add 'argenta\[a2ui]'`"
         )
         sys.exit(1)
 
@@ -64,7 +77,7 @@ def _reload_supervised(
 
 def a2ui_handler(container: Container, entrypoint_path: str, options: A2UIRunOptions) -> None:
     console = container.get(Console)
-    _ensure_a2ui_extra(console)
+    _ensure_transport_modules(console, options.transport)
     spec = split_entrypoint_spec(
         entrypoint_path,
         console,

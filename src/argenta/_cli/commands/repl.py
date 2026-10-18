@@ -11,7 +11,7 @@ from argenta._cli.commands._entrypoint import (
     split_entrypoint_spec,
 )
 from argenta._cli.commands._reload import resolve_watch_root, supervise_cli
-from argenta.orchestrator.entity import RunnerConfig
+from argenta.orchestrator.config import RunnerConfig
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,8 +26,8 @@ def _ensure_watchfiles(console: Console) -> None:
     if find_spec("watchfiles") is None:
         console.print(
             "[bold red]Error:[/bold red] --reload requires the optional "
-            "'watchfiles' dependency — install it with `pip install watchfiles` "
-            r"or `pip install 'argenta\[cli]'`"
+            "'watchfiles' dependency — install it with `uv add watchfiles` "
+            r"or `uv add 'argenta\[cli]'`"
         )
         sys.exit(1)
 

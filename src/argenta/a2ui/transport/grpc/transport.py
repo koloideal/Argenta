@@ -14,8 +14,6 @@ from argenta.a2ui.transport.grpc import agent_pb2
 
 _Frames = queue.Queue[agent_pb2.Frame | None]
 
-_STOP_WAIT_SECONDS = 10
-
 
 def _drain_requests(
     transport: "GrpcTransport",
@@ -41,12 +39,20 @@ class GrpcTransport:
     cannot call gRPC directly.
 
     Requires the optional ``grpcio`` and ``protobuf`` dependencies
-    (``pip install 'argenta[a2ui]'``).
+    (``uv add 'argenta[a2ui]'``).
     """
 
-    def __init__(self, host: str = "127.0.0.1", port: int = 8765, *, verbose: bool = False) -> None:
+    def __init__(
+        self,
+        host: str = "127.0.0.1",
+        port: int = 8765,
+        *,
+        verbose: bool = False,
+        stop_timeout: float = 10,
+    ) -> None:
         self.verbose = VerboseLog(verbose, "grpc")  # Private. Handler access
         self.incoming: queue.Queue[Message | None] = queue.Queue()  # Private. Actions
+        self._stop_timeout = stop_timeout
         self._history: list[str] = []
         self._channels: set[_Frames] = set()
         self._lock = threading.Lock()
@@ -89,7 +95,7 @@ class GrpcTransport:
             channels = tuple(self._channels)
         for outgoing in channels:
             outgoing.put(None)
-        self._server.stop(grace=None).wait(timeout=_STOP_WAIT_SECONDS)
+        self._server.stop(grace=None).wait(timeout=self._stop_timeout)
 
     def register_channel(self) -> _Frames:
         """Private. Replays the message history into a fresh stream's queue

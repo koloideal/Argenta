@@ -82,13 +82,14 @@ def _a2ui(  # noqa: WPS211
         typer.Option(
             "--transport",
             "-t",
-            help="A2UI transport: 'ws' WebSocket server (default), 'sse' HTTP "
-            "Server-Sent Events + POST actions, 'poll' HTTP long-polling for "
+            help="A2UI transport: 'sse' HTTP Server-Sent Events + POST actions "
+            "(default), 'ws' WebSocket server, 'poll' HTTP long-polling for "
             "proxies that block streaming, 'socket' JSONL over TCP or a Unix "
             "socket for native clients, 'grpc' bidirectional gRPC stream, or "
-            "'stdio' JSONL for machine clients driving the agent over stdin/stdout.",
+            "'stdio' JSONL for machine clients driving the agent over stdin/stdout. "
+            "Default: 'sse' (standard library only; ws/grpc need the a2ui extra).",
         ),
-    ] = "ws",
+    ] = "sse",
     port: Annotated[
         int | None,
         typer.Option(

@@ -100,7 +100,9 @@ def test_register_channel_replays_history(transport: GrpcTransport) -> None:
     outgoing = transport.register_channel()
     transport.unregister_channel(outgoing)
 
-    assert json.loads(outgoing.get().json)["createSurface"]["surfaceId"] == "main"
+    frame = outgoing.get()
+    assert frame is not None
+    assert json.loads(frame.json)["createSurface"]["surfaceId"] == "main"
 
 
 def test_verbose_reports_lifecycle_to_stderr(capsys: pytest.CaptureFixture[str]) -> None:

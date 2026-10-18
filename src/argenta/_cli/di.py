@@ -7,7 +7,7 @@ from dishka import (
 )
 from rich.console import Console
 
-from argenta.orchestrator.entity import RunnerConfig
+from argenta.orchestrator.config import RunnerConfig
 
 
 class CliProvider(Provider):
