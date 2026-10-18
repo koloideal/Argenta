@@ -2,7 +2,8 @@ import re
 
 from argenta import Command, Response, Router
 from argenta.a2ui.catalog import _flag_path, build_surface
-from argenta.a2ui.models import A2UIConfig, JsonValue, Message
+from argenta.a2ui.config import A2UIConfig
+from argenta.a2ui.models import JsonValue, Message
 from argenta.app.registered_routers.entity import RegisteredRouters
 from argenta.command.flag import Flag, Flags, PossibleValues
 

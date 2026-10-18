@@ -1,6 +1,6 @@
 from dishka import make_container
 
-from argenta.a2ui.models import A2UIConfig
+from argenta.a2ui.config import A2UIConfig
 from argenta.a2ui.provider import A2UIProvider
 
 

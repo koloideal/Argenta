@@ -4,13 +4,13 @@ from contextlib import closing
 
 from argenta.a2ui._verbose import VerboseLog
 from argenta.a2ui.catalog import build_surface
+from argenta.a2ui.config import A2UIConfig
 from argenta.a2ui.log import EntryLog
 from argenta.a2ui.messages import MessageFactory, extract_action
-from argenta.a2ui.models import A2UIConfig, JsonValue, Message
+from argenta.a2ui.models import JsonValue, Message
 from argenta.a2ui.transport import Transport
 from argenta.app import App
-from argenta.command import Command, InputCommand, InputFlags
-from argenta.command.flag.models import Flag, InputFlag, PossibleValues
+from argenta.command import Command, Flag, InputCommand, InputFlag, InputFlags, PossibleValues
 
 
 def _to_input_flag(flag: Flag, flag_value: JsonValue) -> InputFlag:

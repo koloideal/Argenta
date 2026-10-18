@@ -16,13 +16,7 @@ The REPL runtime runs an ``App`` as an interactive terminal session. Its present
 
 .. autoclass:: argenta.repl.REPLConfig
 
-Terminal layout of the REPL, passed to ``Orchestrator.run_repl``:
-
-* ``dividing_line``: frames command and system output (``StaticDividingLine``, ``DynamicDividingLine`` or ``None`` for no frame). Defaults to ``None``.
-* ``prompt_gap``: blank lines before and after the input prompt. Defaults to ``1``.
-* ``frame_padding``: blank lines between the dividing line and the framed output. Defaults to ``1``.
-* ``startup_messages_gap``: blank lines before the startup messages. Defaults to ``1``.
-* ``command_groups_gap``: blank lines before the list of available commands. Defaults to ``2``.
+Passed to ``Orchestrator.run_repl``; the field descriptions above come from the ``Doc`` annotations in the source.
 
 .. code-block:: python
 

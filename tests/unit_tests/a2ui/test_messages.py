@@ -1,5 +1,6 @@
+from argenta.a2ui.config import A2UIConfig
 from argenta.a2ui.messages import MessageFactory, extract_action
-from argenta.a2ui.models import A2UIConfig, Message
+from argenta.a2ui.models import Message
 
 _CATALOG_URL = "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
 

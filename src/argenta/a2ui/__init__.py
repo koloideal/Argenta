@@ -1,4 +1,4 @@
-from argenta.a2ui.models import A2UIConfig as A2UIConfig
+from argenta.a2ui.config import A2UIConfig as A2UIConfig
 from argenta.a2ui.models import JsonValue as JsonValue
 from argenta.a2ui.models import Message as Message
 from argenta.a2ui.provider import A2UIProvider as A2UIProvider

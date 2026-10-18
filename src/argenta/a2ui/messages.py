@@ -1,7 +1,8 @@
 import json
 from contextlib import suppress
 
-from argenta.a2ui.models import A2UIConfig, JsonValue, Message
+from argenta.a2ui.config import A2UIConfig
+from argenta.a2ui.models import JsonValue, Message
 
 
 def decode_message(raw: str | bytes) -> Message | None:

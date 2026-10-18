@@ -5,7 +5,8 @@ from pytest_mock import MockerFixture
 
 from argenta import App, Command, Response, Router
 from argenta.a2ui import AgentRuntime, MemoryTransport
-from argenta.a2ui.models import A2UIConfig, Message
+from argenta.a2ui.config import A2UIConfig
+from argenta.a2ui.models import Message
 from argenta.a2ui.runtime import _find_command
 from argenta.command.flag import Flag, Flags, PossibleValues
 

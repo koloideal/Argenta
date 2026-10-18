@@ -2,7 +2,8 @@ from collections.abc import Iterable
 from itertools import batched
 from re import Pattern
 
-from argenta.a2ui.models import A2UIConfig, JsonValue, Message
+from argenta.a2ui.config import A2UIConfig
+from argenta.a2ui.models import JsonValue, Message
 from argenta.app.registered_routers.entity import RegisteredRouters
 from argenta.command.flag.models import Flag, PossibleValues
 from argenta.router.entity import Router

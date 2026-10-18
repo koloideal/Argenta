@@ -1,5 +1,7 @@
 from dataclasses import dataclass
+from typing import Annotated
 
+from argenta._doc import Doc
 from argenta.repl.dividing_line import DynamicDividingLine, StaticDividingLine
 
 
@@ -10,8 +12,17 @@ class REPLConfig:
     frames command output and the blank-line gaps between blocks
     """
 
-    dividing_line: StaticDividingLine | DynamicDividingLine | None = None
-    prompt_gap: int = 1
-    frame_padding: int = 1
-    startup_messages_gap: int = 1
-    command_groups_gap: int = 2
+    dividing_line: Annotated[
+        StaticDividingLine | DynamicDividingLine | None,
+        Doc("Line framing command and system output above and below; None draws no frame"),
+    ] = None
+    prompt_gap: Annotated[int, Doc("Blank lines printed before and after the input prompt")] = 1
+    frame_padding: Annotated[
+        int, Doc("Blank lines between the dividing line and the framed output, on both sides")
+    ] = 1
+    startup_messages_gap: Annotated[
+        int, Doc("Blank lines between the banner and the startup messages")
+    ] = 1
+    command_groups_gap: Annotated[
+        int, Doc("Blank lines before the list of available commands (also in repeat mode)")
+    ] = 2

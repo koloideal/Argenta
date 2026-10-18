@@ -1,6 +1,6 @@
 import dishka
 
-from argenta.a2ui.models import A2UIConfig
+from argenta.a2ui.config import A2UIConfig
 
 
 class A2UIProvider(dishka.Provider):

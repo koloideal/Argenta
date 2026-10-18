@@ -3,7 +3,8 @@ from collections.abc import Callable
 from contextlib import redirect_stdout
 from io import StringIO
 
-from argenta.a2ui.models import A2UIConfig, Message
+from argenta.a2ui.config import A2UIConfig
+from argenta.a2ui.models import Message
 from argenta.app.presentation.layout import BlockKind
 
 
