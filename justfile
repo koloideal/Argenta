@@ -27,26 +27,26 @@ snapshot-update:
 
 # Format code and fix imports (Ruff) — modifies files
 format:
-    uv run ruff format ./src ./tests ./metrics ./examples ./repl_framed ./repl_compact ./dual_runtime ./script_runtime
-    uv run ruff check --select I --fix ./src ./tests ./metrics ./examples ./repl_framed ./repl_compact ./dual_runtime ./script_runtime
+    uv run ruff format ./src ./tests ./metrics ./examples
+    uv run ruff check --select I --fix ./src ./tests ./metrics ./examples
 
 # Check types via mypy (strict for src, default for the rest)
 mypy:
     uv run mypy -p argenta --strict
-    uv run mypy tests metrics examples repl_framed repl_compact dual_runtime script_runtime
+    uv run mypy tests metrics examples
 
 # Check style via wemake-python-styleguide
 wps:
-    uv run flake8 --format=wemake ./src ./tests ./metrics ./examples ./repl_framed ./repl_compact ./dual_runtime ./script_runtime
+    uv run flake8 --format=wemake ./src ./tests ./metrics ./examples
 
 # Run Ruff linter
 ruff:
-    uv run ruff check ./src ./tests ./metrics ./examples ./repl_framed ./repl_compact ./dual_runtime ./script_runtime
+    uv run ruff check ./src ./tests ./metrics ./examples
 
 # Verify formatting without changing files
 format-check:
-    uv run ruff format --check ./src ./tests ./metrics ./examples ./repl_framed ./repl_compact ./dual_runtime ./script_runtime
-    uv run ruff check --select I ./src ./tests ./metrics ./examples ./repl_framed ./repl_compact ./dual_runtime ./script_runtime
+    uv run ruff format --check ./src ./tests ./metrics ./examples
+    uv run ruff check --select I ./src ./tests ./metrics ./examples
 
 # Run all checks (format-check, mypy, ruff, wps) — never modifies files
 check-format: format-check mypy ruff wps

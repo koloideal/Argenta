@@ -1,9 +1,0 @@
-# a scripted session of the inventory app
-stock
-add --item coffee --qty 3
-stock
-ship --item milk --qty 2
-ship --item bread --qty 99
-bogus-command
-add --item
-q
