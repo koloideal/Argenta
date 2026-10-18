@@ -5,7 +5,7 @@ flag_with_value = InputFlag(
 )
 
 flag_without_value = InputFlag(
-    name="help", prefix="-", input_value="", status=ValidationStatus.VALID
+    name="help", prefix="-", input_value='', status=ValidationStatus.VALID
 )
 
 # String representation includes value
