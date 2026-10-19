@@ -9,9 +9,9 @@ Argenta
 What is it and why?
 -------------------
 
-**A library for building modular CLI applications with a simple and pleasant API.**
+**The command-driven framework for Python: build your commands once, run them in any runtime.**
 
-If you have functionality that you want to provide as a CLI application, Argenta will help you with that. The main goal of the library is to enable developers to focus on implementing their ideas by providing convenient abstractions.
+If you have functionality that you want to provide as a command-driven application, Argenta will help you with that. The main goal of the framework is to enable developers to focus on implementing their ideas by providing convenient abstractions.
 
 .. image:: /_static/app-screenshot.png
    :alt: App example

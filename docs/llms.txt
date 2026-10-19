@@ -1,8 +1,8 @@
 # Argenta
 
-> A Python library for building modular CLI applications with interactive REPL-like sessions, declarative command handlers, native DI via dishka, and automatic flag parsing/validation.
+> The command-driven framework for Python: one command layer — routers, declarative commands and flags, native DI via dishka — run by pluggable runtimes (currently a terminal REPL and an A2UI agent).
 
-Argenta creates applications that run a cyclic interactive session (like a Python REPL or MySQL console): the app starts once, and the user executes commands one after another without restarting. Commands and their handlers are registered via decorators; flags are parsed, validated and passed to handlers through a typed `Response` object. Requires Python 3.12+.
+Argenta applications define commands and their handlers via decorators; flags are parsed, validated and passed to handlers through a typed `Response` object. A runtime decides how the app is consumed; built-in runtimes include the REPL runtime, which runs a cyclic interactive terminal session (like a Python REPL or MySQL console), and the A2UI agent runtime, which streams command surfaces to renderers over SSE, WebSocket, gRPC and other transports. Requires Python 3.12+.
 
 ## Guides
 
