@@ -16,7 +16,7 @@ The REPL runtime runs an ``App`` as an interactive terminal session. Its present
 
 .. autoclass:: argenta.repl.REPLConfig
 
-Passed to ``Orchestrator.run_repl``; the field descriptions above come from the ``Doc`` annotations in the source.
+Passed to ``Orchestrator.run_repl``; every field documents itself via an ``Annotated[type, "..."]`` doc string in the source.
 
 .. code-block:: python
 

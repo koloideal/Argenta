@@ -1,6 +1,6 @@
 from argenta import App, Orchestrator
 from argenta.app import PredefinedMessages
-from argenta.repl import REPLConfig, StaticDividingLine
+from argenta.repl import REPLConfig, DynamicDividingLine
 from examples.repl.app.routers import work_router
 
 app: App = App()
@@ -14,7 +14,7 @@ def main() -> None:
     app.add_message_on_startup(PredefinedMessages.AUTOCOMPLETE)
     app.add_message_on_startup(PredefinedMessages.HELP)
 
-    orchestrator.run_repl(app, REPLConfig(dividing_line=StaticDividingLine("~")))
+    orchestrator.run_repl(app, REPLConfig(dividing_line=DynamicDividingLine("~")))
 
 
 if __name__ == "__main__":
