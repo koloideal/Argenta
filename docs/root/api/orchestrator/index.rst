@@ -32,6 +32,26 @@ Main Methods
    :param app: ``App`` instance to be launched.
    :param config: optional :ref:`REPLConfig <root_api_repl>` — terminal layout of the REPL (dividing line, gaps). Ignored when the app runs as an A2UI agent.
 
+   .. note::
+      When the process is started via ``argenta a2ui`` (``ARGENTA_RUN_MODE=a2ui``), ``run_repl`` delegates to ``run_agent`` over the transport selected by the CLI flags — the same ``main()`` serves both runtimes. See :ref:`A2UI Runtime <root_a2ui>`.
+
+-----
+
+.. automethod:: argenta.Orchestrator.run_agent
+
+   Runs the application as an `A2UI <https://a2ui.org/>`_ agent: the registered commands are emitted as a declarative surface and incoming ``action`` messages are dispatched through the regular command-handling path.
+
+   :param app: ``App`` instance to be launched.
+   :param transport: a :ref:`Transport <root_api_a2ui>` implementation carrying the JSON messages.
+   :param config: optional :ref:`A2UIConfig <root_api_a2ui>` — surface and envelope configuration.
+   :param verbose: log the agent lifecycle to stderr.
+
+-----
+
+.. autoclass:: argenta.orchestrator.config.RunnerConfig
+
+Frozen dataclass describing the **environment bridge** between the ``argenta`` CLI commands and the orchestrator: the CLI sets these variables, the orchestrator reads them. Override the field values to rename the variables or change the defaults (host ``127.0.0.1``, port ``8765``, the ``a2ui`` mode marker). For the semantics of each variable see :ref:`the environment bridge <root_a2ui>`.
+
 -----
    
 Purpose and Usage

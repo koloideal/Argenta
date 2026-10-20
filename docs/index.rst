@@ -16,13 +16,15 @@ If you have functionality that you want to provide as a command-driven applicati
 .. image:: /_static/app-screenshot.png
    :alt: App example
 
-Argenta is designed for creating applications that work in their own context (scope). This means that the application starts once and creates an interactive session, similar to Python REPL or MySQL console. When launched, the user enters this session where all the functionality you've implemented is available.
+Argenta separates the **command layer** from the way it is consumed. Routers, commands and flags are declared once; a **runtime** then decides how people or programs interact with them. Two runtimes ship out of the box, and the same ``main()`` serves both — the choice is made at launch, commands never depend on the runtime:
 
-One of the key principles of the library is cyclicity. After executing a command, the user remains in the interactive session, unlike libraries such as ``argparse``, ``click``, and ``typer``, where the application terminates after each command. Exiting the session is controlled by the user.
+*   **REPL runtime** — a cyclic interactive session in the terminal, similar to a Python REPL or a MySQL console: the application starts once and the user executes commands one after another, unlike ``argparse``, ``click`` or ``typer``, where the process terminates after each command. Exiting the session is controlled by the user.
+*   **A2UI runtime** — exposes the same commands as a generated `A2UI <https://a2ui.org/>`_ surface (one card per command, one input per flag) streamed to renderers over SSE, WebSocket, gRPC and other transports. See :ref:`A2UI Runtime <root_a2ui>`.
 
 **Key features:**
 
-*   **Interactive sessions**: Unlike traditional CLI tools, ``Argenta`` creates cyclical sessions, allowing users to execute commands sequentially without restarting the application.
+*   **Pluggable runtimes**: The application emits semantic output blocks (banner, command output, errors) and a runtime decides how to present them — so the interface (terminal, web UI, your own runtime) stays decoupled from the logic. See :ref:`Runtimes <root_runtimes>`.
+*   **Interactive sessions**: The REPL runtime keeps the session alive between commands — users execute commands sequentially without restarting the application.
 *   **Declarative syntax**: Commands and their handlers are declared using simple decorators, making the code intuitive and allowing you to focus on "what" you want to do, not "how".
 *   **Native DI**: Thanks to integration with `dishka <https://dishka.readthedocs.io/en/stable/>`_, you can easily inject dependencies directly into command handlers, simplifying their testing, avoiding mutable globals, and much more.
 *   **Automatic validation and parsing**: The library handles command-line flags and arguments, including their parsing, validation, and type conversion.
@@ -44,16 +46,17 @@ The following diagram illustrates how Argenta components interact with each othe
     :caption: Content:
 
     root/quickstart
+    root/runtimes
     root/error_handling
     root/flags
-    root/overriding_formatting
     root/api/index
 
 .. toctree::
     :hidden:
     :caption: Advanced usage:
 
-    root/redirect_stdout
+    root/repl/index
+    root/a2ui/index
     root/dependency_injection
     root/cli
     root/testing

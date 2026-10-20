@@ -3,11 +3,35 @@
 REPL Runtime
 ============
 
-The REPL runtime runs an ``App`` as an interactive terminal session. Its presentation — the dividing line that frames command output and the blank-line gaps between blocks — belongs to the runtime, not to the ``App``: the same application can run as an A2UI agent, where the renderer lays out output on its own and no terminal decoration is emitted.
+The REPL runtime runs an ``App`` as an interactive terminal session. Its presentation — the dividing line that frames command output and the blank-line gaps between blocks — belongs to the runtime, not to the ``App``: the same application can run as an :ref:`A2UI agent <root_api_a2ui>`, where the renderer lays out output on its own and no terminal decoration is emitted.
 
 .. code-block:: python
 
-   from argenta.repl import REPLConfig, StaticDividingLine, DynamicDividingLine
+   from argenta.repl import (
+       REPLRuntime,
+       TerminalLayout,
+       REPLConfig,
+       StaticDividingLine,
+       DynamicDividingLine
+   )
+
+-----
+
+``REPLRuntime``
+----------------
+
+.. autoclass:: argenta.repl.REPLRuntime
+   :members: run
+
+Started via ``Orchestrator.run_repl(app, config)`` — instantiate it directly only when embedding the loop without the orchestrator (for example in tests).
+
+``TerminalLayout``
+------------------
+
+.. autoclass:: argenta.repl.TerminalLayout
+   :members: present, read_input
+
+The REPL's implementation of the :ref:`Layout <root_api_app_index>` protocol: command and system output is framed by the dividing line, other blocks are separated by blank-line gaps configured on ``REPLConfig``.
 
 -----
 
@@ -20,11 +44,16 @@ Passed to ``Orchestrator.run_repl``; every field documents itself via an ``Annot
 
 .. code-block:: python
 
+.. code-block:: python
+
    from argenta import App, Orchestrator
    from argenta.repl import DynamicDividingLine, REPLConfig
 
    app = App()
    Orchestrator().run_repl(app, REPLConfig(dividing_line=DynamicDividingLine("~")))
+
+.. note::
+   When the process is started via ``argenta a2ui``, the REPL config is ignored — ``run_repl`` delegates to the A2UI runtime. See :ref:`A2UI Runtime <root_a2ui>`.
 
 -----
 

@@ -3,7 +3,9 @@
 App
 ===
 
-The ``App`` object is the implementations of your console application. It handles configuration, lifecycle management, command processing, and user interaction, coordinating the work of all components: routers, handlers, and system messages.
+The ``App`` object is the implementation of your command-driven application. It handles configuration, lifecycle management, command processing, and user interaction, coordinating the work of all components: routers, handlers, and system messages.
+
+``App`` is runtime-agnostic: it emits semantic output blocks and consumes ``InputCommand`` objects, while a runtime — the built-in :ref:`REPL <root_api_repl>` or :ref:`A2UI <root_api_a2ui>` runtime, or your own — decides how those blocks are presented and how commands are collected.
 
 ------
 
@@ -22,7 +24,7 @@ Creates and configures an application instance.
     * ``repeat_command_groups_printing``: If ``True``, the list of available commands is displayed before each input.
     * ``override_system_messages``: If ``True``, standard formatting (colors, ASCII art) is disabled.
     * ``autocompleter``: Instance of the :ref:`AutoCompleter <root_api_app_autocompleter>` class responsible for command autocompletion.
-    * ``print_func``: Function for outputting all system messages (defaults to ``rich.Console().print``).
+    * ``printer``: Function for outputting all system messages (defaults to ``rich.Console().print``).
     * ``initial_message_font``: :ref:`FigletFont <root_api_ascii_art>` for the initial message banner (defaults to the bundled ``tarty1`` font).
     * ``farewell_message_font``: :ref:`FigletFont <root_api_ascii_art>` for the farewell message banner (defaults to the bundled ``chunky`` font).
 
@@ -105,13 +107,28 @@ Handler Setup Methods
    
    The handler accepts no arguments.
    
------
+------
 
 .. automethod:: argenta.App.set_exit_command_handler
 
    Overrides the default behavior when the exit command is invoked.
    
    The handler accepts a ``Response`` object.
+
+-----
+
+Presentation primitives
+-----------------------
+
+The block contract between ``App`` and runtimes lives in ``argenta.app.presentation``:
+
+.. autoclass:: argenta.app.presentation.BlockKind
+
+   Semantic kind of an emitted block: ``banner``, ``startup_messages``, ``command_groups``, ``output``, ``system``, ``farewell``, ``error``. Runtimes decide how each kind is laid out — the REPL frames output with dividing lines, the A2UI agent turns blocks into log entries.
+
+.. autoclass:: argenta.app.presentation.Layout
+
+   Runtime-owned presentation strategy: ``present(kind, produce, *, capturable=True)`` hands a block producer to the runtime, which decides what surrounds it. ``capturable=False`` marks output that must not be intercepted (handlers reading interactive input). Implemented by ``argenta.repl.TerminalLayout`` and by the agent's log layout internally.
 
 .. toctree::
     :hidden:

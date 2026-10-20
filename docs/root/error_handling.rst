@@ -6,6 +6,9 @@ Error Handling
 ``Argenta`` throws exceptions in edge cases related to user input. By default, they are handled by system handlers, but you can override them. This is done using ``App`` instance setters of the form ``.set_*_handler()``. More details about each of them are described :ref:`below <possible_errors>`.
 
 .. note::
+    "Outputs to the console" below means "emits a system block" — in the REPL it is printed to the terminal, in the :ref:`A2UI agent <root_a2ui>` it lands in the surface's log card.
+
+.. note::
     No exception goes unhandled, as a default handler is provided for each case. Therefore, overriding is optional.
 
 **Usage example:**

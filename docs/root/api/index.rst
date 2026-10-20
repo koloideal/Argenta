@@ -83,6 +83,27 @@ All main library components are available for direct import from the root packag
 * :ref:`StaticDividingLine <root_api_repl>` — Static dividing line framing command output.
 * :ref:`DynamicDividingLine <root_api_repl>` — Dynamic dividing line framing command output.
 
+.. rubric:: A2UI Runtime
+
+.. code-block:: python
+
+   from argenta.a2ui import (
+       AgentRuntime,
+       A2UIConfig,
+       A2UIProvider,
+       Transport,
+       StdioTransport,
+       MemoryTransport,
+       SocketTransport,
+       SSETransport,
+       LongPollTransport
+   )
+
+* :ref:`AgentRuntime <root_api_a2ui>` — Runs an ``App`` as an A2UI agent over a transport.
+* :ref:`A2UIConfig <root_api_a2ui>` — Surface and message-envelope configuration.
+* :ref:`A2UIProvider <root_api_a2ui>` — Dishka provider exposing ``A2UIConfig`` from the container context.
+* :ref:`Transport <root_api_a2ui>` — Transport protocol plus ``StdioTransport``, ``MemoryTransport``, ``SocketTransport``, ``SSETransport``, ``LongPollTransport`` (stdlib) and the optional ``WebSocketTransport``/``GrpcTransport`` (``[a2ui]`` extra).
+
 .. rubric:: Dependency Injection
 
 .. code-block:: python
@@ -101,6 +122,7 @@ All main library components are available for direct import from the root packag
     
     app/index
     repl
+    a2ui
     router
     orchestrator/index
     command/index

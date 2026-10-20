@@ -72,7 +72,7 @@ If you set ``disable_redirect_stdout=True`` when creating a router, the ``stdout
 
 **Usage example:**
 
-.. literalinclude:: ../code_snippets/redirect_stdout/sample.py
+.. literalinclude:: ../../code_snippets/redirect_stdout/sample.py
    :language: python
    :linenos:
 
@@ -85,11 +85,11 @@ Types of Dividing Lines
 
 ``Argenta`` supports two types of dividers, configured on the REPL runtime via :ref:`REPLConfig <root_api_repl>`:
 
-1.  **``DynamicDividingLine()``**
+1.  ``DynamicDividingLine()``
 	*  The line length dynamically adjusts to the longest text in the output.
 	*  Requires enabled ``stdout`` interception (``disable_redirect_stdout=False`` in the router).
 
-2.  **``StaticDividingLine(length: int = 25)``**
+2.  ``StaticDividingLine(length: int = 25)``
 	*  The line has a fixed length (25 characters by default), which can be set via the ``length`` argument.
 	*  Used forcibly for routers with ``disable_redirect_stdout=True``, as it is impossible to determine dynamic length without output interception.
 
@@ -102,7 +102,7 @@ The dividing line is part of the REPL runtime layout, not of the ``App``: set it
 
 **Usage example:**
 
-.. literalinclude:: ../code_snippets/redirect_stdout/sample2.py
+.. literalinclude:: ../../code_snippets/redirect_stdout/sample2.py
    :language: python
    :linenos:
 
