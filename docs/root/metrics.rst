@@ -68,6 +68,7 @@ Displays a list of all available benchmark types with the number of tests in eac
      • command_autocomplete (3 benchmarks)
      • command_dispatch (3 benchmarks)
      • command_groups_render (2 benchmarks)
+     • command_history_completion (4 benchmarks)
      • finds_appropriate_handler (5 benchmarks)
      • flag_validation (9 benchmarks)
      • input_command_parse (7 benchmarks)
@@ -153,6 +154,12 @@ Benchmark results include the following metrics:
 
 Usage Recommendations
 ---------------------
+
+**History completion**
+  The ``command_history_completion`` benchmarks use temporary, synthetic file histories
+  with 1,000, 10,000 and 100,000 entries. Background loading and the initial completion
+  happen before timing starts. These measure repeated completion requests in a running
+  session, including a prefix with one match; they do not measure startup or disk loading.
 
 **For optimization**
   Use ``run-type`` to focus on a specific area and ``--without-gc`` for more accurate measurements.

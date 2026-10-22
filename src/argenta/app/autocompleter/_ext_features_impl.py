@@ -41,8 +41,7 @@ class HistoryCompleter(Completer):
     def __init__(self, history_container: History, static_commands: set[str]) -> None:
         self.history_container: History = history_container
         self.static_commands: set[str] = static_commands
-        self._candidates_cache: list[str] = []
-        self._cached_history_size: int = -1
+        self._candidates_cache: tuple[list[str], list[str]] | None = None
 
     def get_completions(
         self, document: Document, complete_event: CompleteEvent
@@ -58,11 +57,14 @@ class HistoryCompleter(Completer):
             index += 1
 
     def _candidates(self) -> list[str]:
-        history_strings = list(self.history_container.load_history_strings())
-        if len(history_strings) != self._cached_history_size:
-            self._candidates_cache = sorted(self.static_commands | set(history_strings))
-            self._cached_history_size = len(history_strings)
-        return self._candidates_cache
+        history_strings = self.history_container.get_strings()
+        cached_candidates = self._candidates_cache
+        if cached_candidates is not None and cached_candidates[0] == history_strings:
+            return cached_candidates[1]
+
+        candidates = sorted(self.static_commands | set(history_strings))
+        self._candidates_cache = (history_strings, candidates)
+        return candidates
 
 
 def find_common_prefix(matches: list[str]) -> str:

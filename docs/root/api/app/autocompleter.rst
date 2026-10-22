@@ -30,7 +30,7 @@ Main features of ``AutoCompleter``:
 
 *   **Common prefix**: If multiple commands with a common prefix are found, only the common part will be inserted. For example, for commands ``show_users`` and ``show_profile``, when entering ``sho`` and pressing **Tab**, the input will be completed to ``show_``.
 
-*   **Persistent history**: If ``history_filename`` is specified, command history is saved to a file on exit and loaded on the next startup. This makes autocompletion "smarter" over time.
+*   **Persistent history**: If ``history_filename`` is specified, entered commands are appended to the file. The prompt loads saved history in the background, and completion uses the entries loaded so far. New commands in the current session become available immediately. Completion does not reread the file on each request; changes made by another process are picked up by a new session.
 
 *   **Key customization**: The autocompletion key can be changed using the ``autocomplete_button`` parameter.
  
