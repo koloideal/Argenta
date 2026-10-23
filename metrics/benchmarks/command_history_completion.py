@@ -1,66 +1,78 @@
 import asyncio
 import atexit
+from dataclasses import dataclass
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from types import SimpleNamespace
 
-from prompt_toolkit.completion import CompleteEvent
-from prompt_toolkit.document import Document
-from prompt_toolkit.history import FileHistory, History, ThreadedHistory
+from prompt_toolkit.history import FileHistory, ThreadedHistory
 
 from argenta.app.autocompleter._ext_features_impl import HistoryCompleter
+from metrics.benchmarks._history_scenarios import complete, load_history
 from metrics.benchmarks.entity import benchmarks
 
-_BENCHMARK_TYPE = "command_history_completion"
-_SMALL_HISTORY_COUNT = 1000
-_LARGE_HISTORY_COUNT = 10000
-_STRESS_HISTORY_COUNT = 100000
-_MISSING_PREFIX = "missing"
-_HISTORY_DIRECTORY = TemporaryDirectory(prefix="argenta-history-bench-")
 
-atexit.register(_HISTORY_DIRECTORY.cleanup)
-
-
-async def _load_history(history: History) -> list[str]:
-    return [entry async for entry in history.load()]
+@dataclass(frozen=True, slots=True)
+class HistoryCompletionConfig:
+    benchmark_type: str = "command_history_completion"
+    small_history_count: int = 1000
+    large_history_count: int = 10000
+    stress_history_count: int = 100000
+    missing_prefix: str = "missing"
 
 
-def _complete(completer: HistoryCompleter, prefix: str) -> None:
-    list(completer.get_completions(Document(prefix), CompleteEvent()))
-
-
-def _history_completer(entry_count: int) -> HistoryCompleter:
-    filename = Path(_HISTORY_DIRECTORY.name) / f"history-{entry_count}"
+def _history_completer(entry_count: int, history_directory: Path) -> HistoryCompleter:
+    filename = history_directory / f"history-{entry_count}"
     filename.write_text(
         "".join(f"\n+history{index} --flag value\n" for index in range(entry_count)),
         encoding="utf-8",
     )
     history = ThreadedHistory(FileHistory(filename))
-    asyncio.run(_load_history(history))
+    asyncio.run(load_history(history))
     completer = HistoryCompleter(history, {"status"})
-    _complete(completer, _MISSING_PREFIX)
+    complete(completer, _CONFIG.missing_prefix)
     return completer
 
 
-_SMALL_COMPLETER = _history_completer(_SMALL_HISTORY_COUNT)
-_LARGE_COMPLETER = _history_completer(_LARGE_HISTORY_COUNT)
-_STRESS_COMPLETER = _history_completer(_STRESS_HISTORY_COUNT)
+def _history_completers() -> SimpleNamespace:
+    directory = TemporaryDirectory(prefix="argenta-history-bench-")
+    atexit.register(directory.cleanup)
+    history_directory = Path(directory.name)
+    return SimpleNamespace(
+        directory=directory,
+        small=_history_completer(_CONFIG.small_history_count, history_directory),
+        large=_history_completer(_CONFIG.large_history_count, history_directory),
+        stress=_history_completer(_CONFIG.stress_history_count, history_directory),
+    )
 
 
-@benchmarks.register(type_=_BENCHMARK_TYPE, description="Loaded file history (1,000 entries)")
+_CONFIG = HistoryCompletionConfig()
+_COMPLETERS = _history_completers()
+
+
+@benchmarks.register(
+    type_=_CONFIG.benchmark_type, description="Loaded file history (1,000 entries)"
+)
 def benchmark_file_history_small() -> None:
-    _complete(_SMALL_COMPLETER, _MISSING_PREFIX)
+    complete(_COMPLETERS.small, _CONFIG.missing_prefix)
 
 
-@benchmarks.register(type_=_BENCHMARK_TYPE, description="Loaded file history (10,000 entries)")
+@benchmarks.register(
+    type_=_CONFIG.benchmark_type, description="Loaded file history (10,000 entries)"
+)
 def benchmark_file_history_large() -> None:
-    _complete(_LARGE_COMPLETER, _MISSING_PREFIX)
+    complete(_COMPLETERS.large, _CONFIG.missing_prefix)
 
 
-@benchmarks.register(type_=_BENCHMARK_TYPE, description="Loaded file history (100,000 entries)")
+@benchmarks.register(
+    type_=_CONFIG.benchmark_type, description="Loaded file history (100,000 entries)"
+)
 def benchmark_file_history_stress() -> None:
-    _complete(_STRESS_COMPLETER, _MISSING_PREFIX)
+    complete(_COMPLETERS.stress, _CONFIG.missing_prefix)
 
 
-@benchmarks.register(type_=_BENCHMARK_TYPE, description="One match in 10,000 loaded file entries")
+@benchmarks.register(
+    type_=_CONFIG.benchmark_type, description="One match in 10,000 loaded file entries"
+)
 def benchmark_file_history_match() -> None:
-    _complete(_LARGE_COMPLETER, "history9999 ")
+    complete(_COMPLETERS.large, "history9999 ")
