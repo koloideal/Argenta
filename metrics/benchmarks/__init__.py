@@ -2,6 +2,7 @@ from metrics.benchmarks import app_startup as app_startup
 from metrics.benchmarks import command_autocomplete as command_autocomplete
 from metrics.benchmarks import command_dispatch as command_dispatch
 from metrics.benchmarks import command_groups_render as command_groups_render
+from metrics.benchmarks import command_history_completion as command_history_completion
 from metrics.benchmarks import finds_appropriate_handler as finds_appropriate_handler
 from metrics.benchmarks import flag_validation as flag_validation
 from metrics.benchmarks import flag_validation_many as flag_validation_many
