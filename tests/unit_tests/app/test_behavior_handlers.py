@@ -173,7 +173,7 @@ class TestBehaviorHandlersSettersMixin:
             exit_handler,
         )
 
-        assert mixin._description_message_generator == desc_gen
+        assert mixin.description_message_generator == desc_gen
         assert mixin._incorrect_input_syntax_handler == incorrect_handler
         assert mixin._repeated_input_flags_handler == repeated_handler
         assert mixin._empty_input_command_handler == empty_handler
@@ -198,7 +198,7 @@ class TestBehaviorHandlersSettersMixin:
 
         mixin.set_description_message_pattern(new_gen)
 
-        assert mixin._description_message_generator == new_gen
+        assert mixin.description_message_generator == new_gen
 
     def test_set_incorrect_input_syntax_handler(self):
         def initial_handler(raw):

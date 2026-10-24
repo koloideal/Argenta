@@ -1,8 +1,6 @@
 # serializer version: 1
 # name: TestRendererSnapshots.test_render_command_groups_description[plain]
   '''
-  
-  
   Admin
   restart — Restart the service
   logs — 
@@ -13,8 +11,6 @@
 # ---
 # name: TestRendererSnapshots.test_render_command_groups_description[rich]
   '''
-  
-  
   Admin
   restart — Restart the service
   logs — 
@@ -24,10 +20,7 @@
   '''
 # ---
 # name: TestRendererSnapshots.test_render_farewell_message[plain]
-  '''
-  
-  Bye! | https://github.com/koloideal/Argenta | made by kolo
-  '''
+  'Bye! | https://github.com/koloideal/Argenta | made by kolo'
 # ---
 # name: TestRendererSnapshots.test_render_farewell_message[rich]
   '''
@@ -56,7 +49,6 @@
 # ---
 # name: TestRendererSnapshots.test_render_messages_on_startup[plain]
   '''
-  
   First
   Second
   Third
@@ -64,7 +56,6 @@
 # ---
 # name: TestRendererSnapshots.test_render_messages_on_startup[rich]
   '''
-  
   First
   Second
   Third

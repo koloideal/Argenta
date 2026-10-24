@@ -3,6 +3,9 @@ import io
 import os
 import runpy
 import sys
+import threading
+import time
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Self
 from unittest.mock import MagicMock
@@ -14,7 +17,10 @@ from typer.testing import CliRunner
 
 from argenta._cli import __main__ as cli_main
 from argenta._cli.__main__ import app
+from argenta._cli.commands._reload import resolve_watch_root, supervise_cli
+from argenta._cli.commands.a2ui import A2UIRunOptions, _child_args
 from argenta._cli.commands.build import _resolve_build_target
+from argenta._cli.commands.repl import ReplRunOptions
 from argenta._cli.di import create_cli_container
 from argenta.app.presentation.ascii_art import fetcher as fetcher_module
 
@@ -69,30 +75,291 @@ def test_module_runnable_as_script(mocker: MockerFixture) -> None:
 
 
 # ============================================================================
-# `argenta run`
+# `argenta repl`
 # ============================================================================
 
 
-def test_run_invokes_entrypoint_callable(tmp_path: Path) -> None:
+def test_repl_invokes_entrypoint_callable(tmp_path: Path) -> None:
     path = _write_module(
-        tmp_path, "climod_run_ok", 'def main():\n    print("ENTRYPOINT-RAN-MARKER")\n'
+        tmp_path, "climod_repl_ok", 'def main():\n    print("ENTRYPOINT-RAN-MARKER")\n'
     )
-    result = runner.invoke(app, ["run", f"{path}:main"])
+    result = runner.invoke(app, ["repl", f"{path}:main"])
 
     assert result.exit_code == 0
     assert "ENTRYPOINT-RAN-MARKER" in result.output
-    # handler marks the process as runner-spawned; the autouse fixture cleans it up
     assert os.environ["RUN_FROM_ARGENTA_RUNNER"] == "1"
 
 
-def test_run_fails_on_malformed_spec() -> None:
-    result = runner.invoke(app, ["run", "no_colon_here"])
+def test_repl_leaves_a2ui_env_unset(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_repl_plain", "def main():\n    pass\n")
+    result = runner.invoke(app, ["repl", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert "ARGENTA_RUN_MODE" not in os.environ
+    assert "ARGENTA_A2UI_TRANSPORT" not in os.environ
+
+
+def test_repl_fails_on_malformed_spec() -> None:
+    result = runner.invoke(app, ["repl", "no_colon_here"])
     assert result.exit_code == 1
     assert "must be in format" in result.output
 
 
-def test_run_fails_on_missing_file() -> None:
-    result = runner.invoke(app, ["run", "ghost_dir_xyz/missing.py:main"])
+def test_repl_reload_supervises_and_exits(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_repl_reload", "def main():\n    pass\n")
+    result = runner.invoke(app, ["repl", "--reload", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert "watching" in result.output
+
+
+def test_repl_reload_fails_on_unresolvable_module(tmp_path: Path) -> None:
+    result = runner.invoke(app, ["repl", "--reload", "no_such_module_xyz:main"])
+
+    assert result.exit_code == 1
+    assert "cannot resolve a directory" in result.output
+
+
+def test_repl_reload_fails_without_watchfiles(mocker: MockerFixture, tmp_path: Path) -> None:
+    mocker.patch("argenta._cli.commands.repl.find_spec", return_value=None)
+    path = _write_module(tmp_path, "climod_repl_no_watch", "def main():\n    pass\n")
+
+    result = runner.invoke(app, ["repl", "--reload", f"{path}:main"])
+
+    assert result.exit_code == 1
+    assert "watchfiles" in result.output
+
+
+# ============================================================================
+# `argenta a2ui`
+# ============================================================================
+
+
+def test_a2ui_sets_agent_mode_env(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_a2ui", "def main():\n    pass\n")
+    result = runner.invoke(app, ["a2ui", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert os.environ["RUN_FROM_ARGENTA_RUNNER"] == "1"
+    assert os.environ["ARGENTA_RUN_MODE"] == "a2ui"
+
+
+def test_a2ui_ws_transport_sets_env(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_ws", "def main():\n    pass\n")
+    result = runner.invoke(app, ["a2ui", "--transport", "ws", "--port", "9999", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "ws"
+    assert os.environ["ARGENTA_A2UI_PORT"] == "9999"
+
+
+def test_a2ui_transport_defaults_to_sse(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_std", "def main():\n    pass\n")
+    result = runner.invoke(app, ["a2ui", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "sse"
+    assert "ARGENTA_A2UI_PORT" not in os.environ
+    assert "ARGENTA_A2UI_VERBOSE" not in os.environ
+
+
+def test_a2ui_socket_transport_sets_env(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_sock", "def main():\n    pass\n")
+    result = runner.invoke(
+        app,
+        ["a2ui", "-t", "socket", "--socket-path", "/tmp/agent.sock", f"{path}:main"],
+    )
+
+    assert result.exit_code == 0
+    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "socket"
+    assert os.environ["ARGENTA_A2UI_SOCKET_PATH"] == "/tmp/agent.sock"
+
+
+def test_a2ui_grpc_transport_sets_env(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_grpc", "def main():\n    pass\n")
+    result = runner.invoke(app, ["a2ui", "-t", "grpc", "-p", "9998", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "grpc"
+    assert os.environ["ARGENTA_A2UI_PORT"] == "9998"
+
+
+def test_a2ui_stdio_transport_sets_env(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_stdio", "def main():\n    pass\n")
+    result = runner.invoke(app, ["a2ui", "--transport", "stdio", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "stdio"
+
+
+def test_a2ui_verbose_sets_env(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_run_verbose", "def main():\n    pass\n")
+    result = runner.invoke(app, ["a2ui", "-v", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert os.environ["ARGENTA_A2UI_VERBOSE"] == "1"
+
+
+def test_a2ui_fails_on_malformed_spec() -> None:
+    result = runner.invoke(app, ["a2ui", "no_colon_here"])
+    assert result.exit_code == 1
+    assert "must be in format" in result.output
+
+
+def test_a2ui_reload_supervises_and_exits(tmp_path: Path) -> None:
+    path = _write_module(tmp_path, "climod_reload_ok", "def main():\n    pass\n")
+    result = runner.invoke(app, ["a2ui", "--reload", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert "watching" in result.output
+    assert "ARGENTA_RUN_MODE" not in os.environ  # env bridge lives in the child
+
+
+def test_a2ui_reload_fails_on_unresolvable_module(tmp_path: Path) -> None:
+    result = runner.invoke(app, ["a2ui", "--reload", "no_such_module_xyz:main"])
+
+    assert result.exit_code == 1
+    assert "cannot resolve a directory" in result.output
+
+
+# ============================================================================
+# `argenta a2ui --reload` supervisor
+# ============================================================================
+
+
+def test_resolve_watch_root_for_file(tmp_path: Path) -> None:
+    module_path = tmp_path / "watched.py"
+    module_path.write_text("x = 1")
+    assert resolve_watch_root(str(module_path)) == tmp_path.resolve()
+
+
+def test_resolve_watch_root_for_module() -> None:
+    import argenta.app
+
+    expected = Path(argenta.app.__file__).resolve().parent
+    assert resolve_watch_root("argenta.app") == expected
+
+
+def test_resolve_watch_root_unresolvable() -> None:
+    assert resolve_watch_root("no_such_module_xyz.deep") is None
+
+
+def test_supervise_restarts_on_file_change(tmp_path: Path) -> None:
+    watched = tmp_path / "mod.py"
+    watched.write_text("x = 1")
+    counter = tmp_path / "count.txt"
+    script = (
+        "import pathlib, time\n"
+        f"p = pathlib.Path({str(counter)!r})\n"
+        "n = int(p.read_text()) + 1 if p.exists() else 1\n"
+        "p.write_text(str(n))\n"
+        "time.sleep(0 if n >= 2 else 30)\n"
+    )
+    args = [sys.executable, "-c", script]
+    supervisor = threading.Thread(
+        target=supervise_cli,
+        args=(args, tmp_path, Console()),
+    )
+    supervisor.start()
+    time.sleep(0.6)
+    watched.write_text("x = 2")
+    supervisor.join(timeout=20)
+
+    assert not supervisor.is_alive()
+    assert counter.read_text() == "2"
+
+
+def test_supervise_stops_on_keyboard_interrupt(tmp_path: Path, mocker: MockerFixture) -> None:
+    mocker.patch("watchfiles.watch", side_effect=KeyboardInterrupt)
+    args = [sys.executable, "-c", "import time; time.sleep(30)"]
+
+    supervise_cli(args, tmp_path, Console())  # terminates the sleeping child
+
+
+def test_supervise_returns_when_child_exits_before_change(tmp_path: Path) -> None:
+    # the child exits instantly; a later change must not respawn it
+    args = [sys.executable, "-c", "pass"]
+    supervisor = threading.Thread(
+        target=supervise_cli,
+        args=(args, tmp_path, Console()),
+    )
+    supervisor.start()
+    time.sleep(0.6)
+    (tmp_path / "watched.py").write_text("x = 1")
+    supervisor.join(timeout=20)
+
+    assert not supervisor.is_alive()
+
+
+def test_supervise_skips_respawn_when_child_died(tmp_path: Path, mocker: MockerFixture) -> None:
+    # watch yields a change after the instantly-exiting child is already dead
+    def stale_watch(*_args: object, **_kwargs: object) -> Iterator[set[tuple[int, str]]]:
+        time.sleep(0.5)
+        yield {(1, str(tmp_path / "watched.py"))}
+
+    mocker.patch("watchfiles.watch", stale_watch)
+
+    supervise_cli([sys.executable, "-c", "pass"], tmp_path, Console())
+
+
+def test_supervise_returns_zero_when_spawn_interrupted(
+    tmp_path: Path, mocker: MockerFixture
+) -> None:
+    mocker.patch(
+        "argenta._cli.commands._reload.subprocess.Popen",
+        side_effect=KeyboardInterrupt,
+    )
+    assert supervise_cli([sys.executable], tmp_path, Console(), "repl") == 0
+
+
+def test_a2ui_child_args_include_options() -> None:
+    args = _child_args(
+        "app/main.py:main",
+        A2UIRunOptions(transport="sse", port=9999, socket_path="/tmp/agent.sock", verbose=True),
+    )
+
+    assert "--port" in args
+    assert "9999" in args
+    assert "--socket-path" in args
+    assert "/tmp/agent.sock" in args
+    assert "--verbose" in args
+    assert args[-1] == "app/main.py:main"
+
+
+def test_a2ui_ws_fails_without_extra(mocker: MockerFixture, tmp_path: Path) -> None:
+    mocker.patch("argenta._cli.commands.a2ui.find_spec", return_value=None)
+    path = _write_module(tmp_path, "climod_no_extra", "def main():\n    pass\n")
+
+    result = runner.invoke(app, ["a2ui", "-t", "ws", f"{path}:main"])
+
+    assert result.exit_code == 1
+    assert "websockets" in result.output
+    assert "argenta[a2ui]" in result.output
+
+
+def test_a2ui_grpc_fails_without_extra(mocker: MockerFixture, tmp_path: Path) -> None:
+    mocker.patch("argenta._cli.commands.a2ui.find_spec", side_effect=ModuleNotFoundError)
+    path = _write_module(tmp_path, "climod_no_grpc", "def main():\n    pass\n")
+
+    result = runner.invoke(app, ["a2ui", "-t", "grpc", f"{path}:main"])
+
+    assert result.exit_code == 1
+    assert "google.protobuf" in result.output
+    assert "argenta[a2ui]" in result.output
+
+
+def test_a2ui_sse_runs_without_extra(mocker: MockerFixture, tmp_path: Path) -> None:
+    mocker.patch("argenta._cli.commands.a2ui.find_spec", return_value=None)
+    path = _write_module(tmp_path, "climod_sse_stdlib", "def main():\n    pass\n")
+
+    result = runner.invoke(app, ["a2ui", "-t", "sse", f"{path}:main"])
+
+    assert result.exit_code == 0
+    assert os.environ["ARGENTA_A2UI_TRANSPORT"] == "sse"
+
+
+def test_repl_fails_on_missing_file() -> None:
+    result = runner.invoke(app, ["repl", "ghost_dir_xyz/missing.py:main"])
     assert result.exit_code == 1
 
 
@@ -415,3 +682,96 @@ def test_preview_font_fails_when_download_fails(tmp_path: Path, mocker: MockerFi
 
     assert result.exit_code == 1
     assert "Could not fetch" in result.output
+
+
+# ============================================================================
+# `argenta example`
+# ============================================================================
+
+
+def test_example_repl_runs_bundled_app(mocker: MockerFixture) -> None:
+    repl_mock = mocker.patch("argenta._cli.commands.example.repl_handler")
+    result = runner.invoke(app, ["example", "repl"])
+
+    assert result.exit_code == 0
+    call_args = repl_mock.call_args.args
+    assert call_args[1] == "examples/repl/app/main.py:main"
+    assert call_args[2] == ReplRunOptions()
+
+
+def test_example_repl_rejects_extra_args() -> None:
+    result = runner.invoke(app, ["example", "repl", "agent"])
+
+    assert result.exit_code == 1
+    assert "no further arguments" in result.output
+
+
+def test_example_a2ui_requires_target() -> None:
+    result = runner.invoke(app, ["example", "a2ui"])
+
+    assert result.exit_code == 1
+    assert "requires a target" in result.output
+
+
+def test_example_a2ui_agent_runs_verbose_sse_by_default(mocker: MockerFixture) -> None:
+    a2ui_mock = mocker.patch("argenta._cli.commands.example.a2ui_handler")
+    result = runner.invoke(app, ["example", "a2ui", "agent"])
+
+    assert result.exit_code == 0
+    call_args = a2ui_mock.call_args.args
+    options = call_args[2]
+    assert call_args[1] == "examples/a2ui/agent.py:main"
+    assert options.transport == "sse"
+    assert options.verbose is True
+
+
+def test_example_a2ui_agent_accepts_transport_flag(mocker: MockerFixture) -> None:
+    a2ui_mock = mocker.patch("argenta._cli.commands.example.a2ui_handler")
+    result = runner.invoke(app, ["example", "a2ui", "agent", "-t", "grpc"])
+
+    assert result.exit_code == 0
+    assert a2ui_mock.call_args.args[2].transport == "grpc"
+
+
+def test_example_a2ui_agent_rejects_client_kind() -> None:
+    result = runner.invoke(app, ["example", "a2ui", "agent", "lit"])
+
+    assert result.exit_code == 1
+    assert "client kind" in result.output
+
+
+def test_example_a2ui_client_serves_lit_by_default(mocker: MockerFixture) -> None:
+    server_mock = mocker.patch("argenta._cli.commands.example.ThreadingHTTPServer")
+    result = runner.invoke(app, ["example", "a2ui", "client"])
+
+    assert result.exit_code == 0
+    assert "http://127.0.0.1:8080" in result.output
+    handler = server_mock.call_args.args[1]
+    assert handler.keywords["directory"].endswith("lit_client")
+    server_mock.return_value.__enter__.return_value.serve_forever.assert_called_once()
+
+
+def test_example_a2ui_client_grpc_runs_terminal_client(mocker: MockerFixture) -> None:
+    resolve_mock = mocker.patch("argenta._cli.commands.example.resolve_callable_entrypoint")
+    result = runner.invoke(app, ["example", "a2ui", "client", "grpc"])
+
+    assert result.exit_code == 0
+    spec = resolve_mock.call_args.args[0]
+    assert spec.file_path == "examples/a2ui/grpc_client.py"
+    assert spec.callable_name == "main"
+
+
+def test_example_a2ui_client_grpc_fails_without_extra(mocker: MockerFixture) -> None:
+    mocker.patch("argenta._cli.commands.a2ui.find_spec", return_value=None)
+    result = runner.invoke(app, ["example", "a2ui", "client", "grpc"])
+
+    assert result.exit_code == 1
+    assert "grpc" in result.output
+
+
+def test_example_fails_outside_checkout(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    result = runner.invoke(app, ["example", "repl"])
+
+    assert result.exit_code == 1
+    assert "examples" in result.output

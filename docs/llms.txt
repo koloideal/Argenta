@@ -1,19 +1,26 @@
 # Argenta
 
-> A Python library for building modular CLI applications with interactive REPL-like sessions, declarative command handlers, native DI via dishka, and automatic flag parsing/validation.
+> The command-driven framework for Python: one command layer — routers, declarative commands and flags, native DI via dishka — run by pluggable runtimes (currently a terminal REPL and an A2UI runtime).
 
-Argenta creates applications that run a cyclic interactive session (like a Python REPL or MySQL console): the app starts once, and the user executes commands one after another without restarting. Commands and their handlers are registered via decorators; flags are parsed, validated and passed to handlers through a typed `Response` object. Requires Python 3.12+.
+Argenta applications define commands and their handlers via decorators; flags are parsed, validated and passed to handlers through a typed `Response` object. A runtime decides how the app is consumed; built-in runtimes include the REPL runtime, which runs a cyclic interactive terminal session (like a Python REPL or MySQL console), and the A2UI runtime, which streams command surfaces to renderers over SSE, WebSocket, gRPC and other transports. Requires Python 3.12+.
 
 ## Guides
 
 - [Quick Start]({base_url}root/quickstart.html): minimal app, calculator with flags, task manager with DI
+- [Runtimes]({base_url}root/runtimes.html): Argenta's architecture — command layer vs runtimes, the presentation contract, choosing or writing a runtime
 - [Error Handling]({base_url}root/error_handling.html): custom handlers for unknown commands, empty input, repeated flags and invalid syntax
 - [Flags]({base_url}root/flags.html): defining flags, prefixes, allowed values and validation
-- [Overriding Formatting]({base_url}root/overriding_formatting.html): plain vs rich rendering of system messages
+
+## Runtimes
+
+- [REPL Runtime]({base_url}root/repl/index.html): the cyclic interactive terminal session, prompt, autocompletion, terminal layout
+- [A2UI Runtime]({base_url}root/a2ui/index.html): run the same commands as a generated A2UI surface over SSE/WebSocket/gRPC/socket/stdio transports
+- [A2UI Transports]({base_url}root/a2ui/transports/index.html): wire formats per transport — SSE, WebSocket, long poll, TCP/Unix socket, gRPC, stdio, in-memory
+- [Redirecting stdout]({base_url}root/repl/redirect_stdout.html): how handler output is captured and framed in the REPL, and when to disable it
+- [Overriding Formatting]({base_url}root/repl/overriding_formatting.html): plain vs rich rendering of system messages, FIGlet fonts
 
 ## Advanced
 
-- [Redirecting stdout]({base_url}root/redirect_stdout.html): how handler output is captured and framed, and when to disable it
 - [Dependency Injection]({base_url}root/dependency_injection.html): dishka integration, injecting dependencies into handlers
 - [Argenta CLI]({base_url}root/cli.html): scaffolding and running projects with the bundled CLI
 - [Testing]({base_url}root/testing.html): testing applications built on Argenta
@@ -25,7 +32,9 @@ Argenta creates applications that run a cyclic interactive session (like a Pytho
 - [Response]({base_url}root/api/response.html): the object passed to handlers
 - [Command & Flags]({base_url}root/api/command/index.html): Command, Flag, InputFlag, PossibleValues, ValidationStatus
 - [Orchestrator & ArgParser]({base_url}root/api/orchestrator/index.html): startup-time CLI arguments and app orchestration
-- [App]({base_url}root/api/app/index.html): application configuration, autocompleter, dividing lines
+- [App]({base_url}root/api/app/index.html): application configuration, autocompleter, runtime-facing API
+- [REPL Runtime]({base_url}root/api/repl.html): REPLRuntime, TerminalLayout, REPLConfig, dividing lines
+- [A2UI Runtime]({base_url}root/api/a2ui.html): AgentRuntime, A2UIConfig, transports
 - [DataBridge]({base_url}root/api/bridge.html): shared storage between handlers
 
 ## Optional

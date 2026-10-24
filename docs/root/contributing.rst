@@ -205,7 +205,7 @@ To get started, set up a local development environment by following these steps.
 * ``src/argenta/response`` — ``Response`` and ``ResponseStatus``.
 * ``src/argenta/di`` — Dishka integration (``FromDishka``, ``inject``, providers).
 * ``src/argenta/data_bridge`` — session-scoped ``DataBridge``.
-* ``src/argenta/_cli`` — the ``argenta`` command-line tool (``init``, ``new``, ``run``, ``build``, ``info``, ``routes``).
+* ``src/argenta/_cli`` — the ``argenta`` command-line tool (``init``, ``new``, ``repl``, ``a2ui``, ``build``, ``info``, ``routes``).
 * ``tests/unit_tests`` / ``tests/system_tests`` — mirror the package layout; Syrupy snapshots live in ``__snapshots__`` directories.
 * ``metrics/`` — benchmark registry and the CI comparison harness.
 * ``fuzz/`` — the Atheris fuzz target for ``InputCommand.parse``.

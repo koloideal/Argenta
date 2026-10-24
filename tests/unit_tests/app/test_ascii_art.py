@@ -525,7 +525,7 @@ class TestAppCustomFonts:
     def test_uses_user_supplied_fonts(self) -> None:
         font = FigletFont(height=1, glyphs={char: (char * 2,) for char in PRINTABLE_ASCII})
         app = App(initial_message="Hi", initial_message_font=font, farewell_message_font=font)
-        assert "HHii" in app._initial_message
+        assert "HHii" in app.initial_message
 
     def test_fails_fast_on_text_the_font_cannot_render(self) -> None:
         with pytest.raises(FigletFontException):

@@ -1,14 +1,33 @@
 import re
+from collections.abc import Callable
 
 import pytest
 
 from argenta.app import App
+from argenta.app.presentation import BlockKind
 from argenta.app.protocols import DescriptionMessageGenerator, NonStandardBehaviorHandler
 from argenta.command.models import Command, InputCommand
+from argenta.repl import REPLRuntime
 from argenta.response import Response
 from argenta.response.status import ResponseStatus
 from argenta.router import Router
 from argenta.router.exceptions import RepeatedAliasNameException
+
+
+class _RecordingLayout:
+    def __init__(self) -> None:
+        self.blocks: list[tuple[BlockKind, bool]] = []
+
+    def present(
+        self, kind: BlockKind, produce: Callable[[], None], *, capturable: bool = True
+    ) -> None:
+        self.blocks.append((kind, capturable))
+        produce()
+
+    @property
+    def kinds(self) -> list[BlockKind]:
+        return [kind for kind, _ in self.blocks]
+
 
 # ============================================================================
 # Tests for exit command detection
@@ -55,7 +74,7 @@ def test_dispatch_command_invokes_exit_handler_exactly_once() -> None:
     app.set_exit_command_handler(custom_handler)
     app._setup_system_router()
 
-    assert app._dispatch_command("q") is True
+    assert REPLRuntime(app)._dispatch_command("q") is True
     assert call_tracker["count"] == 1
 
 
@@ -71,7 +90,7 @@ def test_dispatch_command_processes_registered_command_exactly_once() -> None:
     app.include_router(router)
     app._setup_system_router()
 
-    assert app._dispatch_command("run") is False
+    assert REPLRuntime(app)._dispatch_command("run") is False
     assert call_tracker["count"] == 1
 
 
@@ -117,7 +136,7 @@ def test_most_similar_command_finds_closest_match() -> None:
         pass
 
     app.include_routers(router)
-    app._pre_cycle_setup()
+    app.prepare_for_run(_RecordingLayout())
 
     assert app._most_similar_command("por") == "port"
 
@@ -135,7 +154,7 @@ def test_most_similar_command_prefers_shorter_match() -> None:
         pass
 
     app.include_routers(router)
-    app._pre_cycle_setup()
+    app.prepare_for_run(_RecordingLayout())
 
     assert app._most_similar_command("com") == "command"
 
@@ -153,7 +172,7 @@ def test_most_similar_command_finds_longer_match_when_closer() -> None:
         pass
 
     app.include_routers(router)
-    app._pre_cycle_setup()
+    app.prepare_for_run(_RecordingLayout())
 
     assert app._most_similar_command("command_") == "command"
 
@@ -171,7 +190,7 @@ def test_most_similar_command_returns_none_for_no_match() -> None:
         pass
 
     app.include_routers(router)
-    app._pre_cycle_setup()
+    app.prepare_for_run(_RecordingLayout())
 
     assert app._most_similar_command("nonexists") is None
 
@@ -189,7 +208,7 @@ def test_most_similar_command_matches_aliases() -> None:
         pass
 
     app.include_routers(router)
-    app._pre_cycle_setup()
+    app.prepare_for_run(_RecordingLayout())
 
     assert app._most_similar_command("other_") == "other_name"
 
@@ -241,7 +260,7 @@ def test_app_detects_trigger_collision_between_routers() -> None:
     app.include_router(router2)
 
     with pytest.raises(RepeatedTriggerNameException, match="'hello'"):
-        app._pre_cycle_setup()
+        app.prepare_for_run(_RecordingLayout())
 
 
 def test_app_detects_alias_collision_between_routers() -> None:
@@ -261,7 +280,7 @@ def test_app_detects_alias_collision_between_routers() -> None:
     app.include_router(router2)
 
     with pytest.raises(RepeatedAliasNameException):
-        app._pre_cycle_setup()
+        app.prepare_for_run(_RecordingLayout())
 
 
 def test_app_detects_trigger_alias_collision_between_routers() -> None:
@@ -281,7 +300,7 @@ def test_app_detects_trigger_alias_collision_between_routers() -> None:
     app.include_router(router2)
 
     with pytest.raises(RepeatedAliasNameException):
-        app._pre_cycle_setup()
+        app.prepare_for_run(_RecordingLayout())
 
 
 def test_app_detects_collision_case_insensitive() -> None:
@@ -303,7 +322,7 @@ def test_app_detects_collision_case_insensitive() -> None:
     app.include_router(router2)
 
     with pytest.raises(RepeatedTriggerNameException):
-        app._pre_cycle_setup()
+        app.prepare_for_run(_RecordingLayout())
 
 
 # ============================================================================
@@ -320,7 +339,7 @@ def test_add_message_on_startup_stores_message() -> None:
 def test_pre_cycle_setup_prints_startup_messages(capsys: pytest.CaptureFixture[str]) -> None:
     app = App()
     app.add_message_on_startup("some message")
-    app._pre_cycle_setup()
+    app.prepare_for_run(_RecordingLayout())
     stdout = capsys.readouterr()
 
     assert "some message" in stdout.out
@@ -338,7 +357,7 @@ def test_set_description_message_pattern_stores_generator() -> None:
     )
     app.set_description_message_pattern(descr_gen)
 
-    assert app._description_message_generator is descr_gen
+    assert app.description_message_generator is descr_gen
 
 
 def test_set_exit_command_handler_stores_handler() -> None:
@@ -366,8 +385,8 @@ def test_process_command_with_router_with_disabled_stdout_redirect(
 
     app.include_router(router)
 
-    app._pre_cycle_setup()
-    app._process_exist_and_valid_command(InputCommand("command"))
+    app.prepare_for_run(_RecordingLayout())
+    app._process_exist_and_valid_command(InputCommand("command"), _RecordingLayout())
 
     stdout = capsys.readouterr()
 
@@ -646,7 +665,7 @@ def test_app_handlers_work_with_multiple_routers() -> None:
         pass
 
     app.include_routers(router1, router2)
-    app._pre_cycle_setup()
+    app.prepare_for_run(_RecordingLayout())
 
     call_tracker = {"called": False}
 
@@ -665,7 +684,73 @@ def test_app_handlers_work_with_multiple_routers() -> None:
 
 def test_process_exist_and_valid_command_raises_runtime_error_when_router_not_found() -> None:
     app = App()
-    app._pre_cycle_setup()
+    app.prepare_for_run(_RecordingLayout())
 
     with pytest.raises(RuntimeError, match=re.escape("Router for 'nonexistent' not found. Panic!")):
-        app._process_exist_and_valid_command(InputCommand("nonexistent"))
+        app._process_exist_and_valid_command(InputCommand("nonexistent"), _RecordingLayout())
+
+
+# ============================================================================
+# Tests for emitted layout blocks
+# ============================================================================
+
+
+def _app_with_command() -> App:
+    app = App(override_system_messages=True, printer=print)
+    router = Router()
+    router.command("hello")(lambda _response: print("hi"))
+    quiet = Router(disable_redirect_stdout=True)
+    quiet.command("ask")(lambda _response: None)
+    app.include_routers(router, quiet)
+    return app
+
+
+def test_prepare_for_run_emits_startup_blocks_in_order() -> None:
+    app = _app_with_command()
+    app.add_message_on_startup("welcome")
+    layout = _RecordingLayout()
+
+    app.prepare_for_run(layout)
+
+    assert layout.kinds == [
+        BlockKind.BANNER,
+        BlockKind.STARTUP_MESSAGES,
+        BlockKind.COMMAND_GROUPS,
+    ]
+
+
+def test_prepare_for_run_skips_groups_in_repeat_mode() -> None:
+    app = App(repeat_command_groups_printing=True)
+    layout = _RecordingLayout()
+
+    app.prepare_for_run(layout)
+
+    assert layout.kinds == [BlockKind.BANNER]
+
+
+def test_present_command_groups_emits_groups_block(capsys: pytest.CaptureFixture[str]) -> None:
+    app = _app_with_command()
+    layout = _RecordingLayout()
+
+    app.present_command_groups(layout)
+
+    assert layout.kinds == [BlockKind.COMMAND_GROUPS]
+    assert "hello" in capsys.readouterr().out
+
+
+def test_dispatch_emits_kind_per_outcome() -> None:
+    app = _app_with_command()
+    app.prepare_for_run(_RecordingLayout())
+    layout = _RecordingLayout()
+
+    assert app.dispatch_input_command(InputCommand("hello"), layout) is False
+    assert app.dispatch_input_command(InputCommand("ask"), layout) is False
+    assert app.dispatch_input_command(InputCommand("bogus"), layout) is False
+    assert app.dispatch_input_command(InputCommand("q"), layout) is True
+
+    assert layout.blocks == [
+        (BlockKind.OUTPUT, True),
+        (BlockKind.OUTPUT, False),
+        (BlockKind.SYSTEM, True),
+        (BlockKind.FAREWELL, True),
+    ]

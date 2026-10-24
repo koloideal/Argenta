@@ -3,7 +3,7 @@
 Quick Start
 ===========
 
-In this guide, we will look at two examples of creating a CLI application with Argenta:
+In this guide, we will look at two examples of creating a command-driven application with Argenta:
 
 *   **Simple example**: a minimal application for quick introduction to the main components.
 *   **Medium-complexity example**: the Calculator app using and setting flags.
@@ -36,7 +36,10 @@ Save the code to a file (for example, ``main.py``) and run:
 
 .. image:: /_static/quickstart-simple.png
    :alt: Simple App Example
-   
+
+.. note::
+   The same ``main()`` can serve a generated web UI instead of the terminal — run it via ``argenta a2ui main.py:main`` (from the ``[cli]`` extra) or ``Orchestrator.run_agent``. Commands need no changes. See :ref:`A2UI Runtime <root_a2ui>`.
+
 -----
 
 Intermediate Example: Calculator with Flags

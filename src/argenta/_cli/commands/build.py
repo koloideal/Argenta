@@ -32,7 +32,7 @@ def _ensure_nuitka(console: Console) -> None:
     if find_spec("nuitka") is None:
         console.print(
             "[bold red]Error:[/bold red] nuitka is required for the build command. "
-            "Install it via 'pip install argenta[cli]' or 'pip install nuitka[onefile]'"
+            "Install it via 'uv add argenta[cli]' or 'uv add nuitka[onefile]'"
         )
         sys.exit(1)
 

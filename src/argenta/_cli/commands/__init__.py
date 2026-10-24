@@ -1,10 +1,15 @@
+from argenta._cli.commands.a2ui import A2UIRunOptions as A2UIRunOptions
+from argenta._cli.commands.a2ui import a2ui_handler as a2ui_handler
 from argenta._cli.commands.build import build_handler as build_handler
 from argenta._cli.commands.compile_font import compile_font_handler as compile_font_handler
+from argenta._cli.commands.example import ExampleOptions as ExampleOptions
+from argenta._cli.commands.example import example_handler as example_handler
 from argenta._cli.commands.fetch_font import fetch_font_handler as fetch_font_handler
 from argenta._cli.commands.info import info_handler as info_handler
 from argenta._cli.commands.init import init_handler as init_handler
 from argenta._cli.commands.list_fonts import list_fonts_handler as list_fonts_handler
 from argenta._cli.commands.new import new_handler as new_handler
 from argenta._cli.commands.preview_font import preview_font_handler as preview_font_handler
+from argenta._cli.commands.repl import ReplRunOptions as ReplRunOptions
+from argenta._cli.commands.repl import repl_handler as repl_handler
 from argenta._cli.commands.routes import routes_handler as routes_handler
-from argenta._cli.commands.run import run_handler as run_handler

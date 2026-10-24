@@ -1,8 +1,10 @@
 ![preview](https://raw.githubusercontent.com/koloideal/Argenta/main/.github/assets/logo.jpg)
 
-**Argenta** is a simple and elegant framework for building modular CLI applications. It provides a clean and intuitive way to create context-aware command-line tools with isolated command scopes.
+**Argenta** is the command-driven framework for Python.
 
-Argenta is the **"Simplest"**, **"Most Modular"**, and **"Most Elegant"** way to build interactive CLI applications in Python.
+Build your commands once — run them wherever they're needed: from an interactive terminal to a web UI and beyond.
+
+Argenta is the **"Simplest"**, **"Most Modular"**, and **"Most Elegant"** way to build command-driven applications in Python.
 
 [![PyPI version](https://img.shields.io/pypi/v/argenta)](https://pypi.org/project/argenta/)
 [![Python versions](https://img.shields.io/pypi/pyversions/argenta)](https://pypi.org/project/argenta/)
@@ -19,14 +21,14 @@ Argenta is the **"Simplest"**, **"Most Modular"**, and **"Most Elegant"** way to
 
 ![preview](https://raw.githubusercontent.com/koloideal/Argenta/main/.github/assets/demo.gif)
 
-**Argenta** allows you to build interactive CLI applications incredibly easily. There's no need to manually parse complex command structures or manage state transitions — just use routers and commands!
+**Argenta** lets you build command-driven applications incredibly easily. There's no need to manually parse complex command structures or manage state transitions — just use routers and commands.
 
 ## ✨ Installing Argenta
 
 Argenta is available on ``PyPI``:
 
 ```console
-$ python -m pip install argenta
+$ pip install argenta
 ```
 
 or using ``uv``:
@@ -39,12 +41,12 @@ Argenta officially supports Python 3.12+.
 
 ## 🚀 Supported Features & Best Practices
 
-Argenta is ready for the demands of building scalable, robust and maintainable CLI applications.
+Argenta is ready for the demands of building scalable, robust and maintainable applications.
 
--   **Interactive Sessions**: Unlike traditional CLI tools, ``Argenta`` creates cyclic sessions, allowing users to execute commands sequentially without restarting the application.
+-   **Built-in Runtimes**: A runtime is the way people or programs interact with your application. Argenta ships them out of the box — an interactive terminal session and a web UI today, with more to come — so there's nothing to write yourself. Commands never depend on the runtime, so switching to another one doesn't require rewriting them.
 -   **Declarative Syntax**: Commands and their handlers are declared using simple decorators, making the code intuitive and allowing you to focus on "what" you want to do, not "how".
 -   **Native DI**: Thanks to integration with [dishka](https://dishka.readthedocs.io/en/stable/), you can easily inject dependencies directly into command handlers, simplifying testing, avoiding mutable globals, and much more.
--   **Automatic Validation and Parsing**: The library handles command-line flags and arguments processing, including parsing, validation, and type conversion.
+-   **Automatic Validation and Parsing**: The framework handles flags and arguments processing, including parsing, validation, and type conversion.
 -   **Flexible Configuration**: You can easily customize system messages, output formatting, create custom handlers for non-standard behavior, and more.
 
 Need something more? Create an **issue**, we're open to suggestions.
@@ -55,11 +57,9 @@ Argenta follows [Semantic Versioning](https://semver.org/). The public API is st
 
 ## 📄 Why did we create this?
 
-Building complex CLI applications often requires managing different contexts and command scopes. For example, when creating a utility similar to the Metasploit Framework, users need to enter specific scopes (like selecting a scanning module) and then access commands specific only to that context.
+As a command-driven application grows, two things get hard: keeping dozens of commands organized, and keeping them independent of the interface they are used through. Most tools leave the first to you and hard-wire the second.
 
-Traditional CLI frameworks don't provide an elegant way to handle this kind of modular, context-aware architecture. Argenta was built to solve this problem by providing a simple and concise way to encapsulate CLI functionality in isolated, abstracted environments.
-
-We believe that building CLI applications should be as pleasant as building web applications with modern frameworks. Argenta brings the router pattern and clean separation of concerns to the CLI world.
+Argenta was built to fix both. Routers split commands into isolated, self-contained modules, and runtimes keep the interface separate from the logic. Building an application should feel as pleasant as working with a modern web framework.
 
 ## 🚀 Quick Start
 
@@ -99,14 +99,14 @@ def main() -> None:
     # Include your routers
     app.include_router(router)
     
-    # Start the interactive CLI
+    # Start the interactive REPL
     orchestrator.run_repl(app)
 
 if __name__ == '__main__':
     main()
 ```
 
-That's it! You now have a fully functional interactive CLI application.
+That's it! You now have a fully functional interactive application. To serve the same commands through another interface, you only change how the app is started — the commands stay untouched.
 
 ## 📚 Documentation
 

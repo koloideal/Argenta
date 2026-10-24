@@ -64,6 +64,9 @@ A flag consists of a prefix (``-``, ``--``, or ``---``), a name, and optionally 
    deploy --verbose
    backup -f --compress
 
+.. note::
+   This syntax describes typed input in the REPL. In the :ref:`A2UI agent <root_a2ui>` flag values arrive as form fields in the action context — names and validation semantics are identical, only the transport differs.
+
 -----
 
 Working with Flags in Handlers

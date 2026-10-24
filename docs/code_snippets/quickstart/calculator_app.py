@@ -2,8 +2,8 @@ import operator
 import re
 
 from argenta import App, Orchestrator, Response, Router
-from argenta.app import DynamicDividingLine
 from argenta.command import Command, Flag, Flags
+from argenta.repl import DynamicDividingLine, REPLConfig
 from argenta.response.status import ResponseStatus
 
 router = Router("Calculator")
@@ -58,14 +58,13 @@ app = App(
     initial_message="Calculator",
     repeat_command_groups_printing=False,
     prompt=">> ",
-    dividing_line=DynamicDividingLine("~"),
 )
 orchestrator = Orchestrator()
 
 
 def main():
     app.include_router(router)
-    orchestrator.run_repl(app)
+    orchestrator.run_repl(app, REPLConfig(dividing_line=DynamicDividingLine("~")))
 
 
 if __name__ == "__main__":

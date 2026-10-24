@@ -89,7 +89,7 @@ class BehaviorHandlersSettersMixin:
         unknown_command_handler: NonStandardBehaviorHandler[InputCommand],
         exit_command_handler: NonStandardBehaviorHandler[Response],
     ):
-        self._description_message_generator: DescriptionMessageGenerator = (
+        self.description_message_generator: DescriptionMessageGenerator = (
             description_message_generator
         )
         self._incorrect_input_syntax_handler: NonStandardBehaviorHandler[str] = (
@@ -105,7 +105,7 @@ class BehaviorHandlersSettersMixin:
         self._exit_command_handler: NonStandardBehaviorHandler[Response] = exit_command_handler
 
     def set_description_message_pattern(self, _: DescriptionMessageGenerator, /) -> None:
-        self._description_message_generator = _
+        self.description_message_generator = _
 
     def set_incorrect_input_syntax_handler(self, _: NonStandardBehaviorHandler[str], /) -> None:
         self._incorrect_input_syntax_handler = _

@@ -1,3 +1,5 @@
+.. _root_testing:
+
 Testing
 =======
 
@@ -58,6 +60,21 @@ Full execution of the ``run_repl`` loop can be covered through a subprocess with
    :language: python
    :linenos:
    
+-----
+
+Testing the A2UI Runtime
+------------------------
+
+The :ref:`A2UI runtime <root_a2ui>` is testable without any network: ``MemoryTransport`` replays a fixed list of incoming action messages (script mode) and records everything the agent sends in ``.sent``. Assert on message kinds, the emitted components, and the ``/log`` entries — handler output ends up there.
+
+**Usage example:**
+
+.. literalinclude:: ../code_snippets/a2ui/agent_testing.py
+   :language: python
+   :linenos:
+
+For a host application keeping the agent alive between assertions, use ``MemoryTransport(live=True)``: drive actions with ``push()``, subscribe to outgoing frames with ``messages()``, end the session with ``close()``.
+
 -----
 
 Testing Tips

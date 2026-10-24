@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package argenta.a2ui;
+
+// Bidirectional A2UI channel: the agent streams surface messages,
+// the client streams action messages. One JSON document per frame.
+service AgentChannel {
+  rpc Channel(stream Frame) returns (stream Frame);
+}
+
+message Frame {
+  string json = 1;
+}
