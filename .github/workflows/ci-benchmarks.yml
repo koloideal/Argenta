@@ -56,6 +56,8 @@ jobs:
         .bench/head/bin/python -m metrics.ci.compare \
           --base-python .bench/base/bin/python \
           --head-python .bench/head/bin/python \
+          --base-dir .bench/base-src \
+          --head-dir . \
           --output report.md
         { echo "$COMMENT_MARKER"; cat report.md; } > comment.md
         cat report.md >> "$GITHUB_STEP_SUMMARY"

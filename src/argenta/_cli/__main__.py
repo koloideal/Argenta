@@ -39,18 +39,150 @@ def _root(
 
 
 @app.command(
-    "run",
-    help="Start the orchestrator REPL from a callable entrypoint.",
-    short_help="Start the orchestrator REPL",
-    epilog="Example: argenta run app/main.py:main",
+    "repl",
+    help="Start the interactive orchestrator REPL from a callable entrypoint.",
+    short_help="Start the interactive REPL",
+    epilog=("Examples:\n  argenta repl app/main.py:main\n  argenta repl app/main.py:main --reload"),
 )
-def _run(
+def _repl(
     ctx: typer.Context,
     entrypoint_path: Annotated[
         str, typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>")
     ],
+    hot_reload: Annotated[
+        bool,
+        typer.Option(
+            "--reload",
+            "-r",
+            help="Restart the REPL when python files around the entrypoint change.",
+        ),
+    ] = False,
 ) -> None:
-    commands.run_handler(ctx.obj, entrypoint_path)
+    commands.repl_handler(ctx.obj, entrypoint_path, commands.ReplRunOptions(hot_reload))
+
+
+@app.command(
+    "a2ui",
+    help="Start the app as an A2UI agent: emit the command surface and dispatch "
+    "incoming actions over a JSONL/WebSocket transport instead of the interactive REPL.",
+    short_help="Run as an A2UI agent",
+    epilog=(
+        "Examples:\n"
+        "  argenta a2ui app/main.py:main\n"
+        "  argenta a2ui app/main.py:main --transport ws --port 8765 --verbose"
+    ),
+)
+def _a2ui(  # noqa: WPS211
+    ctx: typer.Context,
+    entrypoint_path: Annotated[
+        str, typer.Argument(help="Entrypoint as <path/to/file.py>:<callable>")
+    ],
+    transport: Annotated[
+        Literal["stdio", "ws", "sse", "socket", "poll", "grpc"],
+        typer.Option(
+            "--transport",
+            "-t",
+            help="A2UI transport: 'sse' HTTP Server-Sent Events + POST actions "
+            "(default), 'ws' WebSocket server, 'poll' HTTP long-polling for "
+            "proxies that block streaming, 'socket' JSONL over TCP or a Unix "
+            "socket for native clients, 'grpc' bidirectional gRPC stream, or "
+            "'stdio' JSONL for machine clients driving the agent over stdin/stdout. "
+            "Default: 'sse' (standard library only; ws/grpc need the a2ui extra).",
+        ),
+    ] = "sse",
+    port: Annotated[
+        int | None,
+        typer.Option(
+            "--port",
+            "-p",
+            help="Listen port for the ws/sse/poll/socket/grpc server transports.",
+        ),
+    ] = None,
+    socket_path: Annotated[
+        str | None,
+        typer.Option(
+            "--socket-path",
+            help="Unix domain socket path for the 'socket' transport; "
+            "without it the transport listens on TCP host:port.",
+        ),
+    ] = None,
+    verbose: Annotated[
+        bool,
+        typer.Option(
+            "--verbose",
+            "-v",
+            help="Log the agent lifecycle (actions received, messages sent, "
+            "client connections) to stderr.",
+        ),
+    ] = False,
+    hot_reload: Annotated[
+        bool,
+        typer.Option(
+            "--reload",
+            "-r",
+            help="Restart the agent when python files around the entrypoint change.",
+        ),
+    ] = False,
+) -> None:
+    commands.a2ui_handler(
+        ctx.obj,
+        entrypoint_path,
+        commands.A2UIRunOptions(
+            transport=transport,
+            port=port,
+            socket_path=socket_path,
+            verbose=verbose,
+            hot_reload=hot_reload,
+        ),
+    )
+
+
+@app.command(
+    "example",
+    help="Run a bundled example: the REPL app, the A2UI agent or an A2UI client.",
+    short_help="Run a bundled example",
+    epilog=(
+        "Examples:\n"
+        "  argenta example repl\n"
+        "  argenta example a2ui agent --transport ws\n"
+        "  argenta example a2ui client grpc"
+    ),
+)
+def _example(
+    ctx: typer.Context,
+    kind: Annotated[
+        Literal["repl", "a2ui"],
+        typer.Argument(help="Example kind: 'repl' for the REPL app, 'a2ui' for the agent demo."),
+    ],
+    target: Annotated[
+        Literal["agent", "client"] | None,
+        typer.Argument(
+            help="A2UI side: 'agent' starts the example server, 'client' connects "
+            "to a running agent. Required for 'a2ui'."
+        ),
+    ] = None,
+    client_kind: Annotated[
+        Literal["lit", "grpc"] | None,
+        typer.Argument(
+            help="A2UI client: 'lit' serves the browser client (default), "
+            "'grpc' runs the terminal gRPC client."
+        ),
+    ] = None,
+    transport: Annotated[
+        Literal["stdio", "ws", "sse", "socket", "poll", "grpc"],
+        typer.Option(
+            "--transport",
+            "-t",
+            help="A2UI agent transport. Default: 'sse' "
+            "(standard library only; ws/grpc need the a2ui extra).",
+        ),
+    ] = "sse",
+) -> None:
+    commands.example_handler(
+        ctx.obj,
+        kind,
+        commands.ExampleOptions(target=target, client_kind=client_kind, transport=transport),
+    )
 
 
 @app.command(

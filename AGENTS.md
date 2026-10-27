@@ -1,5 +1,11 @@
 # Argenta
 
+## Code style hard rules
+
+- Never use `from __future__ import annotations` — quote forward references instead.
+- No `Any`, no `TYPE_CHECKING`; imports stay at module top level (lazy import only
+  inside a function when it guards an optional dependency).
+
 ## Agent skills
 
 ### Issue tracker

@@ -1,17 +1,22 @@
+from dataclasses import dataclass
+from types import SimpleNamespace
+
 from argenta import App
 from argenta.command.models import Command
-from argenta.response import Response
 from argenta.router import Router
+from metrics.benchmarks._scenarios import command_handler
 from metrics.benchmarks.entity import benchmarks
 
-_BENCHMARK_TYPE = "most_similar_command"
-_MANY_COMMANDS_COUNT = 50
-_ALIASED_COMMANDS_COUNT = 20
-_EXTREME_COMMANDS_COUNT = 100
-_EXTREME_ALIASES_COUNT = 20
 
-
-def _command_handler(_res: Response) -> None: ...
+@dataclass(frozen=True, slots=True)
+class MostSimilarCommandConfig:
+    benchmark_type: str = "most_similar_command"
+    few_commands_count: int = 10
+    many_commands_count: int = 50
+    aliased_commands_count: int = 20
+    aliases_per_aliased_command: int = 10
+    extreme_commands_count: int = 100
+    extreme_aliases_per_command: int = 20
 
 
 def setup_app_with_commands(command_count: int, aliases_per_command: int = 0) -> App:
@@ -24,42 +29,55 @@ def setup_app_with_commands(command_count: int, aliases_per_command: int = 0) ->
             if aliases_per_command
             else set()
         )
-        router.command(Command(f"command{command_index}", aliases=aliases))(_command_handler)
+        router.command(Command(f"command{command_index}", aliases=aliases))(command_handler)
 
     app.include_router(router)
     return app
 
 
-_FEW_COMMANDS_APP = setup_app_with_commands(10)
-_MANY_COMMANDS_APP = setup_app_with_commands(_MANY_COMMANDS_COUNT)
-_MANY_ALIASES_APP = setup_app_with_commands(_ALIASED_COMMANDS_COUNT, aliases_per_command=10)
-_EXTREME_APP = setup_app_with_commands(
-    _EXTREME_COMMANDS_COUNT, aliases_per_command=_EXTREME_ALIASES_COUNT
+_CONFIG = MostSimilarCommandConfig()
+_APPS = SimpleNamespace(
+    few_commands=setup_app_with_commands(_CONFIG.few_commands_count),
+    many_commands=setup_app_with_commands(_CONFIG.many_commands_count),
+    many_aliases=setup_app_with_commands(
+        _CONFIG.aliased_commands_count, _CONFIG.aliases_per_aliased_command
+    ),
+    extreme=setup_app_with_commands(
+        _CONFIG.extreme_commands_count, _CONFIG.extreme_aliases_per_command
+    ),
 )
-
-
-@benchmarks.register(type_=_BENCHMARK_TYPE, description="Few commands (10 commands, no match)")
-def benchmark_few_commands() -> None:
-    _FEW_COMMANDS_APP._most_similar_command("unknown")
-
-
-@benchmarks.register(type_=_BENCHMARK_TYPE, description="Many commands (50 commands, no match)")
-def benchmark_many_commands_most_similar() -> None:
-    _MANY_COMMANDS_APP._most_similar_command("unknown")
 
 
 @benchmarks.register(
-    type_=_BENCHMARK_TYPE, description="Many aliases (20 commands, 10 aliases each)"
+    type_=_CONFIG.benchmark_type, description="Few commands (10 commands, no match)"
+)
+def benchmark_few_commands() -> None:
+    _APPS.few_commands._most_similar_command("unknown")
+
+
+@benchmarks.register(
+    type_=_CONFIG.benchmark_type, description="Many commands (50 commands, no match)"
+)
+def benchmark_many_commands_most_similar() -> None:
+    _APPS.many_commands._most_similar_command("unknown")
+
+
+@benchmarks.register(
+    type_=_CONFIG.benchmark_type, description="Many aliases (20 commands, 10 aliases each)"
 )
 def benchmark_many_aliases() -> None:
-    _MANY_ALIASES_APP._most_similar_command("unknown")
+    _APPS.many_aliases._most_similar_command("unknown")
 
 
-@benchmarks.register(type_=_BENCHMARK_TYPE, description="Partial match (50 commands, prefix match)")
+@benchmarks.register(
+    type_=_CONFIG.benchmark_type, description="Partial match (50 commands, prefix match)"
+)
 def benchmark_partial_match() -> None:
-    _MANY_COMMANDS_APP._most_similar_command("comm")
+    _APPS.many_commands._most_similar_command("comm")
 
 
-@benchmarks.register(type_=_BENCHMARK_TYPE, description="Extreme (100 commands, 20 aliases each)")
+@benchmarks.register(
+    type_=_CONFIG.benchmark_type, description="Extreme (100 commands, 20 aliases each)"
+)
 def benchmark_extreme_commands() -> None:
-    _EXTREME_APP._most_similar_command("comm")
+    _APPS.extreme._most_similar_command("comm")

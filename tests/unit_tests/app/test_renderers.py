@@ -43,7 +43,7 @@ class TestRichRenderer:
     def test_render_messages_on_startup(self):
         messages = ["Message 1", "Message 2"]
         result = RichRenderer.render_messages_on_startup(messages)
-        assert result == "\nMessage 1\nMessage 2"
+        assert result == "Message 1\nMessage 2"
 
     def test_render_command_groups_description(self):
         router = Router(title="Test Router")
@@ -59,7 +59,7 @@ class TestRichRenderer:
             return f"{cmd}: {desc}"
 
         result = RichRenderer.render_command_groups_description(desc_gen, registered_routers)
-        assert result == "\n\nTest Router\ntest: Test command"
+        assert result == "Test Router\ntest: Test command"
 
 
 class TestPlainRenderer:
@@ -105,7 +105,7 @@ class TestPlainRenderer:
         renderer = PlainRenderer()
         messages = ["Message 1", "Message 2"]
         result = renderer.render_messages_on_startup(messages)
-        assert result == "\nMessage 1\nMessage 2"
+        assert result == "Message 1\nMessage 2"
 
     def test_render_command_groups_description(self):
         router = Router(title="Test Router")
@@ -121,4 +121,12 @@ class TestPlainRenderer:
             return f"{cmd}: {desc}"
 
         result = PlainRenderer.render_command_groups_description(desc_gen, registered_routers)
-        assert result == "\n\nTest Router\ntest: Test command"
+        assert result == "Test Router\ntest: Test command"
+
+
+def test_rich_renderer_dims_dividing_line() -> None:
+    assert RichRenderer.render_dividing_line("---") == "[dim]---[/dim]"
+
+
+def test_plain_renderer_keeps_dividing_line_raw() -> None:
+    assert PlainRenderer.render_dividing_line("---") == "---"

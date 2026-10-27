@@ -1,0 +1,307 @@
+# serializer version: 1
+# name: test_plain_dynamic_dividing_line
+  '''
+  Banner
+  
+  [b dim]Usage[/b dim]: [i]<command> <[green]flags[/green]>[/i]
+  
+  
+  Main:
+  hello *=*=* Says hello
+  
+  System points:
+  q *=*=* Exit command
+  
+  
+  -------------------------------------
+  
+  hello from handler
+  second, longer line of handler output
+  
+  -------------------------------------
+  
+  
+  ----------------------
+  
+  Unknown command: bogus
+  
+  ----------------------
+  
+  
+  ---------------------------------
+  
+  Repeated input flags: hello -f -f
+  
+  ---------------------------------
+  
+  
+  -------------------
+  
+  Empty input command
+  
+  -------------------
+  
+  
+  See you | https://github.com/koloideal/Argenta | made by kolo
+  
+  '''
+# ---
+# name: test_plain_dynamic_line_with_redirect_disabled
+  '''
+  Banner
+  
+  [b dim]Usage[/b dim]: [i]<command> <[green]flags[/green]>[/i]
+  
+  
+  Main:
+  hello *=*=* Says hello
+  
+  System points:
+  q *=*=* Exit command
+  
+  
+  -------------------------
+  
+  hello from handler
+  second, longer line of handler output
+  
+  -------------------------
+  
+  
+  ----------------------
+  
+  Unknown command: bogus
+  
+  ----------------------
+  
+  
+  ---------------------------------
+  
+  Repeated input flags: hello -f -f
+  
+  ---------------------------------
+  
+  
+  -------------------
+  
+  Empty input command
+  
+  -------------------
+  
+  
+  See you | https://github.com/koloideal/Argenta | made by kolo
+  
+  '''
+# ---
+# name: test_plain_repeated_command_groups
+  '''
+  Banner
+  
+  [b dim]Usage[/b dim]: [i]<command> <[green]flags[/green]>[/i]
+  
+  
+  Main:
+  hello *=*=* Says hello
+  
+  System points:
+  q *=*=* Exit command
+  
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  hello from handler
+  second, longer line of handler output
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  
+  Main:
+  hello *=*=* Says hello
+  
+  System points:
+  q *=*=* Exit command
+  
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Unknown command: bogus
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  
+  Main:
+  hello *=*=* Says hello
+  
+  System points:
+  q *=*=* Exit command
+  
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Repeated input flags: hello -f -f
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  
+  Main:
+  hello *=*=* Says hello
+  
+  System points:
+  q *=*=* Exit command
+  
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Empty input command
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  
+  Main:
+  hello *=*=* Says hello
+  
+  System points:
+  q *=*=* Exit command
+  
+  
+  See you | https://github.com/koloideal/Argenta | made by kolo
+  
+  '''
+# ---
+# name: test_plain_static_dividing_line
+  '''
+  Banner
+  
+  [b dim]Usage[/b dim]: [i]<command> <[green]flags[/green]>[/i]
+  
+  
+  Main:
+  hello *=*=* Says hello
+  
+  System points:
+  q *=*=* Exit command
+  
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  hello from handler
+  second, longer line of handler output
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Unknown command: bogus
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Repeated input flags: hello -f -f
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Empty input command
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  
+  See you | https://github.com/koloideal/Argenta | made by kolo
+  
+  '''
+# ---
+# name: test_plain_without_dividing_line
+  '''
+  Banner
+  
+  [b dim]Usage[/b dim]: [i]<command> <[green]flags[/green]>[/i]
+  
+  
+  Main:
+  hello *=*=* Says hello
+  
+  System points:
+  q *=*=* Exit command
+  
+  
+  hello from handler
+  second, longer line of handler output
+  
+  
+  Unknown command: bogus
+  
+  
+  Repeated input flags: hello -f -f
+  
+  
+  Empty input command
+  
+  
+  See you | https://github.com/koloideal/Argenta | made by kolo
+  
+  '''
+# ---
+# name: test_rich_static_dividing_line
+  '''
+  
+  ██████╗░░█████╗░███╗░░██╗███╗░░██╗███████╗██████╗░
+  ██╔══██╗██╔══██╗████╗░██║████╗░██║██╔════╝██╔══██╗
+  ██████╦╝███████║██╔██╗██║██╔██╗██║█████╗░░██████╔╝
+  ██╔══██╗██╔══██║██║╚████║██║╚████║██╔══╝░░██╔══██╗
+  ██████╦╝██║░░██║██║░╚███║██║░╚███║███████╗██║░░██║
+  ╚═════╝░╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚══╝╚══════╝╚═╝░░╚═╝
+  
+  Usage: <command> <flags>
+  
+  
+  Main:
+  <hello> *=*=* Says hello
+  
+  System points:
+  <q> *=*=* Exit command
+  
+  
+  =========================
+  
+  hello from handler
+  second, longer line of handler output
+  
+  =========================
+  
+  
+  =========================
+  
+  Unknown command: bogus
+  
+  =========================
+  
+  
+  =========================
+  
+  Repeated input flags: hello -f -f
+  
+  =========================
+  
+  
+  =========================
+  
+  Empty input command
+  
+  =========================
+  
+  
+   _______                                     
+  |     __|.-----..-----. .--.--..-----..--.--.
+  |__     ||  -__||  -__| |  |  ||  _  ||  |  |
+  |_______||_____||_____| |___  ||_____||_____|
+                          |_____|              
+  
+  https://github.com/koloideal/Argenta | made by kolo
+  
+  '''
+# ---

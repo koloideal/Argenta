@@ -13,7 +13,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-from metrics.ci.models import Comparison, Measurement
+from metrics.ci.models import Comparison, Measurement, Side
 from metrics.ci.render import render
 
 _DEFAULT_THRESHOLD = 1.1
@@ -22,13 +22,19 @@ _DEFAULT_BATCH_SECONDS = 0.02
 RunSet = list[list[Measurement]]
 
 
-def run_measure(python: str, measure_args: list[str]) -> list[Measurement]:
-    completed = subprocess.run(
-        [python, "-m", "metrics.ci.measure", *measure_args],
-        stdout=subprocess.PIPE,
-        text=True,
-        check=True,
-    )
+def run_measure(side: Side, measure_args: list[str]) -> list[Measurement]:
+    try:
+        completed = subprocess.run(
+            [side.python, "-m", "metrics.ci.measure", *measure_args],
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=side.directory,
+        )
+    except subprocess.CalledProcessError as error:
+        # surface the child traceback instead of a bare CalledProcessError
+        sys.stderr.write(error.stderr)
+        raise
     return [Measurement(**entry) for entry in json.loads(completed.stdout)]
 
 
@@ -41,15 +47,15 @@ def medians(runs: RunSet) -> dict[str, float]:
 
 
 def _all_rounds(
-    base_python: str, head_python: str, rounds: int, measure_args: list[str]
+    base: Side, head: Side, rounds: int, measure_args: list[str]
 ) -> tuple[RunSet, RunSet]:
     base_runs: RunSet = []
     head_runs: RunSet = []
     for _ in range(rounds):
-        base_runs.append(run_measure(base_python, measure_args))
-        head_runs.append(run_measure(head_python, measure_args))
-        head_runs.append(run_measure(head_python, measure_args))
-        base_runs.append(run_measure(base_python, measure_args))
+        base_runs.append(run_measure(base, measure_args))
+        head_runs.append(run_measure(head, measure_args))
+        head_runs.append(run_measure(head, measure_args))
+        base_runs.append(run_measure(base, measure_args))
     return base_runs, head_runs
 
 
@@ -62,38 +68,49 @@ def _set_diffs(base_runs: RunSet, head_runs: RunSet) -> tuple[list[Measurement],
 
 
 def collect(
-    base_python: str, head_python: str, *, rounds: int, measure_args: list[str]
+    base: Side,
+    head: Side,
+    *,
+    rounds: int,
+    measure_args: list[str],
 ) -> tuple[list[Comparison], list[Measurement], list[Measurement]]:
-    base_runs, head_runs = _all_rounds(base_python, head_python, rounds, measure_args)
-    base, head = medians(base_runs), medians(head_runs)
+    # each side measures with the benchmark code from its own checkout —
+    # the PR's metrics may reference argenta APIs the base tree lacks
+    base_runs, head_runs = _all_rounds(base, head, rounds, measure_args)
+    base_medians, head_medians = medians(base_runs), medians(head_runs)
     comparisons = [
         Comparison(
             type_=measurement.type_,
             description=measurement.description,
-            base=base[measurement.name],
-            head=head[measurement.name],
+            base=base_medians[measurement.name],
+            head=head_medians[measurement.name],
         )
         for measurement in base_runs[0]
-        if measurement.name in head
+        if measurement.name in head_medians
     ]
     return comparisons, *_set_diffs(base_runs, head_runs)
 
 
-def main() -> None:
+def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-python", required=True)
     parser.add_argument("--head-python", required=True)
+    parser.add_argument("--base-dir", required=True, help="base source checkout dir")
+    parser.add_argument("--head-dir", required=True, help="head source checkout dir")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--rounds", type=int, default=5)
     parser.add_argument("--threshold", type=float, default=_DEFAULT_THRESHOLD)
     parser.add_argument("--batch-seconds", type=float, default=_DEFAULT_BATCH_SECONDS)
     parser.add_argument("--repeats", type=int, default=5)
-    args = parser.parse_args()
+    return parser.parse_args()
 
+
+def main() -> None:
+    args = _parse_args()
     report = render(
         *collect(
-            args.base_python,
-            args.head_python,
+            Side.from_cli(args.base_python, args.base_dir),
+            Side.from_cli(args.head_python, args.head_dir),
             rounds=args.rounds,
             measure_args=[
                 "--batch-seconds",
