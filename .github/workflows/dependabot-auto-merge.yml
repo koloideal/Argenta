@@ -1,6 +1,9 @@
 name: dependabot auto-merge
 
 on:
+  # zizmor: ignore[dangerous-triggers] job never checks out or runs PR code,
+  # it only enables auto-merge on the PR — write token is required because
+  # pull_request events from dependabot[bot] get a read-only GITHUB_TOKEN
   pull_request_target:
     branches: [ "main" ]
 
