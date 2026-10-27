@@ -94,6 +94,18 @@ def test_client_disconnect_unregisters_channel(transport: GrpcTransport) -> None
     transport.send({"a": 1})
 
 
+def test_clean_request_stream_end(transport: GrpcTransport) -> None:
+    channel, requests, responses = _client(transport)
+    try:
+        _wait_for_clients(transport, 1)
+        requests.put(None)
+        for _frame in responses:
+            pass
+        _wait_for_clients(transport, 0)
+    finally:
+        channel.close()
+
+
 def test_register_channel_replays_history(transport: GrpcTransport) -> None:
     transport.send({"version": "v0.9", "createSurface": {"surfaceId": "main"}})
 
