@@ -93,7 +93,9 @@ def _a2ui(  # noqa: WPS211
     port: Annotated[
         int | None,
         typer.Option(
-            "--port", "-p", help="Listen port for the ws/sse/socket/grpc server transports."
+            "--port",
+            "-p",
+            help="Listen port for the ws/sse/poll/socket/grpc server transports.",
         ),
     ] = None,
     socket_path: Annotated[

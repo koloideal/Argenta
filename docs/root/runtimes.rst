@@ -104,7 +104,7 @@ So when additional runtimes appear, they will show up as *additional launch opti
 Writing your own
 ----------------
 
-A custom runtime lives below the same seam: implement the ``Layout`` protocol to receive output blocks (or accept the printer's output), collect commands however your interface works, and feed them through the application's dispatch. The seam is the contract — if you can turn user events into ``InputCommand`` objects and give blocks a place to land, you have a runtime. Embedding via ``MemoryTransport`` (:ref:`guide <root_a2ui_transport_memory>`) is a worked example of this shape: the agent runs in-process and a host application drives it.
+A custom runtime lives below the same seam: implement the :ref:`Layout <root_api_app_index>` protocol to receive output blocks (or accept the printer's output), collect commands however your interface works, and feed them through the application's dispatch. The seam is the contract — if you can turn user events into ``InputCommand`` objects and give blocks a place to land, you have a runtime. Embedding via ``MemoryTransport`` (:ref:`guide <root_a2ui_transport_memory>`) is a worked example of this shape: the agent runs in-process and a host application drives it.
 
 -----
 

@@ -22,7 +22,7 @@ Shared behavior
 ---------------
 
 *   **History replay** — every server transport (SSE, WebSocket, long poll, socket, gRPC) keeps the sent messages and replays them to newly connected clients, so a renderer can attach at any time and rebuild the current surface.
-*   **Multiple clients** — server transports broadcast each message to all connected clients; actions from any of them enter the single dispatch queue.
+*   **Multiple clients** — server transports broadcast each message to all connected clients; actions from any of them enter the single dispatch queue. All clients share one application session — there is no per-client state.
 *   **Bound port** — the actual bound port is exposed as ``.port`` on every network transport (useful with ``port=0`` for an ephemeral port).
 *   **Graceful shutdown** — when the exit action is dispatched or the process is interrupted, the runtime emits ``deleteSurface`` and closes the transport; client disconnects (including TCP resets) are treated as drops, not errors.
 *   **Security** — none of the transports implement authentication or encryption. They bind to ``127.0.0.1`` by default and are designed for local use; for network exposure put them behind a proxy that terminates TLS and auth, or use :ref:`stdio <root_a2ui_transport_stdio>`/Unix sockets.

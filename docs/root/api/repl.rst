@@ -44,8 +44,6 @@ Passed to ``Orchestrator.run_repl``; every field documents itself via an ``Annot
 
 .. code-block:: python
 
-.. code-block:: python
-
    from argenta import App, Orchestrator
    from argenta.repl import DynamicDividingLine, REPLConfig
 

@@ -3,7 +3,7 @@
 A2UI Runtime
 ============
 
-Besides the interactive REPL, ``Argenta`` ships a second built-in runtime: the **A2UI runtime**. It exposes your application over `A2UI <https://a2ui.org/>`_ — a protocol where an agent (your app) streams a declarative description of a UI (a *surface*) to a renderer, and the renderer streams user actions back. The same commands you registered for the terminal become a generated web-native (or native) interface: no UI code, no per-command wiring.
+Besides the interactive REPL, ``Argenta`` ships a second built-in runtime: the **A2UI runtime**. It exposes your application over `A2UI <https://a2ui.org/>`_ — a protocol where an agent (your app) streams a declarative description of a UI (a *surface*) to a renderer, and the renderer streams user actions back. The same commands you registered for the terminal become a generated UI in a browser, a terminal client or a native app: no UI code, no per-command wiring.
 
 The split of responsibilities stays exactly where the framework puts it everywhere else:
 
@@ -20,7 +20,7 @@ How it works
 
 When the agent starts, it emits the surface in three messages, then enters a dispatch loop:
 
-1.  ``createSurface`` — declares the surface id, the component catalog the renderer should use, and an optional theme.
+1.  ``createSurface`` — declares the surface id, the component catalog (the set of component types the renderer knows how to draw) the renderer should use, and an optional theme.
 2.  ``updateComponents`` — the component graph built from your registered routers (see :ref:`a2ui_surface`).
 3.  ``updateDataModel`` — the initial data model the components bind to.
 
@@ -37,6 +37,9 @@ The same ``main.py`` that starts the REPL can serve the agent. You pick the runt
 
 With the CLI
 ~~~~~~~~~~~~
+
+.. tip::
+   To see the agent first, run the bundled demo from a repository checkout: ``argenta example a2ui agent`` starts the example agent, ``argenta example a2ui client`` serves the browser client on ``http://127.0.0.1:8080``. See :ref:`the example command <root_cli>`.
 
 The recommended way is the ``argenta a2ui`` command from the ``[cli]`` extra:
 
