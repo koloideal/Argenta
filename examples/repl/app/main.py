@@ -1,6 +1,6 @@
 from argenta import App, Orchestrator
 from argenta.app import PredefinedMessages
-from argenta.repl import REPLConfig, DynamicDividingLine
+from argenta.repl import DynamicDividingLine, REPLConfig
 from examples.repl.app.routers import work_router
 
 app: App = App()
