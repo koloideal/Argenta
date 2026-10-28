@@ -149,7 +149,11 @@ class TestFigletFontLoader:
         font_path = tmp_path / "custom.flf"
         font_path.write_text(build_flf(), encoding="utf-8")
         FigletFontLoader().load(font_path)
+        recorded_mtime = font_path.stat().st_mtime_ns
         font_path.write_text(build_flf(height=9), encoding="utf-8")
+        # Advance the source timestamp even when both writes share a filesystem clock tick.
+        updated_mtime = recorded_mtime + 1_000_000_000
+        os.utime(font_path, ns=(updated_mtime, updated_mtime))
         assert FigletFontLoader().load(font_path).height == 9
 
     def test_recovers_from_corrupted_dump(self, tmp_path: Path) -> None:
