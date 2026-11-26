@@ -30,7 +30,7 @@ def calc_handler(response: Response):
     # Get flag values
     a_flag = response.input_flags.get_flag_by_name("a")
     b_flag = response.input_flags.get_flag_by_name("b")
-    op_flag = response.input_flags.get_flag_by_name("op")
+    op_flag = response.input_flags.get_flag_by_name("operation")
 
     # Check that all flags are provided
     if (
@@ -39,7 +39,7 @@ def calc_handler(response: Response):
         or b_flag is None
         or op_flag is None
     ):
-        print("Error: must specify --a, --b and --op")
+        print("Error: must specify --a, --b and --operation")
         return
 
     a = float(a_flag.input_value)
