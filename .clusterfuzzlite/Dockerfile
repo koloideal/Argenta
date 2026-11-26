@@ -1,4 +1,4 @@
-FROM gcr.io/oss-fuzz-base/base-builder-python:v1
+FROM gcr.io/oss-fuzz-base/base-builder-python:v1@sha256:6ccbb6b02fcbb8e07d15680e933a6d835cdb579636032cec7d256d0f25d483e4
 
 # The base image ships Python 3.11 (Ubuntu focal), but Argenta
 # requires >=3.12 (PEP 695 generics/type statements). Install a
